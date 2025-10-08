@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 /// Extension to easily access localizations from context
 extension LocalizationContext on BuildContext {
-  AppLocalizations get l10n => AppLocalizations.of(this)!;
+  AppLocalizations get l10n => AppLocalizations.of(this);
 }
 
 /// Helper class for localization-related utilities
