@@ -81,7 +81,7 @@ class SafeDriverApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(currentLocaleProvider);
-    
+
     return MaterialApp(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
