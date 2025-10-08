@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -12,6 +13,8 @@ import 'core/services/firebase_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/themes/app_theme.dart';
 import 'firebase_options.dart';
+import 'providers/language_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Top-level function to handle background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
