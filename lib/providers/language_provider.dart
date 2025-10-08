@@ -25,7 +25,7 @@ enum AppLanguage {
 /// Language controller to manage current language state
 class LanguageController extends StateNotifier<AppLanguage> {
   static const String _languageKey = 'selected_language';
-  
+
   LanguageController() : super(AppLanguage.english) {
     _loadSavedLanguage();
   }
@@ -35,7 +35,7 @@ class LanguageController extends StateNotifier<AppLanguage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLanguageCode = prefs.getString(_languageKey);
-      
+
       if (savedLanguageCode != null) {
         state = AppLanguage.fromCode(savedLanguageCode);
       }
@@ -60,13 +60,13 @@ class LanguageController extends StateNotifier<AppLanguage> {
   Locale get currentLocale => Locale(state.code);
 
   /// Get all supported locales
-  static List<Locale> get supportedLocales => AppLanguage.values
-      .map((lang) => Locale(lang.code))
-      .toList();
+  static List<Locale> get supportedLocales =>
+      AppLanguage.values.map((lang) => Locale(lang.code)).toList();
 }
 
 /// Provider for language controller
-final languageControllerProvider = StateNotifierProvider<LanguageController, AppLanguage>(
+final languageControllerProvider =
+    StateNotifierProvider<LanguageController, AppLanguage>(
   (ref) => LanguageController(),
 );
 
