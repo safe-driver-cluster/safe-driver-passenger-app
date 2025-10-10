@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "409271921385",
+    "project_id": "safedriver-mobile",
+    "storage_bucket": "safedriver-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409271921385:android:09abd63f55001963d11e78",
+        "android_client_info": {
+          "package_name": "com.example.safedriver_passenger_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB31V8yBLI2Rv52yYdDz_PwWFZgBteD7BQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
