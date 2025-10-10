@@ -1,6 +1,6 @@
 class AppStrings {
   // App Info
-  static const String appName = 'SafeDriver Passenger';
+  static const String appName = 'SafeDriver';
   static const String appTagline = 'Your Safety, Our Priority';
 
   // Authentication
