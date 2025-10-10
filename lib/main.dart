@@ -18,7 +18,10 @@ import 'firebase_options.dart';
 
 // Top-level function to handle background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Ensure Firebase is initialized (but don't initialize if already done)
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
   debugPrint('Handling a background message: ${message.messageId}');
 }
 
@@ -32,10 +35,12 @@ void main() async {
   ]);
 
   try {
-    // Initialize Firebase with proper configuration
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // Initialize Firebase with proper configuration (only if not already initialized)
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
 
     // Initialize Firebase services
     await FirebaseService.instance.initialize();
