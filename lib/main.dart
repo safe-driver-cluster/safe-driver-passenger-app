@@ -110,7 +110,7 @@ class SafeDriverErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SafeDriver Passenger',
+      title: 'SafeDriver',
       home: Scaffold(
         body: Center(
           child: Column(
