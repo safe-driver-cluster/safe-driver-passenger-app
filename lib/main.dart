@@ -18,7 +18,18 @@ import 'firebase_options.dart';
 
 // Top-level function to handle background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Ensure Firebase is initialized (but don't initialize if already done)
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform);
+    }
+  } catch (e) {
+    // If Firebase is already initialized, continue
+    if (!e.toString().contains('duplicate-app')) {
+      rethrow;
+    }
+  }
   debugPrint('Handling a background message: ${message.messageId}');
 }
 
@@ -32,10 +43,20 @@ void main() async {
   ]);
 
   try {
-    // Initialize Firebase with proper configuration
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // Initialize Firebase with proper configuration (only if not already initialized)
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      }
+    } catch (e) {
+      // If Firebase is already initialized (common during hot restart), continue
+      if (!e.toString().contains('duplicate-app')) {
+        rethrow;
+      }
+      debugPrint('Firebase already initialized, continuing...');
+    }
 
     // Initialize Firebase services
     await FirebaseService.instance.initialize();
