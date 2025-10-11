@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace = "com.example.safedriver_passenger_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
