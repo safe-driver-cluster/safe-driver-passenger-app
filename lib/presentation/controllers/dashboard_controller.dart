@@ -171,7 +171,7 @@ class DashboardController extends StateNotifier<DashboardState> {
 
       // Get recent safety alerts to show as activity
       try {
-        final alerts = await _safetyRepository.getRecentSafetyAlerts(limit: 3);
+        final alerts = await _safetyRepository.getRecentAlerts(limit: 3);
         for (var alert in alerts) {
           activities.add('Safety Alert: ${alert.title}');
         }
