@@ -546,7 +546,6 @@ class _UserProfilePageState extends State<UserProfilePage>
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
           ),
         ],
       ),
