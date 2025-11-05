@@ -765,6 +765,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                       : AppColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
