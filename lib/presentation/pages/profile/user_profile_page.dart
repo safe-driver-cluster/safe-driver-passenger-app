@@ -1035,6 +1035,8 @@ class _UserProfilePageState extends State<UserProfilePage>
 
 }
 
+}
+
 class MenuItemData {
   final String title;
   final IconData icon;
