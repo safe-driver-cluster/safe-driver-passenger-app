@@ -13,6 +13,7 @@ class SafetyAlertModel {
   final DateTime timestamp;
   final AlertStatus status;
   final List<String> affectedAreas;
+  final List<String> affectedUsers; // List of user IDs affected by this alert
   final Map<String, dynamic> additionalData;
   final String? imageUrl;
   final String? videoUrl;
@@ -38,6 +39,7 @@ class SafetyAlertModel {
     required this.timestamp,
     required this.status,
     required this.affectedAreas,
+    this.affectedUsers = const [],
     required this.additionalData,
     this.imageUrl,
     this.videoUrl,
@@ -174,6 +176,7 @@ class SafetyAlertModel {
         orElse: () => AlertStatus.active,
       ),
       affectedAreas: List<String>.from(json['affectedAreas'] ?? []),
+      affectedUsers: List<String>.from(json['affectedUsers'] ?? []),
       additionalData: Map<String, dynamic>.from(json['additionalData'] ?? {}),
       imageUrl: json['imageUrl'],
       videoUrl: json['videoUrl'],
