@@ -34,20 +34,21 @@ class BusRepository {
   Future<List<BusModel>> getNearbyBuses(double latitude, double longitude,
       {double radiusKm = 5.0}) async {
     try {
-      // For now, get all active buses and filter by distance
-      // In a real app, you'd use a geospatial query or service like GeoFirestore
+      // Get all active buses and filter by distance
+      // Note: For production, consider using GeoFirestore or similar for better geospatial queries
       final query = await _firebaseService.firestore
           .collection(_collection)
           .where('isActive', isEqualTo: true)
-          .where('status', whereIn: ['online', 'inTransit'])
-          .limit(50)
+          .where('status', whereIn: ['online', 'inTransit', 'atStop'])
+          .orderBy('lastUpdated', descending: true)
+          .limit(100)
           .get();
 
       final buses = query.docs
           .map((doc) => BusModel.fromJson({...doc.data(), 'id': doc.id}))
           .toList();
 
-      // Filter by distance (simplified calculation)
+      // Filter by distance using Haversine formula
       return buses.where((bus) {
         if (bus.currentLocation == null) return false;
 
