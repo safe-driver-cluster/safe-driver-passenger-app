@@ -1,12 +1,13 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/firebase_service.dart';
 import '../models/bus_model.dart';
-import '../models/user_model.dart';
-import '../models/safety_alert_model.dart';
 import '../models/feedback_model.dart';
+import '../models/safety_alert_model.dart';
+import '../models/user_model.dart';
 
 /// Comprehensive data service that integrates all Firebase operations
 /// Replaces hardcoded data with real Firebase data
@@ -66,7 +67,8 @@ class FirebaseDataService {
   }
 
   /// Update user statistics (trips, carbon saved, points)
-  Future<void> updateUserStats(String userId, {
+  Future<void> updateUserStats(
+    String userId, {
     int? todayTrips,
     double? carbonSaved,
     int? pointsEarned,
@@ -74,12 +76,12 @@ class FirebaseDataService {
   }) async {
     try {
       final updateData = <String, dynamic>{};
-      
+
       if (todayTrips != null) updateData['stats.todayTrips'] = todayTrips;
       if (carbonSaved != null) updateData['stats.carbonSaved'] = carbonSaved;
       if (pointsEarned != null) updateData['stats.pointsEarned'] = pointsEarned;
       if (safetyScore != null) updateData['stats.safetyScore'] = safetyScore;
-      
+
       updateData['updatedAt'] = FieldValue.serverTimestamp();
 
       await _firebaseService.firestore
@@ -99,7 +101,7 @@ class FirebaseDataService {
 
   /// Get nearby buses with real-time location data
   Future<List<BusModel>> getNearbyBuses(
-    double latitude, 
+    double latitude,
     double longitude, {
     double radiusKm = 5.0,
     int limit = 20,
@@ -119,18 +121,21 @@ class FirebaseDataService {
           .toList();
 
       // Filter by distance (Haversine formula)
-      final nearbyBuses = buses.where((bus) {
-        if (bus.currentLocation == null) return false;
-        
-        final distance = _calculateDistance(
-          latitude, 
-          longitude,
-          bus.currentLocation!.latitude,
-          bus.currentLocation!.longitude,
-        );
-        
-        return distance <= radiusKm;
-      }).take(limit).toList();
+      final nearbyBuses = buses
+          .where((bus) {
+            if (bus.currentLocation == null) return false;
+
+            final distance = _calculateDistance(
+              latitude,
+              longitude,
+              bus.currentLocation!.latitude,
+              bus.currentLocation!.longitude,
+            );
+
+            return distance <= radiusKm;
+          })
+          .take(limit)
+          .toList();
 
       return nearbyBuses;
     } catch (e) {
@@ -145,10 +150,8 @@ class FirebaseDataService {
     if (cached != null) return cached;
 
     try {
-      final doc = await _firebaseService.firestore
-          .collection('buses')
-          .doc(busId)
-          .get();
+      final doc =
+          await _firebaseService.firestore.collection('buses').doc(busId).get();
 
       if (doc.exists) {
         final bus = BusModel.fromJson({...doc.data()!, 'id': doc.id});
@@ -194,25 +197,28 @@ class FirebaseDataService {
       final querySnapshot = await query.limit(limit * 2).get();
 
       List<SafetyAlertModel> alerts = querySnapshot.docs
-          .map((doc) => SafetyAlertModel.fromJson({...doc.data() as Map<String, dynamic>, 'id': doc.id}))
+          .map((doc) => SafetyAlertModel.fromJson(
+              {...doc.data() as Map<String, dynamic>, 'id': doc.id}))
           .toList();
 
       // Filter for user relevance
       if (userId != null || busId != null || favoriteRoutes != null) {
         alerts = alerts.where((alert) {
           // Include if user is affected
-          if (userId != null && alert.affectedUsers.contains(userId)) return true;
-          
+          if (userId != null && alert.affectedUsers.contains(userId))
+            return true;
+
           // Include if alert is for current bus
           if (busId != null && alert.busId == busId) return true;
-          
+
           // Include if alert is for favorite routes
-          if (favoriteRoutes != null && alert.routeId != null && 
+          if (favoriteRoutes != null &&
+              alert.routeId != null &&
               favoriteRoutes.contains(alert.routeId)) return true;
-          
+
           // Include high priority alerts
           if (alert.severity >= 4) return true;
-          
+
           return false;
         }).toList();
       }
@@ -244,7 +250,8 @@ class FirebaseDataService {
 
     return query.limit(20).snapshots().map((snapshot) {
       return snapshot.docs
-          .map((doc) => SafetyAlertModel.fromJson({...doc.data() as Map<String, dynamic>, 'id': doc.id}))
+          .map((doc) => SafetyAlertModel.fromJson(
+              {...doc.data() as Map<String, dynamic>, 'id': doc.id}))
           .toList();
     });
   }
@@ -252,7 +259,8 @@ class FirebaseDataService {
   // ============ USER ACTIVITY ============
 
   /// Get user's recent activity (journeys, feedback, etc.)
-  Future<List<String>> getUserRecentActivity(String userId, {int limit = 10}) async {
+  Future<List<String>> getUserRecentActivity(String userId,
+      {int limit = 10}) async {
     try {
       final activities = <String>[];
 
@@ -272,9 +280,10 @@ class FirebaseDataService {
         final routeNumber = data['routeNumber'] ?? 'Unknown Route';
         final timestamp = (data['createdAt'] as Timestamp?)?.toDate();
         final timeAgo = timestamp != null ? _getTimeAgo(timestamp) : '';
-        
+
         if (status == 'completed') {
-          activities.add('Completed journey on $busNumber - Route $routeNumber $timeAgo');
+          activities.add(
+              'Completed journey on $busNumber - Route $routeNumber $timeAgo');
         } else if (status == 'ongoing') {
           activities.add('Currently on $busNumber - Route $routeNumber');
         }
@@ -344,7 +353,7 @@ class FirebaseDataService {
 
   /// Get fleet statistics for dashboard
   Future<Map<String, dynamic>> _getFleetStatistics() async {
-    final cacheKey = 'fleet_stats';
+    const cacheKey = 'fleet_stats';
     final cached = _getCachedData<Map<String, dynamic>>(cacheKey);
     if (cached != null) return cached;
 
@@ -364,9 +373,11 @@ class FirebaseDataService {
       // Calculate average safety score
       double totalSafetyScore = 0;
       for (var doc in busesQuery.docs) {
-        totalSafetyScore += (doc.data()['safetyScore'] as num?)?.toDouble() ?? 0;
+        totalSafetyScore +=
+            (doc.data()['safetyScore'] as num?)?.toDouble() ?? 0;
       }
-      final avgSafetyScore = totalBuses > 0 ? totalSafetyScore / totalBuses : 0.0;
+      final avgSafetyScore =
+          totalBuses > 0 ? totalSafetyScore / totalBuses : 0.0;
 
       // Get active incidents count
       final incidentsQuery = await _firebaseService.firestore
@@ -392,18 +403,21 @@ class FirebaseDataService {
   // ============ HELPER METHODS ============
 
   /// Calculate distance between two points using Haversine formula
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
     const double earthRadius = 6371; // Earth's radius in km
-    
+
     final dLat = _degreesToRadians(lat2 - lat1);
     final dLon = _degreesToRadians(lon2 - lon1);
-    
+
     final a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(_degreesToRadians(lat1)) * Math.cos(_degreesToRadians(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+        Math.cos(_degreesToRadians(lat1)) *
+            Math.cos(_degreesToRadians(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
     final c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    
+
     return earthRadius * c;
   }
 
@@ -412,12 +426,12 @@ class FirebaseDataService {
   /// Get human readable time ago string
   String _getTimeAgo(DateTime dateTime) {
     final difference = DateTime.now().difference(dateTime);
-    
+
     if (difference.inMinutes < 1) return 'just now';
     if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
     if (difference.inHours < 24) return '${difference.inHours}h ago';
     if (difference.inDays < 7) return '${difference.inDays}d ago';
-    
+
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
 
@@ -438,7 +452,7 @@ class FirebaseDataService {
 class FirebaseDataException implements Exception {
   final String message;
   FirebaseDataException(this.message);
-  
+
   @override
   String toString() => 'FirebaseDataException: $message';
 }
