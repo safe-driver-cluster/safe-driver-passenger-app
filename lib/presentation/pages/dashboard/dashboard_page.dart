@@ -70,6 +70,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                 ],
               ),
               child: FloatingActionButton(
+                heroTag: "dashboard_qr_fab", // Unique hero tag
                 onPressed: () {
                   setState(() {
                     _selectedIndex = 2; // Navigate to QR scanner
