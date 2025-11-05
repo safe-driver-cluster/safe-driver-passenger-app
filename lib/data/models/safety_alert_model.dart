@@ -209,6 +209,7 @@ class SafetyAlertModel {
       'timestamp': timestamp.toIso8601String(),
       'status': status.toString().split('.').last,
       'affectedAreas': affectedAreas,
+      'affectedUsers': affectedUsers,
       'additionalData': additionalData,
       'imageUrl': imageUrl,
       'videoUrl': videoUrl,
