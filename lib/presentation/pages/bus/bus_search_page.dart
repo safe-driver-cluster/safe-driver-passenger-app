@@ -1008,6 +1008,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
         return Transform.scale(
           scale: _fabAnimation.value,
           child: FloatingActionButton.extended(
+            heroTag: "search_fab", // Unique hero tag
             onPressed: () {
               HapticFeedback.mediumImpact();
               _performSearch();
