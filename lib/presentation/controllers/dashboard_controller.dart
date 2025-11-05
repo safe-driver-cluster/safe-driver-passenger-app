@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/repositories/bus_repository.dart';
-import '../../data/repositories/driver_repository.dart';
-import '../../data/repositories/safety_repository.dart';
+
 import '../../data/models/bus_model.dart';
 import '../../data/models/driver_model.dart';
 import '../../data/models/safety_alert_model.dart';
+import '../../data/repositories/bus_repository.dart';
+import '../../data/repositories/driver_repository.dart';
+import '../../data/repositories/safety_repository.dart';
 
 // Dashboard State
 class DashboardState {
@@ -156,7 +157,8 @@ class DashboardController extends StateNotifier<DashboardState> {
   Future<void> _loadActiveJourney() async {
     try {
       // Check if user has an active journey
-      final activeJourney = await _busRepository.getActiveJourney('current_user_id'); // Replace with actual user ID
+      final activeJourney = await _busRepository
+          .getActiveJourney('current_user_id'); // Replace with actual user ID
       state = state.copyWith(activeJourney: activeJourney);
     } catch (e) {
       print('Error loading active journey: $e');
@@ -192,9 +194,10 @@ class DashboardController extends StateNotifier<DashboardState> {
         final status = data['status'] ?? 'unknown';
         final busNumber = data['busNumber'] ?? 'Unknown Bus';
         final routeNumber = data['routeNumber'] ?? 'Unknown Route';
-        
+
         if (status == 'completed') {
-          activities.add('Completed journey on $busNumber - Route $routeNumber');
+          activities
+              .add('Completed journey on $busNumber - Route $routeNumber');
         } else if (status == 'ongoing') {
           activities.add('Currently on $busNumber - Route $routeNumber');
         }
