@@ -356,8 +356,17 @@ class _UserProfilePageState extends State<UserProfilePage>
         children: [
           // Background Pattern
           Positioned.fill(
-            child: CustomPaint(
-              painter: ProfileBackgroundPainter(isDarkMode),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topRight,
+                  radius: 2,
+                  colors: [
+                    Colors.white.withOpacity(0.1),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
             ),
           ),
 
