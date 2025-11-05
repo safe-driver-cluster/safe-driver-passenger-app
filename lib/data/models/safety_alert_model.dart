@@ -39,6 +39,7 @@ class SafetyAlertModel {
     required this.timestamp,
     required this.status,
     required this.affectedAreas,
+    this.affectedUsers = const [],
     required this.additionalData,
     this.imageUrl,
     this.videoUrl,
