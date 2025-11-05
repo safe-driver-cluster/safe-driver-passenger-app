@@ -165,17 +165,63 @@ class DashboardController extends StateNotifier<DashboardState> {
 
   Future<void> _loadRecentActivity() async {
     try {
-      // Mock recent activity data
-      final activities = [
-        'Boarded Bus #123 on Route A',
-        'Submitted feedback for Trip #456',
-        'Safety alert resolved for Route B',
-        'New route notification received',
-      ];
+      final user = _ref.read(authControllerProvider);
+      if (user == null) return;
+
+      // Get user's recent journeys for activity
+      final recentJourneys = await _firebaseService.firestore
+          .collection('journeys')
+          .where('userId', isEqualTo: user.uid)
+          .orderBy('createdAt', descending: true)
+          .limit(5)
+          .get();
+
+      // Get user's recent feedback for activity
+      final recentFeedback = await _firebaseService.firestore
+          .collection('feedback')
+          .where('userId', isEqualTo: user.uid)
+          .orderBy('createdAt', descending: true)
+          .limit(3)
+          .get();
+
+      List<String> activities = [];
+
+      // Process journeys into activity items
+      for (var doc in recentJourneys.docs) {
+        final data = doc.data();
+        final status = data['status'] ?? 'unknown';
+        final busNumber = data['busNumber'] ?? 'Unknown Bus';
+        final routeNumber = data['routeNumber'] ?? 'Unknown Route';
+        
+        if (status == 'completed') {
+          activities.add('Completed journey on $busNumber - Route $routeNumber');
+        } else if (status == 'ongoing') {
+          activities.add('Currently on $busNumber - Route $routeNumber');
+        }
+      }
+
+      // Process feedback into activity items
+      for (var doc in recentFeedback.docs) {
+        final data = doc.data();
+        final rating = data['rating']?['overall'] ?? 0;
+        final busNumber = data['busNumber'] ?? 'Bus';
+        activities.add('Rated $busNumber: $rating/5 stars');
+      }
+
+      // If no recent activity, show some helpful messages
+      if (activities.isEmpty) {
+        activities = [
+          'Welcome to SafeDriver!',
+          'Start your first journey by searching for buses',
+          'Scan QR codes on buses for quick access',
+        ];
+      }
 
       state = state.copyWith(recentActivity: activities);
     } catch (e) {
       print('Error loading recent activity: $e');
+      // Fallback activity
+      state = state.copyWith(recentActivity: ['Welcome to SafeDriver!']);
     }
   }
 
