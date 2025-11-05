@@ -1,5 +1,7 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../core/services/firebase_service.dart';
 import '../models/safety_alert_model.dart';
 
@@ -50,23 +52,28 @@ class SafetyAlertRepository {
         }).toList();
 
         // Apply client-side filtering for user relevance
-        if (userId != null || busId != null || routeId != null || favoriteRoutes != null) {
+        if (userId != null ||
+            busId != null ||
+            routeId != null ||
+            favoriteRoutes != null) {
           alerts = alerts.where((alert) {
             // Include if user is affected
-            if (userId != null && alert.affectedUsers.contains(userId)) return true;
-            
+            if (userId != null && alert.affectedUsers.contains(userId))
+              return true;
+
             // Include if alert is for current bus
             if (busId != null && alert.busId == busId) return true;
-            
+
             // Include if alert is for specific route
             if (routeId != null && alert.routeId == routeId) return true;
-            
+
             // Include if alert is for favorite routes
-            if (favoriteRoutes != null && favoriteRoutes.contains(alert.routeId)) return true;
-            
+            if (favoriteRoutes != null &&
+                favoriteRoutes.contains(alert.routeId)) return true;
+
             // Include high priority alerts (severity >= 4)
             if (alert.severity >= 4) return true;
-            
+
             return false;
           }).toList();
         }
