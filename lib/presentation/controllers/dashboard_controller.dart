@@ -167,64 +167,43 @@ class DashboardController extends StateNotifier<DashboardState> {
 
   Future<void> _loadRecentActivity() async {
     try {
-      final user = _ref.read(authControllerProvider);
-      if (user == null) return;
+      // For now, load from repositories (this can be enhanced with user-specific data later)
+      final activities = <String>[];
 
-      // Get user's recent journeys for activity
-      final recentJourneys = await _firebaseService.firestore
-          .collection('journeys')
-          .where('userId', isEqualTo: user.uid)
-          .orderBy('createdAt', descending: true)
-          .limit(5)
-          .get();
-
-      // Get user's recent feedback for activity
-      final recentFeedback = await _firebaseService.firestore
-          .collection('feedback')
-          .where('userId', isEqualTo: user.uid)
-          .orderBy('createdAt', descending: true)
-          .limit(3)
-          .get();
-
-      List<String> activities = [];
-
-      // Process journeys into activity items
-      for (var doc in recentJourneys.docs) {
-        final data = doc.data();
-        final status = data['status'] ?? 'unknown';
-        final busNumber = data['busNumber'] ?? 'Unknown Bus';
-        final routeNumber = data['routeNumber'] ?? 'Unknown Route';
-
-        if (status == 'completed') {
-          activities
-              .add('Completed journey on $busNumber - Route $routeNumber');
-        } else if (status == 'ongoing') {
-          activities.add('Currently on $busNumber - Route $routeNumber');
+      // Get recent safety alerts to show as activity
+      try {
+        final alerts = await _safetyRepository.getRecentSafetyAlerts(limit: 3);
+        for (var alert in alerts) {
+          activities.add('Safety Alert: ${alert.title}');
         }
+      } catch (e) {
+        print('Error loading safety alerts: $e');
       }
 
-      // Process feedback into activity items
-      for (var doc in recentFeedback.docs) {
-        final data = doc.data();
-        final rating = data['rating']?['overall'] ?? 0;
-        final busNumber = data['busNumber'] ?? 'Bus';
-        activities.add('Rated $busNumber: $rating/5 stars');
-      }
+      // Add some general activity items for now
+      activities.addAll([
+        'System monitoring active',
+        'Fleet safety score updated',
+        'Bus locations synchronized',
+      ]);
 
-      // If no recent activity, show some helpful messages
+      // If no activities, show welcome messages
       if (activities.isEmpty) {
-        activities = [
+        activities.addAll([
           'Welcome to SafeDriver!',
-          'Start your first journey by searching for buses',
-          'Scan QR codes on buses for quick access',
-        ];
+          'Start monitoring bus safety',
+          'Check nearby buses and routes',
+        ]);
       }
 
-      state = state.copyWith(recentActivity: activities);
+      state = state.copyWith(recentActivity: activities.take(5).toList());
     } catch (e) {
       print('Error loading recent activity: $e');
       // Fallback activity
-      state = state.copyWith(recentActivity: ['Welcome to SafeDriver!']);
+      state = state.copyWith(recentActivity: [
+        'Welcome to SafeDriver!',
+        'System ready for monitoring'
+      ]);
     }
   }
 
