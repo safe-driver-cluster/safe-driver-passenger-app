@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -57,13 +57,14 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fabAnimationController, curve: Curves.elasticOut),
+      CurvedAnimation(
+          parent: _fabAnimationController, curve: Curves.elasticOut),
     );
 
     _loadPopularRoutes();
     _loadRecentSearches();
     _loadPopularDestinations();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -181,7 +182,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       _isSearching = true;
       _showSearchResults = true;
     });
-    
+
     if (_selectedSearchType == 0) {
       _searchByRoute();
     } else if (_selectedSearchType == 1) {
@@ -282,7 +283,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 ),
 
                 // Search Results or Popular Routes
-                _showSearchResults 
+                _showSearchResults
                     ? _buildSearchResultsSliver()
                     : _buildPopularRoutesSliver(),
               ],
@@ -393,7 +394,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Where are you going?',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     color: AppColors.textHint,
                     fontSize: 16,
                   ),
@@ -451,7 +452,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Quick Access',
                 style: TextStyle(
                   fontSize: 18,
@@ -461,7 +462,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               ),
               TextButton(
                 onPressed: () {},
-                child: Text(
+                child: const Text(
                   'See All',
                   style: TextStyle(
                     color: AppColors.primaryColor,
@@ -479,12 +480,28 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               itemCount: 4,
               itemBuilder: (context, index) {
                 final suggestions = [
-                  {'icon': Icons.location_city, 'title': 'City Center', 'color': Colors.blue},
-                  {'icon': Icons.local_airport, 'title': 'Airport', 'color': Colors.green},
-                  {'icon': Icons.school, 'title': 'University', 'color': Colors.orange},
-                  {'icon': Icons.local_mall, 'title': 'Mall', 'color': Colors.purple},
+                  {
+                    'icon': Icons.location_city,
+                    'title': 'City Center',
+                    'color': Colors.blue
+                  },
+                  {
+                    'icon': Icons.local_airport,
+                    'title': 'Airport',
+                    'color': Colors.green
+                  },
+                  {
+                    'icon': Icons.school,
+                    'title': 'University',
+                    'color': Colors.orange
+                  },
+                  {
+                    'icon': Icons.local_mall,
+                    'title': 'Mall',
+                    'color': Colors.purple
+                  },
                 ];
-                
+
                 return Container(
                   width: 80,
                   margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
@@ -494,7 +511,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
-                          color: (suggestions[index]['color'] as Color).withOpacity(0.1),
+                          color: (suggestions[index]['color'] as Color)
+                              .withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
@@ -544,7 +562,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Search Fields Based on Type
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -557,7 +575,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
   Widget _buildModernTab(String title, int index, IconData icon) {
     final isSelected = _selectedSearchType == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -709,7 +727,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Popular Routes',
               style: TextStyle(
                 fontSize: 20,
@@ -813,7 +831,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Bus Info
                     Expanded(
                       child: Column(
@@ -846,7 +864,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: bus['isLive'] ? Colors.green : Colors.grey,
+                                    color: bus['isLive']
+                                        ? Colors.green
+                                        : Colors.grey,
                                   ),
                                 ),
                               ),
@@ -855,7 +875,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           const SizedBox(height: 4),
                           Text(
                             bus['routeName'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: AppColors.textSecondary,
                               fontWeight: FontWeight.w500,
@@ -864,7 +884,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         ],
                       ),
                     ),
-                    
+
                     // Arrival Time
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -888,9 +908,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Route
                 Row(
                   children: [
@@ -911,9 +931,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 12),
-                
+
                 // Stats Row
                 Row(
                   children: [
@@ -931,7 +951,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                     const Spacer(),
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.star_rounded,
                           size: 16,
                           color: Colors.amber,
@@ -995,7 +1015,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             backgroundColor: AppColors.primaryColor,
             elevation: 8,
             icon: _isSearching
-                ? SizedBox(
+                ? const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
