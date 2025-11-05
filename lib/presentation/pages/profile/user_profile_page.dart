@@ -494,7 +494,8 @@ class _UserProfilePageState extends State<UserProfilePage>
   ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      constraints: const BoxConstraints(minHeight: 120), // Add minimum height constraint
+      constraints:
+          const BoxConstraints(minHeight: 120), // Add minimum height constraint
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(20),
