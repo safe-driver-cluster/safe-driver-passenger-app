@@ -237,6 +237,7 @@ class SafetyAlertModel {
     DateTime? timestamp,
     AlertStatus? status,
     List<String>? affectedAreas,
+    List<String>? affectedUsers,
     Map<String, dynamic>? additionalData,
     String? imageUrl,
     String? videoUrl,
