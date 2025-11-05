@@ -176,6 +176,7 @@ class SafetyAlertModel {
         orElse: () => AlertStatus.active,
       ),
       affectedAreas: List<String>.from(json['affectedAreas'] ?? []),
+      affectedUsers: List<String>.from(json['affectedUsers'] ?? []),
       additionalData: Map<String, dynamic>.from(json['additionalData'] ?? {}),
       imageUrl: json['imageUrl'],
       videoUrl: json['videoUrl'],
