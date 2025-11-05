@@ -28,22 +28,50 @@ class SafetyAlertRepository {
     }
   }
 
-  /// Get active safety alerts
-  Stream<List<SafetyAlertModel>> getActiveSafetyAlerts() {
+  /// Get active safety alerts with enhanced filtering
+  Stream<List<SafetyAlertModel>> getActiveSafetyAlerts({
+    String? busId,
+    String? routeId,
+    String? userId,
+    List<String>? favoriteRoutes,
+    int limit = 50,
+  }) {
     try {
-      return _firebaseService.firestore
+      Query query = _firebaseService.firestore
           .collection(_collection)
-          .where('isActive', isEqualTo: true)
-          .where('expiresAt', isGreaterThan: Timestamp.now())
-          .orderBy('expiresAt')
-          .orderBy('severity', descending: true)
-          .orderBy('createdAt', descending: true)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.docs.map((doc) {
-          final data = doc.data();
+          .where('status', whereIn: ['active', 'acknowledged', 'inProgress'])
+          .orderBy('priority', descending: true)
+          .orderBy('createdAt', descending: true);
+
+      return query.limit(limit).snapshots().map((snapshot) {
+        List<SafetyAlertModel> alerts = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
           return SafetyAlertModel.fromJson({...data, 'id': doc.id});
         }).toList();
+
+        // Apply client-side filtering for user relevance
+        if (userId != null || busId != null || routeId != null || favoriteRoutes != null) {
+          alerts = alerts.where((alert) {
+            // Include if user is affected
+            if (userId != null && alert.affectedUsers.contains(userId)) return true;
+            
+            // Include if alert is for current bus
+            if (busId != null && alert.busId == busId) return true;
+            
+            // Include if alert is for specific route
+            if (routeId != null && alert.routeId == routeId) return true;
+            
+            // Include if alert is for favorite routes
+            if (favoriteRoutes != null && favoriteRoutes.contains(alert.routeId)) return true;
+            
+            // Include high priority alerts (severity >= 4)
+            if (alert.severity >= 4) return true;
+            
+            return false;
+          }).toList();
+        }
+
+        return alerts;
       });
     } catch (e) {
       throw SafetyAlertRepositoryException(
