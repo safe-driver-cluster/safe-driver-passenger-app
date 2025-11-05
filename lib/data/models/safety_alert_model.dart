@@ -13,6 +13,7 @@ class SafetyAlertModel {
   final DateTime timestamp;
   final AlertStatus status;
   final List<String> affectedAreas;
+  final List<String> affectedUsers; // List of user IDs affected by this alert
   final Map<String, dynamic> additionalData;
   final String? imageUrl;
   final String? videoUrl;
