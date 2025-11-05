@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/services/firebase_service.dart';
 
 // Base controller class for presentation layer
 abstract class BaseController extends StateNotifier<AsyncValue<void>> {
@@ -23,13 +25,16 @@ class AuthController extends BaseController {
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     setLoading();
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      // Firebase authentication implementation
+      final firebaseService = FirebaseService.instance;
+      final userCredential = await firebaseService.auth
+          .signInWithEmailAndPassword(email: email, password: password);
 
-      // TODO: Implement actual Firebase authentication
-      print('Sign in with email: $email');
-
-      setData();
+      if (userCredential.user != null) {
+        setData();
+      } else {
+        setError('Authentication failed');
+      }
     } catch (e) {
       setError('Failed to sign in: ${e.toString()}');
     }
@@ -44,13 +49,49 @@ class AuthController extends BaseController {
   }) async {
     setLoading();
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final firebaseService = FirebaseService.instance;
+      
+      // Create user account
+      final userCredential = await firebaseService.auth
+          .createUserWithEmailAndPassword(email: email, password: password);
 
-      // TODO: Implement actual Firebase authentication
-      print('Sign up with email: $email, name: $firstName $lastName');
+      if (userCredential.user != null) {
+        // Create user profile in Firestore
+        await firebaseService.firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'phoneNumber': phoneNumber,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'isVerified': false,
+          'isActive': true,
+          'preferences': {
+            'language': 'en',
+            'theme': 'system',
+            'notifications': {
+              'safetyAlerts': true,
+              'journeyUpdates': true,
+              'emergencyAlerts': true,
+              'systemAnnouncements': true,
+            }
+          },
+          'stats': {
+            'todayTrips': 0,
+            'totalTrips': 0,
+            'carbonSaved': 0.0,
+            'pointsEarned': 0,
+            'safetyScore': 5.0,
+          }
+        });
 
-      setData();
+        setData();
+      } else {
+        setError('Failed to create account');
+      }
     } catch (e) {
       setError('Failed to sign up: ${e.toString()}');
     }
