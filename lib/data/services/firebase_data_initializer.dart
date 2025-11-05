@@ -10,7 +10,7 @@ class FirebaseDataInitializer {
       await _createSampleRoutes();
       await _createSampleSafetyAlerts();
       await _createHazardZones();
-      
+
       print('✅ Firebase collections initialized successfully!');
     } catch (e) {
       print('❌ Error initializing Firebase data: $e');
@@ -210,7 +210,8 @@ class FirebaseDataInitializer {
         'type': 'weather',
         'severity': 3,
         'title': 'Heavy Rain Warning',
-        'description': 'Heavy rain expected on Colombo-Kandy route. Drive carefully.',
+        'description':
+            'Heavy rain expected on Colombo-Kandy route. Drive carefully.',
         'location': {
           'latitude': 7.0000,
           'longitude': 80.0000,
@@ -266,7 +267,8 @@ class FirebaseDataInitializer {
 
     final batch = FirebaseFirestore.instance.batch();
     for (var alert in alerts) {
-      final docRef = FirebaseFirestore.instance.collection('safety_alerts').doc();
+      final docRef =
+          FirebaseFirestore.instance.collection('safety_alerts').doc();
       batch.set(docRef, alert);
     }
     await batch.commit();
@@ -276,7 +278,8 @@ class FirebaseDataInitializer {
     final hazardZones = [
       {
         'name': 'Sharp Curve Zone - Kadugannawa',
-        'description': 'Dangerous curve with limited visibility on Colombo-Kandy route',
+        'description':
+            'Dangerous curve with limited visibility on Colombo-Kandy route',
         'location': {
           'center': {'latitude': 7.2500, 'longitude': 80.5000},
           'radius': 500.0,
@@ -329,7 +332,8 @@ class FirebaseDataInitializer {
 
     final batch = FirebaseFirestore.instance.batch();
     for (var zone in hazardZones) {
-      final docRef = FirebaseFirestore.instance.collection('hazard_zones').doc();
+      final docRef =
+          FirebaseFirestore.instance.collection('hazard_zones').doc();
       batch.set(docRef, zone);
     }
     await batch.commit();
