@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -11,39 +12,175 @@ import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
 
   @override
+  State<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late AnimationController _headerAnimationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+  
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _headerAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    
+    _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
+    );
+    
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _headerAnimationController, curve: Curves.elasticOut),
+    );
+
+    _scrollController.addListener(_onScroll);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animationController.forward();
+      Future.delayed(const Duration(milliseconds: 200), () {
+        _headerAnimationController.forward();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _headerAnimationController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final offset = _scrollController.offset;
+    setState(() {
+      _isScrolled = offset > 100;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Professional Header
-            _buildProfessionalHeader(),
+      extendBodyBehindAppBar: true,
+      appBar: _buildModernAppBar(context, isDarkMode),
+      body: AnimatedBuilder(
+        animation: _fadeAnimation,
+        builder: (context, child) {
+          return FadeTransition(
+            opacity: _fadeAnimation,
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                // Modern Profile Header
+                SliverToBoxAdapter(
+                  child: _buildModernProfileHeader(context, isDarkMode),
+                ),
 
-            // Profile Content
-            Padding(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
-              child: Column(
-                children: [
-                  // User Stats Cards
-                  _buildUserStatsSection(),
+                // Profile Statistics
+                SliverToBoxAdapter(
+                  child: _buildProfileStatistics(context, isDarkMode),
+                ),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                // Achievement Badges
+                SliverToBoxAdapter(
+                  child: _buildAchievementBadges(context, isDarkMode),
+                ),
 
-                  // Quick Actions
-                  _buildQuickActionsSection(),
+                // Quick Actions Grid
+                SliverToBoxAdapter(
+                  child: _buildQuickActionsGrid(context, isDarkMode),
+                ),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                // Profile Menu
+                SliverToBoxAdapter(
+                  child: _buildProfileMenu(context, isDarkMode),
+                ),
 
-                  // Menu Items
-                  _buildMenuSection(context),
-                ],
-              ),
+                // Theme Toggle Section
+                SliverToBoxAdapter(
+                  child: _buildThemeSection(context, isDarkMode),
+                ),
+
+                // Bottom Spacer
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 100),
+                ),
+              ],
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildModernAppBar(BuildContext context, bool isDarkMode) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: _isScrolled 
+          ? (isDarkMode ? AppColors.darkSurface : Colors.white).withOpacity(0.9)
+          : Colors.transparent,
+      leading: Container(
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: (isDarkMode ? Colors.white : Colors.black).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+          ),
+        ),
+      ),
+      actions: [
+        Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (isDarkMode ? Colors.white : Colors.black).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              );
+            },
+            icon: Icon(
+              Icons.settings_rounded,
+              color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            ),
+          ),
+        ),
+      ],
+    );
           ],
         ),
       ),
