@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/bus_model.dart';
-import '../../data/models/driver_model.dart';
 import '../../data/models/safety_alert_model.dart';
 import '../../data/repositories/bus_repository.dart';
 import '../../data/repositories/driver_repository.dart';
