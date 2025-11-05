@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../core/services/firebase_service.dart';
 
 // Base controller class for presentation layer
@@ -50,7 +51,7 @@ class AuthController extends BaseController {
     setLoading();
     try {
       final firebaseService = FirebaseService.instance;
-      
+
       // Create user account
       final userCredential = await firebaseService.auth
           .createUserWithEmailAndPassword(email: email, password: password);
