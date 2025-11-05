@@ -410,18 +410,18 @@ class FirebaseDataService {
     final dLat = _degreesToRadians(lat2 - lat1);
     final dLon = _degreesToRadians(lon2 - lon1);
 
-    final a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(_degreesToRadians(lat1)) *
-            Math.cos(_degreesToRadians(lat2)) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degreesToRadians(lat1)) *
+            math.cos(_degreesToRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
 
-    final c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
 
     return earthRadius * c;
   }
 
-  double _degreesToRadians(double degrees) => degrees * (Math.pi / 180);
+  double _degreesToRadians(double degrees) => degrees * (math.pi / 180);
 
   /// Get human readable time ago string
   String _getTimeAgo(DateTime dateTime) {
