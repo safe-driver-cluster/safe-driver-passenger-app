@@ -493,7 +493,8 @@ class _UserProfilePageState extends State<UserProfilePage>
     bool isDarkMode,
   ) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      constraints: const BoxConstraints(minHeight: 120), // Add minimum height constraint
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -506,10 +507,11 @@ class _UserProfilePageState extends State<UserProfilePage>
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
@@ -517,27 +519,32 @@ class _UserProfilePageState extends State<UserProfilePage>
             child: Icon(
               icon,
               color: color,
-              size: 26,
+              size: 24,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
+          const SizedBox(height: 8),
+          FittedBox(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               color: isDarkMode
                   ? AppColors.darkTextSecondary
                   : AppColors.textSecondary,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
         ],
