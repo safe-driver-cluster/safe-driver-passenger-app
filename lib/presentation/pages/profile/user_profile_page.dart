@@ -26,19 +26,19 @@ class _UserProfilePageState extends State<UserProfilePage>
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   late Animation<double> _scaleAnimation;
-  
+
   final ScrollController _scrollController = ScrollController();
   bool _isScrolled = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _headerAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -47,17 +47,18 @@ class _UserProfilePageState extends State<UserProfilePage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    
+
     _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _headerAnimationController, curve: Curves.elasticOut),
+      CurvedAnimation(
+          parent: _headerAnimationController, curve: Curves.elasticOut),
     );
 
     _scrollController.addListener(_onScroll);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
       Future.delayed(const Duration(milliseconds: 200), () {
@@ -84,7 +85,7 @@ class _UserProfilePageState extends State<UserProfilePage>
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: _buildModernAppBar(context, isDarkMode),
@@ -138,10 +139,11 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  PreferredSizeWidget _buildModernAppBar(BuildContext context, bool isDarkMode) {
+  PreferredSizeWidget _buildModernAppBar(
+      BuildContext context, bool isDarkMode) {
     return AppBar(
       elevation: 0,
-      backgroundColor: _isScrolled 
+      backgroundColor: _isScrolled
           ? (isDarkMode ? AppColors.darkSurface : Colors.white).withOpacity(0.9)
           : Colors.transparent,
       leading: Container(
@@ -154,7 +156,8 @@ class _UserProfilePageState extends State<UserProfilePage>
           onPressed: () => Navigator.pop(context),
           icon: Icon(
             Icons.arrow_back_ios_rounded,
-            color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            color:
+                isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
           ),
         ),
       ),
@@ -175,7 +178,9 @@ class _UserProfilePageState extends State<UserProfilePage>
             },
             icon: Icon(
               Icons.settings_rounded,
-              color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              color: isDarkMode
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textPrimary,
             ),
           ),
         ),
@@ -292,42 +297,6 @@ class _UserProfilePageState extends State<UserProfilePage>
     );
   }
 
-  Widget _buildUserStatsSection() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Total Trips',
-            '47',
-            Icons.directions_bus_rounded,
-            AppColors.primaryColor,
-            isDarkMode,
-          ),
-        ),
-        const SizedBox(width: AppDesign.spaceLG),
-        Expanded(
-          child: _buildStatCard(
-            'Distance',
-            '1,234 km',
-            Icons.route_rounded,
-            AppColors.accentColor,
-            isDarkMode,
-          ),
-        ),
-        const SizedBox(width: AppDesign.spaceLG),
-        Expanded(
-          child: _buildStatCard(
-            'Safety Score',
-            '98%',
-            Icons.security_rounded,
-            AppColors.successColor,
-            isDarkMode,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildModernProfileHeader(BuildContext context, bool isDarkMode) {
     return Container(
       height: 320,
@@ -398,7 +367,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                         padding: const EdgeInsets.all(4),
                         child: CircleAvatar(
                           radius: 56,
-                          backgroundColor: AppColors.primaryColor.withOpacity(0.1),
+                          backgroundColor:
+                              AppColors.primaryColor.withOpacity(0.1),
                           child: const Icon(
                             Icons.person_rounded,
                             size: 60,
@@ -421,7 +391,9 @@ class _UserProfilePageState extends State<UserProfilePage>
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: isDarkMode ? AppColors.darkTextPrimary : Colors.white,
+                            color: isDarkMode
+                                ? AppColors.darkTextPrimary
+                                : Colors.white,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -430,7 +402,9 @@ class _UserProfilePageState extends State<UserProfilePage>
                           'john.doe@email.com',
                           style: TextStyle(
                             fontSize: 16,
-                            color: (isDarkMode ? AppColors.darkTextSecondary : Colors.white)
+                            color: (isDarkMode
+                                    ? AppColors.darkTextSecondary
+                                    : Colors.white)
                                 .withOpacity(0.9),
                           ),
                         ),
@@ -560,7 +534,9 @@ class _UserProfilePageState extends State<UserProfilePage>
             title,
             style: TextStyle(
               fontSize: 12,
-              color: isDarkMode ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              color: isDarkMode
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -580,7 +556,9 @@ class _UserProfilePageState extends State<UserProfilePage>
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              color: isDarkMode
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -591,13 +569,21 @@ class _UserProfilePageState extends State<UserProfilePage>
               itemCount: 5,
               itemBuilder: (context, index) {
                 final achievements = [
-                  {'icon': '🚌', 'title': 'Frequent Rider', 'desc': '100+ Trips'},
+                  {
+                    'icon': '🚌',
+                    'title': 'Frequent Rider',
+                    'desc': '100+ Trips'
+                  },
                   {'icon': '⭐', 'title': 'Top Rated', 'desc': '5.0 Rating'},
-                  {'icon': '🛡️', 'title': 'Safety First', 'desc': 'Perfect Record'},
+                  {
+                    'icon': '🛡️',
+                    'title': 'Safety First',
+                    'desc': 'Perfect Record'
+                  },
                   {'icon': '🎯', 'title': 'Regular', 'desc': 'Daily Commuter'},
                   {'icon': '🏆', 'title': 'Champion', 'desc': 'Premium User'},
                 ];
-                
+
                 return Container(
                   width: 80,
                   margin: EdgeInsets.only(right: index < 4 ? 12 : 0),
@@ -606,7 +592,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: (isDarkMode ? Colors.black : Colors.grey).withOpacity(0.1),
+                        color: (isDarkMode ? Colors.black : Colors.grey)
+                            .withOpacity(0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -625,7 +612,9 @@ class _UserProfilePageState extends State<UserProfilePage>
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDarkMode
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -651,7 +640,9 @@ class _UserProfilePageState extends State<UserProfilePage>
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              color: isDarkMode
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -670,7 +661,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                 isDarkMode,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                  MaterialPageRoute(
+                      builder: (context) => const EditProfilePage()),
                 ),
               ),
               _buildActionCard(
@@ -680,7 +672,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                 isDarkMode,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const TripHistoryPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const TripHistoryPage()),
                 ),
               ),
               _buildActionCard(
@@ -690,7 +683,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                 isDarkMode,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const PaymentMethodsPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const PaymentMethodsPage()),
                 ),
               ),
               _buildActionCard(
@@ -700,7 +694,8 @@ class _UserProfilePageState extends State<UserProfilePage>
                 isDarkMode,
                 () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HelpSupportPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const HelpSupportPage()),
                 ),
               ),
             ],
@@ -732,7 +727,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: isDarkMode 
+            border: isDarkMode
                 ? Border.all(color: Colors.white.withOpacity(0.1))
                 : null,
           ),
@@ -758,7 +753,9 @@ class _UserProfilePageState extends State<UserProfilePage>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDarkMode
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -791,7 +788,8 @@ class _UserProfilePageState extends State<UserProfilePage>
             isDarkMode,
             () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              MaterialPageRoute(
+                  builder: (context) => const NotificationsPage()),
             ),
           ),
           _buildMenuDivider(isDarkMode),
@@ -868,12 +866,15 @@ class _UserProfilePageState extends State<UserProfilePage>
           fontWeight: FontWeight.w600,
           color: isDestructive
               ? AppColors.errorColor
-              : (isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary),
+              : (isDarkMode
+                  ? AppColors.darkTextPrimary
+                  : AppColors.textPrimary),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right_rounded,
-        color: isDarkMode ? AppColors.darkTextSecondary : AppColors.textSecondary,
+        color:
+            isDarkMode ? AppColors.darkTextSecondary : AppColors.textSecondary,
       ),
     );
   }
@@ -911,7 +912,9 @@ class _UserProfilePageState extends State<UserProfilePage>
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: isDarkMode ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDarkMode
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
@@ -1027,8 +1030,6 @@ class _UserProfilePageState extends State<UserProfilePage>
       ),
     );
   }
-
-
 }
 
 class MenuItemData {
