@@ -184,7 +184,7 @@ class _UserProfilePageState extends State<UserProfilePage>
           ],
         ),
       ),
-    );
+    )
   }
 
   Widget _buildProfessionalHeader() {
