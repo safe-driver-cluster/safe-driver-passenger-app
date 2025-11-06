@@ -125,6 +125,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     bool rememberMe = false,
   }) async {
     try {
+      print('🎯 Starting sign in process for: $email');
       state = state.copyWith(isLoading: true, error: null);
 
       await _authService.signInWithEmailAndPassword(
@@ -133,11 +134,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         rememberMe: rememberMe,
       );
 
+      print('🎉 Sign in successful!');
       state = state.copyWith(
         isLoading: false,
         isRemembered: rememberMe,
       );
     } catch (e) {
+      print('💥 Sign in error in provider: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
