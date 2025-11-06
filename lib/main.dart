@@ -13,6 +13,7 @@ import 'core/constants/string_constants.dart';
 import 'core/services/crashlytics_service.dart';
 import 'core/services/firebase_service.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/storage_service.dart';
 import 'core/themes/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -69,6 +70,10 @@ void main() async {
 
     // Initialize Hive for local storage
     await Hive.initFlutter();
+
+    // Initialize storage service for local data persistence
+    final storageService = StorageService.instance;
+    await storageService.initialize();
 
     // Initialize notification service
     final notificationService = NotificationService.instance;

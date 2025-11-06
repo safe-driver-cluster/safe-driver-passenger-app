@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/simple_providers.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -47,58 +47,25 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         return;
       }
 
-      try {
-        final authController = ref.read(authControllerProvider.notifier);
-        await authController.signUpWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
-          phoneNumber: _phoneController.text.trim(),
-        );
-
-        // Navigate to dashboard after successful registration
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Registration failed: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+      final authNotifier = ref.read(authStateProvider.notifier);
+      await authNotifier.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+      );
     }
   }
 
   Future<void> _googleSignUp() async {
-    try {
-      final authController = ref.read(authControllerProvider.notifier);
-      final success = await authController.signInWithGoogle();
-
-      if (success && mounted) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Google Sign-Up failed'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google Sign-Up error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    // TODO: Implement Google Sign-Up
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Google Sign-Up coming soon!'),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   String? _validateFirstName(String? value) {
@@ -166,9 +133,30 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+    final authState = ref.watch(authStateProvider);
+
+    // Listen for auth state changes and navigate accordingly
+    ref.listen(authStateProvider, (previous, next) {
+      if (next.user != null && mounted) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else if (next.error != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error!),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+                ref.read(authStateProvider.notifier).clearError();
+              },
+            ),
+          ),
+        );
+      }
+    });
+
     final isLoading = authState.isLoading;
-    final error = authState.error;
 
     return LoadingWidget(
       isLoading: isLoading,
@@ -474,39 +462,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       ),
 
                       const SizedBox(height: 20),
-
-                      // Error Display
-                      if (error != null)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  error.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
 
                       // Sign Up Button
                       ElevatedButton(
