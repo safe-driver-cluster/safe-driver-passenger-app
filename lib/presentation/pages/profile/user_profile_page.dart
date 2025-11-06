@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
