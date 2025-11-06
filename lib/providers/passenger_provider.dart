@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/services/firebase_service.dart';
 import '../data/models/passenger_model.dart';
 import '../data/services/passenger_service.dart';
 
@@ -10,7 +9,7 @@ final currentUserIdProvider = StateProvider<String?>((ref) => null);
 
 /// Provider for the current authenticated user
 final currentUserProvider = StreamProvider<User?>((ref) {
-  return FirebaseService.instance.auth.authStateChanges();
+  return FirebaseAuth.instance.authStateChanges();
 });
 
 /// Provider for passenger service
