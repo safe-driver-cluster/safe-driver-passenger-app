@@ -54,13 +54,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _login() async {
     print('🚀 Login button pressed');
-    
+
     if (!_formKey.currentState!.validate()) {
       print('❌ Form validation failed');
       return;
     }
 
-    print('✅ Form validated, attempting login with email: ${_emailController.text.trim()}');
+    print(
+        '✅ Form validated, attempting login with email: ${_emailController.text.trim()}');
 
     final authNotifier = ref.read(authStateProvider.notifier);
     await authNotifier.signIn(
