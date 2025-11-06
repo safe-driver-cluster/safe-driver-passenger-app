@@ -78,6 +78,7 @@ class AppRoutes {
 
   // Profile routes
   static const String userProfile = '/user-profile';
+  static const String passengerProfile = '/passenger-profile';
   static const String settings = '/settings';
 
   /// Generate route based on route settings
