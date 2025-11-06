@@ -366,20 +366,19 @@ class PassengerService {
   Future<void> testFirestoreConnection() async {
     try {
       print('🧪 Testing Firestore connection...');
-      
+
       final testDoc = _firestore.collection('test').doc('connection_test');
       await testDoc.set({
         'timestamp': DateTime.now().toIso8601String(),
         'status': 'connected',
         'message': 'Firestore connection test successful',
       });
-      
+
       print('✅ Firestore connection test successful');
-      
+
       // Clean up test document
       await testDoc.delete();
       print('🧹 Test document cleaned up');
-      
     } catch (e) {
       print('❌ Firestore connection test failed: $e');
       throw Exception('Firestore connection test failed: $e');
