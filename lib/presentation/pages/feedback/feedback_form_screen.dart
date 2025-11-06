@@ -104,7 +104,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Feedback submitted successfully! ID: ${feedbackId.substring(0, 8)}...'),
+            content: Text(
+                'Feedback submitted successfully! ID: ${feedbackId.substring(0, 8)}...'),
             backgroundColor: Colors.green,
           ),
         );
@@ -188,34 +189,36 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                   children: [
                     // Passenger Info Card (shows passenger details being used)
                     _buildPassengerInfoCard(passenger),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Feedback Type and Category
                     _buildBasicInfoCard(),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Ratings
                     _buildRatingsCard(),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Feedback Content
                     _buildContentCard(),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Options
                     _buildOptionsCard(),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Submit Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isSubmitting ? null : () => _submitFeedback(passenger),
+                        onPressed: _isSubmitting
+                            ? null
+                            : () => _submitFeedback(passenger),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2563EB),
                           foregroundColor: Colors.white,
@@ -231,7 +234,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : const Text(
@@ -243,7 +247,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                               ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -264,15 +268,15 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.person,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Passenger Information',
                   style: TextStyle(
                     fontSize: 18,
@@ -331,15 +335,15 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.category,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Feedback Details',
                   style: TextStyle(
                     fontSize: 18,
@@ -354,7 +358,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               value: _selectedType,
               decoration: InputDecoration(
                 labelText: 'Feedback Type',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               items: _feedbackTypes.map((type) {
                 return DropdownMenuItem<String>(
@@ -373,7 +378,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               value: _selectedCategory,
               decoration: InputDecoration(
                 labelText: 'Category',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               items: _categories.map((category) {
                 return DropdownMenuItem<String>(
@@ -402,15 +408,15 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.star,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Ratings',
                   style: TextStyle(
                     fontSize: 18,
@@ -439,7 +445,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
             _buildRatingRow('Driver Behavior', _driverBehaviorRating, (rating) {
               setState(() => _driverBehaviorRating = rating);
             }),
-            _buildRatingRow('Vehicle Condition', _vehicleConditionRating, (rating) {
+            _buildRatingRow('Vehicle Condition', _vehicleConditionRating,
+                (rating) {
               setState(() => _vehicleConditionRating = rating);
             }),
           ],
@@ -448,7 +455,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
     );
   }
 
-  Widget _buildRatingRow(String label, int rating, Function(int) onRatingChanged) {
+  Widget _buildRatingRow(
+      String label, int rating, Function(int) onRatingChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -484,15 +492,15 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.edit,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Feedback Content',
                   style: TextStyle(
                     fontSize: 18,
@@ -507,7 +515,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               controller: _titleController,
               decoration: InputDecoration(
                 labelText: 'Title',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -522,7 +531,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 labelText: 'Description',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 alignLabelWithHint: true,
               ),
               validator: (value) {
@@ -547,15 +557,15 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.settings,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Options',
                   style: TextStyle(
                     fontSize: 18,
@@ -570,7 +580,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               value: _selectedPriority,
               decoration: InputDecoration(
                 labelText: 'Priority',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               items: const [
                 DropdownMenuItem(value: 'low', child: Text('Low')),
@@ -587,7 +598,8 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
             const SizedBox(height: 16),
             CheckboxListTile(
               title: const Text('Submit anonymously'),
-              subtitle: const Text('Your personal information will not be shared'),
+              subtitle:
+                  const Text('Your personal information will not be shared'),
               value: _isAnonymous,
               onChanged: (value) {
                 setState(() {
