@@ -326,13 +326,13 @@ class UserProfilePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          ..._buildMenuItems(context),
+          ..._buildMenuItems(context, ref),
         ],
       ),
     );
   }
 
-  List<Widget> _buildMenuItems(BuildContext context) {
+  List<Widget> _buildMenuItems(BuildContext context, WidgetRef ref) {
     final menuItems = [
       MenuItemData('Edit Profile', Icons.person_outline_rounded, () {
         Navigator.push(
@@ -453,11 +453,11 @@ class UserProfilePage extends ConsumerWidget {
             text: 'Sign Out',
             onPressed: () async {
               Navigator.pop(context);
-              
+
               // Sign out using the auth provider
               final authNotifier = ref.read(authStateProvider.notifier);
               await authNotifier.signOut();
-              
+
               // Navigate to login page
               if (context.mounted) {
                 Navigator.pushNamedAndRemoveUntil(
