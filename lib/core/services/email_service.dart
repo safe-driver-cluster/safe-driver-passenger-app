@@ -447,4 +447,36 @@ Making public transport safer, one trip at a time
       ''';
     }
   }
+
+  /// Send feedback summary to user (main method used by controller)
+  Future<bool> sendFeedbackSummary(dynamic feedback, String userEmail) async {
+    try {
+      debugPrint('📧 EmailService: Sending feedback summary to user: $userEmail');
+      
+      // Send confirmation email to user
+      final userEmailSent = await EmailService.sendUserConfirmationEmail(
+        feedback: feedback,
+        userEmail: userEmail,
+      );
+      
+      // Send notification to admin
+      final adminEmailSent = await EmailService.sendAdminNotificationEmail(
+        feedback: feedback,
+        userEmail: userEmail,
+      );
+      
+      final success = userEmailSent && adminEmailSent;
+      
+      if (success) {
+        debugPrint('✅ EmailService: All feedback emails sent successfully');
+      } else {
+        debugPrint('❌ EmailService: Some feedback emails failed to send');
+      }
+      
+      return success;
+    } catch (e) {
+      debugPrint('❌ EmailService: Error in sendFeedbackSummary: $e');
+      return false;
+    }
+  }
 }
