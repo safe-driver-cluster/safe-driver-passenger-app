@@ -584,13 +584,13 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     try {
       // Get current user info
       final user = ref.read(simpleUserProvider);
-      
+
       debugPrint('🔍 Starting feedback submission...');
       debugPrint('👤 User: ${user['name']} (${user['id']})');
       debugPrint('🚌 Bus: ${widget.busNumber}');
       debugPrint('⭐ Rating: $selectedRating');
       debugPrint('📝 Comment: ${_commentController.text.trim()}');
-      
+
       // Submit to Firebase
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: user['id']!,
@@ -613,7 +613,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           'platform': 'mobile',
         },
       );
-      
+
       debugPrint('✅ Feedback submitted successfully!');
 
       if (mounted) {
