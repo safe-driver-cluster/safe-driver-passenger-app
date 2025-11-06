@@ -36,7 +36,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _loadSavedCredentials() async {
     final authNotifier = ref.read(authStateProvider.notifier);
     final savedEmail = await authNotifier.getSavedEmail();
-    
+
     if (savedEmail != null) {
       _emailController.text = savedEmail;
       setState(() {
@@ -73,7 +73,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authStateProvider);
-    
+
     // Listen for auth state changes and navigate accordingly
     ref.listen(authStateProvider, (previous, next) {
       if (next.user != null && mounted) {
