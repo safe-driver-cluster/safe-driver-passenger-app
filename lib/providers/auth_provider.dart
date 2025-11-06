@@ -64,7 +64,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     // Listen to Firebase Auth state changes
     _ref.listen(firebaseUserProvider, (previous, next) {
-      next?.when(
+      next.when(
         data: (user) {
           state = state.copyWith(user: user, isLoading: false, error: null);
         },
