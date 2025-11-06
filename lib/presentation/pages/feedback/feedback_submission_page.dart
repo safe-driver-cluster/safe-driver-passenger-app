@@ -623,13 +623,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         busId: widget.busNumber,
         busNumber: widget.busNumber,
         rating: selectedRating,
-        comment: _commentController.text.trim().isEmpty 
+        comment: _commentController.text.trim().isEmpty
             ? selectedQuickAction ?? _getRatingText()
             : _commentController.text.trim(),
         category: widget.feedbackTarget == FeedbackTarget.bus
             ? FeedbackCategory.vehicle
             : FeedbackCategory.driver,
-        type: selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
+        type:
+            selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
         title: selectedQuickAction ?? _getRatingText(),
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
