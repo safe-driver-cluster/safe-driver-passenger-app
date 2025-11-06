@@ -14,6 +14,7 @@ import '../presentation/pages/driver/driver_history_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
+import '../presentation/pages/feedback/feedback_form_screen.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
 import '../presentation/pages/feedback/feedback_system_page.dart';
@@ -61,6 +62,7 @@ class AppRoutes {
 
   // Feedback routes
   static const String feedback = '/feedback';
+  static const String feedbackForm = '/feedback-form';
   static const String feedbackSystem = '/feedback-system';
   static const String feedbackTest = '/feedback-test';
   static const String feedbackHistory = '/feedback-history';
