@@ -119,9 +119,9 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       debugPrint('📋 FeedbackController: Created feedback model');
       debugPrint('🔥 FeedbackController: Submitting to Firebase...');
-      
+
       await _feedbackRepository.submitFeedback(feedback);
-      
+
       debugPrint('✅ FeedbackController: Successfully submitted to Firebase');
 
       // Add to local state
