@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../presentation/controllers/base_controller.dart';
 
 // Export passenger providers for convenience
