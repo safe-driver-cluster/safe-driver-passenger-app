@@ -4,9 +4,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../data/models/feedback_model.dart';
-import '../../controllers/feedback_controller.dart';
-import '../qr/qr_scanner_page.dart';
 import 'feedback_submission_page.dart';
 
 class FeedbackSystemPage extends ConsumerStatefulWidget {
@@ -121,7 +118,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -133,7 +130,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
+                    SizedBox(height: AppDesign.spaceXS),
                     Text(
                       'Help us improve our service by providing feedback about the bus or driver',
                       style: TextStyle(
@@ -156,7 +153,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Select Bus',
           style: TextStyle(
             fontSize: 18,
@@ -232,7 +229,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             const SizedBox(height: AppDesign.spaceMD),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -241,7 +238,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               subtitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.textSecondary,
               ),
@@ -257,7 +254,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Recent Buses',
           style: TextStyle(
             fontSize: 18,
@@ -344,7 +341,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceLG),
             color: AppColors.surfaceColor,
-            child: Column(
+            child: const Column(
               children: [
                 Text(
                   'Point your camera at the bus QR code',
@@ -355,7 +352,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: AppDesign.spaceSM),
+                SizedBox(height: AppDesign.spaceSM),
                 Text(
                   'The QR code is usually located inside the bus',
                   style: TextStyle(
@@ -454,7 +451,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Container(
       width: 30,
       height: 30,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(color: AppColors.primaryColor, width: 4),
           left: BorderSide(color: AppColors.primaryColor, width: 4),
@@ -519,7 +516,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceXS),
-                Text(
+                const Text(
                   'Selected for feedback',
                   style: TextStyle(
                     fontSize: 14,
@@ -546,7 +543,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'What would you like to give feedback about?',
           style: TextStyle(
             fontSize: 18,
@@ -630,7 +627,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   const SizedBox(height: AppDesign.spaceXS),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                       height: 1.3,
@@ -661,7 +658,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusSelectionBottomSheet() {
     final buses = _getAvailableBuses();
-    
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -686,7 +683,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
-                Text(
+                const Text(
                   'Select Bus',
                   style: TextStyle(
                     fontSize: 20,
@@ -699,9 +696,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
               itemCount: buses.length,
-              separatorBuilder: (context, index) => const SizedBox(height: AppDesign.spaceSM),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: AppDesign.spaceSM),
               itemBuilder: (context, index) {
                 final bus = buses[index];
                 return _buildBusSelectionItem(bus);
