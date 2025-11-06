@@ -5,6 +5,7 @@ import '../../core/services/email_service.dart';
 import '../../data/models/feedback_model.dart';
 import '../../data/models/location_model.dart';
 import '../../data/repositories/feedback_repository.dart';
+import '../../providers/auth_provider.dart';
 
 /// Controller for feedback operations and state management
 class FeedbackController extends StateNotifier<AsyncValue<void>> {
@@ -135,7 +136,9 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       try {
         final authState = _ref.read(authStateProvider);
         final userEmail = authState.maybeWhen(
-          authenticated: (user) => user.email,
+          data: (user) => user?.email,
+          loading: () => null,
+          error: (error, stack) => null,
           orElse: () => null,
         );
 
