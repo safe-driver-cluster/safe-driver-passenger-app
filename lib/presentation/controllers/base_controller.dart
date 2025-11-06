@@ -1,5 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/firebase_service.dart';
 import '../../data/services/passenger_service.dart';
@@ -52,7 +52,7 @@ class AuthController extends BaseController {
     setLoading();
     try {
       print('🎯 Starting signup process...');
-      
+
       // Use Firebase Auth directly instead of through FirebaseService
       print('🔐 Creating Firebase Auth user...');
       final userCredential = await FirebaseAuth.instance
@@ -60,7 +60,7 @@ class AuthController extends BaseController {
 
       if (userCredential.user != null) {
         print('✅ Firebase Auth user created: ${userCredential.user!.uid}');
-        
+
         // Create comprehensive passenger profile in passenger_details collection
         print('📋 Creating passenger profile...');
         final passengerService = PassengerService.instance;
@@ -71,7 +71,7 @@ class AuthController extends BaseController {
           email: email,
           phoneNumber: phoneNumber,
         );
-        
+
         print('🎉 Signup process completed successfully!');
         setData();
       } else {
