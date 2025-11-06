@@ -72,14 +72,14 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusSelectionView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppDesign.paddingMD),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          const SizedBox(height: AppDesign.spacingXL),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildSelectionMethods(),
-          const SizedBox(height: AppDesign.spacingXL),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildRecentBuses(),
         ],
       ),
