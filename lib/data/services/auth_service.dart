@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../core/services/storage_service.dart';
 
 class AuthService {
@@ -76,10 +77,10 @@ class AuthService {
     try {
       // Clear auto-login but keep saved credentials if remember me was checked
       await _storage.saveBool(_autoLoginKey, false);
-      
+
       // If user explicitly signs out, we should also clear remember me
       await _clearSavedCredentials();
-      
+
       await _firebaseAuth.signOut();
     } catch (e) {
       throw _handleAuthError(e);
