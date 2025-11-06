@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/services/email_service.dart';
 import '../../data/models/feedback_model.dart';
 import '../../data/models/location_model.dart';
 import '../../data/repositories/feedback_repository.dart';
-import '../../core/services/email_service.dart';
-import '../../providers/auth_provider.dart';
 
 /// Controller for feedback operations and state management
 class FeedbackController extends StateNotifier<AsyncValue<void>> {
@@ -352,7 +351,12 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 final feedbackControllerProvider =
     StateNotifierProvider<FeedbackController, AsyncValue<void>>((ref) {
   final feedbackRepository = ref.read(feedbackRepositoryProvider);
-  return FeedbackController(feedbackRepository: feedbackRepository);
+  final emailService = ref.read(emailServiceProvider);
+  return FeedbackController(
+    feedbackRepository: feedbackRepository,
+    emailService: emailService,
+    ref: ref,
+  );
 });
 
 /// Provider for FeedbackRepository
