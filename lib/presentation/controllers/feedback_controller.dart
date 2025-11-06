@@ -136,7 +136,9 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       try {
         final authState = _ref.read(authStateProvider);
         final userEmail = authState.maybeWhen(
-          authenticated: (user) => user.email,
+          data: (user) => user?.email,
+          loading: () => null,
+          error: (error, stack) => null,
           orElse: () => null,
         );
 
