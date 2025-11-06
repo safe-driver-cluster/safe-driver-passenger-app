@@ -4,6 +4,8 @@ import '../presentation/controllers/base_controller.dart';
 
 // Export passenger providers for convenience
 export 'passenger_provider.dart';
+// Export new auth provider
+export 'auth_provider.dart';
 
 // Create a simple provider for the AuthController
 final authControllerProvider =
