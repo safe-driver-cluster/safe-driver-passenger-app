@@ -583,7 +583,12 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
     try {
       // Get current user info
-      final user = ref.read(simpleUserProvider);
+      final authState = ref.read(authStateProvider);
+      final user = {
+        'id': authState.user?.uid ?? 'anonymous',
+        'name': authState.user?.displayName ?? 'Anonymous User',
+        'email': authState.user?.email ?? '',
+      };
 
       debugPrint('🔍 Starting feedback submission...');
       debugPrint('👤 User: ${user['name']} (${user['id']})');
