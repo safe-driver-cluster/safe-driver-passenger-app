@@ -213,13 +213,13 @@ class PassengerService {
       if (passenger == null) return;
 
       List<String> recentSearches = List.from(passenger.recentSearches);
-      
+
       // Remove if already exists
       recentSearches.removeWhere((search) => search == searchQuery);
-      
+
       // Add to beginning
       recentSearches.insert(0, searchQuery);
-      
+
       // Keep only last 10 searches
       if (recentSearches.length > 10) {
         recentSearches = recentSearches.take(10).toList();
@@ -312,7 +312,8 @@ class PassengerService {
   }
 
   /// Search passengers by name (for admin use)
-  Future<List<PassengerModel>> searchPassengersByName(String searchQuery) async {
+  Future<List<PassengerModel>> searchPassengersByName(
+      String searchQuery) async {
     try {
       final querySnapshot = await _firebaseService.firestore
           .collection(_collection)
@@ -336,9 +337,8 @@ class PassengerService {
   /// Get passenger statistics for dashboard
   Future<Map<String, dynamic>> getPassengerStatistics() async {
     try {
-      final querySnapshot = await _firebaseService.firestore
-          .collection(_collection)
-          .get();
+      final querySnapshot =
+          await _firebaseService.firestore.collection(_collection).get();
 
       int totalPassengers = 0;
       int verifiedPassengers = 0;
@@ -349,10 +349,10 @@ class PassengerService {
       for (final doc in querySnapshot.docs) {
         final passenger = PassengerModel.fromFirestore(doc);
         totalPassengers++;
-        
+
         if (passenger.isVerified) verifiedPassengers++;
         if (passenger.isActive) activePassengers++;
-        
+
         totalCarbonSaved += passenger.stats.carbonSaved;
         totalTrips += passenger.stats.totalTrips;
       }
