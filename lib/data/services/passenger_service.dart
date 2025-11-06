@@ -23,6 +23,13 @@ class PassengerService {
       print('🚀 Starting to create passenger profile for user: $userId');
       print('📝 Data: $firstName $lastName, $email, $phoneNumber');
 
+      // Check if profile already exists
+      final existingProfile = await getPassengerProfile(userId);
+      if (existingProfile != null) {
+        print('ℹ️ Passenger profile already exists for user: $userId');
+        return;
+      }
+
       final now = DateTime.now();
       final passengerData = PassengerModel(
         id: userId,
@@ -352,6 +359,30 @@ class PassengerService {
       };
     } catch (e) {
       throw Exception('Failed to get passenger statistics: $e');
+    }
+  }
+
+  /// Test method to verify Firestore connection and write permissions
+  Future<void> testFirestoreConnection() async {
+    try {
+      print('🧪 Testing Firestore connection...');
+      
+      final testDoc = _firestore.collection('test').doc('connection_test');
+      await testDoc.set({
+        'timestamp': DateTime.now().toIso8601String(),
+        'status': 'connected',
+        'message': 'Firestore connection test successful',
+      });
+      
+      print('✅ Firestore connection test successful');
+      
+      // Clean up test document
+      await testDoc.delete();
+      print('🧹 Test document cleaned up');
+      
+    } catch (e) {
+      print('❌ Firestore connection test failed: $e');
+      throw Exception('Firestore connection test failed: $e');
     }
   }
 }
