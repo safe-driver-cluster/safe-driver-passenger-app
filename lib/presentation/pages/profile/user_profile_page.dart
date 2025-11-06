@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
@@ -11,11 +13,11 @@ import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: SingleChildScrollView(
@@ -40,7 +42,7 @@ class UserProfilePage extends StatelessWidget {
                   const SizedBox(height: AppDesign.space2XL),
 
                   // Menu Items
-                  _buildMenuSection(context),
+                  _buildMenuSection(context, ref),
                 ],
               ),
             ),
@@ -312,7 +314,7 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuSection(BuildContext context) {
+  Widget _buildMenuSection(BuildContext context, WidgetRef ref) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,13 +327,13 @@ class UserProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          ..._buildMenuItems(context),
+          ..._buildMenuItems(context, ref),
         ],
       ),
     );
   }
 
-  List<Widget> _buildMenuItems(BuildContext context) {
+  List<Widget> _buildMenuItems(BuildContext context, WidgetRef ref) {
     final menuItems = [
       MenuItemData('Edit Profile', Icons.person_outline_rounded, () {
         Navigator.push(
@@ -379,7 +381,7 @@ class UserProfilePage extends StatelessWidget {
         );
       }),
       MenuItemData('Sign Out', Icons.logout_rounded, () {
-        _showSignOutDialog(context);
+        _showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
 
@@ -437,7 +439,7 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  void _showSignOutDialog(BuildContext context) {
+  void _showSignOutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -450,9 +452,21 @@ class UserProfilePage extends StatelessWidget {
           ),
           ProfessionalButton(
             text: 'Sign Out',
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // Handle sign out
+
+              // Sign out using the auth provider
+              final authNotifier = ref.read(authStateProvider.notifier);
+              await authNotifier.signOut();
+
+              // Navigate to login page
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
             },
             backgroundColor: AppColors.errorColor,
             height: 36,

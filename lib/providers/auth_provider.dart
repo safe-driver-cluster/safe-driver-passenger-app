@@ -1,110 +1,246 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/models/user_model.dart';
+import '../data/services/auth_service.dart';
+import '../data/services/passenger_service.dart';
 
-/// Provider for Firebase Auth instance
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
+// Auth service provider
+final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+
+// Firebase user provider that listens to Firebase Auth state
+final firebaseUserProvider = StreamProvider<User?>((ref) {
+  final authService = ref.watch(authServiceProvider);
+  return authService.authStateChanges;
 });
 
-/// Provider for current user stream
-final authStateProvider = StreamProvider<User?>((ref) {
-  final auth = ref.read(firebaseAuthProvider);
-  return auth.authStateChanges();
+// Auth state provider for UI
+final authStateProvider =
+    StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
+  return AuthStateNotifier(ref);
 });
 
-/// Provider for current user data
-final currentUserProvider = FutureProvider<UserModel?>((ref) async {
-  final authState = ref.watch(authStateProvider);
+// Auth state model
+class AuthState {
+  final User? user;
+  final bool isLoading;
+  final String? error;
+  final bool isRemembered;
 
-  return authState.when(
-    data: (user) {
-      if (user != null) {
-        // Return a demo user for now - replace with actual user data fetching
-        return UserModel(
-          id: user.uid,
-          firstName: user.displayName?.split(' ').first ?? 'John',
-          lastName: user.displayName?.split(' ').last ?? 'Doe',
-          email: user.email ?? 'user@example.com',
-          phoneNumber: user.phoneNumber ?? '+1234567890',
-          profileImageUrl: user.photoURL,
-          dateOfBirth: DateTime.now().subtract(const Duration(days: 10000)),
-          gender: 'Male',
-          address: Address(
-            street: '123 Main St',
-            city: 'City',
-            state: 'State',
-            zipCode: '12345',
-            country: 'Country',
-            latitude: 0.0,
-            longitude: 0.0,
-          ),
-          emergencyContact: EmergencyContact(
-            name: 'Emergency Contact',
-            phoneNumber: '+1234567890',
-            relationship: 'Friend',
-          ),
-          preferences: UserPreferences(
-            language: 'en',
-            theme: 'light',
-            notificationsEnabled: true,
-            locationSharingEnabled: true,
-            biometricAuthEnabled: false,
-            emailNotificationsEnabled: true,
-            smsNotificationsEnabled: false,
-          ),
-          createdAt: DateTime.now().subtract(const Duration(days: 365)),
-          updatedAt: DateTime.now(),
-          isVerified: true,
-          isActive: true,
+  const AuthState({
+    this.user,
+    this.isLoading = false,
+    this.error,
+    this.isRemembered = false,
+  });
+
+  AuthState copyWith({
+    User? user,
+    bool? isLoading,
+    String? error,
+    bool? isRemembered,
+  }) {
+    return AuthState(
+      user: user ?? this.user,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      isRemembered: isRemembered ?? this.isRemembered,
+    );
+  }
+}
+
+// Auth state notifier
+class AuthStateNotifier extends StateNotifier<AuthState> {
+  AuthStateNotifier(this._ref) : super(const AuthState()) {
+    _initialize();
+  }
+
+  final Ref _ref;
+  late final AuthService _authService;
+  late final PassengerService _passengerService;
+
+  void _initialize() {
+    _authService = _ref.read(authServiceProvider);
+    _passengerService = PassengerService.instance;
+
+    // Listen to Firebase Auth state changes
+    _ref.listen(firebaseUserProvider, (previous, next) {
+      next.when(
+        data: (user) {
+          state = state.copyWith(user: user, isLoading: false, error: null);
+        },
+        loading: () {
+          state = state.copyWith(isLoading: true, error: null);
+        },
+        error: (error, stackTrace) {
+          state = state.copyWith(
+            isLoading: false,
+            error: error.toString(),
+            user: null,
+          );
+        },
+      );
+    });
+
+    // Check for auto-login on initialization
+    _checkAutoLogin();
+  }
+
+  Future<void> _checkAutoLogin() async {
+    try {
+      state = state.copyWith(isLoading: true);
+
+      // Check if user is already signed in (Firebase persistence)
+      if (_authService.currentUser != null) {
+        final isRemembered = await _authService.isRememberMeEnabled();
+        state = state.copyWith(
+          user: _authService.currentUser,
+          isLoading: false,
+          isRemembered: isRemembered,
+        );
+        return;
+      }
+
+      // Attempt auto-login if enabled
+      final autoLoginSuccess = await _authService.attemptAutoLogin();
+      if (autoLoginSuccess) {
+        state = state.copyWith(isRemembered: true);
+      }
+
+      final isRemembered = await _authService.isRememberMeEnabled();
+      state = state.copyWith(
+        isLoading: false,
+        isRemembered: isRemembered,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signIn({
+    required String email,
+    required String password,
+    bool rememberMe = false,
+  }) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+
+      await _authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+        rememberMe: rememberMe,
+      );
+
+      state = state.copyWith(
+        isLoading: false,
+        isRemembered: rememberMe,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signUp({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+  }) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+
+      // Create Firebase Auth user
+      final userCredential = await _authService.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user != null) {
+        // Create passenger profile
+        await _passengerService.createPassengerProfile(
+          userId: userCredential.user!.uid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
         );
       }
-      return null;
-    },
-    loading: () => null,
-    error: (_, __) => null,
-  );
-});
 
-/// Provider for user authentication status
-final isAuthenticatedProvider = Provider<bool>((ref) {
-  final authState = ref.watch(authStateProvider);
-  return authState.when(
-    data: (user) => user != null,
-    loading: () => false,
-    error: (_, __) => false,
-  );
-});
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      // Handle the PigeonUserDetails error gracefully
+      if (e.toString().contains('PigeonUserDetails') ||
+          e.toString().contains('List<Object?>')) {
+        // Check if user was actually created despite the error
+        await Future.delayed(const Duration(seconds: 1));
 
-/// Simple user data provider for immediate use
-final simpleUserProvider = Provider<Map<String, String>>((ref) {
-  final authState = ref.watch(authStateProvider);
-  return authState.when(
-    data: (user) {
-      if (user != null) {
-        return {
-          'id': user.uid,
-          'name': user.displayName ?? 'John Doe',
-          'email': user.email ?? 'user@example.com',
-        };
+        if (_authService.currentUser != null) {
+          try {
+            // Create passenger profile
+            await _passengerService.createPassengerProfile(
+              userId: _authService.currentUser!.uid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              phoneNumber: phoneNumber,
+            );
+
+            state = state.copyWith(isLoading: false);
+            return;
+          } catch (profileError) {
+            print('Error creating passenger profile: $profileError');
+          }
+        }
       }
-      // Return demo user if not authenticated
-      return {
-        'id': 'demo_user_001',
-        'name': 'John Doe',
-        'email': 'john.doe@example.com',
-      };
-    },
-    loading: () => {
-      'id': 'demo_user_001',
-      'name': 'John Doe',
-      'email': 'john.doe@example.com',
-    },
-    error: (_, __) => {
-      'id': 'demo_user_001',
-      'name': 'John Doe',
-      'email': 'john.doe@example.com',
-    },
-  );
-});
+
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      state = state.copyWith(isLoading: true);
+      await _authService.signOut();
+      state = state.copyWith(
+        user: null,
+        isLoading: false,
+        isRemembered: false,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+      await _authService.resetPassword(email);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<String?> getSavedEmail() async {
+    return await _authService.getSavedEmail();
+  }
+
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
+}
