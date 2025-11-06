@@ -380,7 +380,7 @@ class UserProfilePage extends ConsumerWidget {
         );
       }),
       MenuItemData('Sign Out', Icons.logout_rounded, () {
-        _showSignOutDialog(context);
+        _showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
 
