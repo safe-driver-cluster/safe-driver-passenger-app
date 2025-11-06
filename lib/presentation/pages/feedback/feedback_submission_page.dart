@@ -624,8 +624,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     }
   }
 
-
-
   List<String> _generateTags() {
     final tags = <String>[];
 
