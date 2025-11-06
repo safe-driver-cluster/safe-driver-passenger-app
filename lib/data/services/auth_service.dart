@@ -9,7 +9,7 @@ class AuthService {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final StorageService _storage = StorageService.instance;
-  
+
   bool _initialized = false;
 
   // Storage keys for remember me functionality
@@ -44,7 +44,7 @@ class AuthService {
   }) async {
     try {
       print('🔐 Attempting Firebase Auth sign in with email: $email');
-      
+
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
