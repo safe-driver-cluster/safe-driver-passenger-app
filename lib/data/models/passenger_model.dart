@@ -56,14 +56,14 @@ class PassengerModel {
       email: json['email'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       profileImageUrl: json['profileImageUrl'],
-      dateOfBirth: json['dateOfBirth'] != null 
-          ? (json['dateOfBirth'] is Timestamp 
+      dateOfBirth: json['dateOfBirth'] != null
+          ? (json['dateOfBirth'] is Timestamp
               ? (json['dateOfBirth'] as Timestamp).toDate()
               : DateTime.parse(json['dateOfBirth']))
           : null,
       gender: json['gender'],
-      address: json['address'] != null 
-          ? PassengerAddress.fromJson(json['address']) 
+      address: json['address'] != null
+          ? PassengerAddress.fromJson(json['address'])
           : null,
       emergencyContact: json['emergencyContact'] != null
           ? PassengerEmergencyContact.fromJson(json['emergencyContact'])
@@ -73,13 +73,13 @@ class PassengerModel {
       favoriteRoutes: List<String>.from(json['favoriteRoutes'] ?? []),
       favoriteBuses: List<String>.from(json['favoriteBuses'] ?? []),
       recentSearches: List<String>.from(json['recentSearches'] ?? []),
-      createdAt: json['createdAt'] != null 
-          ? (json['createdAt'] is Timestamp 
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] is Timestamp
               ? (json['createdAt'] as Timestamp).toDate()
               : DateTime.parse(json['createdAt']))
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null 
-          ? (json['updatedAt'] is Timestamp 
+      updatedAt: json['updatedAt'] != null
+          ? (json['updatedAt'] is Timestamp
               ? (json['updatedAt'] as Timestamp).toDate()
               : DateTime.parse(json['updatedAt']))
           : DateTime.now(),
@@ -251,14 +251,15 @@ class PassengerPreferences {
     this.theme = 'system',
     PassengerNotificationSettings? notifications,
     PassengerPrivacySettings? privacy,
-  }) : notifications = notifications ?? PassengerNotificationSettings(),
-       privacy = privacy ?? PassengerPrivacySettings();
+  })  : notifications = notifications ?? PassengerNotificationSettings(),
+        privacy = privacy ?? PassengerPrivacySettings();
 
   factory PassengerPreferences.fromJson(Map<String, dynamic> json) {
     return PassengerPreferences(
       language: json['language'] ?? 'en',
       theme: json['theme'] ?? 'system',
-      notifications: PassengerNotificationSettings.fromJson(json['notifications'] ?? {}),
+      notifications:
+          PassengerNotificationSettings.fromJson(json['notifications'] ?? {}),
       privacy: PassengerPrivacySettings.fromJson(json['privacy'] ?? {}),
     );
   }
