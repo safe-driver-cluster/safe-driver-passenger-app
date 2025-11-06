@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../core/services/firebase_service.dart';
 import '../models/passenger_model.dart';
 
 /// Service for managing passenger data in the passenger_details collection
@@ -9,7 +8,7 @@ class PassengerService {
   static PassengerService get instance => _instance;
   PassengerService._internal();
 
-  final FirebaseService _firebaseService = FirebaseService.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collection = 'passenger_details';
 
   /// Create a new passenger profile
@@ -21,6 +20,9 @@ class PassengerService {
     required String phoneNumber,
   }) async {
     try {
+      print('🚀 Starting to create passenger profile for user: $userId');
+      print('📝 Data: $firstName $lastName, $email, $phoneNumber');
+      
       final now = DateTime.now();
       final passengerData = PassengerModel(
         id: userId,
@@ -34,11 +36,20 @@ class PassengerService {
         updatedAt: now,
       );
 
-      await _firebaseService.firestore
+      print('🔄 Converting to JSON...');
+      final jsonData = passengerData.toJson();
+      print('📋 JSON Data: $jsonData');
+
+      print('🔥 Saving to Firestore collection: $_collection');
+      await _firestore
           .collection(_collection)
           .doc(userId)
-          .set(passengerData.toJson());
+          .set(jsonData);
+      
+      print('✅ Passenger profile created successfully!');
     } catch (e) {
+      print('❌ Error creating passenger profile: $e');
+      print('🔍 Error type: ${e.runtimeType}');
       throw Exception('Failed to create passenger profile: $e');
     }
   }
@@ -46,7 +57,7 @@ class PassengerService {
   /// Get passenger profile by ID
   Future<PassengerModel?> getPassengerProfile(String userId) async {
     try {
-      final doc = await _firebaseService.firestore
+      final doc = await _firestore
           .collection(_collection)
           .doc(userId)
           .get();
@@ -70,7 +81,7 @@ class PassengerService {
         updatedAt: DateTime.now(),
       );
 
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update(updatedPassenger.toJson());
@@ -92,7 +103,7 @@ class PassengerService {
         'updatedAt': DateTime.now().toIso8601String(),
       };
 
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update(updateData);
@@ -137,7 +148,7 @@ class PassengerService {
     required String routeId,
   }) async {
     try {
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update({
@@ -155,7 +166,7 @@ class PassengerService {
     required String routeId,
   }) async {
     try {
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update({
@@ -173,7 +184,7 @@ class PassengerService {
     required String busId,
   }) async {
     try {
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update({
@@ -191,7 +202,7 @@ class PassengerService {
     required String busId,
   }) async {
     try {
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .update({
@@ -288,7 +299,7 @@ class PassengerService {
   /// Delete passenger profile
   Future<void> deletePassengerProfile(String userId) async {
     try {
-      await _firebaseService.firestore
+      await _firestore
           .collection(_collection)
           .doc(userId)
           .delete();
@@ -299,7 +310,7 @@ class PassengerService {
 
   /// Get passenger profile stream for real-time updates
   Stream<PassengerModel?> getPassengerProfileStream(String userId) {
-    return _firebaseService.firestore
+    return _firestore
         .collection(_collection)
         .doc(userId)
         .snapshots()
@@ -315,7 +326,7 @@ class PassengerService {
   Future<List<PassengerModel>> searchPassengersByName(
       String searchQuery) async {
     try {
-      final querySnapshot = await _firebaseService.firestore
+      final querySnapshot = await _firestore
           .collection(_collection)
           .where('isActive', isEqualTo: true)
           .get();
@@ -338,7 +349,7 @@ class PassengerService {
   Future<Map<String, dynamic>> getPassengerStatistics() async {
     try {
       final querySnapshot =
-          await _firebaseService.firestore.collection(_collection).get();
+          await _firestore.collection(_collection).get();
 
       int totalPassengers = 0;
       int verifiedPassengers = 0;
