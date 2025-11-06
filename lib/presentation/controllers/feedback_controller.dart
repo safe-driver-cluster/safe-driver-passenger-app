@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/services/email_service.dart';
 import '../../data/models/feedback_model.dart';
 import '../../data/models/location_model.dart';
 import '../../data/repositories/feedback_repository.dart';
@@ -8,10 +9,16 @@ import '../../data/repositories/feedback_repository.dart';
 /// Controller for feedback operations and state management
 class FeedbackController extends StateNotifier<AsyncValue<void>> {
   final FeedbackRepository _feedbackRepository;
+  final EmailService _emailService;
+  final Ref _ref;
 
   FeedbackController({
     required FeedbackRepository feedbackRepository,
+    required EmailService emailService,
+    required Ref ref,
   })  : _feedbackRepository = feedbackRepository,
+        _emailService = emailService,
+        _ref = ref,
         super(const AsyncValue.data(null));
 
   // State management
@@ -123,6 +130,27 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       await _feedbackRepository.submitFeedback(feedback);
 
       debugPrint('✅ FeedbackController: Successfully submitted to Firebase');
+
+      // Send email notification
+      try {
+        final authState = _ref.read(authStateProvider);
+        final userEmail = authState.maybeWhen(
+          authenticated: (user) => user.email,
+          orElse: () => null,
+        );
+
+        if (userEmail != null && userEmail.isNotEmpty) {
+          debugPrint('📧 FeedbackController: Sending email to $userEmail...');
+          await _emailService.sendFeedbackSummary(feedback, userEmail);
+          debugPrint('✅ FeedbackController: Email sent successfully');
+        } else {
+          debugPrint(
+              '⚠️ FeedbackController: No user email available for notification');
+        }
+      } catch (emailError) {
+        debugPrint('❌ FeedbackController: Email sending failed: $emailError');
+        // Continue execution - email failure shouldn't stop the feedback submission
+      }
 
       // Add to local state
       _feedbacks.value = [..._feedbacks.value, feedback];
@@ -344,12 +372,22 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 final feedbackControllerProvider =
     StateNotifierProvider<FeedbackController, AsyncValue<void>>((ref) {
   final feedbackRepository = ref.read(feedbackRepositoryProvider);
-  return FeedbackController(feedbackRepository: feedbackRepository);
+  final emailService = ref.read(emailServiceProvider);
+  return FeedbackController(
+    feedbackRepository: feedbackRepository,
+    emailService: emailService,
+    ref: ref,
+  );
 });
 
 /// Provider for FeedbackRepository
 final feedbackRepositoryProvider = Provider<FeedbackRepository>((ref) {
   return FeedbackRepository();
+});
+
+/// Provider for EmailService
+final emailServiceProvider = Provider<EmailService>((ref) {
+  return EmailService();
 });
 
 /// Provider for feedback list
