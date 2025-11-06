@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/app_providers.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 import 'register_page.dart';
@@ -27,57 +27,43 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
 
-    try {
-      final authController = ref.read(authControllerProvider.notifier);
-      await authController.signInWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      if (mounted) {
-        // Navigation will be handled by auth state listener
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+  Future<void> _loadSavedCredentials() async {
+    final authNotifier = ref.read(authStateProvider.notifier);
+    final savedEmail = await authNotifier.getSavedEmail();
+    
+    if (savedEmail != null) {
+      _emailController.text = savedEmail;
+      setState(() {
+        _rememberMe = true;
+      });
     }
   }
 
-  Future<void> _googleSignIn() async {
-    try {
-      final authController = ref.read(authControllerProvider.notifier);
-      final success = await authController.signInWithGoogle();
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
 
-      if (success && mounted) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Google Sign-In failed'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google Sign-In error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    final authNotifier = ref.read(authStateProvider.notifier);
+    await authNotifier.signIn(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      rememberMe: _rememberMe,
+    );
+  }
+
+  Future<void> _googleSignIn() async {
+    // TODO: Implement Google Sign-In
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Google Sign-In coming soon!'),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   Future<void> _forgotPassword() async {
@@ -86,7 +72,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
+    final authState = ref.watch(authStateProvider);
+    
+    // Listen for auth state changes and navigate accordingly
+    ref.listen(authStateProvider, (previous, next) {
+      if (next.user != null && mounted) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else if (next.error != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error!),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+                ref.read(authStateProvider.notifier).clearError();
+              },
+            ),
+          ),
+        );
+      }
+    });
+
     final isLoading = authState.isLoading;
 
     return LoadingWidget(
