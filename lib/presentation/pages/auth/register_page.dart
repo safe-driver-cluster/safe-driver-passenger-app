@@ -56,6 +56,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           lastName: _lastNameController.text.trim(),
           phoneNumber: _phoneController.text.trim(),
         );
+
+        // Navigate to dashboard after successful registration
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
