@@ -227,7 +227,7 @@ class AppRoutes {
       case feedbackForm:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => const FeedbackFormScreen(
+          builder: (_) => FeedbackFormScreen(
             busId: args?['busId'],
             driverId: args?['driverId'],
             journeyId: args?['journeyId'],
