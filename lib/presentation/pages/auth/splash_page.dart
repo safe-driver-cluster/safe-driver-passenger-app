@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../../../core/constants/color_constants.dart';
-import '../../../providers/simple_providers.dart';
+import '../../../providers/auth_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -94,7 +94,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
   }
 
   void _checkAuthenticationState() {
-    final authState = ref.read(authControllerProvider);
+    final authState = ref.read(authStateProvider);
 
     if (authState.user != null) {
       // User is authenticated, go to dashboard
