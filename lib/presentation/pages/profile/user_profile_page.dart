@@ -339,6 +339,9 @@ class UserProfilePage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const EditProfilePage()),
         );
       }),
+      MenuItemData('Passenger Details', Icons.account_circle_outlined, () {
+        Navigator.pushNamed(context, '/passenger-profile');
+      }),
       MenuItemData('Trip History', Icons.history_rounded, () {
         Navigator.push(
           context,
