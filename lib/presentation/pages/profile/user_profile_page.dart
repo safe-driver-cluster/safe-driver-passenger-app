@@ -41,7 +41,7 @@ class UserProfilePage extends ConsumerWidget {
                   const SizedBox(height: AppDesign.space2XL),
 
                   // Menu Items
-                  _buildMenuSection(context),
+                  _buildMenuSection(context, ref),
                 ],
               ),
             ),
@@ -313,7 +313,7 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMenuSection(BuildContext context) {
+  Widget _buildMenuSection(BuildContext context, WidgetRef ref) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,9 +451,21 @@ class UserProfilePage extends ConsumerWidget {
           ),
           ProfessionalButton(
             text: 'Sign Out',
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // Handle sign out
+              
+              // Sign out using the auth provider
+              final authNotifier = ref.read(authStateProvider.notifier);
+              await authNotifier.signOut();
+              
+              // Navigate to login page
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/login',
+                  (route) => false,
+                );
+              }
             },
             backgroundColor: AppColors.errorColor,
             height: 36,
