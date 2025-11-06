@@ -96,12 +96,17 @@ class _SplashPageState extends ConsumerState<SplashPage>
   }
 
   void _checkAuthenticationState() {
+    print('🔍 Checking authentication state...');
     final authState = ref.read(authStateProvider);
+    print('🔍 Auth state: ${authState.toString()}');
+    print('🔍 User: ${authState.user?.uid ?? 'null'}');
 
     if (authState.user != null) {
+      print('✅ User is authenticated, navigating to dashboard');
       // User is authenticated, go to dashboard
       Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
+      print('❌ User is not authenticated, navigating to login');
       // User is not authenticated, go to login
       Navigator.pushReplacementNamed(context, '/login');
     }
