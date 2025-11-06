@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/feedback_model.dart';
 
@@ -10,8 +11,14 @@ class FeedbackRepository {
   /// Submit feedback
   Future<void> submitFeedback(FeedbackModel feedback) async {
     try {
-      await _firestore.collection(_collection).add(feedback.toJson());
+      debugPrint('🔥 FeedbackRepository: Preparing to submit feedback...');
+      debugPrint('📄 FeedbackRepository: Feedback JSON: ${feedback.toJson()}');
+      
+      final docRef = await _firestore.collection(_collection).add(feedback.toJson());
+      
+      debugPrint('✅ FeedbackRepository: Successfully submitted with ID: ${docRef.id}');
     } catch (e) {
+      debugPrint('❌ FeedbackRepository: Error submitting feedback: $e');
       throw Exception('Failed to submit feedback: $e');
     }
   }
