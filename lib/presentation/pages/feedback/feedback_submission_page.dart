@@ -603,7 +603,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         tags: _generateTags(),
         attachments: [],
         timestamp: DateTime.now(),
-        status: FeedbackStatus.pending,
+        status: FeedbackStatus.submitted,
         priority: _getPriority(),
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
