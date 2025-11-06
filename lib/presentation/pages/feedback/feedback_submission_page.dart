@@ -611,6 +611,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           'feedbackTarget': widget.feedbackTarget.name,
           'quickAction': selectedQuickAction,
           'platform': 'mobile',
+          'userEmail': user['email']!,
+          'submittedAt': DateTime.now().toIso8601String(),
         },
       );
 
