@@ -9,12 +9,14 @@ class PassengerProfileScreen extends ConsumerStatefulWidget {
   const PassengerProfileScreen({super.key});
 
   @override
-  ConsumerState<PassengerProfileScreen> createState() => _PassengerProfileScreenState();
+  ConsumerState<PassengerProfileScreen> createState() =>
+      _PassengerProfileScreenState();
 }
 
-class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen> {
+class _PassengerProfileScreenState
+    extends ConsumerState<PassengerProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers for editing
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -57,8 +59,10 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
     _postalCodeController.text = passenger.address?.postalCode ?? '';
     _countryController.text = passenger.address?.country ?? '';
     _emergencyNameController.text = passenger.emergencyContact?.name ?? '';
-    _emergencyPhoneController.text = passenger.emergencyContact?.phoneNumber ?? '';
-    _emergencyRelationshipController.text = passenger.emergencyContact?.relationship ?? '';
+    _emergencyPhoneController.text =
+        passenger.emergencyContact?.phoneNumber ?? '';
+    _emergencyRelationshipController.text =
+        passenger.emergencyContact?.relationship ?? '';
   }
 
   Future<void> _saveProfile() async {
@@ -83,8 +87,10 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
     );
 
     try {
-      await ref.read(passengerControllerProvider.notifier).updateProfile(updatedPassenger);
-      
+      await ref
+          .read(passengerControllerProvider.notifier)
+          .updateProfile(updatedPassenger);
+
       setState(() {
         _isEditing = false;
       });
@@ -212,9 +218,9 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                   children: [
                     // Profile Header
                     _buildProfileHeader(passenger),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Personal Information
                     _buildSectionCard(
                       title: 'Personal Information',
@@ -273,9 +279,9 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Address Information
                     _buildSectionCard(
                       title: 'Address',
@@ -314,9 +320,9 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Emergency Contact
                     _buildSectionCard(
                       title: 'Emergency Contact',
@@ -342,12 +348,12 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Statistics
                     _buildStatisticsCard(passenger),
-                    
+
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -411,9 +417,12 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: passenger.isVerified ? Colors.green : Colors.orange,
+                          color: passenger.isVerified
+                              ? Colors.green
+                              : Colors.orange,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -427,7 +436,8 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: passenger.isActive ? Colors.blue : Colors.grey,
                           borderRadius: BorderRadius.circular(12),
@@ -535,15 +545,15 @@ class _PassengerProfileScreenState extends ConsumerState<PassengerProfileScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.analytics,
                   color: Color(0xFF2563EB),
                   size: 24,
                 ),
-                const SizedBox(width: 12),
-                const Text(
+                SizedBox(width: 12),
+                Text(
                   'Travel Statistics',
                   style: TextStyle(
                     fontSize: 20,
