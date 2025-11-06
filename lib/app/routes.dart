@@ -14,6 +14,7 @@ import '../presentation/pages/driver/driver_history_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
+import '../presentation/pages/feedback/feedback_form_screen.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
 import '../presentation/pages/feedback/feedback_system_page.dart';
@@ -21,6 +22,7 @@ import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
+import '../presentation/pages/profile/passenger_profile_screen.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
@@ -60,6 +62,7 @@ class AppRoutes {
 
   // Feedback routes
   static const String feedback = '/feedback';
+  static const String feedbackForm = '/feedback-form';
   static const String feedbackSystem = '/feedback-system';
   static const String feedbackTest = '/feedback-test';
   static const String feedbackHistory = '/feedback-history';
@@ -222,6 +225,17 @@ class AppRoutes {
           settings: settings,
         );
 
+      case feedbackForm:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => FeedbackFormScreen(
+            busId: args?['busId'],
+            driverId: args?['driverId'],
+            journeyId: args?['journeyId'],
+          ),
+          settings: settings,
+        );
+
       case feedbackSystem:
         return MaterialPageRoute(
           builder: (_) => const FeedbackSystemPage(),
@@ -271,6 +285,12 @@ class AppRoutes {
       case userProfile:
         return MaterialPageRoute(
           builder: (_) => const UserProfilePage(),
+          settings: settings,
+        );
+
+      case passengerProfile:
+        return MaterialPageRoute(
+          builder: (_) => const PassengerProfileScreen(),
           settings: settings,
         );
 
