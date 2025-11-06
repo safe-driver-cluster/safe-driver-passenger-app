@@ -584,38 +584,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       // Get current user info (you'll need to implement this based on your auth system)
       final user = await _getCurrentUser();
 
-      final feedback = FeedbackModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        userId: user['id'],
-        userName: user['name'],
-        busId: widget.busNumber,
-        busNumber: widget.busNumber,
-        category: widget.feedbackTarget == FeedbackTarget.bus
-            ? FeedbackCategory.vehicle
-            : FeedbackCategory.driver,
-        type:
-            selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
-        title: selectedQuickAction ?? _getRatingText(),
-        description: _commentController.text.trim().isEmpty
-            ? selectedQuickAction ?? _getRatingText()
-            : _commentController.text.trim(),
-        rating: FeedbackRating.values[selectedRating - 1],
-        tags: _generateTags(),
-        attachments: [],
-        timestamp: DateTime.now(),
-        status: FeedbackStatus.submitted,
-        priority: _getPriority(),
-        metadata: {
-          'feedbackTarget': widget.feedbackTarget.name,
-          'quickAction': selectedQuickAction,
-          'platform': 'mobile',
-        },
-        relatedFeedbackIds: [],
-        comment: _commentController.text.trim(),
-        images: [],
-        submittedAt: DateTime.now(),
-      );
-
       // Submit to Firebase
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: user['id']!,
