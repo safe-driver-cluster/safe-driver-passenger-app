@@ -17,7 +17,7 @@ final authStateProvider = StreamProvider<User?>((ref) {
 /// Provider for current user data
 final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   final authState = ref.watch(authStateProvider);
-  
+
   return authState.when(
     data: (user) {
       if (user != null) {
