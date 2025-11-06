@@ -135,12 +135,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       // Send email notification
       try {
         final authState = _ref.read(authStateProvider);
-        final userEmail = authState.maybeWhen(
-          data: (user) => user?.email,
-          loading: () => null,
-          error: (error, stack) => null,
-          orElse: () => null,
-        );
+        final userEmail = authState.user?.email;
 
         if (userEmail != null && userEmail.isNotEmpty) {
           debugPrint('📧 FeedbackController: Sending email to $userEmail...');
