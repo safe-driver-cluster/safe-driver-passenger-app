@@ -87,6 +87,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
     Map<String, dynamic>? metadata,
   }) async {
     try {
+      debugPrint('🎯 FeedbackController: Starting submission...');
       state = const AsyncValue.loading();
 
       final feedback = FeedbackModel(
@@ -116,12 +117,18 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         submittedAt: DateTime.now(),
       );
 
+      debugPrint('📋 FeedbackController: Created feedback model');
+      debugPrint('🔥 FeedbackController: Submitting to Firebase...');
+      
       await _feedbackRepository.submitFeedback(feedback);
+      
+      debugPrint('✅ FeedbackController: Successfully submitted to Firebase');
 
       // Add to local state
       _feedbacks.value = [..._feedbacks.value, feedback];
       await _updateStatistics();
 
+      debugPrint('📊 FeedbackController: Updated local state and statistics');
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to submit feedback: $e', stack);
