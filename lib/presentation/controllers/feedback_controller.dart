@@ -364,6 +364,11 @@ final feedbackRepositoryProvider = Provider<FeedbackRepository>((ref) {
   return FeedbackRepository();
 });
 
+/// Provider for EmailService
+final emailServiceProvider = Provider<EmailService>((ref) {
+  return EmailService();
+});
+
 /// Provider for feedback list
 final feedbacksProvider = Provider<List<FeedbackModel>>((ref) {
   final controller = ref.watch(feedbackControllerProvider.notifier);
