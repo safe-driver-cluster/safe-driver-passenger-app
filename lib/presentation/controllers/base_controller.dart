@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/firebase_service.dart';
+import '../../data/services/passenger_service.dart';
 
 // Base controller class for presentation layer
 abstract class BaseController extends StateNotifier<AsyncValue<void>> {
@@ -50,50 +51,36 @@ class AuthController extends BaseController {
   }) async {
     setLoading();
     try {
-      final firebaseService = FirebaseService.instance;
+      print('🎯 Starting signup process...');
 
-      // Create user account
-      final userCredential = await firebaseService.auth
+      // Use Firebase Auth directly instead of through FirebaseService
+      print('🔐 Creating Firebase Auth user...');
+      final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       if (userCredential.user != null) {
-        // Create user profile in Firestore
-        await firebaseService.firestore
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'firstName': firstName,
-          'lastName': lastName,
-          'email': email,
-          'phoneNumber': phoneNumber,
-          'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-          'isVerified': false,
-          'isActive': true,
-          'preferences': {
-            'language': 'en',
-            'theme': 'system',
-            'notifications': {
-              'safetyAlerts': true,
-              'journeyUpdates': true,
-              'emergencyAlerts': true,
-              'systemAnnouncements': true,
-            }
-          },
-          'stats': {
-            'todayTrips': 0,
-            'totalTrips': 0,
-            'carbonSaved': 0.0,
-            'pointsEarned': 0,
-            'safetyScore': 5.0,
-          }
-        });
+        print('✅ Firebase Auth user created: ${userCredential.user!.uid}');
 
+        // Create comprehensive passenger profile in passenger_details collection
+        print('📋 Creating passenger profile...');
+        final passengerService = PassengerService.instance;
+        await passengerService.createPassengerProfile(
+          userId: userCredential.user!.uid,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+        );
+
+        print('🎉 Signup process completed successfully!');
         setData();
       } else {
+        print('❌ Firebase Auth user creation failed');
         setError('Failed to create account');
       }
     } catch (e) {
+      print('💥 Signup error: $e');
+      print('🔍 Error type: ${e.runtimeType}');
       setError('Failed to sign up: ${e.toString()}');
     }
   }
