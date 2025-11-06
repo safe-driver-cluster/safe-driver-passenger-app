@@ -21,6 +21,7 @@ import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
+import '../presentation/pages/profile/passenger_profile_screen.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
