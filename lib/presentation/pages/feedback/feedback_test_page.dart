@@ -25,7 +25,7 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
 
     try {
       debugPrint('🧪 Testing Firebase connection...');
-      
+
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: 'test_user_001',
         userName: 'Test User',
@@ -89,15 +89,15 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
                   ),
                 ],
               ),
-              child: Column(
+              child: const Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.cloud_upload,
                     size: 64,
                     color: AppColors.primaryColor,
                   ),
-                  const SizedBox(height: AppDesign.spaceMD),
-                  const Text(
+                  SizedBox(height: AppDesign.spaceMD),
+                  Text(
                     'Firebase Integration Test',
                     style: TextStyle(
                       fontSize: 20,
@@ -105,7 +105,7 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppDesign.spaceSM),
+                  SizedBox(height: AppDesign.spaceSM),
                   Text(
                     'Test the Firebase connection by submitting a test feedback entry.',
                     style: TextStyle(
@@ -123,7 +123,8 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.white,
-                padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                 ),
@@ -184,7 +185,7 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
                   width: 1,
                 ),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -195,7 +196,7 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
                       color: AppColors.infoColor,
                     ),
                   ),
-                  const SizedBox(height: AppDesign.spaceXS),
+                  SizedBox(height: AppDesign.spaceXS),
                   Text(
                     '• Check Flutter logs for detailed error messages\n'
                     '• Ensure Firebase project is properly configured\n'
