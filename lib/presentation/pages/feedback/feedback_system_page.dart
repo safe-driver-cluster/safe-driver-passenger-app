@@ -88,7 +88,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.paddingLG),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
