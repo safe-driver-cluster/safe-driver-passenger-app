@@ -585,6 +585,12 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       // Get current user info
       final user = ref.read(simpleUserProvider);
 
+      debugPrint('🔍 Starting feedback submission...');
+      debugPrint('👤 User: ${user['name']} (${user['id']})');
+      debugPrint('🚌 Bus: ${widget.busNumber}');
+      debugPrint('⭐ Rating: $selectedRating');
+      debugPrint('📝 Comment: ${_commentController.text.trim()}');
+
       // Submit to Firebase
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: user['id']!,
@@ -605,8 +611,12 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           'feedbackTarget': widget.feedbackTarget.name,
           'quickAction': selectedQuickAction,
           'platform': 'mobile',
+          'userEmail': user['email']!,
+          'submittedAt': DateTime.now().toIso8601String(),
         },
       );
+
+      debugPrint('✅ Feedback submitted successfully!');
 
       if (mounted) {
         _showSuccessDialog();

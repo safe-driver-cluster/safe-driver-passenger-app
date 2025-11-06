@@ -53,6 +53,17 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         actions: [
           if (!isQRScanMode)
             IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/feedback-test');
+              },
+              icon: const Icon(
+                Icons.bug_report,
+                color: AppColors.warningColor,
+              ),
+              tooltip: 'Firebase Test',
+            ),
+          if (!isQRScanMode)
+            IconButton(
               onPressed: _showQRScanner,
               icon: const Icon(
                 Icons.qr_code_scanner,
