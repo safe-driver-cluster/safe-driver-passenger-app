@@ -1,19 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../data/services/auth_service.dart';
 import '../data/services/passenger_service.dart';
 
 // Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-// Current user provider that listens to Firebase Auth state
-final currentUserProvider = StreamProvider<User?>((ref) {
+// Firebase user provider that listens to Firebase Auth state
+final firebaseUserProvider = StreamProvider<User?>((ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.authStateChanges;
 });
 
 // Auth state provider for UI
-final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
+final authStateProvider =
+    StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
   return AuthStateNotifier(ref);
 });
 
@@ -59,10 +61,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
   void _initialize() {
     _authService = _ref.read(authServiceProvider);
     _passengerService = PassengerService.instance;
-    
+
     // Listen to Firebase Auth state changes
-    _ref.listen(currentUserProvider, (previous, next) {
-      next.when(
+    _ref.listen(firebaseUserProvider, (previous, next) {
+      next?.when(
         data: (user) {
           state = state.copyWith(user: user, isLoading: false, error: null);
         },
@@ -175,10 +177,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       // Handle the PigeonUserDetails error gracefully
       if (e.toString().contains('PigeonUserDetails') ||
           e.toString().contains('List<Object?>')) {
-        
         // Check if user was actually created despite the error
         await Future.delayed(const Duration(seconds: 1));
-        
+
         if (_authService.currentUser != null) {
           try {
             // Create passenger profile
