@@ -30,23 +30,38 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _loadSavedCredentials();
+    // Load saved credentials after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSavedCredentials();
+    });
   }
 
   Future<void> _loadSavedCredentials() async {
-    final authNotifier = ref.read(authStateProvider.notifier);
-    final savedEmail = await authNotifier.getSavedEmail();
+    try {
+      final authNotifier = ref.read(authStateProvider.notifier);
+      final savedEmail = await authNotifier.getSavedEmail();
 
-    if (savedEmail != null) {
-      _emailController.text = savedEmail;
-      setState(() {
-        _rememberMe = true;
-      });
+      if (savedEmail != null && mounted) {
+        _emailController.text = savedEmail;
+        setState(() {
+          _rememberMe = true;
+        });
+      }
+    } catch (e) {
+      print('Error loading saved credentials: $e');
     }
   }
 
   Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+    print('🚀 Login button pressed');
+
+    if (!_formKey.currentState!.validate()) {
+      print('❌ Form validation failed');
+      return;
+    }
+
+    print(
+        '✅ Form validated, attempting login with email: ${_emailController.text.trim()}');
 
     final authNotifier = ref.read(authStateProvider.notifier);
     await authNotifier.signIn(
