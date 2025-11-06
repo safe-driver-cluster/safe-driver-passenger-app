@@ -16,6 +16,7 @@ import '../presentation/pages/driver/driver_profile_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
+import '../presentation/pages/feedback/feedback_system_page_new.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
 import '../presentation/pages/profile/settings_page.dart';
@@ -58,6 +59,7 @@ class AppRoutes {
 
   // Feedback routes
   static const String feedback = '/feedback';
+  static const String feedbackSystem = '/feedback-system';
   static const String feedbackHistory = '/feedback-history';
 
   // Trip routes
@@ -214,6 +216,12 @@ class AppRoutes {
             driverId: args?['driverId'],
             tripId: args?['tripId'],
           ),
+          settings: settings,
+        );
+
+      case feedbackSystem:
+        return MaterialPageRoute(
+          builder: (_) => const FeedbackSystemPage(),
           settings: settings,
         );
 
