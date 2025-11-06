@@ -15,6 +15,7 @@ import 'core/services/firebase_service.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/themes/app_theme.dart';
+import 'data/services/auth_service.dart';
 import 'firebase_options.dart';
 
 // Top-level function to handle background messages
@@ -72,8 +73,16 @@ void main() async {
     await Hive.initFlutter();
 
     // Initialize storage service for local data persistence
+    print('🚀 Initializing storage service...');
     final storageService = StorageService.instance;
-    await storageService.initialize();
+    final storageInitialized = await storageService.initialize();
+    print('💾 Storage service initialized: $storageInitialized');
+
+    // Initialize auth service
+    print('🔐 Initializing auth service...');
+    final authService = AuthService();
+    await authService.initialize();
+    print('🔐 Auth service initialized');
 
     // Initialize notification service
     final notificationService = NotificationService.instance;
