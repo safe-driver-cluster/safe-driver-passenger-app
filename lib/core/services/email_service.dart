@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../data/models/feedback_model.dart';
@@ -12,7 +10,7 @@ class EmailService {
   static const String _smtpPassword = 'gtrkvhgjaqfplaup';
   static const String _smtpHost = 'smtp.gmail.com';
   static const int _smtpPort = 587;
-  
+
   // EmailJS configuration (alternative to direct SMTP)
   static const String _emailJsServiceId = 'service_feedback';
   static const String _emailJsTemplateId = 'template_feedback';
@@ -128,10 +126,10 @@ class EmailService {
       // In production, you would integrate with EmailJS or similar service
       debugPrint('📤 Simulating email send to: $toEmail');
       debugPrint('📋 Subject: $subject');
-      
+
       // Simulate network delay
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       // In real implementation, you would make HTTP request to EmailJS
       /*
       final response = await http.post(
@@ -152,7 +150,7 @@ class EmailService {
       
       return response.statusCode == 200;
       */
-      
+
       // For demo, always return true
       return true;
     } catch (e) {
@@ -168,7 +166,7 @@ class EmailService {
   }) {
     final dateFormatter = DateFormat('MMMM dd, yyyy \'at\' h:mm a');
     final formattedDate = dateFormatter.format(feedback.submittedAt);
-    
+
     return '''
 <!DOCTYPE html>
 <html>
@@ -257,12 +255,18 @@ class EmailService {
   }) {
     final dateFormatter = DateFormat('MMMM dd, yyyy \'at\' h:mm a');
     final formattedDate = dateFormatter.format(feedback.submittedAt);
-    
-    final priorityColor = feedback.priority == FeedbackPriority.high ? '#dc2626' : 
-                         feedback.priority == FeedbackPriority.medium ? '#d97706' : '#059669';
-    final priorityBg = feedback.priority == FeedbackPriority.high ? '#fef2f2' : 
-                       feedback.priority == FeedbackPriority.medium ? '#fffbeb' : '#f0fdf4';
-    
+
+    final priorityColor = feedback.priority == FeedbackPriority.high
+        ? '#dc2626'
+        : feedback.priority == FeedbackPriority.medium
+            ? '#d97706'
+            : '#059669';
+    final priorityBg = feedback.priority == FeedbackPriority.high
+        ? '#fef2f2'
+        : feedback.priority == FeedbackPriority.medium
+            ? '#fffbeb'
+            : '#f0fdf4';
+
     return '''
 <!DOCTYPE html>
 <html>
@@ -387,7 +391,7 @@ class EmailService {
   }) {
     final dateFormatter = DateFormat('MMMM dd, yyyy \'at\' h:mm a');
     final formattedDate = dateFormatter.format(feedback.submittedAt);
-    
+
     if (isAdminEmail) {
       return '''
 NEW FEEDBACK ALERT - SafeDriver
