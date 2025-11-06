@@ -72,14 +72,14 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusSelectionView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppDesign.paddingMD),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
-          const SizedBox(height: AppDesign.spacingXL),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildSelectionMethods(),
-          const SizedBox(height: AppDesign.spacingXL),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildRecentBuses(),
         ],
       ),
@@ -88,7 +88,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.paddingLG),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -106,7 +106,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(AppDesign.paddingSM),
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -117,12 +117,12 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   size: AppDesign.iconLG,
                 ),
               ),
-              const SizedBox(width: AppDesign.spacingMD),
-              Expanded(
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Share Your Experience',
                       style: TextStyle(
                         fontSize: 20,
@@ -130,8 +130,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spacingXS),
-                    const Text(
+                    SizedBox(height: AppDesign.spaceXS),
+                    Text(
                       'Help us improve our service by providing feedback about the bus or driver',
                       style: TextStyle(
                         fontSize: 14,
@@ -161,7 +161,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: AppDesign.spacingMD),
+        const SizedBox(height: AppDesign.spaceMD),
         Row(
           children: [
             Expanded(
@@ -172,7 +172,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 onTap: _showBusSelection,
               ),
             ),
-            const SizedBox(width: AppDesign.spacingMD),
+            const SizedBox(width: AppDesign.spaceMD),
             Expanded(
               child: _buildSelectionCard(
                 icon: Icons.qr_code_scanner,
@@ -196,7 +196,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.paddingLG),
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -215,7 +215,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppDesign.paddingMD),
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
                 color: AppColors.primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -226,7 +226,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 size: AppDesign.iconXL,
               ),
             ),
-            const SizedBox(height: AppDesign.spacingMD),
+            const SizedBox(height: AppDesign.spaceMD),
             Text(
               title,
               style: const TextStyle(
@@ -235,7 +235,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: AppDesign.spacingXS),
+            const SizedBox(height: AppDesign.spaceXS),
             Text(
               subtitle,
               style: const TextStyle(
@@ -262,7 +262,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: AppDesign.spacingMD),
+        const SizedBox(height: AppDesign.spaceMD),
         Container(
           decoration: BoxDecoration(
             color: AppColors.surfaceColor,
@@ -296,11 +296,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   Widget _buildRecentBusItem(Map<String, String> bus) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppDesign.paddingLG,
-        vertical: AppDesign.paddingSM,
+        horizontal: AppDesign.spaceLG,
+        vertical: AppDesign.spaceSM,
       ),
       leading: Container(
-        padding: const EdgeInsets.all(AppDesign.paddingSM),
+        padding: const EdgeInsets.all(AppDesign.spaceSM),
         decoration: BoxDecoration(
           color: AppColors.primaryColor.withOpacity(0.1),
           borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -339,11 +339,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppDesign.paddingLG),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
             color: AppColors.surfaceColor,
-            child: Column(
+            child: const Column(
               children: [
-                const Text(
+                Text(
                   'Point your camera at the bus QR code',
                   style: TextStyle(
                     fontSize: 16,
@@ -352,8 +352,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: AppDesign.spacingSM),
-                const Text(
+                SizedBox(height: AppDesign.spaceSM),
+                Text(
                   'The QR code is usually located inside the bus',
                   style: TextStyle(
                     fontSize: 14,
@@ -421,7 +421,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(AppDesign.paddingLG),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
             color: AppColors.surfaceColor,
             child: Row(
               children: [
@@ -434,7 +434,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                       backgroundColor: AppColors.greyLight,
                       foregroundColor: AppColors.textPrimary,
                       padding: const EdgeInsets.symmetric(
-                        vertical: AppDesign.paddingMD,
+                        vertical: AppDesign.spaceMD,
                       ),
                     ),
                   ),
@@ -462,12 +462,12 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildFeedbackTypeSelection() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppDesign.paddingMD),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildBusInfoCard(),
-          const SizedBox(height: AppDesign.spacingXL),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildFeedbackTypeOptions(),
         ],
       ),
@@ -476,7 +476,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusInfoCard() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.paddingLG),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: AppColors.surfaceColor,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -491,7 +491,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppDesign.paddingMD),
+            padding: const EdgeInsets.all(AppDesign.spaceMD),
             decoration: BoxDecoration(
               color: AppColors.successColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -502,7 +502,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               size: AppDesign.iconLG,
             ),
           ),
-          const SizedBox(width: AppDesign.spacingMD),
+          const SizedBox(width: AppDesign.spaceMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,7 +515,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppDesign.spacingXS),
+                const SizedBox(height: AppDesign.spaceXS),
                 const Text(
                   'Selected for feedback',
                   style: TextStyle(
@@ -551,7 +551,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: AppDesign.spacingLG),
+        const SizedBox(height: AppDesign.spaceLG),
         _buildFeedbackOption(
           icon: Icons.directions_bus,
           title: 'Bus Behavior',
@@ -559,7 +559,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           color: AppColors.primaryColor,
           onTap: () => _navigateToFeedbackForm(FeedbackTarget.bus),
         ),
-        const SizedBox(height: AppDesign.spacingMD),
+        const SizedBox(height: AppDesign.spaceMD),
         _buildFeedbackOption(
           icon: Icons.person,
           title: 'Driver Behavior',
@@ -581,7 +581,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.paddingLG),
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -600,7 +600,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppDesign.paddingMD),
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -611,7 +611,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 size: AppDesign.iconLG,
               ),
             ),
-            const SizedBox(width: AppDesign.spacingLG),
+            const SizedBox(width: AppDesign.spaceLG),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -624,7 +624,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppDesign.spacingXS),
+                  const SizedBox(height: AppDesign.spaceXS),
                   Text(
                     subtitle,
                     style: const TextStyle(
@@ -671,7 +671,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppDesign.paddingLG),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
             child: Column(
               children: [
                 Container(
@@ -682,7 +682,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(height: AppDesign.spacingMD),
+                const SizedBox(height: AppDesign.spaceMD),
                 const Text(
                   'Select Bus',
                   style: TextStyle(
@@ -697,10 +697,10 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           Expanded(
             child: ListView.separated(
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppDesign.paddingLG),
+                  const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
               itemCount: buses.length,
               separatorBuilder: (context, index) =>
-                  const SizedBox(height: AppDesign.spacingSM),
+                  const SizedBox(height: AppDesign.spaceSM),
               itemBuilder: (context, index) {
                 final bus = buses[index];
                 return _buildBusSelectionItem(bus);
@@ -719,7 +719,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         _selectBus(bus['number']!);
       },
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.paddingLG),
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -731,7 +731,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppDesign.paddingSM),
+              padding: const EdgeInsets.all(AppDesign.spaceSM),
               decoration: BoxDecoration(
                 color: AppColors.primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -741,7 +741,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 color: AppColors.primaryColor,
               ),
             ),
-            const SizedBox(width: AppDesign.spacingMD),
+            const SizedBox(width: AppDesign.spaceMD),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -11,18 +11,19 @@ import '../presentation/pages/bus/bus_search_page.dart';
 import '../presentation/pages/bus/live_tracking_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
+import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
-import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
+import '../presentation/pages/feedback/feedback_system_page_new.dart';
+import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
 import '../presentation/pages/qr/qr_scanner_page.dart';
-import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/safety/emergency_page.dart';
 import '../presentation/pages/safety/hazard_zones_page.dart';
 import '../presentation/pages/safety/safety_alerts_page.dart';
@@ -58,6 +59,7 @@ class AppRoutes {
 
   // Feedback routes
   static const String feedback = '/feedback';
+  static const String feedbackSystem = '/feedback-system';
   static const String feedbackHistory = '/feedback-history';
 
   // Trip routes
@@ -214,6 +216,12 @@ class AppRoutes {
             driverId: args?['driverId'],
             tripId: args?['tripId'],
           ),
+          settings: settings,
+        );
+
+      case feedbackSystem:
+        return MaterialPageRoute(
+          builder: (_) => const FeedbackSystemPage(),
           settings: settings,
         );
 
