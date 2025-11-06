@@ -128,6 +128,7 @@ class AuthService {
 
   /// Get saved password (for auto-login only)
   Future<String?> _getSavedPassword() async {
+    await initialize(); // Ensure storage is initialized
     final autoLogin = await isAutoLoginEnabled();
     if (autoLogin) {
       return _storage.getString(_savedPasswordKey);
