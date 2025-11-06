@@ -17,6 +17,7 @@ import '../presentation/pages/driver/driver_profile_page.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
 import '../presentation/pages/feedback/feedback_system_page.dart';
+import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
@@ -60,6 +61,7 @@ class AppRoutes {
   // Feedback routes
   static const String feedback = '/feedback';
   static const String feedbackSystem = '/feedback-system';
+  static const String feedbackTest = '/feedback-test';
   static const String feedbackHistory = '/feedback-history';
 
   // Trip routes
@@ -222,6 +224,12 @@ class AppRoutes {
       case feedbackSystem:
         return MaterialPageRoute(
           builder: (_) => const FeedbackSystemPage(),
+          settings: settings,
+        );
+
+      case feedbackTest:
+        return MaterialPageRoute(
+          builder: (_) => const FeedbackTestPage(),
           settings: settings,
         );
 
