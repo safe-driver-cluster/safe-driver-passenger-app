@@ -4,14 +4,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/feedback_model.dart';
 import '../../data/models/location_model.dart';
 import '../../data/repositories/feedback_repository.dart';
+import '../../core/services/email_service.dart';
+import '../../providers/auth_provider.dart';
 
 /// Controller for feedback operations and state management
 class FeedbackController extends StateNotifier<AsyncValue<void>> {
   final FeedbackRepository _feedbackRepository;
+  final EmailService _emailService;
+  final Ref _ref;
 
   FeedbackController({
     required FeedbackRepository feedbackRepository,
+    required EmailService emailService,
+    required Ref ref,
   })  : _feedbackRepository = feedbackRepository,
+        _emailService = emailService,
+        _ref = ref,
         super(const AsyncValue.data(null));
 
   // State management
