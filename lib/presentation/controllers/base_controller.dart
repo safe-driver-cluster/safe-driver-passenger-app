@@ -81,6 +81,43 @@ class AuthController extends BaseController {
     } catch (e) {
       print('💥 Signup error: $e');
       print('🔍 Error type: ${e.runtimeType}');
+      
+      // Check if this is the PigeonUserDetails error but auth was successful
+      if (e.toString().contains('PigeonUserDetails') || 
+          e.toString().contains('List<Object?>')) {
+        print('🔧 PigeonUserDetails error detected, checking if user was created...');
+        
+        // Wait a moment for Firebase to sync
+        await Future.delayed(const Duration(seconds: 1));
+        
+        // Check if user was actually created despite the error
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null) {
+          print('✅ User was created despite error: ${currentUser.uid}');
+          
+          try {
+            // Create passenger profile
+            print('📋 Creating passenger profile...');
+            final passengerService = PassengerService.instance;
+            await passengerService.createPassengerProfile(
+              userId: currentUser.uid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              phoneNumber: phoneNumber,
+            );
+            
+            print('🎉 Signup process completed successfully despite plugin error!');
+            setData();
+            return;
+          } catch (profileError) {
+            print('❌ Error creating passenger profile: $profileError');
+            setError('Account created but profile setup failed: ${profileError.toString()}');
+            return;
+          }
+        }
+      }
+      
       setError('Failed to sign up: ${e.toString()}');
     }
   }
