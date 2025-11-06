@@ -70,6 +70,10 @@ void main() async {
     // Initialize Hive for local storage
     await Hive.initFlutter();
 
+    // Initialize storage service for local data persistence
+    final storageService = StorageService.instance;
+    await storageService.initialize();
+
     // Initialize notification service
     final notificationService = NotificationService.instance;
     await notificationService.initialize();
