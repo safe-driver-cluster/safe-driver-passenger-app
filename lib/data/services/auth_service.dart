@@ -9,12 +9,23 @@ class AuthService {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final StorageService _storage = StorageService.instance;
+  
+  bool _initialized = false;
 
   // Storage keys for remember me functionality
   static const String _rememberMeKey = 'remember_me';
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
   static const String _autoLoginKey = 'auto_login';
+
+  /// Initialize the auth service
+  Future<void> initialize() async {
+    if (!_initialized) {
+      await _storage.initialize();
+      _initialized = true;
+      print('🔐 AuthService initialized');
+    }
+  }
 
   /// Get current user
   User? get currentUser => _firebaseAuth.currentUser;
@@ -32,13 +43,18 @@ class AuthService {
     bool rememberMe = false,
   }) async {
     try {
+      print('🔐 Attempting Firebase Auth sign in with email: $email');
+      
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      print('✅ Firebase Auth successful for user: ${userCredential.user?.uid}');
+
       // Save credentials if remember me is enabled
       if (rememberMe) {
+        print('💾 Saving credentials for remember me');
         await _saveCredentials(email, password);
         await _storage.saveBool(_rememberMeKey, true);
         await _storage.saveBool(_autoLoginKey, true);
@@ -48,6 +64,7 @@ class AuthService {
 
       return userCredential;
     } catch (e) {
+      print('❌ Firebase Auth error: $e');
       throw _handleAuthError(e);
     }
   }
@@ -89,16 +106,19 @@ class AuthService {
 
   /// Check if remember me is enabled
   Future<bool> isRememberMeEnabled() async {
+    await initialize(); // Ensure storage is initialized
     return _storage.getBool(_rememberMeKey) ?? false;
   }
 
   /// Check if auto login is enabled
   Future<bool> isAutoLoginEnabled() async {
+    await initialize(); // Ensure storage is initialized
     return _storage.getBool(_autoLoginKey) ?? false;
   }
 
   /// Get saved email
   Future<String?> getSavedEmail() async {
+    await initialize(); // Ensure storage is initialized
     final rememberMe = await isRememberMeEnabled();
     if (rememberMe) {
       return _storage.getString(_savedEmailKey);
@@ -142,12 +162,14 @@ class AuthService {
 
   /// Save credentials locally
   Future<void> _saveCredentials(String email, String password) async {
+    await initialize(); // Ensure storage is initialized
     await _storage.saveString(_savedEmailKey, email);
     await _storage.saveString(_savedPasswordKey, password);
   }
 
   /// Clear saved credentials
   Future<void> _clearSavedCredentials() async {
+    await initialize(); // Ensure storage is initialized
     await _storage.saveBool(_rememberMeKey, false);
     await _storage.saveBool(_autoLoginKey, false);
     await _storage.saveString(_savedEmailKey, '');
