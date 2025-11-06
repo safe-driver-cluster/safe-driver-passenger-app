@@ -291,11 +291,9 @@ class DashboardHome extends ConsumerWidget {
                               );
                             },
                             onFeedback: () {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => const FeedbackPage(),
-                                ),
+                                '/feedback-system',
                               );
                             },
                           ),
