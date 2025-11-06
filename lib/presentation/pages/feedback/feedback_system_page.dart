@@ -4,10 +4,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../data/models/feedback_model.dart';
-import '../../controllers/feedback_controller.dart';
-import '../../widgets/common/professional_widgets.dart';
-import '../qr/qr_scanner_page.dart';
 import 'feedback_submission_page.dart';
 
 class FeedbackSystemPage extends ConsumerStatefulWidget {
@@ -126,7 +122,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Share Your Experience',
                       style: TextStyle(
                         fontSize: 20,
@@ -135,7 +131,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                       ),
                     ),
                     const SizedBox(height: AppDesign.spacingXS),
-                    Text(
+                    const Text(
                       'Help us improve our service by providing feedback about the bus or driver',
                       style: TextStyle(
                         fontSize: 14,
@@ -157,7 +153,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Select Bus',
           style: TextStyle(
             fontSize: 18,
@@ -233,7 +229,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             const SizedBox(height: AppDesign.spacingMD),
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -242,7 +238,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             const SizedBox(height: AppDesign.spacingXS),
             Text(
               subtitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
                 color: AppColors.textSecondary,
               ),
@@ -258,7 +254,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Recent Buses',
           style: TextStyle(
             fontSize: 18,
@@ -347,7 +343,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             color: AppColors.surfaceColor,
             child: Column(
               children: [
-                Text(
+                const Text(
                   'Point your camera at the bus QR code',
                   style: TextStyle(
                     fontSize: 16,
@@ -357,7 +353,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppDesign.spacingSM),
-                Text(
+                const Text(
                   'The QR code is usually located inside the bus',
                   style: TextStyle(
                     fontSize: 14,
@@ -455,7 +451,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Container(
       width: 30,
       height: 30,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(color: AppColors.primaryColor, width: 4),
           left: BorderSide(color: AppColors.primaryColor, width: 4),
@@ -520,7 +516,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                 ),
                 const SizedBox(height: AppDesign.spacingXS),
-                Text(
+                const Text(
                   'Selected for feedback',
                   style: TextStyle(
                     fontSize: 14,
@@ -547,7 +543,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'What would you like to give feedback about?',
           style: TextStyle(
             fontSize: 18,
@@ -631,7 +627,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   const SizedBox(height: AppDesign.spacingXS),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
                       height: 1.3,
@@ -662,7 +658,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusSelectionBottomSheet() {
     final buses = _getAvailableBuses();
-    
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -687,7 +683,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                 ),
                 const SizedBox(height: AppDesign.spacingMD),
-                Text(
+                const Text(
                   'Select Bus',
                   style: TextStyle(
                     fontSize: 20,
@@ -700,9 +696,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: AppDesign.paddingLG),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppDesign.paddingLG),
               itemCount: buses.length,
-              separatorBuilder: (context, index) => const SizedBox(height: AppDesign.spacingSM),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: AppDesign.spacingSM),
               itemBuilder: (context, index) {
                 final bus = buses[index];
                 return _buildBusSelectionItem(bus);
