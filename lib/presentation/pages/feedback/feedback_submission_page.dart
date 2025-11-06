@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
+import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
 import 'feedback_system_page.dart';
 
@@ -581,8 +582,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     });
 
     try {
-      // Get current user info (you'll need to implement this based on your auth system)
-      final user = await _getCurrentUser();
+      // Get current user info
+      final user = ref.read(simpleUserProvider);
 
       // Submit to Firebase
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
@@ -623,15 +624,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     }
   }
 
-  Future<Map<String, String>> _getCurrentUser() async {
-    // Implement this based on your authentication system
-    // This is a placeholder
-    return {
-      'id': 'user123',
-      'name': 'John Doe',
-      'email': 'john.doe@example.com',
-    };
-  }
+
 
   List<String> _generateTags() {
     final tags = <String>[];
