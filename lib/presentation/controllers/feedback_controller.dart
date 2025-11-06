@@ -144,7 +144,8 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
           await _emailService.sendFeedbackSummary(feedback, userEmail);
           debugPrint('✅ FeedbackController: Email sent successfully');
         } else {
-          debugPrint('⚠️ FeedbackController: No user email available for notification');
+          debugPrint(
+              '⚠️ FeedbackController: No user email available for notification');
         }
       } catch (emailError) {
         debugPrint('❌ FeedbackController: Email sending failed: $emailError');
