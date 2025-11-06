@@ -13,6 +13,7 @@ import 'core/constants/string_constants.dart';
 import 'core/services/crashlytics_service.dart';
 import 'core/services/firebase_service.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/storage_service.dart';
 import 'core/themes/app_theme.dart';
 import 'firebase_options.dart';
 
