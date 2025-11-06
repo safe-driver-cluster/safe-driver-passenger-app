@@ -456,17 +456,16 @@ Making public transport safer, one trip at a time
 
       // Send confirmation email to user
       final userEmailSent = await EmailService.sendUserConfirmationEmail(
-        feedback: feedback,
         userEmail: userEmail,
+        userName: feedback.userName,
+        feedback: feedback,
       );
-
+      
       // Send notification to admin
       final adminEmailSent = await EmailService.sendAdminNotificationEmail(
         feedback: feedback,
         userEmail: userEmail,
-      );
-
-      final success = userEmailSent && adminEmailSent;
+      );      final success = userEmailSent && adminEmailSent;
 
       if (success) {
         debugPrint('✅ EmailService: All feedback emails sent successfully');
