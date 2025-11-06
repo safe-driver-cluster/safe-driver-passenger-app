@@ -5,7 +5,6 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../controllers/feedback_controller.dart';
-import '../../widgets/common/professional_widgets.dart';
 import 'feedback_system_page.dart';
 
 class FeedbackSubmissionPage extends ConsumerStatefulWidget {
@@ -19,7 +18,8 @@ class FeedbackSubmissionPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FeedbackSubmissionPage> createState() => _FeedbackSubmissionPageState();
+  ConsumerState<FeedbackSubmissionPage> createState() =>
+      _FeedbackSubmissionPageState();
 }
 
 class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
@@ -61,7 +61,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _starControllers = List.generate(
       5,
       (index) => AnimationController(
@@ -174,7 +174,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 const SizedBox(height: AppDesign.spaceXS),
                 Text(
                   '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
@@ -198,7 +198,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Rate your experience',
             style: TextStyle(
               fontSize: 18,
@@ -209,7 +209,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           const SizedBox(height: AppDesign.spaceMD),
           Text(
             _getRatingDescription(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
               height: 1.4,
@@ -238,7 +238,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               return Transform.scale(
                 scale: selectedRating > index ? 1.2 : 1.0,
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceXS),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceXS),
                   child: Icon(
                     selectedRating > index ? Icons.star : Icons.star_outline,
                     size: 40,
@@ -302,7 +303,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Quick feedback (optional)',
             style: TextStyle(
               fontSize: 18,
@@ -311,7 +312,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          Text(
+          const Text(
             'Select a common feedback or write your own below',
             style: TextStyle(
               fontSize: 14,
@@ -322,7 +323,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           Wrap(
             spacing: AppDesign.spaceSM,
             runSpacing: AppDesign.spaceSM,
-            children: actions.map((action) => _buildQuickActionChip(action)).toList(),
+            children:
+                actions.map((action) => _buildQuickActionChip(action)).toList(),
           ),
         ],
       ),
@@ -348,7 +350,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           borderRadius: BorderRadius.circular(AppDesign.radiusFull),
           border: isSelected
               ? Border.all(
-                  color: isPositive ? AppColors.successColor : AppColors.warningColor,
+                  color: isPositive
+                      ? AppColors.successColor
+                      : AppColors.warningColor,
                   width: 2,
                 )
               : null,
@@ -376,7 +380,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Additional comments',
             style: TextStyle(
               fontSize: 18,
@@ -385,7 +389,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          Text(
+          const Text(
             'Share more details about your experience (optional)',
             style: TextStyle(
               fontSize: 14,
@@ -399,7 +403,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             maxLength: 500,
             decoration: InputDecoration(
               hintText: 'Type your feedback here...',
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 color: AppColors.textHint,
               ),
               filled: true,
@@ -415,7 +419,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   width: 2,
                 ),
               ),
-              counterStyle: TextStyle(
+              counterStyle: const TextStyle(
                 color: AppColors.textHint,
                 fontSize: 12,
               ),
@@ -491,7 +495,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     setState(() {
       selectedRating = rating;
     });
-    
+
     // Animate stars
     for (int i = 0; i < rating; i++) {
       _starControllers[i].forward();
@@ -559,7 +563,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       'professional',
       'works well',
     ];
-    
+
     return positiveKeywords.any(
       (keyword) => action.toLowerCase().contains(keyword),
     );
@@ -579,7 +583,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     try {
       // Get current user info (you'll need to implement this based on your auth system)
       final user = await _getCurrentUser();
-      
+
       final feedback = FeedbackModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: user['id'],
@@ -589,9 +593,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         category: widget.feedbackTarget == FeedbackTarget.bus
             ? FeedbackCategory.vehicle
             : FeedbackCategory.driver,
-        type: selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
+        type:
+            selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
         title: selectedQuickAction ?? _getRatingText(),
-        description: _commentController.text.trim().isEmpty 
+        description: _commentController.text.trim().isEmpty
             ? selectedQuickAction ?? _getRatingText()
             : _commentController.text.trim(),
         rating: FeedbackRating.values[selectedRating - 1],
@@ -612,7 +617,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       );
 
       // Submit to Firebase
-      await ref.read(feedbackControllerProvider.notifier).submitFeedback(feedback);
+      await ref
+          .read(feedbackControllerProvider.notifier)
+          .submitFeedback(feedback);
 
       if (mounted) {
         _showSuccessDialog();
@@ -642,11 +649,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   List<String> _generateTags() {
     final tags = <String>[];
-    
+
     tags.add(widget.feedbackTarget.name);
     tags.add('bus-${widget.busNumber}');
     tags.add('rating-$selectedRating');
-    
+
     if (selectedQuickAction != null) {
       if (_isPositiveAction(selectedQuickAction!)) {
         tags.add('positive');
@@ -654,7 +661,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         tags.add('negative');
       }
     }
-    
+
     return tags;
   }
 
@@ -697,7 +704,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ),
             ),
             const SizedBox(height: AppDesign.spaceSM),
-            Text(
+            const Text(
               'Thank you for your feedback. It helps us improve our service.',
               style: TextStyle(
                 fontSize: 14,
@@ -759,7 +766,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ),
             ),
             const SizedBox(height: AppDesign.spaceSM),
-            Text(
+            const Text(
               'Failed to submit feedback. Please try again.',
               style: TextStyle(
                 fontSize: 14,
