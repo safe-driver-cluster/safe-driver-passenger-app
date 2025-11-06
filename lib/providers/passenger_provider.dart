@@ -1,9 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/services/firebase_service.dart';
 import '../data/models/passenger_model.dart';
 import '../data/services/passenger_service.dart';
-import '../core/services/firebase_service.dart';
 
 /// Provider for the current passenger's user ID
 final currentUserIdProvider = StateProvider<String?>((ref) => null);
@@ -21,7 +21,7 @@ final passengerServiceProvider = Provider<PassengerService>((ref) {
 /// Provider for current passenger profile
 final currentPassengerProvider = StreamProvider<PassengerModel?>((ref) {
   final user = ref.watch(currentUserProvider);
-  
+
   return user.when(
     data: (user) {
       if (user != null) {
