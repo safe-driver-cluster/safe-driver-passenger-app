@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'core/services/email_service.dart';
 import 'data/models/feedback_model.dart';
 
@@ -6,9 +7,9 @@ import 'data/models/feedback_model.dart';
 /// This can be used to test the email service independently
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   print('🧪 Testing Email Service...');
-  
+
   // Create a sample feedback for testing
   final testFeedback = FeedbackModel(
     id: 'test_${DateTime.now().millisecondsSinceEpoch}',
@@ -38,27 +39,26 @@ void main() async {
     images: [],
     submittedAt: DateTime.now(),
   );
-  
+
   // Test the email service
   final emailService = EmailService();
-  
+
   try {
     print('📧 Sending test feedback email...');
-    
+
     final success = await emailService.sendFeedbackSummary(
       testFeedback,
-      'test@example.com',  // Replace with actual test email
+      'test@example.com', // Replace with actual test email
     );
-    
+
     if (success) {
       print('✅ Test email sent successfully!');
     } else {
       print('❌ Test email failed to send.');
     }
-    
   } catch (e) {
     print('❌ Error during email test: $e');
   }
-  
+
   print('🧪 Email test completed.');
 }
