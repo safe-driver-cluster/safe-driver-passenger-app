@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/services/firebase_service.dart';
-import '../models/passenger_model.dart';
 import '../services/passenger_service.dart';
 
 /// Model for feedback submitted by passengers
@@ -11,13 +10,15 @@ class FeedbackModel {
   final String? busId;
   final String? driverId;
   final String? journeyId;
-  final String type; // positive, negative, neutral, suggestion, inquiry, urgent, general
+  final String
+      type; // positive, negative, neutral, suggestion, inquiry, urgent, general
   final String category; // service, safety, comfort, driver, vehicle, route
   final FeedbackRating rating;
   final String title;
   final String description;
   final List<FeedbackAttachment> attachments;
-  final String status; // submitted, received, inReview, responded, resolved, closed
+  final String
+      status; // submitted, received, inReview, responded, resolved, closed
   final String priority; // low, medium, high, urgent
   final bool isAnonymous;
   final FeedbackAdminResponse? adminResponse;
@@ -237,7 +238,7 @@ class FeedbackService {
     try {
       // Get passenger details for context
       final passenger = await _passengerService.getPassengerProfile(userId);
-      
+
       if (passenger == null) {
         throw Exception('Passenger profile not found');
       }
