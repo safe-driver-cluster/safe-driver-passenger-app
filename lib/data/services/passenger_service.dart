@@ -22,7 +22,7 @@ class PassengerService {
     try {
       print('🚀 Starting to create passenger profile for user: $userId');
       print('📝 Data: $firstName $lastName, $email, $phoneNumber');
-      
+
       final now = DateTime.now();
       final passengerData = PassengerModel(
         id: userId,
@@ -41,11 +41,8 @@ class PassengerService {
       print('📋 JSON Data: $jsonData');
 
       print('🔥 Saving to Firestore collection: $_collection');
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .set(jsonData);
-      
+      await _firestore.collection(_collection).doc(userId).set(jsonData);
+
       print('✅ Passenger profile created successfully!');
     } catch (e) {
       print('❌ Error creating passenger profile: $e');
@@ -57,10 +54,7 @@ class PassengerService {
   /// Get passenger profile by ID
   Future<PassengerModel?> getPassengerProfile(String userId) async {
     try {
-      final doc = await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .get();
+      final doc = await _firestore.collection(_collection).doc(userId).get();
 
       if (doc.exists) {
         return PassengerModel.fromFirestore(doc);
@@ -103,10 +97,7 @@ class PassengerService {
         'updatedAt': DateTime.now().toIso8601String(),
       };
 
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update(updateData);
+      await _firestore.collection(_collection).doc(userId).update(updateData);
     } catch (e) {
       throw Exception('Failed to update passenger fields: $e');
     }
@@ -148,10 +139,7 @@ class PassengerService {
     required String routeId,
   }) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update({
+      await _firestore.collection(_collection).doc(userId).update({
         'favorites.routes': FieldValue.arrayUnion([routeId]),
         'updatedAt': DateTime.now().toIso8601String(),
       });
@@ -166,10 +154,7 @@ class PassengerService {
     required String routeId,
   }) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update({
+      await _firestore.collection(_collection).doc(userId).update({
         'favorites.routes': FieldValue.arrayRemove([routeId]),
         'updatedAt': DateTime.now().toIso8601String(),
       });
@@ -184,10 +169,7 @@ class PassengerService {
     required String busId,
   }) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update({
+      await _firestore.collection(_collection).doc(userId).update({
         'favorites.buses': FieldValue.arrayUnion([busId]),
         'updatedAt': DateTime.now().toIso8601String(),
       });
@@ -202,10 +184,7 @@ class PassengerService {
     required String busId,
   }) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .update({
+      await _firestore.collection(_collection).doc(userId).update({
         'favorites.buses': FieldValue.arrayRemove([busId]),
         'updatedAt': DateTime.now().toIso8601String(),
       });
@@ -299,10 +278,7 @@ class PassengerService {
   /// Delete passenger profile
   Future<void> deletePassengerProfile(String userId) async {
     try {
-      await _firestore
-          .collection(_collection)
-          .doc(userId)
-          .delete();
+      await _firestore.collection(_collection).doc(userId).delete();
     } catch (e) {
       throw Exception('Failed to delete passenger profile: $e');
     }
@@ -348,8 +324,7 @@ class PassengerService {
   /// Get passenger statistics for dashboard
   Future<Map<String, dynamic>> getPassengerStatistics() async {
     try {
-      final querySnapshot =
-          await _firestore.collection(_collection).get();
+      final querySnapshot = await _firestore.collection(_collection).get();
 
       int totalPassengers = 0;
       int verifiedPassengers = 0;
