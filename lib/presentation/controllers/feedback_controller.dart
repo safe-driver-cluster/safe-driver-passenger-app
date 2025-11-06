@@ -131,6 +131,26 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       debugPrint('✅ FeedbackController: Successfully submitted to Firebase');
 
+      // Send email notification
+      try {
+        final authState = _ref.read(authStateProvider);
+        final userEmail = authState.maybeWhen(
+          authenticated: (user) => user.email,
+          orElse: () => null,
+        );
+
+        if (userEmail != null && userEmail.isNotEmpty) {
+          debugPrint('📧 FeedbackController: Sending email to $userEmail...');
+          await _emailService.sendFeedbackSummary(feedback, userEmail);
+          debugPrint('✅ FeedbackController: Email sent successfully');
+        } else {
+          debugPrint('⚠️ FeedbackController: No user email available for notification');
+        }
+      } catch (emailError) {
+        debugPrint('❌ FeedbackController: Email sending failed: $emailError');
+        // Continue execution - email failure shouldn't stop the feedback submission
+      }
+
       // Add to local state
       _feedbacks.value = [..._feedbacks.value, feedback];
       await _updateStatistics();
