@@ -13,10 +13,12 @@ class FeedbackRepository {
     try {
       debugPrint('🔥 FeedbackRepository: Preparing to submit feedback...');
       debugPrint('📄 FeedbackRepository: Feedback JSON: ${feedback.toJson()}');
-      
-      final docRef = await _firestore.collection(_collection).add(feedback.toJson());
-      
-      debugPrint('✅ FeedbackRepository: Successfully submitted with ID: ${docRef.id}');
+
+      final docRef =
+          await _firestore.collection(_collection).add(feedback.toJson());
+
+      debugPrint(
+          '✅ FeedbackRepository: Successfully submitted with ID: ${docRef.id}');
     } catch (e) {
       debugPrint('❌ FeedbackRepository: Error submitting feedback: $e');
       throw Exception('Failed to submit feedback: $e');
