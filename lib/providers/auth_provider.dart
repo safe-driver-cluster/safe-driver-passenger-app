@@ -1,11 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../data/models/passenger_model.dart';
 import '../data/services/auth_service.dart';
 import '../data/services/passenger_service.dart';
-import '../data/models/passenger_model.dart';
 
 // Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -190,7 +188,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> signIn({
+  // Sign in with email and password
+  Future<AuthResult> signIn({
     required String email,
     required String password,
     bool rememberMe = false,
@@ -199,27 +198,50 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       print('🎯 Starting sign in process for: $email');
       state = state.copyWith(isLoading: true, error: null);
 
-      await _authService.signInWithEmailAndPassword(
+      final userCredential = await _authService.signInWithEmailAndPassword(
         email: email,
         password: password,
         rememberMe: rememberMe,
       );
 
+      // Check if email is verified
+      if (userCredential.user != null && !userCredential.user!.emailVerified) {
+        state = state.copyWith(
+          isLoading: false,
+          currentStep: AuthStep.emailVerification,
+          error: 'Please verify your email address to continue.',
+        );
+        return const AuthResult(
+          success: false,
+          message: 'Email verification required',
+        );
+      }
+
       print('🎉 Sign in successful!');
       state = state.copyWith(
         isLoading: false,
         isRemembered: rememberMe,
+        currentStep: AuthStep.signIn,
+      );
+
+      return AuthResult(
+        success: true,
+        message: 'Sign in successful',
+        user: userCredential.user,
       );
     } catch (e) {
       print('💥 Sign in error in provider: $e');
+      final errorMessage = _getFirebaseErrorMessage(e.toString());
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: errorMessage,
       );
+      return AuthResult(success: false, message: errorMessage);
     }
   }
 
-  Future<void> signUp({
+  // Sign up with email and password
+  Future<AuthResult> signUp({
     required String email,
     required String password,
     required String firstName,
@@ -236,6 +258,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
 
       if (userCredential.user != null) {
+        // Update display name
+        await userCredential.user!.updateDisplayName('$firstName $lastName');
+
+        // Send email verification
+        await sendEmailVerification();
+
         // Create passenger profile
         await _passengerService.createPassengerProfile(
           userId: userCredential.user!.uid,
@@ -244,18 +272,38 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           email: email,
           phoneNumber: phoneNumber,
         );
+
+        state = state.copyWith(
+          isLoading: false,
+          currentStep: AuthStep.emailVerification,
+        );
+
+        return AuthResult(
+          success: true,
+          message: 'Account created successfully. Please verify your email.',
+          user: userCredential.user,
+        );
       }
 
-      state = state.copyWith(isLoading: false);
+      throw Exception('Failed to create user account');
     } catch (e) {
-      // Handle the PigeonUserDetails error gracefully
+      // Handle errors gracefully
+      String errorMessage = _getFirebaseErrorMessage(e.toString());
+
+      // Check if user was actually created despite the error
       if (e.toString().contains('PigeonUserDetails') ||
           e.toString().contains('List<Object?>')) {
-        // Check if user was actually created despite the error
         await Future.delayed(const Duration(seconds: 1));
 
         if (_authService.currentUser != null) {
           try {
+            // Update display name
+            await _authService.currentUser!
+                .updateDisplayName('$firstName $lastName');
+
+            // Send email verification
+            await sendEmailVerification();
+
             // Create passenger profile
             await _passengerService.createPassengerProfile(
               userId: _authService.currentUser!.uid,
@@ -265,10 +313,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
               phoneNumber: phoneNumber,
             );
 
-            state = state.copyWith(isLoading: false);
-            return;
+            state = state.copyWith(
+              isLoading: false,
+              currentStep: AuthStep.emailVerification,
+            );
+
+            return AuthResult(
+              success: true,
+              message:
+                  'Account created successfully. Please verify your email.',
+              user: _authService.currentUser,
+            );
           } catch (profileError) {
             print('Error creating passenger profile: $profileError');
+            errorMessage =
+                'Account created but profile setup failed. Please try again.';
           }
         }
       }
