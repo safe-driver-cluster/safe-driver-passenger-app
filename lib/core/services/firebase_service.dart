@@ -4,10 +4,10 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'crashlytics_service.dart';
