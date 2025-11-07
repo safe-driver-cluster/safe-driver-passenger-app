@@ -252,7 +252,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 children: [
                   // Header Section
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 60, horizontal: 24),
                     child: Column(
                       children: [
                         // Logo with glow effect
@@ -355,7 +356,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         color: Colors.grey[600],
                                       ),
                                       border: InputBorder.none,
-                                      contentPadding: const EdgeInsets.symmetric(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 20,
                                       ),
@@ -368,7 +370,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       if (value == null || value.isEmpty) {
                                         return 'Please enter your email';
                                       }
-                                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                      if (!RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                                           .hasMatch(value)) {
                                         return 'Please enter a valid email';
                                       }
@@ -407,12 +410,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            _obscurePassword = !_obscurePassword;
+                                            _obscurePassword =
+                                                !_obscurePassword;
                                           });
                                         },
                                       ),
                                       border: InputBorder.none,
-                                      contentPadding: const EdgeInsets.symmetric(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 20,
                                       ),
@@ -487,7 +492,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF2563EB).withOpacity(0.3),
+                                        color: const Color(0xFF2563EB)
+                                            .withOpacity(0.3),
                                         blurRadius: 12,
                                         offset: const Offset(0, 4),
                                       ),
@@ -508,8 +514,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             width: 24,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2.5,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
                                             ),
                                           )
                                         : const Text(
@@ -535,7 +542,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
                                       child: Text(
                                         'OR',
                                         style: TextStyle(
@@ -612,7 +620,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       onPressed: () {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) => const RegisterPage()),
+                                              builder: (context) =>
+                                                  const RegisterPage()),
                                         );
                                       },
                                       child: const Text(
