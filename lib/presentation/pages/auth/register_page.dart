@@ -60,7 +60,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (result.success) {
         HapticFeedback.mediumImpact();
         _showSuccessSnackBar(result.message ?? 'Account created successfully!');
-        
+
         // Show email verification dialog
         _showEmailVerificationDialog();
       } else {
