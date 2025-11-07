@@ -218,22 +218,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     // Listen for auth state changes and navigate accordingly
     ref.listen(authStateProvider, (previous, next) {
-      if (next.user != null && mounted) {
+      if (next.isAuthenticated && mounted) {
         Navigator.pushReplacementNamed(context, '/dashboard');
-      } else if (next.error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'Dismiss',
-              textColor: Colors.white,
-              onPressed: () {
-                ref.read(authStateProvider.notifier).clearError();
-              },
-            ),
-          ),
-        );
+      } else if (next.error != null && mounted && next.currentStep != AuthStep.emailVerification) {
+        _showErrorSnackBar(next.error!);
+        ref.read(authStateProvider.notifier).clearError();
       }
     });
 
