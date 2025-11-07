@@ -374,14 +374,15 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         } catch (profileError) {
           // Handle profile creation error gracefully
           print('Error with passenger profile: $profileError');
-          
+
           // Check if it's the PigeonUserInfo error - if so, continue anyway
           if (profileError.toString().contains('PigeonUserInfo') ||
               profileError.toString().contains('List<Object?>')) {
             print('Ignoring PigeonUserInfo error - Google sign in successful');
           } else {
             // For other errors, still allow sign in but log the error
-            print('Profile creation failed but allowing sign in: $profileError');
+            print(
+                'Profile creation failed but allowing sign in: $profileError');
           }
         }
 
@@ -390,7 +391,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         return AuthResult(
           success: true,
           message: 'Google sign in successful',
-          user: userCredential.user,
+          user: userCredential!.user,
         );
       }
 
@@ -400,11 +401,13 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       String errorMessage;
       if (e.toString().contains('PigeonUserInfo') ||
           e.toString().contains('List<Object?>')) {
-        errorMessage = 'Google Sign In completed but with minor issues. Please try signing in again.';
+        errorMessage =
+            'Google Sign In completed but with minor issues. Please try signing in again.';
       } else if (e.toString().contains('sign_in_canceled')) {
         errorMessage = 'Google Sign In was canceled';
       } else if (e.toString().contains('network_error')) {
-        errorMessage = 'Network error during Google Sign In. Please check your connection.';
+        errorMessage =
+            'Network error during Google Sign In. Please check your connection.';
       } else {
         errorMessage = _getFirebaseErrorMessage(e.toString());
       }
