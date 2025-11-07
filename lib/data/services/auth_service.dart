@@ -9,6 +9,9 @@ class AuthService {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final StorageService _storage = StorageService.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
 
   bool _initialized = false;
 
@@ -238,5 +241,44 @@ class AuthService {
   /// Reload user to get updated verification status
   Future<void> reloadUser() async {
     await _firebaseAuth.currentUser?.reload();
+  }
+
+  /// Sign in with Google
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        throw Exception('Google sign in was cancelled');
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      return userCredential;
+    } catch (e) {
+      throw _handleAuthError(e);
+    }
+  }
+
+  /// Sign out from Google
+  Future<void> signOutGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+    } catch (e) {
+      print('Google sign out failed: $e');
+    }
   }
 }
