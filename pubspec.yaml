@@ -52,6 +52,7 @@ dependencies:
   firebase_messaging: ^14.7.10
   firebase_analytics: ^10.7.4
   firebase_crashlytics: ^3.4.9
+  firebase_app_check: ^0.2.1+18
   google_sign_in: ^6.2.1
 
   # Location & Maps
