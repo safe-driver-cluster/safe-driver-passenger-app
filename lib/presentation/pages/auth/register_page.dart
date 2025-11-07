@@ -72,7 +72,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Future<void> _googleSignUp() async {
     HapticFeedback.lightImpact();
-    
+
     final authNotifier = ref.read(authStateProvider.notifier);
     final result = await authNotifier.signInWithGoogle();
 
@@ -113,9 +113,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           ),
           ElevatedButton(
             onPressed: () async {
-              final result = await ref.read(authStateProvider.notifier).sendEmailVerification();
+              final result = await ref
+                  .read(authStateProvider.notifier)
+                  .sendEmailVerification();
               if (mounted) {
-                _showSuccessSnackBar(result.message ?? 'Verification email sent');
+                _showSuccessSnackBar(
+                    result.message ?? 'Verification email sent');
               }
             },
             child: const Text('Resend'),
@@ -233,22 +236,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     // Listen for auth state changes and navigate accordingly
     ref.listen(authStateProvider, (previous, next) {
-      if (next.user != null && mounted) {
+      if (next.isAuthenticated && mounted) {
         Navigator.pushReplacementNamed(context, '/dashboard');
-      } else if (next.error != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'Dismiss',
-              textColor: Colors.white,
-              onPressed: () {
-                ref.read(authStateProvider.notifier).clearError();
-              },
-            ),
-          ),
-        );
+      } else if (next.error != null &&
+          mounted &&
+          next.currentStep != AuthStep.emailVerification) {
+        _showErrorSnackBar(next.error!);
+        ref.read(authStateProvider.notifier).clearError();
       }
     });
 
