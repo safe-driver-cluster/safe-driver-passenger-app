@@ -334,46 +334,196 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: _getFirebaseErrorMessage(e.toString()),
+      );
+      
+      return AuthResult(
+        success: false,
+        message: _getFirebaseErrorMessage(e.toString()),
       );
     }
   }
 
+  // Google Sign In
+  Future<AuthResult> signInWithGoogle() async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+
+      final userCredential = await _authService.signInWithGoogle();
+      
+      if (userCredential?.user != null) {
+        // Create or update passenger profile for Google users
+        final existingProfile = await _passengerService.getPassengerProfile(userCredential!.user!.uid);
+        
+        if (existingProfile == null) {
+          // Create new profile with Google account data
+          final names = userCredential.user!.displayName?.split(' ') ?? ['', ''];
+          await _passengerService.createPassengerProfile(
+            userId: userCredential.user!.uid,
+            firstName: names.first,
+            lastName: names.length > 1 ? names.last : '',
+            email: userCredential.user!.email ?? '',
+            phoneNumber: userCredential.user!.phoneNumber ?? '',
+          );
+        }
+        
+        state = state.copyWith(isLoading: false);
+        
+        return AuthResult(
+          success: true,
+          message: 'Google sign in successful',
+          user: userCredential.user,
+        );
+      }
+      
+      throw Exception('Google sign in failed');
+    } catch (e) {
+      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return AuthResult(success: false, message: errorMessage);
+    }
+  }
+
+  // Send email verification
+  Future<AuthResult> sendEmailVerification() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+        return const AuthResult(
+          success: true,
+          message: 'Verification email sent successfully',
+        );
+      }
+      return const AuthResult(
+        success: false,
+        message: 'No user found or email already verified',
+      );
+    } catch (e) {
+      return AuthResult(
+        success: false,
+        message: _getFirebaseErrorMessage(e.toString()),
+      );
+    }
+  }
+
+  // Check email verification status
+  Future<void> checkEmailVerification() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.reload();
+        final updatedUser = FirebaseAuth.instance.currentUser;
+        if (updatedUser != null && updatedUser.emailVerified) {
+          state = state.copyWith(
+            isEmailVerified: true,
+            currentStep: AuthStep.signIn,
+          );
+        }
+      }
+    } catch (e) {
+      print('Error checking email verification: $e');
+    }
+  }
+
+  // Send password reset email
+  Future<AuthResult> sendPasswordResetEmail(String email) async {
+    try {
+      state = state.copyWith(isLoading: true, error: null);
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      state = state.copyWith(isLoading: false);
+      
+      return const AuthResult(
+        success: true,
+        message: 'Password reset email sent successfully',
+      );
+    } catch (e) {
+      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return AuthResult(success: false, message: errorMessage);
+    }
+  }
+
+  // Sign out
   Future<void> signOut() async {
     try {
       state = state.copyWith(isLoading: true);
       await _authService.signOut();
       state = state.copyWith(
         user: null,
+        passengerProfile: null,
         isLoading: false,
         isRemembered: false,
+        isEmailVerified: false,
+        currentStep: AuthStep.signIn,
       );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: _getFirebaseErrorMessage(e.toString()),
       );
     }
   }
 
+  // Reset password (deprecated - use sendPasswordResetEmail instead)
   Future<void> resetPassword(String email) async {
-    try {
-      state = state.copyWith(isLoading: true, error: null);
-      await _authService.resetPassword(email);
-      state = state.copyWith(isLoading: false);
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
-    }
+    await sendPasswordResetEmail(email);
   }
 
+  // Get saved email
   Future<String?> getSavedEmail() async {
     return await _authService.getSavedEmail();
   }
 
+  // Clear error
   void clearError() {
     state = state.copyWith(error: null);
+  }
+
+  // Set current auth step
+  void setAuthStep(AuthStep step) {
+    state = state.copyWith(currentStep: step);
+  }
+
+  // Get Firebase error message
+  String _getFirebaseErrorMessage(String error) {
+    if (error.contains('user-not-found')) {
+      return 'No account found with this email address.';
+    } else if (error.contains('wrong-password')) {
+      return 'Incorrect password. Please try again.';
+    } else if (error.contains('email-already-in-use')) {
+      return 'An account already exists with this email address.';
+    } else if (error.contains('weak-password')) {
+      return 'Password is too weak. Please use a stronger password.';
+    } else if (error.contains('invalid-email')) {
+      return 'Invalid email address format.';
+    } else if (error.contains('user-disabled')) {
+      return 'This account has been disabled. Please contact support.';
+    } else if (error.contains('too-many-requests')) {
+      return 'Too many failed attempts. Please try again later.';
+    } else if (error.contains('network-request-failed')) {
+      return 'Network error. Please check your internet connection.';
+    } else if (error.contains('operation-not-allowed')) {
+      return 'This sign-in method is not enabled. Please contact support.';
+    } else if (error.contains('invalid-credential')) {
+      return 'Invalid credentials. Please check your email and password.';
+    } else if (error.contains('account-exists-with-different-credential')) {
+      return 'An account already exists with the same email but different sign-in credentials.';
+    } else if (error.contains('requires-recent-login')) {
+      return 'This operation requires recent authentication. Please sign in again.';
+    }
+    
+    // Clean up generic error messages
+    if (error.contains('Exception:')) {
+      return error.split('Exception:').last.trim();
+    }
+    
+    return 'An unexpected error occurred. Please try again.';
   }
 }
