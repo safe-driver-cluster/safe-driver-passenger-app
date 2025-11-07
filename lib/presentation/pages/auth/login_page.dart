@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import 'register_page.dart';
-import 'forgot_password_page.dart';
 import 'email_verification_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -66,12 +64,34 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     print(
         '✅ Form validated, attempting login with email: ${_emailController.text.trim()}');
 
+    // Add haptic feedback
+    HapticFeedback.lightImpact();
+
     final authNotifier = ref.read(authStateProvider.notifier);
-    await authNotifier.signIn(
+    final result = await authNotifier.signIn(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
       rememberMe: _rememberMe,
     );
+
+    if (mounted) {
+      if (result.success) {
+        // Success feedback
+        HapticFeedback.mediumImpact();
+
+        // Navigate based on auth state
+        final authState = ref.read(authStateProvider);
+        if (authState.currentStep == AuthStep.emailVerification) {
+          _showEmailVerificationDialog();
+        } else {
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        }
+      } else {
+        // Error feedback
+        HapticFeedback.heavyImpact();
+        _showErrorSnackBar(result.message ?? 'Login failed');
+      }
+    }
   }
 
   Future<void> _googleSignIn() async {
