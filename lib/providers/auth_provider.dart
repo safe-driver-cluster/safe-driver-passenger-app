@@ -336,7 +336,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isLoading: false,
         error: _getFirebaseErrorMessage(e.toString()),
       );
-      
+
       return AuthResult(
         success: false,
         message: _getFirebaseErrorMessage(e.toString()),
@@ -350,14 +350,16 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(isLoading: true, error: null);
 
       final userCredential = await _authService.signInWithGoogle();
-      
+
       if (userCredential?.user != null) {
         // Create or update passenger profile for Google users
-        final existingProfile = await _passengerService.getPassengerProfile(userCredential!.user!.uid);
-        
+        final existingProfile = await _passengerService
+            .getPassengerProfile(userCredential!.user!.uid);
+
         if (existingProfile == null) {
           // Create new profile with Google account data
-          final names = userCredential.user!.displayName?.split(' ') ?? ['', ''];
+          final names =
+              userCredential.user!.displayName?.split(' ') ?? ['', ''];
           await _passengerService.createPassengerProfile(
             userId: userCredential.user!.uid,
             firstName: names.first,
@@ -366,16 +368,16 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
             phoneNumber: userCredential.user!.phoneNumber ?? '',
           );
         }
-        
+
         state = state.copyWith(isLoading: false);
-        
+
         return AuthResult(
           success: true,
           message: 'Google sign in successful',
           user: userCredential.user,
         );
       }
-      
+
       throw Exception('Google sign in failed');
     } catch (e) {
       final errorMessage = _getFirebaseErrorMessage(e.toString());
@@ -435,7 +437,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(isLoading: true, error: null);
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       state = state.copyWith(isLoading: false);
-      
+
       return const AuthResult(
         success: true,
         message: 'Password reset email sent successfully',
@@ -518,12 +520,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     } else if (error.contains('requires-recent-login')) {
       return 'This operation requires recent authentication. Please sign in again.';
     }
-    
+
     // Clean up generic error messages
     if (error.contains('Exception:')) {
       return error.split('Exception:').last.trim();
     }
-    
+
     return 'An unexpected error occurred. Please try again.';
   }
 }
