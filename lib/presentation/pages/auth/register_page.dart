@@ -71,11 +71,95 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Future<void> _googleSignUp() async {
-    // TODO: Implement Google Sign-Up
+    HapticFeedback.lightImpact();
+    
+    final authNotifier = ref.read(authStateProvider.notifier);
+    final result = await authNotifier.signInWithGoogle();
+
+    if (mounted) {
+      if (result.success) {
+        HapticFeedback.mediumImpact();
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        HapticFeedback.heavyImpact();
+        _showErrorSnackBar(result.message ?? 'Google Sign-Up failed');
+      }
+    }
+  }
+
+  void _showEmailVerificationDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
+            SizedBox(width: 12),
+            Text('Verify Email'),
+          ],
+        ),
+        content: const Text(
+          'We\'ve sent a verification email to your address. Please check your inbox and click the verification link to activate your account.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context); // Go back to login
+            },
+            child: const Text('OK'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final result = await ref.read(authStateProvider.notifier).sendEmailVerification();
+              if (mounted) {
+                _showSuccessSnackBar(result.message ?? 'Verification email sent');
+              }
+            },
+            child: const Text('Resend'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Google Sign-Up coming soon!'),
-        backgroundColor: Colors.orange,
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          textColor: Colors.white,
+          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.green.shade600,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
