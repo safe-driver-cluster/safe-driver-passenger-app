@@ -713,7 +713,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             ),
           ),
         ),
-      ),
+  }
+  ),
+  
+  ),
+
     );
   }
 }
