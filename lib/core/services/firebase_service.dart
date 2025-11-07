@@ -49,9 +49,12 @@ class FirebaseService {
       // Initialize Firebase Core (already done in main.dart)
       // await Firebase.initializeApp();
 
-      // Initialize Firebase App Check
+      // Initialize Firebase App Check with debug providers
+      // Note: In production, replace with proper providers:
+      // - webProvider: ReCaptchaV3Provider('your-recaptcha-site-key')
+      // - androidProvider: AndroidProvider.playIntegrity
+      // - appleProvider: AppleProvider.appAttest
       await FirebaseAppCheck.instance.activate(
-        webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
         androidProvider: AndroidProvider.debug,
         appleProvider: AppleProvider.debug,
       );
@@ -190,9 +193,20 @@ class FirebaseService {
         throw FirebaseException('Google sign-in was cancelled');
       }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      // Obtain the auth details from the request with robust error handling
+      GoogleSignInAuthentication? googleAuth;
+      try {
+        googleAuth = await googleUser.authentication;
+      } catch (e) {
+        // Handle PigeonUserInfo casting errors and other Google Sign-In issues
+        print('Google authentication error (possibly PigeonUserInfo issue): $e');
+        throw FirebaseException('Google authentication failed. Please try again or use email login.');
+      }
+
+      // Validate tokens
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        throw FirebaseException('Google sign-in tokens are missing');
+      }
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -207,7 +221,16 @@ class FirebaseService {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
+    } on TypeError catch (e) {
+      // Handle type casting errors like PigeonUserInfo issues
+      print('Type error in Google sign-in (PigeonUserInfo casting): $e');
+      throw FirebaseException('Google sign-in compatibility issue. Please try email login instead.');
     } catch (e) {
+      // Catch any other errors including PigeonUserInfo casting
+      print('Unexpected Google sign-in error: $e');
+      if (e.toString().contains('PigeonUserInfo') || e.toString().contains('List<Object?>')) {
+        throw FirebaseException('Google sign-in data format issue. Please use email login instead.');
+      }
       throw FirebaseException('Google sign-in failed: $e');
     }
   }
