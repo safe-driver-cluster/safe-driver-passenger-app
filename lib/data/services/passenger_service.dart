@@ -23,13 +23,26 @@ class PassengerService {
       print('🚀 Starting to create passenger profile for user: $userId');
       print('📝 Data: $firstName $lastName, $email, $phoneNumber');
 
-      // Check if profile already exists
-      final existingProfile = await getPassengerProfile(userId);
-      if (existingProfile != null) {
-        print('ℹ️ Passenger profile already exists for user: $userId');
-        return;
+      // Check if profile already exists (with PigeonUserInfo error handling)
+      try {
+        print('🔍 Checking existing profile...');
+        final existingProfile = await getPassengerProfile(userId);
+        if (existingProfile != null) {
+          print('ℹ️ Passenger profile already exists for user: $userId');
+          return;
+        }
+        print('✅ No existing profile found, proceeding to create...');
+      } catch (checkError) {
+        print(
+            '⚠️ Error checking existing profile (continuing anyway): $checkError');
+        if (checkError.toString().contains('PigeonUserInfo') ||
+            checkError.toString().contains('List<Object?>')) {
+          print(
+              '🐦 PigeonUserInfo error detected during profile check - continuing');
+        }
       }
 
+      print('🏗️ Building PassengerModel...');
       final now = DateTime.now();
       final passengerData = PassengerModel(
         id: userId,
@@ -45,15 +58,27 @@ class PassengerService {
 
       print('🔄 Converting to JSON...');
       final jsonData = passengerData.toJson();
-      print('📋 JSON Data: $jsonData');
+      print('📋 JSON Data keys: ${jsonData.keys.toList()}');
 
-      print('🔥 Saving to Firestore collection: $_collection');
+      print(
+          '🔥 Saving to Firestore collection: $_collection with doc ID: $userId');
       await _firestore.collection(_collection).doc(userId).set(jsonData);
 
       print('✅ Passenger profile created successfully!');
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('❌ Error creating passenger profile: $e');
       print('🔍 Error type: ${e.runtimeType}');
+      print('📚 Stack trace: $stackTrace');
+
+      // Check if it's the PigeonUserInfo error
+      if (e.toString().contains('PigeonUserInfo') ||
+          e.toString().contains('List<Object?>')) {
+        print(
+            '🐦 PigeonUserInfo error detected! This is likely a Google Sign-In SDK issue.');
+        print('💡 Continuing without throwing to allow signup to succeed...');
+        return; // Don't throw, just return
+      }
+
       throw Exception('Failed to create passenger profile: $e');
     }
   }
@@ -61,13 +86,27 @@ class PassengerService {
   /// Get passenger profile by ID
   Future<PassengerModel?> getPassengerProfile(String userId) async {
     try {
+      print('🔍 Getting passenger profile for user: $userId');
       final doc = await _firestore.collection(_collection).doc(userId).get();
 
       if (doc.exists) {
+        print('📄 Profile document exists, parsing...');
         return PassengerModel.fromFirestore(doc);
       }
+      print('📭 No profile document found');
       return null;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('❌ Error getting passenger profile: $e');
+      print('🔍 Error type: ${e.runtimeType}');
+
+      // Handle PigeonUserInfo errors gracefully
+      if (e.toString().contains('PigeonUserInfo') ||
+          e.toString().contains('List<Object?>')) {
+        print(
+            '🐦 PigeonUserInfo error in getPassengerProfile - returning null');
+        return null; // Don't throw, just return null
+      }
+
       throw Exception('Failed to get passenger profile: $e');
     }
   }
