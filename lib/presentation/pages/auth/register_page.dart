@@ -36,25 +36,37 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   }
 
   Future<void> _signUp() async {
-    if (_formKey.currentState!.validate()) {
-      if (!_acceptTerms) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please accept the terms and conditions'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-      final authNotifier = ref.read(authStateProvider.notifier);
-      await authNotifier.signUp(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        phoneNumber: _phoneController.text.trim(),
-      );
+    if (!_acceptTerms) {
+      _showErrorSnackBar('Please accept the terms and conditions');
+      return;
+    }
+
+    HapticFeedback.lightImpact();
+
+    final authNotifier = ref.read(authStateProvider.notifier);
+    final result = await authNotifier.signUp(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      phoneNumber: _phoneController.text.trim(),
+    );
+
+    if (mounted) {
+      if (result.success) {
+        HapticFeedback.mediumImpact();
+        _showSuccessSnackBar(result.message ?? 'Account created successfully!');
+        
+        // Show email verification dialog
+        _showEmailVerificationDialog();
+      } else {
+        HapticFeedback.heavyImpact();
+        _showErrorSnackBar(result.message ?? 'Registration failed');
+      }
     }
   }
 
