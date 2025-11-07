@@ -96,7 +96,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _googleSignIn() async {
     HapticFeedback.lightImpact();
-    
+
     final authNotifier = ref.read(authStateProvider.notifier);
     final result = await authNotifier.signInWithGoogle();
 
