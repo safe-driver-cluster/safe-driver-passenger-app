@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../data/services/auth_service.dart';
 import '../data/services/passenger_service.dart';
+import '../data/models/passenger_model.dart';
 
 // Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -22,30 +25,66 @@ final authStateProvider =
 // Auth state model
 class AuthState {
   final User? user;
+  final PassengerModel? passengerProfile;
   final bool isLoading;
   final String? error;
   final bool isRemembered;
+  final bool isEmailVerified;
+  final AuthStep currentStep;
 
   const AuthState({
     this.user,
+    this.passengerProfile,
     this.isLoading = false,
     this.error,
     this.isRemembered = false,
+    this.isEmailVerified = false,
+    this.currentStep = AuthStep.signIn,
   });
 
   AuthState copyWith({
     User? user,
+    PassengerModel? passengerProfile,
     bool? isLoading,
     String? error,
     bool? isRemembered,
+    bool? isEmailVerified,
+    AuthStep? currentStep,
   }) {
     return AuthState(
       user: user ?? this.user,
+      passengerProfile: passengerProfile ?? this.passengerProfile,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       isRemembered: isRemembered ?? this.isRemembered,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+      currentStep: currentStep ?? this.currentStep,
     );
   }
+
+  bool get isAuthenticated => user != null && isEmailVerified;
+}
+
+// Auth steps enum
+enum AuthStep {
+  signIn,
+  signUp,
+  emailVerification,
+  forgotPassword,
+  resetPassword,
+}
+
+// Authentication result model
+class AuthResult {
+  final bool success;
+  final String? message;
+  final User? user;
+
+  const AuthResult({
+    required this.success,
+    this.message,
+    this.user,
+  });
 }
 
 // Auth state notifier
@@ -66,7 +105,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     _ref.listen(firebaseUserProvider, (previous, next) {
       next.when(
         data: (user) {
-          state = state.copyWith(user: user, isLoading: false, error: null);
+          _handleUserChange(user);
         },
         loading: () {
           state = state.copyWith(isLoading: true, error: null);
@@ -74,8 +113,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         error: (error, stackTrace) {
           state = state.copyWith(
             isLoading: false,
-            error: error.toString(),
+            error: 'Authentication error: ${error.toString()}',
             user: null,
+            passengerProfile: null,
           );
         },
       );
@@ -83,6 +123,37 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     // Check for auto-login on initialization
     _checkAutoLogin();
+  }
+
+  Future<void> _handleUserChange(User? user) async {
+    if (user != null) {
+      try {
+        // Load passenger profile
+        final profile = await _passengerService.getPassengerProfile(user.uid);
+        state = state.copyWith(
+          user: user,
+          passengerProfile: profile,
+          isLoading: false,
+          error: null,
+          isEmailVerified: user.emailVerified,
+        );
+      } catch (e) {
+        print('Error loading passenger profile: $e');
+        state = state.copyWith(
+          user: user,
+          isLoading: false,
+          isEmailVerified: user.emailVerified,
+        );
+      }
+    } else {
+      state = state.copyWith(
+        user: null,
+        passengerProfile: null,
+        isLoading: false,
+        error: null,
+        isEmailVerified: false,
+      );
+    }
   }
 
   Future<void> _checkAutoLogin() async {
