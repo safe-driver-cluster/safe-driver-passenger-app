@@ -354,21 +354,35 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final userCredential = await firebaseService.signInWithGoogle();
 
       if (userCredential?.user != null) {
-        // Create or update passenger profile for Google users
-        final existingProfile = await _passengerService
-            .getPassengerProfile(userCredential!.user!.uid);
+        // Create or update passenger profile for Google users with error handling
+        try {
+          final existingProfile = await _passengerService
+              .getPassengerProfile(userCredential!.user!.uid);
 
-        if (existingProfile == null) {
-          // Create new profile with Google account data
-          final names =
-              userCredential.user!.displayName?.split(' ') ?? ['', ''];
-          await _passengerService.createPassengerProfile(
-            userId: userCredential.user!.uid,
-            firstName: names.first,
-            lastName: names.length > 1 ? names.last : '',
-            email: userCredential.user!.email ?? '',
-            phoneNumber: userCredential.user!.phoneNumber ?? '',
-          );
+          if (existingProfile == null) {
+            // Create new profile with Google account data
+            final names =
+                userCredential.user!.displayName?.split(' ') ?? ['', ''];
+            await _passengerService.createPassengerProfile(
+              userId: userCredential.user!.uid,
+              firstName: names.first,
+              lastName: names.length > 1 ? names.last : '',
+              email: userCredential.user!.email ?? '',
+              phoneNumber: userCredential.user!.phoneNumber ?? '',
+            );
+          }
+        } catch (profileError) {
+          // Handle profile creation error gracefully
+          print('Error with passenger profile: $profileError');
+          
+          // Check if it's the PigeonUserInfo error - if so, continue anyway
+          if (profileError.toString().contains('PigeonUserInfo') ||
+              profileError.toString().contains('List<Object?>')) {
+            print('Ignoring PigeonUserInfo error - Google sign in successful');
+          } else {
+            // For other errors, still allow sign in but log the error
+            print('Profile creation failed but allowing sign in: $profileError');
+          }
         }
 
         state = state.copyWith(isLoading: false);
@@ -380,9 +394,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         );
       }
 
-      throw Exception('Google sign in failed');
+      throw Exception('Google sign in failed - no user returned');
     } catch (e) {
-      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      // Handle Google Sign In specific errors
+      String errorMessage;
+      if (e.toString().contains('PigeonUserInfo') ||
+          e.toString().contains('List<Object?>')) {
+        errorMessage = 'Google Sign In completed but with minor issues. Please try signing in again.';
+      } else if (e.toString().contains('sign_in_canceled')) {
+        errorMessage = 'Google Sign In was canceled';
+      } else if (e.toString().contains('network_error')) {
+        errorMessage = 'Network error during Google Sign In. Please check your connection.';
+      } else {
+        errorMessage = _getFirebaseErrorMessage(e.toString());
+      }
+
       state = state.copyWith(
         isLoading: false,
         error: errorMessage,
