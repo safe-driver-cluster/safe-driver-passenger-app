@@ -9,9 +9,6 @@ class AuthService {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final StorageService _storage = StorageService.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
 
   bool _initialized = false;
 
