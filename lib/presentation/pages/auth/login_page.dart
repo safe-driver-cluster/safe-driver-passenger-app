@@ -220,7 +220,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.listen(authStateProvider, (previous, next) {
       if (next.isAuthenticated && mounted) {
         Navigator.pushReplacementNamed(context, '/dashboard');
-      } else if (next.error != null && mounted && next.currentStep != AuthStep.emailVerification) {
+      } else if (next.error != null &&
+          mounted &&
+          next.currentStep != AuthStep.emailVerification) {
         _showErrorSnackBar(next.error!);
         ref.read(authStateProvider.notifier).clearError();
       }
