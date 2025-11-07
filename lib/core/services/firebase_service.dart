@@ -4,10 +4,12 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import 'crashlytics_service.dart';
 
 class FirebaseService {
@@ -46,6 +48,13 @@ class FirebaseService {
     try {
       // Initialize Firebase Core (already done in main.dart)
       // await Firebase.initializeApp();
+
+      // Initialize Firebase App Check
+      await FirebaseAppCheck.instance.activate(
+        webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+        androidProvider: AndroidProvider.debug,
+        appleProvider: AppleProvider.debug,
+      );
 
       // Initialize services
       _auth = FirebaseAuth.instance;
