@@ -709,14 +709,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
 
                 const SizedBox(height: 40),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
-  }
-  ),
-  
-  ),
+      ),
+    );
 
     );
   }
