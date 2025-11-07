@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/passenger_model.dart';
 import '../data/services/auth_service.dart';
 import '../data/services/passenger_service.dart';
+import '../core/services/firebase_service.dart';
 
 // Auth service provider
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
@@ -349,7 +350,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      final userCredential = await _authService.signInWithGoogle();
+      final firebaseService = FirebaseService.instance;
+      final userCredential = await firebaseService.signInWithGoogle();
 
       if (userCredential?.user != null) {
         // Create or update passenger profile for Google users
