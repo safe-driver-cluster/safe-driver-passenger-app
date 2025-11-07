@@ -161,7 +161,7 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      throw FirebaseException('Sign in failed: $e');
+      throw Exception('Sign in failed: $e');
     }
   }
 
@@ -179,7 +179,7 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      throw FirebaseException('Account creation failed: $e');
+      throw Exception('Account creation failed: $e');
     }
   }
 
@@ -190,7 +190,7 @@ class FirebaseService {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        throw FirebaseException('Google sign-in was cancelled');
+        throw Exception('Google sign-in was cancelled');
       }
 
       // Obtain the auth details from the request with robust error handling
@@ -201,13 +201,13 @@ class FirebaseService {
         // Handle PigeonUserInfo casting errors and other Google Sign-In issues
         print(
             'Google authentication error (possibly PigeonUserInfo issue): $e');
-        throw FirebaseException(
+        throw Exception(
             'Google authentication failed. Please try again or use email login.');
       }
 
       // Validate tokens
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        throw FirebaseException('Google sign-in tokens are missing');
+        throw Exception('Google sign-in tokens are missing');
       }
 
       // Create a new credential
@@ -222,21 +222,21 @@ class FirebaseService {
       await _analytics.logLogin(loginMethod: 'google');
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      throw _handleAuthException(e);
+      throw Exception('Google sign-in failed: ${e.message}');
     } on TypeError catch (e) {
       // Handle type casting errors like PigeonUserInfo issues
       print('Type error in Google sign-in (PigeonUserInfo casting): $e');
-      throw FirebaseException(
+      throw Exception(
           'Google sign-in compatibility issue. Please try email login instead.');
     } catch (e) {
       // Catch any other errors including PigeonUserInfo casting
       print('Unexpected Google sign-in error: $e');
       if (e.toString().contains('PigeonUserInfo') ||
           e.toString().contains('List<Object?>')) {
-        throw FirebaseException(
+        throw Exception(
             'Google sign-in data format issue. Please use email login instead.');
       }
-      throw FirebaseException('Google sign-in failed: $e');
+      throw Exception('Google sign-in failed: $e');
     }
   }
 
@@ -256,7 +256,7 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      throw FirebaseException('Password reset failed: $e');
+      throw Exception('Password reset failed: $e');
     }
   }
 
@@ -271,7 +271,7 @@ class FirebaseService {
       await _auth.signOut();
       await _analytics.logEvent(name: 'logout');
     } catch (e) {
-      throw FirebaseException('Sign out failed: $e');
+      throw Exception('Sign out failed: $e');
     }
   }
 
@@ -291,7 +291,7 @@ class FirebaseService {
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      throw FirebaseException('Account deletion failed: $e');
+      throw Exception('Account deletion failed: $e');
     }
   }
 
@@ -310,7 +310,7 @@ class FirebaseService {
         SetOptions(merge: true),
       );
     } catch (e) {
-      throw FirebaseException('Failed to create user document: $e');
+      throw Exception('Failed to create user document: $e');
     }
   }
 
@@ -319,7 +319,7 @@ class FirebaseService {
     try {
       return await _firestore.collection('users').doc(uid).get();
     } catch (e) {
-      throw FirebaseException('Failed to get user document: $e');
+      throw Exception('Failed to get user document: $e');
     }
   }
 
@@ -331,7 +331,7 @@ class FirebaseService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      throw FirebaseException('Failed to update user document: $e');
+      throw Exception('Failed to update user document: $e');
     }
   }
 
@@ -355,7 +355,7 @@ class FirebaseService {
 
       await batch.commit();
     } catch (e) {
-      throw FirebaseException('Failed to delete user data: $e');
+      throw Exception('Failed to delete user data: $e');
     }
   }
 
@@ -380,7 +380,7 @@ class FirebaseService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      throw FirebaseException('Failed to add document: $e');
+      throw Exception('Failed to add document: $e');
     }
   }
 
@@ -393,7 +393,7 @@ class FirebaseService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      throw FirebaseException('Failed to update document: $e');
+      throw Exception('Failed to update document: $e');
     }
   }
 
@@ -402,7 +402,7 @@ class FirebaseService {
     try {
       await _firestore.collection(collection).doc(documentId).delete();
     } catch (e) {
-      throw FirebaseException('Failed to delete document: $e');
+      throw Exception('Failed to delete document: $e');
     }
   }
 
@@ -421,7 +421,7 @@ class FirebaseService {
 
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
-      throw FirebaseException('File upload failed: $e');
+      throw Exception('File upload failed: $e');
     }
   }
 
@@ -435,7 +435,7 @@ class FirebaseService {
 
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
-      throw FirebaseException('Bytes upload failed: $e');
+      throw Exception('Bytes upload failed: $e');
     }
   }
 
@@ -445,7 +445,7 @@ class FirebaseService {
       final reference = _storage.refFromURL(downloadUrl);
       await reference.delete();
     } catch (e) {
-      throw FirebaseException('File deletion failed: $e');
+      throw Exception('File deletion failed: $e');
     }
   }
 
@@ -511,26 +511,26 @@ class FirebaseService {
   // Helper Methods
 
   /// Handle Firebase Auth exceptions
-  FirebaseException _handleAuthException(FirebaseAuthException e) {
+  Exception _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return FirebaseException('No user found for this email.');
+        return Exception('No user found for this email.');
       case 'wrong-password':
-        return FirebaseException('Wrong password provided.');
+        return Exception('Wrong password provided.');
       case 'email-already-in-use':
-        return FirebaseException('Account already exists for this email.');
+        return Exception('Account already exists for this email.');
       case 'weak-password':
-        return FirebaseException('Password is too weak.');
+        return Exception('Password is too weak.');
       case 'invalid-email':
-        return FirebaseException('Email address is invalid.');
+        return Exception('Email address is invalid.');
       case 'user-disabled':
-        return FirebaseException('User account has been disabled.');
+        return Exception('User account has been disabled.');
       case 'too-many-requests':
-        return FirebaseException('Too many requests. Please try again later.');
+        return Exception('Too many requests. Please try again later.');
       case 'requires-recent-login':
-        return FirebaseException('Please log in again to perform this action.');
+        return Exception('Please log in again to perform this action.');
       default:
-        return FirebaseException('Authentication failed: ${e.message}');
+        return Exception('Authentication failed: ${e.message}');
     }
   }
 
@@ -569,11 +569,4 @@ class FirebaseService {
   }
 }
 
-// Custom exceptions
-class FirebaseException implements Exception {
-  final String message;
-  FirebaseException(this.message);
-
-  @override
-  String toString() => 'FirebaseException: $message';
-}
+// Note: Using built-in Exception class for error handling
