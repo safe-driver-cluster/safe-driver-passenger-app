@@ -95,13 +95,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _googleSignIn() async {
-    // TODO: Implement Google Sign-In
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Google Sign-In coming soon!'),
-        backgroundColor: Colors.orange,
-      ),
-    );
+    HapticFeedback.lightImpact();
+    
+    final authNotifier = ref.read(authStateProvider.notifier);
+    final result = await authNotifier.signInWithGoogle();
+
+    if (mounted) {
+      if (result.success) {
+        HapticFeedback.mediumImpact();
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        HapticFeedback.heavyImpact();
+        _showErrorSnackBar(result.message ?? 'Google Sign-In failed');
+      }
+    }
   }
 
   Future<void> _forgotPassword() async {
