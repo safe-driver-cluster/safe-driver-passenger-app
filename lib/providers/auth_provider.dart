@@ -265,14 +265,20 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         // Send email verification
         await sendEmailVerification();
 
-        // Create passenger profile
-        await _passengerService.createPassengerProfile(
-          userId: userCredential.user!.uid,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phoneNumber: phoneNumber,
-        );
+        // Create passenger profile with error handling
+        try {
+          await _passengerService.createPassengerProfile(
+            userId: userCredential.user!.uid,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+          );
+        } catch (profileError) {
+          print('Error creating passenger profile: $profileError');
+          // Allow signup to succeed even if profile creation fails
+          // User can complete profile later
+        }
 
         state = state.copyWith(
           isLoading: false,
@@ -305,14 +311,19 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
             // Send email verification
             await sendEmailVerification();
 
-            // Create passenger profile
-            await _passengerService.createPassengerProfile(
-              userId: _authService.currentUser!.uid,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              phoneNumber: phoneNumber,
-            );
+            // Create passenger profile with error handling
+            try {
+              await _passengerService.createPassengerProfile(
+                userId: _authService.currentUser!.uid,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phoneNumber: phoneNumber,
+              );
+            } catch (profileError) {
+              print('Error creating passenger profile in retry: $profileError');
+              // Allow signup to succeed even if profile creation fails in retry
+            }
 
             state = state.copyWith(
               isLoading: false,
