@@ -199,8 +199,10 @@ class FirebaseService {
         googleAuth = await googleUser.authentication;
       } catch (e) {
         // Handle PigeonUserInfo casting errors and other Google Sign-In issues
-        print('Google authentication error (possibly PigeonUserInfo issue): $e');
-        throw FirebaseException('Google authentication failed. Please try again or use email login.');
+        print(
+            'Google authentication error (possibly PigeonUserInfo issue): $e');
+        throw FirebaseException(
+            'Google authentication failed. Please try again or use email login.');
       }
 
       // Validate tokens
@@ -224,12 +226,15 @@ class FirebaseService {
     } on TypeError catch (e) {
       // Handle type casting errors like PigeonUserInfo issues
       print('Type error in Google sign-in (PigeonUserInfo casting): $e');
-      throw FirebaseException('Google sign-in compatibility issue. Please try email login instead.');
+      throw FirebaseException(
+          'Google sign-in compatibility issue. Please try email login instead.');
     } catch (e) {
       // Catch any other errors including PigeonUserInfo casting
       print('Unexpected Google sign-in error: $e');
-      if (e.toString().contains('PigeonUserInfo') || e.toString().contains('List<Object?>')) {
-        throw FirebaseException('Google sign-in data format issue. Please use email login instead.');
+      if (e.toString().contains('PigeonUserInfo') ||
+          e.toString().contains('List<Object?>')) {
+        throw FirebaseException(
+            'Google sign-in data format issue. Please use email login instead.');
       }
       throw FirebaseException('Google sign-in failed: $e');
     }
