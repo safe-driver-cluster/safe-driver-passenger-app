@@ -622,7 +622,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               right: AppDesign.spaceMD,
               child: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
