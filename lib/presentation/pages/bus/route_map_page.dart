@@ -696,7 +696,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                   text: 'Route Details',
                   onPressed: () => _showRouteDetails(currentRoute),
                   isOutlined: true,
-                  prefixIcon: Icons.info_outline_rounded,
+                  icon: const Icon(Icons.info_outline_rounded),
                 ),
               ),
             ],
