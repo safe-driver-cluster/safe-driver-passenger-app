@@ -34,50 +34,176 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceColor,
-        elevation: 0,
-        title: Text(
-          selectedBusNumber != null
-              ? 'Bus ${selectedBusNumber!} Feedback'
-              : isQRScanMode
-                  ? 'Scan QR Code'
-                  : 'Give Feedback',
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
-        actions: [
-          if (!isQRScanMode)
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/feedback-test');
-              },
-              icon: const Icon(
-                Icons.bug_report,
-                color: AppColors.warningColor,
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
+
+              // Content Area
+              Expanded(
+                child: isQRScanMode
+                    ? _buildQRScannerView()
+                    : selectedBusNumber != null
+                        ? _buildFeedbackTypeSelection()
+                        : _buildBusSelectionView(),
               ),
-              tooltip: 'Firebase Test',
-            ),
-          if (!isQRScanMode)
-            IconButton(
-              onPressed: _showQRScanner,
-              icon: const Icon(
-                Icons.qr_code_scanner,
-                color: AppColors.primaryColor,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernHeader() {
+    String headerTitle = selectedBusNumber != null
+        ? 'Bus ${selectedBusNumber!} Feedback'
+        : isQRScanMode
+            ? 'Scan QR Code'
+            : 'Give Feedback';
+
+    String headerSubtitle = selectedBusNumber != null
+        ? 'Share your travel experience'
+        : isQRScanMode
+            ? 'Scan the QR code on the bus'
+            : 'Choose your bus and share feedback';
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        AppDesign.spaceSM,
+        AppDesign.spaceLG,
+        AppDesign.spaceLG,
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    if (isQRScanMode) {
+                      setState(() {
+                        isQRScanMode = false;
+                      });
+                    } else if (selectedBusNumber != null) {
+                      setState(() {
+                        selectedBusNumber = null;
+                      });
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconLG,
+                  ),
+                ),
               ),
-              tooltip: 'Scan QR Code',
-            ),
+              Row(
+                children: [
+                  if (!isQRScanMode)
+                    Container(
+                      margin: const EdgeInsets.only(right: AppDesign.spaceSM),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.glassGradient,
+                        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/feedback-test');
+                        },
+                        icon: const Icon(
+                          Icons.bug_report,
+                          color: Colors.white,
+                          size: AppDesign.iconLG,
+                        ),
+                      ),
+                    ),
+                  if (!isQRScanMode)
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.glassGradient,
+                        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: IconButton(
+                        onPressed: _showQRScanner,
+                        icon: const Icon(
+                          Icons.qr_code_scanner,
+                          color: Colors.white,
+                          size: AppDesign.iconLG,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      headerTitle,
+                      style: const TextStyle(
+                        fontSize: AppDesign.text2XL,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceXS),
+                    Text(
+                      headerSubtitle,
+                      style: TextStyle(
+                        fontSize: AppDesign.textMD,
+                        color: Colors.white.withOpacity(0.8),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ],
       ),
-      body: isQRScanMode
-          ? _buildQRScannerView()
-          : selectedBusNumber != null
-              ? _buildFeedbackTypeSelection()
-              : _buildBusSelectionView(),
     );
   }
 
