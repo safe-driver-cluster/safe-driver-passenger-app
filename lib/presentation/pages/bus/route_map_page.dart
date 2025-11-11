@@ -967,7 +967,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
-                color: AppColors.backgroundSecondary,
+                color: AppColors.greyExtraLight,
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
               ),
               child: Row(
