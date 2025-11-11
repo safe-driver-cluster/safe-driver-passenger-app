@@ -1069,7 +1069,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           '${bus['rating']}',
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
