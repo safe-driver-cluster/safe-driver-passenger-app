@@ -33,8 +33,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   late Animation<double> _cardAnimation;
 
   List<Map<String, dynamic>> _searchResults = [];
-  List<Map<String, dynamic>> _nearbyBuses = [];
-  List<Map<String, dynamic>> _favoriteRoutes = [];
+  final List<Map<String, dynamic>> _nearbyBuses = [];
+  final List<Map<String, dynamic>> _favoriteRoutes = [];
   bool _isSearching = false;
   bool _showSearchResults = false;
   int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Live Tracking
@@ -67,10 +67,12 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fabAnimationController, curve: Curves.elasticOut),
+      CurvedAnimation(
+          parent: _fabAnimationController, curve: Curves.elasticOut),
     );
     _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _cardAnimationController, curve: Curves.easeOutBack),
+      CurvedAnimation(
+          parent: _cardAnimationController, curve: Curves.easeOutBack),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
