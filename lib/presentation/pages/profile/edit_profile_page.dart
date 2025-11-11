@@ -1051,4 +1051,36 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _emergencyRelationController.dispose();
     super.dispose();
   }
+
+  // Helper method to map language codes to display names
+  String _mapLanguageCodeToDisplayName(String languageCode) {
+    switch (languageCode.toLowerCase()) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Spanish';
+      case 'fr':
+        return 'French';
+      case 'de':
+        return 'German';
+      default:
+        return 'English'; // Default fallback
+    }
+  }
+
+  // Helper method to map display names back to language codes
+  String _mapDisplayNameToLanguageCode(String displayName) {
+    switch (displayName) {
+      case 'English':
+        return 'en';
+      case 'Spanish':
+        return 'es';
+      case 'French':
+        return 'fr';
+      case 'German':
+        return 'de';
+      default:
+        return 'en'; // Default fallback
+    }
+  }
 }
