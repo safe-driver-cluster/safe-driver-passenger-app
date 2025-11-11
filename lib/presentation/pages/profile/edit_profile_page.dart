@@ -114,29 +114,25 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
       // Address
       if (profile.address != null) {
-        _streetController.text = profile.address!.street ?? '';
-        _cityController.text = profile.address!.city ?? '';
-        _stateController.text = profile.address!.state ?? '';
-        _zipCodeController.text = profile.address!.zipCode ?? '';
-        _countryController.text = profile.address!.country ?? '';
+        _streetController.text = profile.address!.street;
+        _cityController.text = profile.address!.city;
+        _stateController.text = ''; // No state field in model
+        _zipCodeController.text = profile.address!.postalCode;
+        _countryController.text = profile.address!.country;
       }
 
       // Emergency contact
       if (profile.emergencyContact != null) {
-        _emergencyNameController.text = profile.emergencyContact!.name ?? '';
-        _emergencyPhoneController.text =
-            profile.emergencyContact!.phoneNumber ?? '';
-        _emergencyRelationController.text =
-            profile.emergencyContact!.relationship ?? '';
+        _emergencyNameController.text = profile.emergencyContact!.name;
+        _emergencyPhoneController.text = profile.emergencyContact!.phoneNumber;
+        _emergencyRelationController.text = profile.emergencyContact!.relationship;
       }
 
       // Preferences
-      _notificationsEnabled = profile.preferences.notificationsEnabled ?? true;
-      _locationSharingEnabled =
-          profile.preferences.locationSharingEnabled ?? true;
-      _preferredLanguage = profile.preferences.preferredLanguage ?? 'English';
-      _preferredPaymentMethod =
-          profile.preferences.preferredPaymentMethod ?? 'Card';
+      _notificationsEnabled = profile.preferences.notifications.journeyUpdates;
+      _locationSharingEnabled = profile.preferences.privacy.shareLocation;
+      _preferredLanguage = profile.preferences.language;
+      _preferredPaymentMethod = 'Card'; // Default as not in model
     });
   }
 
@@ -266,7 +262,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           SizedBox(height: AppDesign.spaceMD),
           Text(
             'Loading profile...',
-            style: AppTextStyles.bodyText1,
+            style: AppTextStyles.bodyMedium,
           ),
         ],
       ),
