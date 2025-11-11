@@ -209,7 +209,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
         ),
         child: SafeArea(
           child: AnimatedBuilder(
-            animation: _fadeAnimation,
+            animation: _animationController,
             builder: (context, child) {
               return SlideTransition(
                 position: _slideAnimation,
