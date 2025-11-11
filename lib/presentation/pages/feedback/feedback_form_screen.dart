@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/color_constants.dart';
-import '../../../core/constants/design_constants.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/feedback_service.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/professional_widgets.dart';
 
 class FeedbackFormScreen extends ConsumerStatefulWidget {
   final String? busId;
@@ -137,14 +134,29 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
     final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Submit Feedback'),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: LoadingWidget(
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
+
+              // Content Area
+              Expanded(
+                child: LoadingWidget(
         isLoading: _isSubmitting,
         child: passengerAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
