@@ -7,6 +7,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'bus_details_page.dart';
 import 'live_tracking_page.dart';
+import 'route_map_page.dart';
 
 class BusSearchPage extends ConsumerStatefulWidget {
   const BusSearchPage({super.key});
@@ -255,38 +256,28 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      extendBodyBehindAppBar: true,
+      backgroundColor: AppColors.backgroundColor,
       body: AnimatedBuilder(
         animation: _fadeAnimation,
         builder: (context, child) {
-          return FadeTransition(
-            opacity: _fadeAnimation,
-            child: CustomScrollView(
-              slivers: [
-                // Modern App Bar with Gradient
-                _buildModernAppBar(),
-
-                // Search Hero Section
-                SliverToBoxAdapter(
-                  child: _buildHeroSearchSection(),
-                ),
-
-                // Quick Search Suggestions
-                SliverToBoxAdapter(
-                  child: _buildQuickSuggestions(),
-                ),
-
-                // Main Search Content
-                SliverToBoxAdapter(
-                  child: _buildMainSearchContent(),
-                ),
-
-                // Search Results or Popular Routes
-                _showSearchResults
-                    ? _buildSearchResultsSliver()
-                    : _buildPopularRoutesSliver(),
-              ],
+          return Transform.translate(
+            offset: Offset(0, _slideAnimation.value),
+            child: Opacity(
+              opacity: _fadeAnimation.value,
+              child: CustomScrollView(
+                slivers: [
+                  _buildProfessionalAppBar(),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _buildSearchSection(),
+                        _buildQuickActionsSection(),
+                        _buildPopularRoutesSection(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -295,150 +286,165 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     );
   }
 
-  // New Modern Widget Methods
-  Widget _buildModernAppBar() {
+  Widget _buildProfessionalAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 200,
       floating: false,
       pinned: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryColor.withOpacity(0.8),
-              AppColors.tealAccent.withOpacity(0.6),
+      backgroundColor: AppColors.primaryColor,
+      foregroundColor: Colors.white,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          'Bus Search',
+          style: AppTextStyles.headline6.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -50,
+                top: -50,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -30,
+                bottom: -30,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                ),
+              ),
+              const Positioned(
+                right: AppDesign.spaceLG,
+                bottom: AppDesign.spaceLG,
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 64,
+                  color: Colors.white24,
+                ),
+              ),
             ],
           ),
         ),
-        child: FlexibleSpaceBar(
-          title: const Text(
-            'Find Your Ride',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.map_rounded),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RouteMapPage(),
+              ),
+            );
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.filter_list_rounded),
+          onPressed: () => _showFilterOptions(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchSection() {
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search Type Selector
+          ProfessionalCard(
+            padding: const EdgeInsets.all(AppDesign.spaceSM),
+            child: Row(
+              children: [
+                _buildSearchTypeTab('Route', Icons.route_rounded, 0),
+                _buildSearchTypeTab('Bus #', Icons.directions_bus_rounded, 1),
+                _buildSearchTypeTab('Live', Icons.live_tv_rounded, 2),
+              ],
             ),
           ),
-          background: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primaryColor,
-                  AppColors.tealAccent,
-                ],
-              ),
-            ),
-            child: Stack(
+
+          const SizedBox(height: AppDesign.spaceLG),
+
+          // Search Form
+          ProfessionalCard(
+            child: Column(
               children: [
-                Positioned(
-                  right: -50,
-                  top: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
-                    ),
+                if (_selectedSearchType == 0) ...[
+                  ProfessionalTextField(
+                    controller: _fromController,
+                    labelText: 'From',
+                    hintText: 'Enter departure location',
+                    prefixIcon: const Icon(Icons.my_location_rounded),
                   ),
-                ),
-                Positioned(
-                  left: -30,
-                  bottom: -30,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.05),
-                    ),
+                  const SizedBox(height: AppDesign.spaceLG),
+                  ProfessionalTextField(
+                    controller: _toController,
+                    labelText: 'To',
+                    hintText: 'Enter destination',
+                    prefixIcon: const Icon(Icons.location_on_rounded),
                   ),
+                ] else if (_selectedSearchType == 1) ...[
+                  ProfessionalTextField(
+                    controller: _busNumberController,
+                    labelText: 'Bus Number',
+                    hintText: 'Enter bus number (e.g., B001)',
+                    prefixIcon: const Icon(Icons.directions_bus_rounded),
+                  ),
+                ] else ...[
+                  ProfessionalTextField(
+                    controller: _routeController,
+                    labelText: 'Route Name',
+                    hintText: 'Enter route name',
+                    prefixIcon: const Icon(Icons.route_rounded),
+                  ),
+                ],
+
+                const SizedBox(height: AppDesign.spaceLG),
+
+                // Search Button
+                ProfessionalButton(
+                  text: _isSearching ? 'Searching...' : 'Search Buses',
+                  onPressed: _isSearching ? null : _performSearch,
+                  isLoading: _isSearching,
+                  width: double.infinity,
+                  gradient: AppColors.primaryGradient,
+                  icon: _isSearching
+                      ? null
+                      : const Icon(
+                          Icons.search_rounded,
+                          color: Colors.white,
+                          size: AppDesign.iconSM,
+                        ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
 
-  Widget _buildHeroSearchSection() {
-    return Transform.translate(
-      offset: Offset(0, _slideAnimation.value),
-      child: Container(
-        margin: const EdgeInsets.all(AppDesign.spaceLG),
-        child: Column(
-          children: [
-            // Main Search Bar
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Where are you going?',
-                  hintStyle: const TextStyle(
-                    color: AppColors.textHint,
-                    fontSize: 16,
-                  ),
-                  prefixIcon: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: const Icon(
-                      Icons.search_rounded,
-                      color: AppColors.primaryColor,
-                      size: 24,
-                    ),
-                  ),
-                  suffixIcon: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AppColors.primaryColor.withOpacity(0.1),
-                      child: const Icon(
-                        Icons.tune_rounded,
-                        color: AppColors.primaryColor,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _showSearchResults = value.isNotEmpty;
-                  });
-                },
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                },
-              ),
-            ),
+          // Search Results
+          if (_isSearching || _searchResults.isNotEmpty) ...[
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildSearchResults(),
           ],
-        ),
+        ],
       ),
     );
   }
