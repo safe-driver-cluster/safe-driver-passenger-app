@@ -892,14 +892,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.bodyText1.copyWith(
+                  style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: AppTextStyles.bodyText2.copyWith(
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.greyMedium,
                   ),
                 ),
