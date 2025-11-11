@@ -600,42 +600,5 @@ class DashboardHome extends ConsumerWidget {
     }
   }
 
-  String _getTimeOfDay() {
-    final now = DateTime.now();
-    final hour = now.hour;
-    final minute = now.minute;
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-    return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
-  }
 
-  Widget _buildStatItem({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: Colors.white.withOpacity(0.8),
-          size: AppDesign.iconMD,
-        ),
-        const SizedBox(height: AppDesign.spaceXS),
-        Text(
-          value,
-          style: AppTextStyles.headline6.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Text(
-          label,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
-      ],
-    );
-  }
 }
