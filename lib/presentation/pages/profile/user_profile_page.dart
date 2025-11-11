@@ -371,152 +371,123 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserStatsSection() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Total Trips',
-            '47',
-            Icons.directions_bus_rounded,
-            AppColors.primaryColor,
-          ),
+  Widget _buildProfessionalQuickActions(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.cardGradient,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowLG,
+        border: Border.all(
+          color: AppColors.primaryColor.withOpacity(0.1),
+          width: 1,
         ),
-        const SizedBox(width: AppDesign.spaceLG),
-        Expanded(
-          child: _buildStatCard(
-            'Distance',
-            '1,234 km',
-            Icons.route_rounded,
-            AppColors.accentColor,
-          ),
-        ),
-        const SizedBox(width: AppDesign.spaceLG),
-        Expanded(
-          child: _buildStatCard(
-            'Safety Score',
-            '98%',
-            Icons.security_rounded,
-            AppColors.successColor,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
-    return ProfessionalCard(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceMD),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: AppDesign.iconLG,
-            ),
-          ),
-          const SizedBox(height: AppDesign.spaceMD),
-          Text(
-            value,
-            style: AppTextStyles.headline6.copyWith(
-              color: color,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppDesign.spaceXS),
-          Text(
-            title,
-            style: AppTextStyles.labelMedium.copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
       ),
-    );
-  }
-
-  Widget _buildQuickActionsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick Actions',
-            style: AppTextStyles.headline6.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: AppDesign.spaceLG),
-          Row(
-            children: [
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Edit Profile',
-                  Icons.edit_rounded,
-                  AppColors.primaryColor,
-                  () {},
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Trip History',
-                  Icons.history_rounded,
-                  AppColors.accentColor,
-                  () {},
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Payment',
-                  Icons.payment_rounded,
-                  AppColors.successColor,
-                  () {},
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickActionButton(
-      String label, IconData icon, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceLG),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-          ),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: AppDesign.iconLG,
+            // Section header with gradient
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.accentGradient,
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                  ),
+                  child: const Icon(
+                    Icons.flash_on_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Quick Actions',
+                  style: AppTextStyles.headline6.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: AppDesign.spaceXS),
-            Text(
-              label,
-              style: AppTextStyles.labelMedium.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
+            const SizedBox(height: AppDesign.spaceLG),
+            // Action buttons grid with same sizes
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Edit Profile',
+                    subtitle: 'Update info',
+                    icon: Icons.edit_rounded,
+                    gradient: AppColors.primaryGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfilePage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Trip History',
+                    subtitle: 'View trips',
+                    icon: Icons.history_rounded,
+                    gradient: AppColors.accentGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TripHistoryPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceMD),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Payment',
+                    subtitle: 'Methods',
+                    icon: Icons.payment_rounded,
+                    gradient: AppColors.successGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PaymentMethodsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Support',
+                    subtitle: 'Get help',
+                    icon: Icons.help_rounded,
+                    gradient: AppColors.warningGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HelpSupportPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -524,20 +495,265 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildMenuSection(BuildContext context, WidgetRef ref) {
-    return ProfessionalCard(
+  Widget _buildProfessionalActionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required LinearGradient gradient,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      height: 100, // Fixed height for same size
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          child: Container(
+            padding: const EdgeInsets.all(AppDesign.spaceMD),
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: gradient.colors.first.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  icon,
+                  size: 28,
+                  color: Colors.white,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfessionalStats(UserModel? userProfile) {
+    // Calculate user stats from profile data
+    final totalTrips = userProfile?.totalTrips ?? 0;
+    final totalDistance = userProfile?.totalDistance ?? 0.0;
+    final safetyScore = userProfile?.safetyScore ?? 0.0;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowMD,
+        border: Border.all(
+          color: AppColors.greyLight,
+          width: 1,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Account & Settings',
-            style: AppTextStyles.headline6.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
+          // Professional section header
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: AppColors.successGradient,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppDesign.radiusXL),
+                topRight: Radius.circular(AppDesign.radiusXL),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.analytics_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Travel Statistics',
+                  style: AppTextStyles.headline6.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppDesign.spaceLG),
-          ..._buildMenuItems(context, ref),
+          // Stats content
+          Padding(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem(
+                    'Total Trips',
+                    '$totalTrips',
+                    Icons.directions_bus_rounded,
+                    AppColors.primaryColor,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildStatItem(
+                    'Distance',
+                    '${totalDistance.toStringAsFixed(1)} km',
+                    Icons.route_rounded,
+                    AppColors.accentColor,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildStatItem(
+                    'Safety Score',
+                    '${safetyScore.toStringAsFixed(0)}%',
+                    Icons.security_rounded,
+                    AppColors.successColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: AppDesign.iconMD,
+          ),
+        ),
+        const SizedBox(height: AppDesign.spaceSM),
+        Text(
+          value,
+          style: AppTextStyles.headline6.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Text(
+          title,
+          style: AppTextStyles.labelSmall.copyWith(
+            color: AppColors.textSecondary,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoadingStats() {
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowMD,
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfessionalMenuSection(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowMD,
+        border: Border.all(
+          color: AppColors.greyLight,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Professional section header
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: AppColors.dangerGradient,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppDesign.radiusXL),
+                topRight: Radius.circular(AppDesign.radiusXL),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.settings_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Account & Settings',
+                  style: AppTextStyles.headline6.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Menu content
+          Padding(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: Column(
+              children: _buildMenuItems(context, ref),
+            ),
+          ),
         ],
       ),
     );
