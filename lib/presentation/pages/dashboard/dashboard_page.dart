@@ -453,7 +453,8 @@ class DashboardHome extends ConsumerWidget {
                     subtitle: 'Share',
                     icon: Icons.feedback_rounded,
                     gradient: AppColors.successGradient,
-                    onTap: () => Navigator.pushNamed(context, '/feedback-system'),
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/feedback-system'),
                   ),
                 ),
               ],
