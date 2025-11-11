@@ -353,7 +353,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             const SizedBox(height: AppDesign.spaceLG),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.borderColor),
+                border: Border.all(color: AppColors.greyLight),
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: DropdownButtonHideUnderline(
