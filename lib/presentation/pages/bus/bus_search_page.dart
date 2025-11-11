@@ -1022,7 +1022,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 // Route
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.route,
                       size: 16,
                       color: AppColors.textHint,
@@ -1031,7 +1031,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                     Expanded(
                       child: Text(
                         bus['route'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textSecondary,
                         ),
