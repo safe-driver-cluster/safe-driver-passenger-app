@@ -27,7 +27,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _dateOfBirthController;
-  late final TextEditingController _genderController;
 
   // Address controllers
   late final TextEditingController _streetController;
@@ -52,7 +51,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   bool _notificationsEnabled = true;
   bool _locationSharingEnabled = true;
   String _preferredLanguage = 'English';
-  String _preferredPaymentMethod = 'Card';
+  String _selectedGender = 'Prefer not to say';
 
   @override
   void initState() {
@@ -66,7 +65,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _lastNameController = TextEditingController();
     _phoneController = TextEditingController();
     _dateOfBirthController = TextEditingController();
-    _genderController = TextEditingController();
 
     _streetController = TextEditingController();
     _cityController = TextEditingController();
@@ -108,7 +106,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _lastNameController.text = profile.lastName;
       _phoneController.text = profile.phoneNumber;
       _dateOfBirthController.text = profile.dateOfBirth?.toString() ?? '';
-      _genderController.text = profile.gender ?? '';
 
       // Address
       if (profile.address != null) {
@@ -130,8 +127,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       // Preferences
       _notificationsEnabled = profile.preferences.notifications.journeyUpdates;
       _locationSharingEnabled = profile.preferences.privacy.shareLocation;
-      _preferredLanguage = profile.preferences.language;
-      _preferredPaymentMethod = 'Card'; // Default as not in model
+
+      // Map language code to display name
+      _preferredLanguage =
+          _mapLanguageCodeToDisplayName(profile.preferences.language);
+
+      // Set gender dropdown value
+      _selectedGender = _mapGenderToDisplayValue(profile.gender);
     });
   }
 
@@ -490,9 +492,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           const SizedBox(height: AppDesign.spaceMD),
 
           // Gender
-          _buildFormField(
-            controller: _genderController,
+          _buildDropdownField(
             label: 'Gender',
+            value: _selectedGender,
+            items: const ['Male', 'Female', 'Other', 'Prefer not to say'],
+            onChanged: (value) => setState(() => _selectedGender = value!),
             icon: Icons.wc_outlined,
           ),
         ],
@@ -685,31 +689,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
           const SizedBox(height: AppDesign.spaceMD),
 
-          // Language and Payment preferences
-          Row(
-            children: [
-              Expanded(
-                child: _buildDropdownField(
-                  label: 'Language',
-                  value: _preferredLanguage,
-                  items: const ['English', 'Spanish', 'French', 'German'],
-                  onChanged: (value) =>
-                      setState(() => _preferredLanguage = value!),
-                  icon: Icons.language_outlined,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildDropdownField(
-                  label: 'Payment Method',
-                  value: _preferredPaymentMethod,
-                  items: const ['Card', 'Cash', 'Mobile Payment'],
-                  onChanged: (value) =>
-                      setState(() => _preferredPaymentMethod = value!),
-                  icon: Icons.payment_outlined,
-                ),
-              ),
-            ],
+          // Language preference
+          _buildDropdownField(
+            label: 'Language',
+            value: _preferredLanguage,
+            items: const ['English', 'Spanish', 'French', 'German'],
+            onChanged: (value) => setState(() => _preferredLanguage = value!),
+            icon: Icons.language_outlined,
           ),
         ],
       ),
@@ -1036,7 +1022,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _lastNameController.dispose();
     _phoneController.dispose();
     _dateOfBirthController.dispose();
-    _genderController.dispose();
 
     _streetController.dispose();
     _cityController.dispose();
@@ -1047,5 +1032,72 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _emergencyPhoneController.dispose();
     _emergencyRelationController.dispose();
     super.dispose();
+  }
+
+  // Helper method to map language codes to display names
+  String _mapLanguageCodeToDisplayName(String languageCode) {
+    switch (languageCode.toLowerCase()) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Spanish';
+      case 'fr':
+        return 'French';
+      case 'de':
+        return 'German';
+      default:
+        return 'English'; // Default fallback
+    }
+  }
+
+  // Helper method to map display names back to language codes
+  String _mapDisplayNameToLanguageCode(String displayName) {
+    switch (displayName) {
+      case 'English':
+        return 'en';
+      case 'Spanish':
+        return 'es';
+      case 'French':
+        return 'fr';
+      case 'German':
+        return 'de';
+      default:
+        return 'en'; // Default fallback
+    }
+  }
+
+  // Helper method to map gender from model to display value
+  String _mapGenderToDisplayValue(String? gender) {
+    if (gender == null || gender.isEmpty) return 'Prefer not to say';
+
+    switch (gender.toLowerCase()) {
+      case 'male':
+      case 'm':
+        return 'Male';
+      case 'female':
+      case 'f':
+        return 'Female';
+      case 'other':
+      case 'o':
+        return 'Other';
+      default:
+        return 'Prefer not to say';
+    }
+  }
+
+  // Helper method to map display value back to gender code
+  String? _mapDisplayValueToGender(String displayValue) {
+    switch (displayValue) {
+      case 'Male':
+        return 'Male';
+      case 'Female':
+        return 'Female';
+      case 'Other':
+        return 'Other';
+      case 'Prefer not to say':
+        return null; // Store as null for prefer not to say
+      default:
+        return null;
+    }
   }
 }
