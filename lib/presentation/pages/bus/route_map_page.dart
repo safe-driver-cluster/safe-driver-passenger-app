@@ -686,7 +686,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                     );
                   },
                   gradient: AppColors.primaryGradient,
-                  icon: const Icon(Icons.location_on_rounded, color: Colors.white),
+                  icon: const Icon(Icons.location_on_rounded,
+                      color: Colors.white),
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
