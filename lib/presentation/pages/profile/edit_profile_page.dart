@@ -798,7 +798,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       readOnly: readOnly,
       onTap: onTap,
       validator: validator,
-      style: AppTextStyles.bodyText1,
+      style: AppTextStyles.bodyMedium,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: AppColors.primaryColor),
