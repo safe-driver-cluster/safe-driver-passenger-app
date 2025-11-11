@@ -1491,4 +1491,172 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     if (percentage >= 70) return AppColors.warningColor;
     return AppColors.successColor;
   }
+
+  Widget _buildSearchTypeTab(String title, IconData icon, int index) {
+    final isSelected = _selectedSearchType == index;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedSearchType = index;
+          });
+          HapticFeedback.lightImpact();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceMD,
+            vertical: AppDesign.spaceMD,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+                size: AppDesign.iconSM,
+              ),
+              const SizedBox(width: AppDesign.spaceXS),
+              Text(
+                title,
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionCard(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return ProfessionalCard(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: AppDesign.iconLG,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          Text(
+            title,
+            style: AppTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFilterOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppDesign.radiusXL),
+            topRight: Radius.circular(AppDesign.radiusXL),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(top: AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.greyLight,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
+              child: Column(
+                children: [
+                  Text(
+                    'Filter Options',
+                    style: AppTextStyles.headline6.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceLG),
+                  ListTile(
+                    leading: const Icon(Icons.access_time_rounded),
+                    title: const Text('By Schedule'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.people_rounded),
+                    title: const Text('By Occupancy'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.payments_rounded),
+                    title: const Text('By Fare'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  const SizedBox(height: AppDesign.spaceLG),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLiveTracking() {
+    HapticFeedback.lightImpact();
+    // Navigate to live tracking or show available buses
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Live Tracking feature coming soon!'),
+        backgroundColor: AppColors.primaryColor,
+      ),
+    );
+  }
+
+  void _showNearbyStops() {
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Nearby Stops feature coming soon!'),
+        backgroundColor: AppColors.warningColor,
+      ),
+    );
+  }
+
+  void _showSchedules() {
+    HapticFeedback.lightImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Schedules feature coming soon!'),
+        backgroundColor: AppColors.tealAccent,
+      ),
+    );
+  }
 }
