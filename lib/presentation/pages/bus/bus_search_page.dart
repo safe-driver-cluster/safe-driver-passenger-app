@@ -7,7 +7,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'bus_details_page.dart';
 import 'live_tracking_page.dart';
-import 'route_map_page.dart';
+
 
 class BusSearchPage extends ConsumerStatefulWidget {
   const BusSearchPage({super.key});
@@ -26,15 +26,13 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
   late AnimationController _animationController;
   late AnimationController _fabAnimationController;
-  late AnimationController _cardAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   late Animation<double> _fabAnimation;
-  late Animation<double> _cardAnimation;
 
   List<Map<String, dynamic>> _searchResults = [];
-  final List<Map<String, dynamic>> _nearbyBuses = [];
-  final List<Map<String, dynamic>> _favoriteRoutes = [];
+  List<Map<String, dynamic>> _nearbyBuses = [];
+  List<Map<String, dynamic>> _favoriteRoutes = [];
   bool _isSearching = false;
   bool _showSearchResults = false;
   int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Live Tracking
@@ -55,10 +53,6 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _cardAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
@@ -69,10 +63,6 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
           parent: _fabAnimationController, curve: Curves.elasticOut),
-    );
-    _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-          parent: _cardAnimationController, curve: Curves.easeOutBack),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -157,40 +147,50 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     });
   }
 
-  void _loadRecentSearches() {
+  void _loadNearbyBuses() {
     setState(() {
-      _recentSearches = [
+      _nearbyBuses = [
         {
-          'type': 'route',
-          'from': 'City Center',
-          'to': 'Airport',
-          'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
+          'id': 'nearby_001',
+          'busNumber': 'B012',
+          'routeName': 'Express Route',
+          'distance': '0.2 km',
+          'eta': '3 min',
+          'occupancy': 45,
+          'capacity': 60,
+          'nextStop': 'City Center',
         },
         {
-          'type': 'busNumber',
-          'busNumber': 'B023',
-          'timestamp': DateTime.now().subtract(const Duration(days: 1)),
-        },
-        {
-          'type': 'location',
-          'location': 'University',
-          'timestamp': DateTime.now().subtract(const Duration(days: 2)),
+          'id': 'nearby_002',
+          'busNumber': 'B089',
+          'routeName': 'Metro Line',
+          'distance': '0.5 km',
+          'eta': '7 min',
+          'occupancy': 32,
+          'capacity': 80,
+          'nextStop': 'Mall Junction',
         },
       ];
     });
   }
 
-  void _loadPopularDestinations() {
+  void _loadFavoriteRoutes() {
     setState(() {
-      _popularDestinations = [
-        'Airport',
-        'University',
-        'City Center',
-        'Downtown',
-        'Mall',
-        'Hospital',
-        'Train Station',
-        'Business District',
+      _favoriteRoutes = [
+        {
+          'id': 'fav_001',
+          'routeName': 'Home to Work',
+          'route': 'Residential Area → Business District',
+          'frequency': '10-15 min',
+          'isFavorite': true,
+        },
+        {
+          'id': 'fav_002',
+          'routeName': 'Shopping Route',
+          'route': 'City Center → Mall → Airport',
+          'frequency': '8-12 min',
+          'isFavorite': true,
+        },
       ];
     });
   }
@@ -274,187 +274,199 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      extendBodyBehindAppBar: true,
+      backgroundColor: AppColors.backgroundColor,
       body: AnimatedBuilder(
         animation: _fadeAnimation,
         builder: (context, child) {
-          return FadeTransition(
-            opacity: _fadeAnimation,
-            child: CustomScrollView(
-              slivers: [
-                // Modern App Bar with Gradient
-                _buildModernAppBar(),
-
-                // Search Hero Section
-                SliverToBoxAdapter(
-                  child: _buildHeroSearchSection(),
-                ),
-
-                // Quick Search Suggestions
-                SliverToBoxAdapter(
-                  child: _buildQuickSuggestions(),
-                ),
-
-                // Main Search Content
-                SliverToBoxAdapter(
-                  child: _buildMainSearchContent(),
-                ),
-
-                // Search Results or Popular Routes
-                _showSearchResults
-                    ? _buildSearchResultsSliver()
-                    : _buildPopularRoutesSliver(),
-              ],
+          return Transform.translate(
+            offset: Offset(0, _slideAnimation.value),
+            child: Opacity(
+              opacity: _fadeAnimation.value,
+              child: CustomScrollView(
+                slivers: [
+                  _buildProfessionalAppBar(),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        _buildSearchSection(),
+                        _buildQuickFilters(),
+                        if (_showSearchResults) 
+                          _buildSearchResults()
+                        else ...[
+                          _buildNearbyBuses(),
+                          _buildFavoriteRoutes(),
+                          _buildPopularRoutes(),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
       ),
-      floatingActionButton: _buildAnimatedFAB(),
+      floatingActionButton: _buildProfessionalFAB(),
     );
   }
 
-  // New Modern Widget Methods
-  Widget _buildModernAppBar() {
+  // Professional Widget Methods
+  Widget _buildProfessionalAppBar() {
     return SliverAppBar(
-      expandedHeight: 120,
+      expandedHeight: 200,
       floating: false,
       pinned: true,
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryColor.withOpacity(0.8),
-              AppColors.tealAccent.withOpacity(0.6),
+      backgroundColor: AppColors.primaryColor,
+      foregroundColor: Colors.white,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          'Bus Search',
+          style: AppTextStyles.headline6.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -50,
+                top: -50,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -30,
+                bottom: -30,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                ),
+              ),
+              const Positioned(
+                right: AppDesign.spaceLG,
+                bottom: AppDesign.spaceLG,
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 64,
+                  color: Colors.white24,
+                ),
+              ),
             ],
           ),
         ),
-        child: FlexibleSpaceBar(
-          title: const Text(
-            'Find Your Ride',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-          background: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primaryColor,
-                  AppColors.tealAccent,
-                ],
-              ),
-            ),
-            child: Stack(
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.filter_list_rounded),
+          onPressed: () => _showFilterOptions(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.map_rounded),
+          onPressed: () => _openRouteMap(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchSection() {
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      child: ProfessionalCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Positioned(
-                  right: -50,
-                  top: -50,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.1),
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.search_rounded,
+                    color: AppColors.primaryColor,
+                    size: AppDesign.iconMD,
                   ),
                 ),
-                Positioned(
-                  left: -30,
-                  bottom: -30,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withOpacity(0.05),
-                    ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Search Buses',
+                        style: AppTextStyles.headline6.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'Find buses by route, number, or location',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeroSearchSection() {
-    return Transform.translate(
-      offset: Offset(0, _slideAnimation.value),
-      child: Container(
-        margin: const EdgeInsets.all(AppDesign.spaceLG),
-        child: Column(
-          children: [
-            // Main Search Bar
+            const SizedBox(height: AppDesign.spaceLG),
+            
+            // Search Type Selector
             Container(
+              padding: const EdgeInsets.all(AppDesign.spaceXS),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
+                color: AppColors.greyExtraLight,
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              ),
+              child: Row(
+                children: [
+                  _buildSearchTypeTab('Route', 0, Icons.route_rounded),
+                  _buildSearchTypeTab('Bus #', 1, Icons.directions_bus_rounded),
+                  _buildSearchTypeTab('Live', 2, Icons.live_tv_rounded),
                 ],
               ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Where are you going?',
-                  hintStyle: const TextStyle(
-                    color: AppColors.textHint,
-                    fontSize: 16,
-                  ),
-                  prefixIcon: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: const Icon(
+            ),
+            
+            const SizedBox(height: AppDesign.spaceLG),
+            
+            // Dynamic Search Fields
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _buildSearchFields(),
+            ),
+            
+            const SizedBox(height: AppDesign.spaceLG),
+            
+            // Search Button
+            ProfessionalButton(
+              text: _isSearching ? 'Searching...' : 'Search Buses',
+              onPressed: _isSearching ? null : _performSearch,
+              isLoading: _isSearching,
+              width: double.infinity,
+              gradient: AppColors.primaryGradient,
+              icon: _isSearching 
+                  ? null 
+                  : const Icon(
                       Icons.search_rounded,
-                      color: AppColors.primaryColor,
-                      size: 24,
+                      color: Colors.white,
+                      size: AppDesign.iconSM,
                     ),
-                  ),
-                  suffixIcon: Container(
-                    padding: const EdgeInsets.all(8),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: AppColors.primaryColor.withOpacity(0.1),
-                      child: const Icon(
-                        Icons.tune_rounded,
-                        color: AppColors.primaryColor,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _showSearchResults = value.isNotEmpty;
-                  });
-                },
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                },
-              ),
             ),
           ],
         ),
@@ -1517,5 +1529,513 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     if (percentage >= 90) return AppColors.dangerColor;
     if (percentage >= 70) return AppColors.warningColor;
     return AppColors.successColor;
+  }
+
+  // New Professional Widget Methods
+  Widget _buildSearchTypeTab(String title, int index, IconData icon) {
+    final isSelected = _selectedSearchType == index;
+    
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedSearchType = index;
+          });
+          HapticFeedback.lightImpact();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceMD,
+            vertical: AppDesign.spaceMD,
+          ),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+                size: AppDesign.iconSM,
+              ),
+              const SizedBox(width: AppDesign.spaceXS),
+              Text(
+                title,
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchFields() {
+    switch (_selectedSearchType) {
+      case 0: // Route
+        return Column(
+          key: const ValueKey('route'),
+          children: [
+            ProfessionalTextField(
+              controller: _fromController,
+              labelText: 'From',
+              hintText: 'Enter departure location',
+              prefixIcon: const Icon(Icons.my_location_rounded),
+            ),
+            const SizedBox(height: AppDesign.spaceLG),
+            ProfessionalTextField(
+              controller: _toController,
+              labelText: 'To',
+              hintText: 'Enter destination',
+              prefixIcon: const Icon(Icons.location_on_rounded),
+            ),
+          ],
+        );
+      case 1: // Bus Number
+        return Column(
+          key: const ValueKey('bus'),
+          children: [
+            ProfessionalTextField(
+              controller: _busNumberController,
+              labelText: 'Bus Number',
+              hintText: 'Enter bus number (e.g., B001)',
+              prefixIcon: const Icon(Icons.directions_bus_rounded),
+            ),
+          ],
+        );
+      case 2: // Live Tracking
+        return Column(
+          key: const ValueKey('live'),
+          children: [
+            ProfessionalTextField(
+              controller: _routeController,
+              labelText: 'Route Name',
+              hintText: 'Enter route name',
+              prefixIcon: const Icon(Icons.live_tv_rounded),
+            ),
+          ],
+        );
+      default:
+        return Container();
+    }
+  }
+
+  Widget _buildQuickFilters() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Quick Filters',
+            style: AppTextStyles.headline6.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                final filters = [
+                  {'title': 'Nearby', 'icon': Icons.near_me, 'color': AppColors.primaryColor},
+                  {'title': 'Express', 'icon': Icons.bolt, 'color': AppColors.warningColor},
+                  {'title': 'Low Fare', 'icon': Icons.attach_money, 'color': AppColors.successColor},
+                  {'title': 'AC Buses', 'icon': Icons.ac_unit, 'color': AppColors.tealAccent},
+                ];
+                
+                return Container(
+                  width: 80,
+                  margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
+                  child: ProfessionalCard(
+                    padding: const EdgeInsets.all(AppDesign.spaceMD),
+                    onTap: () => _applyFilter(index),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(AppDesign.spaceSM),
+                          decoration: BoxDecoration(
+                            color: (filters[index]['color'] as Color).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                          ),
+                          child: Icon(
+                            filters[index]['icon'] as IconData,
+                            color: filters[index]['color'] as Color,
+                            size: AppDesign.iconSM,
+                          ),
+                        ),
+                        const SizedBox(height: AppDesign.spaceXS),
+                        Text(
+                          filters[index]['title'] as String,
+                          style: AppTextStyles.labelSmall.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNearbyBuses() {
+    if (_nearbyBuses.isEmpty) return Container();
+    
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Nearby Buses',
+                style: AppTextStyles.headline6.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              TextButton(
+                onPressed: () => _showAllNearbyBuses(),
+                child: Text(
+                  'See All',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _nearbyBuses.length,
+              itemBuilder: (context, index) {
+                final bus = _nearbyBuses[index];
+                return _buildNearbyBusCard(bus, index);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNearbyBusCard(Map<String, dynamic> bus, int index) {
+    return Container(
+      width: 200,
+      margin: EdgeInsets.only(right: index < _nearbyBuses.length - 1 ? 12 : 0),
+      child: ProfessionalCard(
+        onTap: () => _viewBusDetails(bus['id']),
+        gradient: AppColors.primaryGradient,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  bus['busNumber'],
+                  style: AppTextStyles.headline6.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDesign.spaceSM,
+                    vertical: AppDesign.spaceXS,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+                  ),
+                  child: Text(
+                    bus['distance'],
+                    style: AppTextStyles.labelSmall.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceXS),
+            Text(
+              bus['routeName'],
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: Colors.white.withOpacity(0.9),
+              ),
+            ),
+            const Spacer(),
+            Row(
+              children: [
+                Icon(
+                  Icons.access_time_rounded,
+                  color: Colors.white.withOpacity(0.8),
+                  size: AppDesign.iconSM,
+                ),
+                const SizedBox(width: AppDesign.spaceXS),
+                Text(
+                  'ETA: ${bus['eta']}',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFavoriteRoutes() {
+    if (_favoriteRoutes.isEmpty) return Container();
+    
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Favorite Routes',
+            style: AppTextStyles.headline6.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _favoriteRoutes.length,
+            itemBuilder: (context, index) {
+              final route = _favoriteRoutes[index];
+              return _buildFavoriteRouteCard(route);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFavoriteRouteCard(Map<String, dynamic> route) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
+      child: ProfessionalCard(
+        onTap: () => _searchFavoriteRoute(route['id']),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.successColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              ),
+              child: const Icon(
+                Icons.favorite_rounded,
+                color: AppColors.successColor,
+                size: AppDesign.iconMD,
+              ),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    route['routeName'],
+                    style: AppTextStyles.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    route['route'],
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    'Every ${route['frequency']}',
+                    style: AppTextStyles.labelMedium.copyWith(
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textHint,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPopularRoutes() {
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Popular Routes',
+            style: AppTextStyles.headline6.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _searchResults.length,
+            itemBuilder: (context, index) {
+              final bus = _searchResults[index];
+              return _buildProfessionalBusCard(bus);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfessionalFAB() {
+    return AnimatedBuilder(
+      animation: _fabAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _fabAnimation.value,
+          child: FloatingActionButton.extended(
+            heroTag: "search_fab",
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+              _performSearch();
+            },
+            backgroundColor: AppColors.primaryColor,
+            foregroundColor: Colors.white,
+            elevation: 8,
+            icon: _isSearching
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(Icons.search_rounded),
+            label: Text(
+              _isSearching ? 'Searching...' : 'Search Buses',
+              style: AppTextStyles.labelLarge.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Helper Methods
+  void _showFilterOptions() {
+    HapticFeedback.lightImpact();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildFilterModal(),
+    );
+  }
+
+  void _openRouteMap() {
+    HapticFeedback.lightImpact();
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => const RouteMapPage(),
+    //   ),
+    // );
+  }
+
+  void _applyFilter(int filterIndex) {
+    HapticFeedback.lightImpact();
+    // Apply filter logic based on index
+  }
+
+  void _showAllNearbyBuses() {
+    HapticFeedback.lightImpact();
+    // Show all nearby buses
+  }
+
+  void _viewBusDetails(String busId) {
+    HapticFeedback.lightImpact();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BusDetailsPage(busId: busId),
+      ),
+    );
+  }
+
+  void _searchFavoriteRoute(String routeId) {
+    HapticFeedback.lightImpact();
+    // Search for buses on this favorite route
+  }
+
+  Widget _buildFilterModal() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(AppDesign.radiusXL),
+          topRight: Radius.circular(AppDesign.radiusXL),
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(top: AppDesign.spaceMD),
+            decoration: BoxDecoration(
+              color: AppColors.greyLight,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: Text(
+              'Filter Options',
+              style: AppTextStyles.headline6.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
