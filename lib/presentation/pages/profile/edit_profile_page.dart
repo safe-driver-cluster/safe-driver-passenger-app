@@ -489,25 +489,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
           const SizedBox(height: AppDesign.spaceMD),
 
-          // Gender and National ID
-          Row(
-            children: [
-              Expanded(
-                child: _buildFormField(
-                  controller: _genderController,
-                  label: 'Gender',
-                  icon: Icons.wc_outlined,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildFormField(
-                  controller: _nationalIdController,
-                  label: 'National ID',
-                  icon: Icons.badge_outlined,
-                ),
-              ),
-            ],
+          // Gender
+          _buildFormField(
+            controller: _genderController,
+            label: 'Gender',
+            icon: Icons.wc_outlined,
           ),
         ],
       ),
@@ -1051,7 +1037,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _phoneController.dispose();
     _dateOfBirthController.dispose();
     _genderController.dispose();
-    _nationalIdController.dispose();
+
     _streetController.dispose();
     _cityController.dispose();
     _stateController.dispose();
