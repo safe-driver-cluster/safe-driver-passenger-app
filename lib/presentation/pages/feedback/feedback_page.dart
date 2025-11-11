@@ -51,15 +51,29 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: Column(
-        children: [
-          // Professional Header
-          _buildProfessionalHeader(),
-          
-          // Feedback Content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
+              
+              // Feedback Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
               child: Column(
                 children: [
                   // Trip Info Card
