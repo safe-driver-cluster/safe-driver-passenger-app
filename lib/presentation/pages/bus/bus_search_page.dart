@@ -838,12 +838,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(
-          color: AppColors.greyLight,
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
