@@ -517,32 +517,48 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     );
   }
 
-  Widget _buildMainSearchContent() {
+  Widget _buildPopularRoutesSection() {
     return Container(
       margin: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Search Type Tabs
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Row(
-              children: [
-                _buildModernTab('Route', 0, Icons.route),
-                _buildModernTab('Bus #', 1, Icons.directions_bus),
-                _buildModernTab('Live', 2, Icons.live_tv),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Popular Routes',
+                style: AppTextStyles.headline6.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RouteMapPage(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'View All',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-
-          // Search Fields Based on Type
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: _buildSearchFieldsForType(),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _searchResults.length,
+            itemBuilder: (context, index) {
+              return _buildProfessionalBusCard(_searchResults[index]);
+            },
           ),
         ],
       ),
