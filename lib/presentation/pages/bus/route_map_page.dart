@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../core/constants/text_styles.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'bus_details_page.dart';
 import 'live_tracking_page.dart';
@@ -206,7 +205,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: AppColors.backgroundColor,
       body: CustomScrollView(
         slivers: [
           _buildProfessionalAppBar(),
@@ -354,7 +353,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             const SizedBox(height: AppDesign.spaceLG),
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.borderColor),
+                border: Border.all(color: AppColors.greyLight),
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: DropdownButtonHideUnderline(
@@ -410,7 +409,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                               ),
                               child: Text(
                                 'Inactive',
-                                style: AppTextStyles.caption.copyWith(
+                                style: AppTextStyles.labelSmall.copyWith(
                                   color: AppColors.errorColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -489,7 +488,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
               const SizedBox(height: AppDesign.spaceXS),
               Text(
                 title,
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.labelSmall.copyWith(
                   color: isSelected ? Colors.white : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
