@@ -999,13 +999,13 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       children: [
                         Text(
                           bus['nextArrival'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                             color: AppColors.primaryColor,
                           ),
                         ),
-                        Text(
+                        const Text(
                           'arrival',
                           style: TextStyle(
                             fontSize: 12,
@@ -1025,7 +1025,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                     Icon(
                       Icons.route,
                       size: 16,
-                      color: Colors.white.withOpacity(0.6),
+                      color: AppColors.textHint,
                     ),
                     const SizedBox(width: AppDesign.spaceMD),
                     Expanded(
@@ -1033,7 +1033,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         bus['route'],
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withOpacity(0.8),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
