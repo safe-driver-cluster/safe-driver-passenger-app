@@ -51,16 +51,30 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: Column(
-        children: [
-          // Professional Header
-          _buildProfessionalHeader(),
-          
-          // Feedback Content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
-              child: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
+              
+              // Feedback Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+                  child: Column(
                 children: [
                   // Trip Info Card
                   if (widget.busId != null) _buildTripInfoCard(),
@@ -88,78 +102,90 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfessionalHeader() {
+  Widget _buildModernHeader() {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
-        60,
+        AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.space2XL,
+        AppDesign.spaceLG,
       ),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
-      ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-            ),
-            child: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Colors.white,
-                size: AppDesign.iconMD,
-              ),
-            ),
-          ),
-          
-          const SizedBox(width: AppDesign.spaceLG),
-          
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Share Feedback',
-                  style: AppTextStyles.headline4.copyWith(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    size: AppDesign.iconMD,
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceXS),
-                Text(
-                  'Help us improve your experience',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Share Feedback',
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Help us improve your experience',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white.withOpacity(0.9),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceMD),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.feedback_rounded,
-              color: Colors.white,
-              size: AppDesign.iconLG,
-            ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.feedback_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconMD,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

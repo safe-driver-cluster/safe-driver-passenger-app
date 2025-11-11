@@ -493,7 +493,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               'Quick Actions',
               style: AppTextStyles.headline6.copyWith(
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 22,
               ),
             ),
@@ -815,41 +815,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Search Results',
-            style: AppTextStyles.headline6.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
-            ),
-          ),
-          const SizedBox(height: AppDesign.spaceLG),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _searchResults.length,
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: AppDesign.spaceMD),
-            itemBuilder: (context, index) {
-              return _buildModernBusCard(_searchResults[index]);
-            },
-          ),
-        ],
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _searchResults.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppDesign.spaceMD),
+        itemBuilder: (context, index) {
+          return _buildModernBusCard(_searchResults[index]);
+        },
       ),
     );
   }
@@ -864,12 +838,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(
-          color: AppColors.greyLight,
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
