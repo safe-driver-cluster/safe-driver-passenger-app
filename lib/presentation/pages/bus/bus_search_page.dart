@@ -999,17 +999,17 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       children: [
                         Text(
                           bus['nextArrival'],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: AppColors.primaryColor,
                           ),
                         ),
                         Text(
                           'arrival',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                            color: AppColors.textHint,
                           ),
                         ),
                       ],
