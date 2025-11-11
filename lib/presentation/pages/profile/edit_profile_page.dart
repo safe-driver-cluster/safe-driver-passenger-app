@@ -28,7 +28,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _phoneController;
   late final TextEditingController _dateOfBirthController;
   late final TextEditingController _genderController;
-  late final TextEditingController _nationalIdController;
 
   // Address controllers
   late final TextEditingController _streetController;
@@ -977,15 +976,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
       // For now, just show success without actual saving since we need to implement proper service methods
       // TODO: Implement actual profile image upload and update methods
-      
+
       // TODO: Implement actual profile update
       // Update basic fields only for now
       // final updatedProfile = _currentProfile?.copyWith(
       //   firstName: _firstNameController.text.trim(),
       //   lastName: _lastNameController.text.trim(),
       //   phoneNumber: _phoneController.text.trim(),
-      //   gender: _genderController.text.isNotEmpty 
-      //       ? _genderController.text.trim() 
+      //   gender: _genderController.text.isNotEmpty
+      //       ? _genderController.text.trim()
       //       : null,
       //   updatedAt: DateTime.now(),
       // );
