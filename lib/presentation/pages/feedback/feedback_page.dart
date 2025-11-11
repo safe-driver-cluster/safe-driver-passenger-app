@@ -99,7 +99,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                         const SizedBox(height: AppDesign.space2XL),
 
                         // Submit Button
-                        _buildSubmitSection(),
+                                          // Submit Button
+                  _buildSubmitSection(),
                       ],
                     ),
                   ),
