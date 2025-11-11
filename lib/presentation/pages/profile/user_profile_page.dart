@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../data/models/user_model.dart';
-import '../../../data/services/dashboard_service.dart';
+import '../../../data/models/passenger_model.dart';
+import '../../../data/services/passenger_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
@@ -16,13 +16,14 @@ import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
-// User profile provider for Firebase data
-final userProfileProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
+// Passenger profile provider for Firebase data
+final passengerProfileProvider =
+    FutureProvider.autoDispose<PassengerModel?>((ref) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) return null;
 
-  final dashboardService = DashboardService();
-  return await dashboardService.getUserProfile(user.uid);
+  final passengerService = PassengerService.instance;
+  return await passengerService.getPassengerProfile(user.uid);
 });
 
 class UserProfilePage extends ConsumerWidget {
@@ -30,7 +31,7 @@ class UserProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userProfileAsync = ref.watch(userProfileProvider);
+    final passengerProfileAsync = ref.watch(passengerProfileProvider);
     final authState = ref.watch(authStateProvider);
 
     return Scaffold(
@@ -51,7 +52,7 @@ class UserProfilePage extends ConsumerWidget {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(userProfileProvider);
+              ref.invalidate(passengerProfileProvider);
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
@@ -61,7 +62,7 @@ class UserProfilePage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Professional Header with user data
-                  userProfileAsync.when(
+                  passengerProfileAsync.when(
                     data: (userProfile) => _buildProfessionalHeader(
                       context,
                       userProfile,
@@ -86,7 +87,7 @@ class UserProfilePage extends ConsumerWidget {
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // User Stats Section
-                        userProfileAsync.when(
+                        passengerProfileAsync.when(
                           data: (userProfile) =>
                               _buildProfessionalStats(userProfile),
                           loading: () => _buildLoadingStats(),
@@ -111,7 +112,7 @@ class UserProfilePage extends ConsumerWidget {
 
   Widget _buildProfessionalHeader(
     BuildContext context,
-    UserModel? userProfile,
+    PassengerModel? userProfile,
     User? firebaseUser,
   ) {
     final displayName =
@@ -564,7 +565,7 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfessionalStats(UserModel? userProfile) {
+  Widget _buildProfessionalStats(PassengerModel? userProfile) {
     // TODO: Add these fields to UserModel in future iterations
     // For now using placeholder data - should be fetched from travel history
     const totalTrips = 47; // Should be calculated from user's travel records
