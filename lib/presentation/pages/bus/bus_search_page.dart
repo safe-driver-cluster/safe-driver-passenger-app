@@ -395,12 +395,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
           Container(
             margin: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              gradient: AppColors.glassGradient,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             padding: const EdgeInsets.all(AppDesign.spaceSM),
             child: Row(
@@ -413,15 +416,18 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             ),
           ),
 
-          // Search Form with Glass Morphism
+          // Search Form with Modern Design
           Container(
             decoration: BoxDecoration(
-              gradient: AppColors.glassGradient,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             padding: const EdgeInsets.all(AppDesign.spaceLG),
             child: Column(
@@ -572,12 +578,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       child: Container(
         height: 120,
         decoration: BoxDecoration(
-          gradient: AppColors.glassGradient,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.2),
-            width: 1,
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -616,7 +625,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ),
@@ -635,12 +644,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
           const SizedBox(height: AppDesign.spaceLG),
           Container(
             decoration: BoxDecoration(
-              gradient: AppColors.glassGradient,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             padding: const EdgeInsets.all(AppDesign.spaceLG),
             child: Column(
@@ -652,7 +664,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       'Popular Routes',
                       style: AppTextStyles.headline6.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 20,
                       ),
                     ),
@@ -671,14 +683,14 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           vertical: AppDesign.spaceXS,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: AppColors.primaryColor.withOpacity(0.1),
                           borderRadius:
                               BorderRadius.circular(AppDesign.radiusLG),
                         ),
                         child: Text(
                           'View All',
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: Colors.white,
+                            color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -804,12 +816,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -818,7 +833,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
           Text(
             'Search Results',
             style: AppTextStyles.headline6.copyWith(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
               fontSize: 20,
             ),
@@ -849,10 +864,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppColors.greyExtraLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppColors.greyLight,
           width: 1,
         ),
       ),
@@ -936,7 +951,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(width: AppDesign.spaceMD),
@@ -968,9 +983,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           const SizedBox(height: 4),
                           Text(
                             bus['routeName'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: Colors.white.withOpacity(0.8),
+                              color: AppColors.textSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -987,14 +1002,14 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: AppColors.primaryColor,
                           ),
                         ),
-                        Text(
+                        const Text(
                           'arrival',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                            color: AppColors.textHint,
                           ),
                         ),
                       ],
@@ -1007,18 +1022,18 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 // Route
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.route,
                       size: 16,
-                      color: Colors.white.withOpacity(0.6),
+                      color: AppColors.textHint,
                     ),
                     const SizedBox(width: AppDesign.spaceMD),
                     Expanded(
                       child: Text(
                         bus['route'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withOpacity(0.8),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
@@ -1054,7 +1069,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           '${bus['rating']}',
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
@@ -1325,8 +1340,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               Icon(
                 icon,
                 size: AppDesign.iconSM,
-                color:
-                    isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                color: isSelected ? Colors.white : AppColors.textSecondary,
               ),
               const SizedBox(width: AppDesign.spaceXS),
               Text(
@@ -1334,8 +1348,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color:
-                      isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                  color: isSelected ? Colors.white : AppColors.textPrimary,
                 ),
               ),
             ],
@@ -1353,24 +1366,24 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppColors.greyExtraLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppColors.greyLight,
           width: 1,
         ),
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: AppColors.textPrimary),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+          labelStyle: const TextStyle(color: AppColors.textSecondary),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+          hintStyle: const TextStyle(color: AppColors.textHint),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.8),
+            color: AppColors.primaryColor,
             size: AppDesign.iconMD,
           ),
           border: OutlineInputBorder(
