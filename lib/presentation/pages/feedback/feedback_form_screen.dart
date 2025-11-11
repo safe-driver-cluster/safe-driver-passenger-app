@@ -159,120 +159,123 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               // Content Area
               Expanded(
                 child: LoadingWidget(
-        isLoading: _isSubmitting,
-        child: passengerAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load passenger data',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Please try again later',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          data: (passenger) {
-            if (passenger == null) {
-              return const Center(
-                child: Text('No passenger profile found'),
-              );
-            }
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Passenger Info Card (shows passenger details being used)
-                    _buildPassengerInfoCard(passenger),
-
-                    const SizedBox(height: 16),
-
-                    // Feedback Type and Category
-                    _buildBasicInfoCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Ratings
-                    _buildRatingsCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Feedback Content
-                    _buildContentCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Options
-                    _buildOptionsCard(),
-
-                    const SizedBox(height: 24),
-
-                    // Submit Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () => _submitFeedback(passenger),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2563EB),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                  isLoading: _isSubmitting,
+                  child: passengerAsync.when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stackTrace) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.grey[400],
                           ),
-                          elevation: 2,
-                        ),
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                ),
-                              )
-                            : const Text(
-                                'Submit Feedback',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Failed to load passenger data',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Please try again later',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    data: (passenger) {
+                      if (passenger == null) {
+                        return const Center(
+                          child: Text('No passenger profile found'),
+                        );
+                      }
 
-                    const SizedBox(height: 32),
-                  ],
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Passenger Info Card (shows passenger details being used)
+                              _buildPassengerInfoCard(passenger),
+
+                              const SizedBox(height: 16),
+
+                              // Feedback Type and Category
+                              _buildBasicInfoCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Ratings
+                              _buildRatingsCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Feedback Content
+                              _buildContentCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Options
+                              _buildOptionsCard(),
+
+                              const SizedBox(height: 24),
+
+                              // Submit Button
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _isSubmitting
+                                      ? null
+                                      : () => _submitFeedback(passenger),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2563EB),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  child: _isSubmitting
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Submit Feedback',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 32),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            );
-          },
-                ),
-              ),
               )
             ],
           ),
@@ -313,7 +316,6 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                   ),
                 ),
               ),
-              
               Container(
                 decoration: BoxDecoration(
                   gradient: AppColors.glassGradient,
@@ -336,16 +338,14 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Submit Feedback',
                       style: TextStyle(
                         fontSize: AppDesign.text2XL,
@@ -354,9 +354,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    
                     const SizedBox(height: AppDesign.spaceXS),
-                    
                     Text(
                       'Share your experience and help us improve',
                       style: TextStyle(
