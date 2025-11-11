@@ -7,6 +7,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'bus_details_page.dart';
 import 'live_tracking_page.dart';
+import 'route_map_page.dart';
 
 class BusSearchPage extends ConsumerStatefulWidget {
   const BusSearchPage({super.key});
@@ -23,54 +24,70 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   final _routeController = TextEditingController();
   final _searchController = TextEditingController();
 
-  late TabController _tabController;
   late AnimationController _animationController;
   late AnimationController _fabAnimationController;
+  late AnimationController _cardAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   late Animation<double> _fabAnimation;
+  late Animation<double> _cardAnimation;
 
   List<Map<String, dynamic>> _searchResults = [];
-  List<Map<String, dynamic>> _recentSearches = [];
-  List<String> _popularDestinations = [];
+  List<Map<String, dynamic>> _nearbyBuses = [];
+  List<Map<String, dynamic>> _favoriteRoutes = [];
   bool _isSearching = false;
   bool _showSearchResults = false;
-  int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Location
+  int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Live Tracking
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _setupAnimations();
+    _loadInitialData();
+  }
+
+  void _setupAnimations() {
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
     _fabAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _cardAnimationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
-    _slideAnimation = Tween<double>(begin: -50.0, end: 0.0).animate(
+    _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-          parent: _fabAnimationController, curve: Curves.elasticOut),
+      CurvedAnimation(parent: _fabAnimationController, curve: Curves.elasticOut),
     );
-
-    _loadPopularRoutes();
-    _loadRecentSearches();
-    _loadPopularDestinations();
+    _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _cardAnimationController, curve: Curves.easeOutBack),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 400), () {
         _fabAnimationController.forward();
       });
+      Future.delayed(const Duration(milliseconds: 600), () {
+        _cardAnimationController.forward();
+      });
     });
+  }
+
+  void _loadInitialData() {
+    _loadPopularRoutes();
+    _loadNearbyBuses();
+    _loadFavoriteRoutes();
   }
 
   @override
