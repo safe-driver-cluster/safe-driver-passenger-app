@@ -599,6 +599,4 @@ class DashboardHome extends ConsumerWidget {
       return 'Evening';
     }
   }
-
-
 }
