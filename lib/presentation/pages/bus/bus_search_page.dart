@@ -8,7 +8,6 @@ import '../../widgets/common/professional_widgets.dart';
 import 'bus_details_page.dart';
 import 'live_tracking_page.dart';
 
-
 class BusSearchPage extends ConsumerStatefulWidget {
   const BusSearchPage({super.key});
 
@@ -290,7 +289,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       children: [
                         _buildSearchSection(),
                         _buildQuickFilters(),
-                        if (_showSearchResults) 
+                        if (_showSearchResults)
                           _buildSearchResults()
                         else ...[
                           _buildNearbyBuses(),
@@ -426,7 +425,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               ],
             ),
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Search Type Selector
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceXS),
@@ -442,17 +441,17 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 ],
               ),
             ),
-            
+
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Dynamic Search Fields
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _buildSearchFields(),
             ),
-            
+
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Search Button
             ProfessionalButton(
               text: _isSearching ? 'Searching...' : 'Search Buses',
@@ -460,8 +459,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               isLoading: _isSearching,
               width: double.infinity,
               gradient: AppColors.primaryGradient,
-              icon: _isSearching 
-                  ? null 
+              icon: _isSearching
+                  ? null
                   : const Icon(
                       Icons.search_rounded,
                       color: Colors.white,
@@ -1534,7 +1533,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   // New Professional Widget Methods
   Widget _buildSearchTypeTab(String title, int index, IconData icon) {
     final isSelected = _selectedSearchType == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -1645,12 +1644,28 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               itemCount: 4,
               itemBuilder: (context, index) {
                 final filters = [
-                  {'title': 'Nearby', 'icon': Icons.near_me, 'color': AppColors.primaryColor},
-                  {'title': 'Express', 'icon': Icons.bolt, 'color': AppColors.warningColor},
-                  {'title': 'Low Fare', 'icon': Icons.attach_money, 'color': AppColors.successColor},
-                  {'title': 'AC Buses', 'icon': Icons.ac_unit, 'color': AppColors.tealAccent},
+                  {
+                    'title': 'Nearby',
+                    'icon': Icons.near_me,
+                    'color': AppColors.primaryColor
+                  },
+                  {
+                    'title': 'Express',
+                    'icon': Icons.bolt,
+                    'color': AppColors.warningColor
+                  },
+                  {
+                    'title': 'Low Fare',
+                    'icon': Icons.attach_money,
+                    'color': AppColors.successColor
+                  },
+                  {
+                    'title': 'AC Buses',
+                    'icon': Icons.ac_unit,
+                    'color': AppColors.tealAccent
+                  },
                 ];
-                
+
                 return Container(
                   width: 80,
                   margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
@@ -1663,8 +1678,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         Container(
                           padding: const EdgeInsets.all(AppDesign.spaceSM),
                           decoration: BoxDecoration(
-                            color: (filters[index]['color'] as Color).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                            color: (filters[index]['color'] as Color)
+                                .withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppDesign.radiusMD),
                           ),
                           child: Icon(
                             filters[index]['icon'] as IconData,
@@ -1694,7 +1711,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
   Widget _buildNearbyBuses() {
     if (_nearbyBuses.isEmpty) return Container();
-    
+
     return Container(
       margin: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -1809,7 +1826,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
   Widget _buildFavoriteRoutes() {
     if (_favoriteRoutes.isEmpty) return Container();
-    
+
     return Container(
       margin: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
