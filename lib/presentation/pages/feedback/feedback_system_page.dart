@@ -333,7 +333,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 160, // Fixed height to ensure same size
+        height: 180, // Fixed height to ensure same size
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
