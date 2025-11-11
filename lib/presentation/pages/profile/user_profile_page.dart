@@ -773,7 +773,8 @@ class UserProfilePage extends ConsumerWidget {
       MenuItemData('Passenger Details', Icons.account_circle_outlined, () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const PassengerProfileScreen()),
+          MaterialPageRoute(
+              builder: (context) => const PassengerProfileScreen()),
         );
       }),
       MenuItemData('Trip History', Icons.history_rounded, () {
@@ -824,7 +825,11 @@ class UserProfilePage extends ConsumerWidget {
     ];
 
     // Combine all menu items
-    final allItems = [...accountMenuItems, ...settingsMenuItems, ...actionMenuItems];
+    final allItems = [
+      ...accountMenuItems,
+      ...settingsMenuItems,
+      ...actionMenuItems
+    ];
 
     return allItems.asMap().entries.map((entry) {
       final index = entry.key;
@@ -842,8 +847,6 @@ class UserProfilePage extends ConsumerWidget {
       );
     }).toList();
   }
-
-
 
   Widget _buildMenuItem(MenuItemData item) {
     return ListTile(
