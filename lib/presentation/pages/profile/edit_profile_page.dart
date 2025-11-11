@@ -134,7 +134,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       // Map language code to display name
       _preferredLanguage =
           _mapLanguageCodeToDisplayName(profile.preferences.language);
-      
+
       // Set gender dropdown value
       _selectedGender = _mapGenderToDisplayValue(profile.gender);
     });
