@@ -97,11 +97,12 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
                   const SizedBox(height: AppDesign.space2XL),
                   
                   // Submit Button
-                  _buildSubmitSection(),
-                ],
+                    _buildSubmitSection(),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
