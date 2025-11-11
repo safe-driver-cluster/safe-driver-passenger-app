@@ -5,14 +5,11 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
-import '../../widgets/dashboard/modern_safety_overview_widget.dart';
-import '../../widgets/dashboard/quick_actions_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 import '../qr/qr_scanner_page.dart';
-import '../safety/emergency_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -230,12 +227,12 @@ class DashboardHome extends ConsumerWidget {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
-            end: Alignment.centerLeft,
+            end: Alignment.bottomCenter,
             colors: [
-              AppColors.backgroundColor,
+              AppColors.primaryColor,
               AppColors.scaffoldBackground,
             ],
-            stops: [0.0, 0.6],
+            stops: [0.0, 0.4],
           ),
         ),
         child: SafeArea(
@@ -252,8 +249,8 @@ class DashboardHome extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Professional Header
-                  _buildModernHeader(context, dashboardState),
+                  // Redesigned Header
+                  _buildRedesignedHeader(context, dashboardState),
 
                   // Main Content
                   Padding(
@@ -264,55 +261,20 @@ class DashboardHome extends ConsumerWidget {
                       children: [
                         const SizedBox(height: AppDesign.spaceXL),
 
-                        // Safety Overview
-                        _buildProfessionalSection(
-                          title: 'Safety Overview',
-                          icon: Icons.security_rounded,
-                          iconColor: AppColors.successColor,
-                          child: const ModernSafetyOverviewWidget(),
-                        ),
-                        const SizedBox(height: AppDesign.space2XL),
-
-                        // Quick Actions Section
-                        _buildProfessionalSection(
-                          title: 'Quick Actions',
-                          icon: Icons.flash_on_rounded,
-                          iconColor: AppColors.accentColor,
-                          child: QuickActionsWidget(
-                            onQrScan: () => onNavigateToTab?.call(2),
-                            onSearch: () => onNavigateToTab?.call(1),
-                            onEmergency: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const EmergencyPage(),
-                                ),
-                              );
-                            },
-                            onFeedback: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/feedback-system',
-                              );
-                            },
-                          ),
-                        ),
+                        // Quick Actions Grid - Main Feature
+                        _buildQuickActionsGrid(context),
                         const SizedBox(height: AppDesign.space2XL),
 
                         // Active Journey Section
-                        _buildProfessionalSection(
-                          title: 'Active Journey',
-                          icon: Icons.directions_bus_rounded,
-                          iconColor: AppColors.primaryColor,
+                        _buildCleanSection(
+                          title: 'Current Journey',
                           child: const ActiveJourneyWidget(),
                         ),
                         const SizedBox(height: AppDesign.space2XL),
 
                         // Recent Activity Section
-                        _buildProfessionalSection(
+                        _buildCleanSection(
                           title: 'Recent Activity',
-                          icon: Icons.history_rounded,
-                          iconColor: AppColors.tealAccent,
                           child: const RecentActivityWidget(),
                         ),
                         const SizedBox(height: AppDesign.space3XL),
@@ -328,235 +290,227 @@ class DashboardHome extends ConsumerWidget {
     );
   }
 
-  Widget _buildModernHeader(BuildContext context, dynamic dashboardState) {
+  Widget _buildRedesignedHeader(BuildContext context, dynamic dashboardState) {
     final greeting = _getGreeting();
-    final time = _getTimeOfDay();
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
-        60,
+        AppDesign.spaceLG,
         AppDesign.spaceLG,
         AppDesign.space2XL,
       ),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
-        boxShadow: AppDesign.shadowLG,
-      ),
       child: Column(
         children: [
-          // Top Row - Greeting and Notifications
+          // Top Row - Simple greeting and notifications
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Good $greeting!',
-                      style: AppTextStyles.headline3.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.5,
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Good $greeting',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: -0.5,
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    Text(
-                      'Ready for a safe journey?',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: Colors.white.withOpacity(0.85),
-                      ),
-                    ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD,
-                        vertical: AppDesign.spaceXS,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.access_time_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          const SizedBox(width: AppDesign.spaceXS),
-                          Text(
-                            time,
-                            style: AppTextStyles.labelMedium.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
-                      ),
-                    );
-                  },
-                  icon: Stack(
-                    children: [
-                      const Icon(
-                        Icons.notifications_rounded,
-                        size: AppDesign.iconLG,
-                        color: Colors.white,
-                      ),
-                      if (dashboardState.activeIncidents > 0)
-                        Positioned(
-                          right: 2,
-                          top: 2,
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: AppColors.dangerColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Where would you like to go?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.9),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationsPage(),
+                    ),
+                  );
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  padding: const EdgeInsets.all(12),
+                ),
+                icon: const Icon(
+                  Icons.notifications_rounded,
+                  color: Colors.white,
+                  size: 24,
                 ),
               ),
             ],
-          ),
-
-          const SizedBox(height: AppDesign.space2XL),
-
-          // Quick Stats Row
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.directions_bus_rounded,
-                    label: 'Trips',
-                    value: '24',
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.white.withOpacity(0.2),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.route_rounded,
-                    label: 'Distance',
-                    value: '847km',
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.white.withOpacity(0.2),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.security_rounded,
-                    label: 'Safety',
-                    value: '98%',
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildProfessionalSection({
+  Widget _buildQuickActionsGrid(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Quick Actions',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppDesign.spaceLG),
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              // Main action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildActionButton(
+                      title: 'Scan QR Code',
+                      subtitle: 'Board your bus',
+                      icon: Icons.qr_code_scanner_rounded,
+                      color: AppColors.primaryColor,
+                      onTap: () => onNavigateToTab?.call(2),
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceLG),
+                  Expanded(
+                    child: _buildActionButton(
+                      title: 'Find Routes',
+                      subtitle: 'Search buses',
+                      icon: Icons.directions_bus_rounded,
+                      color: AppColors.tealAccent,
+                      onTap: () => onNavigateToTab?.call(1),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppDesign.spaceLG),
+              // Secondary actions
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildActionButton(
+                      title: 'Emergency',
+                      subtitle: 'Get help now',
+                      icon: Icons.warning_rounded,
+                      color: AppColors.errorColor,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/emergency');
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceLG),
+                  Expanded(
+                    child: _buildActionButton(
+                      title: 'Feedback',
+                      subtitle: 'Share experience',
+                      icon: Icons.feedback_rounded,
+                      color: AppColors.successColor,
+                      onTap: () {
+                        Navigator.pushNamed(context, '/feedback-system');
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
     required String title,
+    required String subtitle,
     required IconData icon,
-    required Color iconColor,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(
+            color: color.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: color,
+            ),
+            const SizedBox(height: AppDesign.spaceMD),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCleanSection({
+    required String title,
     required Widget child,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    iconColor.withOpacity(0.15),
-                    iconColor.withOpacity(0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                border: Border.all(
-                  color: iconColor.withOpacity(0.1),
-                ),
-              ),
-              child: Icon(
-                icon,
-                size: AppDesign.iconSM,
-                color: iconColor,
-              ),
-            ),
-            const SizedBox(width: AppDesign.spaceMD),
-            Text(
-              title,
-              style: AppTextStyles.headline6.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: AppColors.textHint,
-              size: AppDesign.iconSM,
-            ),
-          ],
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
         const SizedBox(height: AppDesign.spaceLG),
-        // Section Content
         child,
       ],
     );
