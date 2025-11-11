@@ -259,25 +259,29 @@ class DashboardHome extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: AppDesign.spaceXL),
+                        const SizedBox(height: AppDesign.spaceMD),
 
                         // Quick Actions Grid - Main Feature
-                        _buildQuickActionsGrid(context),
-                        const SizedBox(height: AppDesign.space2XL),
+                        _buildProfessionalQuickActions(context),
+                        const SizedBox(height: AppDesign.spaceLG),
 
                         // Active Journey Section
-                        _buildCleanSection(
+                        _buildProfessionalSection(
                           title: 'Current Journey',
+                          icon: Icons.directions_bus_rounded,
+                          gradient: AppColors.primaryGradient,
                           child: const ActiveJourneyWidget(),
                         ),
-                        const SizedBox(height: AppDesign.space2XL),
+                        const SizedBox(height: AppDesign.spaceLG),
 
                         // Recent Activity Section
-                        _buildCleanSection(
+                        _buildProfessionalSection(
                           title: 'Recent Activity',
+                          icon: Icons.history_rounded,
+                          gradient: AppColors.accentGradient,
                           child: const RecentActivityWidget(),
                         ),
-                        const SizedBox(height: AppDesign.space3XL),
+                        const SizedBox(height: AppDesign.spaceLG),
                       ],
                     ),
                   ),
@@ -296,57 +300,65 @@ class DashboardHome extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
+        AppDesign.spaceSM,
         AppDesign.spaceLG,
         AppDesign.spaceLG,
-        AppDesign.space2XL,
       ),
       child: Column(
         children: [
-          // Top Row - Simple greeting and notifications
+          // Top Row - Greeting and notifications
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Good $greeting',
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: -0.5,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Good $greeting',
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Where would you like to go?',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withOpacity(0.9),
-                      fontWeight: FontWeight.w400,
+                    const SizedBox(height: 2),
+                    Text(
+                      'Ready for your journey?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationsPage(),
-                    ),
-                  );
-                },
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  padding: const EdgeInsets.all(12),
+                  ],
                 ),
-                icon: const Icon(
-                  Icons.notifications_rounded,
-                  color: Colors.white,
-                  size: 24,
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsPage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.notifications_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                 ),
               ),
             ],
