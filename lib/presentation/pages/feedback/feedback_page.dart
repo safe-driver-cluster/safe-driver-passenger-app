@@ -75,7 +75,7 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
                   child: Column(
-                children: [
+                    children: [
                   // Trip Info Card
                   if (widget.busId != null) _buildTripInfoCard(),
                   
