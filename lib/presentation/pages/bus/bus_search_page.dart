@@ -951,7 +951,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(width: AppDesign.spaceMD),
