@@ -27,7 +27,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _phoneController;
   late final TextEditingController _dateOfBirthController;
-  late final TextEditingController _genderController;
 
   // Address controllers
   late final TextEditingController _streetController;
@@ -66,7 +65,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _lastNameController = TextEditingController();
     _phoneController = TextEditingController();
     _dateOfBirthController = TextEditingController();
-    _genderController = TextEditingController();
 
     _streetController = TextEditingController();
     _cityController = TextEditingController();
@@ -108,7 +106,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _lastNameController.text = profile.lastName;
       _phoneController.text = profile.phoneNumber;
       _dateOfBirthController.text = profile.dateOfBirth?.toString() ?? '';
-      _genderController.text = profile.gender ?? '';
 
       // Address
       if (profile.address != null) {
@@ -1025,7 +1022,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _lastNameController.dispose();
     _phoneController.dispose();
     _dateOfBirthController.dispose();
-    _genderController.dispose();
 
     _streetController.dispose();
     _cityController.dispose();
@@ -1067,6 +1063,41 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         return 'de';
       default:
         return 'en'; // Default fallback
+    }
+  }
+
+  // Helper method to map gender from model to display value
+  String _mapGenderToDisplayValue(String? gender) {
+    if (gender == null || gender.isEmpty) return 'Prefer not to say';
+    
+    switch (gender.toLowerCase()) {
+      case 'male':
+      case 'm':
+        return 'Male';
+      case 'female':
+      case 'f':
+        return 'Female';
+      case 'other':
+      case 'o':
+        return 'Other';
+      default:
+        return 'Prefer not to say';
+    }
+  }
+
+  // Helper method to map display value back to gender code
+  String? _mapDisplayValueToGender(String displayValue) {
+    switch (displayValue) {
+      case 'Male':
+        return 'Male';
+      case 'Female':
+        return 'Female';
+      case 'Other':
+        return 'Other';
+      case 'Prefer not to say':
+        return null; // Store as null for prefer not to say
+      default:
+        return null;
     }
   }
 }
