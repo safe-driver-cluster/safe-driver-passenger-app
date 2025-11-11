@@ -22,7 +22,7 @@ final passengerProfileProvider =
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) return null;
 
-  final passengerService = PassengerService();
+  final passengerService = PassengerService.instance;
   return await passengerService.getPassengerProfile(user.uid);
 });
 
