@@ -130,7 +130,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       // Preferences
       _notificationsEnabled = profile.preferences.notifications.journeyUpdates;
       _locationSharingEnabled = profile.preferences.privacy.shareLocation;
-      _preferredLanguage = profile.preferences.language;
+      
+      // Map language code to display name
+      _preferredLanguage = _mapLanguageCodeToDisplayName(profile.preferences.language);
       _preferredPaymentMethod = 'Card'; // Default as not in model
     });
   }
