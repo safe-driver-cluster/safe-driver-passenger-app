@@ -309,7 +309,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                   icon: const Icon(
                     Icons.arrow_back_rounded,
                     color: Colors.white,
-                    size: AppDesign.iconSizeLG,
+                    size: AppDesign.iconLG,
                   ),
                 ),
               ),
@@ -330,7 +330,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                   icon: const Icon(
                     Icons.help_outline_rounded,
                     color: Colors.white,
-                    size: AppDesign.iconSizeLG,
+                    size: AppDesign.iconLG,
                   ),
                 ),
               ),
@@ -348,7 +348,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                     Text(
                       'Submit Feedback',
                       style: TextStyle(
-                        fontSize: AppDesign.fontSizeXL,
+                        fontSize: AppDesign.text2XL,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: -0.5,
@@ -360,7 +360,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                     Text(
                       'Share your experience and help us improve',
                       style: TextStyle(
-                        fontSize: AppDesign.fontSizeMD,
+                        fontSize: AppDesign.textMD,
                         color: Colors.white.withOpacity(0.8),
                         fontWeight: FontWeight.w500,
                       ),
