@@ -757,7 +757,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               children: [
                 Text(
                   label,
-                  style: AppTextStyles.bodyText2.copyWith(
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.greyMedium,
                     fontSize: 12,
                   ),
@@ -765,7 +765,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: AppTextStyles.bodyText1.copyWith(
+                  style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.greyDark,
                     fontWeight: FontWeight.w500,
                   ),
