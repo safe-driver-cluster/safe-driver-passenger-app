@@ -115,9 +115,9 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
         AppDesign.spaceLG,
         AppDesign.space2XL,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(AppDesign.space2XL),
           bottomRight: Radius.circular(AppDesign.space2XL),
         ),
