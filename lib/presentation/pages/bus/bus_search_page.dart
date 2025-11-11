@@ -69,9 +69,6 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       Future.delayed(const Duration(milliseconds: 400), () {
         _fabAnimationController.forward();
       });
-      Future.delayed(const Duration(milliseconds: 600), () {
-        _cardAnimationController.forward();
-      });
     });
   }
 
