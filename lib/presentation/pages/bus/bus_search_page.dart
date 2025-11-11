@@ -233,7 +233,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
         ),
       ),
       floatingActionButton: _buildAnimatedFAB(),
-    )
+    );
   }
 
   Widget _buildModernHeader() {
