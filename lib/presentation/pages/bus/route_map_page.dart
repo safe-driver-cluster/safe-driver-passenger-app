@@ -205,7 +205,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: AppColors.backgroundColor,
       body: CustomScrollView(
         slivers: [
           _buildProfessionalAppBar(),
