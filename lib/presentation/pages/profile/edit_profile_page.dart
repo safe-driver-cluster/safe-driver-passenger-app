@@ -857,7 +857,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,
-          child: Text(item, style: AppTextStyles.bodyText1),
+          child: Text(item, style: AppTextStyles.bodyMedium),
         );
       }).toList(),
     );
