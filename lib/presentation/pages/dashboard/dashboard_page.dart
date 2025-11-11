@@ -226,13 +226,14 @@ class DashboardHome extends ConsumerWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
+              AppColors.primaryDark,
               AppColors.scaffoldBackground,
             ],
-            stops: [0.0, 0.4],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -465,75 +466,126 @@ class DashboardHome extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildProfessionalActionCard({
     required String title,
     required String subtitle,
     required IconData icon,
-    required Color color,
+    required LinearGradient gradient,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+    return Container(
+      height: 100, // Fixed height for same size
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          border: Border.all(
-            color: color.withOpacity(0.2),
-            width: 1,
+          child: Container(
+            padding: const EdgeInsets.all(AppDesign.spaceMD),
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: gradient.colors.first.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  icon,
+                  size: 28,
+                  color: Colors.white,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              icon,
-              size: 32,
-              color: color,
-            ),
-            const SizedBox(height: AppDesign.spaceMD),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
         ),
       ),
     );
   }
 
-  Widget _buildCleanSection({
+  Widget _buildProfessionalSection({
     required String title,
+    required IconData icon,
+    required LinearGradient gradient,
     required Widget child,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowMD,
+        border: Border.all(
+          color: AppColors.greyLight,
+          width: 1,
         ),
-        const SizedBox(height: AppDesign.spaceLG),
-        child,
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Professional section header
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppDesign.radiusXL),
+                topRight: Radius.circular(AppDesign.radiusXL),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  title,
+                  style: AppTextStyles.headline6.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Section content
+          child,
+        ],
+      ),
     );
   }
 
