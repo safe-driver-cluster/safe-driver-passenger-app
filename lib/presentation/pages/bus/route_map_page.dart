@@ -1044,7 +1044,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       const SizedBox(height: AppDesign.spaceXS),
                       LinearProgressIndicator(
                         value: occupancyPercentage / 100,
-                        backgroundColor: AppColors.borderColor,
+                        backgroundColor: AppColors.greyLight,
                         valueColor:
                             AlwaysStoppedAnimation<Color>(occupancyColor),
                         minHeight: 6,
@@ -1204,7 +1204,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1251,7 +1251,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1321,7 +1321,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
