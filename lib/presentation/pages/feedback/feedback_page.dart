@@ -51,62 +51,62 @@ class _FeedbackPageState extends State<FeedbackPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.scaffoldBackground,
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primaryColor,
-                AppColors.primaryDark,
-                AppColors.scaffoldBackground,
-              ],
-              stops: [0.0, 0.3, 0.7],
-            ),
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Modern Header
-                _buildModernHeader(),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
 
-                // Feedback Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD),
-                    child: Column(
-                      children: [
-                        // Trip Info Card
-                        if (widget.busId != null) _buildTripInfoCard(),
+              // Feedback Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+                  child: Column(
+                    children: [
+                      // Trip Info Card
+                      if (widget.busId != null) _buildTripInfoCard(),
 
-                        const SizedBox(height: AppDesign.space2XL),
+                      const SizedBox(height: AppDesign.space2XL),
 
-                        // Rating Section
-                        _buildRatingSection(),
+                      // Rating Section
+                      _buildRatingSection(),
 
-                        const SizedBox(height: AppDesign.space2XL),
+                      const SizedBox(height: AppDesign.space2XL),
 
-                        // Category Selection
-                        _buildCategorySection(),
+                      // Category Selection
+                      _buildCategorySection(),
 
-                        const SizedBox(height: AppDesign.space2XL),
+                      const SizedBox(height: AppDesign.space2XL),
 
-                        // Feedback Text
-                        _buildFeedbackSection(),
+                      // Feedback Text
+                      _buildFeedbackSection(),
 
-                        const SizedBox(height: AppDesign.space2XL),
+                      const SizedBox(height: AppDesign.space2XL),
 
-                        // Submit Button
-                        _buildSubmitSection(),
-                      ],
-                    ),
+                      // Submit Button
+                      _buildSubmitSection(),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
       ),
     );
   }
