@@ -17,13 +17,16 @@ import 'settings_page.dart';
 import 'trip_history_page.dart';
 
 // Passenger profile provider for Firebase data
-final passengerProfileProvider = FutureProvider.autoDispose<PassengerModel?>((ref) async {
+final passengerProfileProvider =
+    FutureProvider.autoDispose<PassengerModel?>((ref) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) return null;
-  
+
   final passengerService = PassengerService();
   return await passengerService.getPassengerProfile(user.uid);
-});class UserProfilePage extends ConsumerWidget {
+});
+
+class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
 
   @override
