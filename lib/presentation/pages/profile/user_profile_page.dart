@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/services/dashboard_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
@@ -12,6 +15,15 @@ import 'notifications_page.dart';
 import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
+
+// User profile provider for Firebase data
+final userProfileProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return null;
+  
+  final dashboardService = DashboardService();
+  return await dashboardService.getUserProfile(user.uid);
+});
 
 class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
