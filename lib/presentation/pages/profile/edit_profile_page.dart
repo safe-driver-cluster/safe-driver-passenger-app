@@ -1069,7 +1069,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   // Helper method to map gender from model to display value
   String _mapGenderToDisplayValue(String? gender) {
     if (gender == null || gender.isEmpty) return 'Prefer not to say';
-    
+
     switch (gender.toLowerCase()) {
       case 'male':
       case 'm':
