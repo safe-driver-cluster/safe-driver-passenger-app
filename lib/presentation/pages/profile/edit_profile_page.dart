@@ -134,7 +134,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       // Map language code to display name
       _preferredLanguage =
           _mapLanguageCodeToDisplayName(profile.preferences.language);
-      _preferredPaymentMethod = 'Card'; // Default as not in model
+      
+      // Set gender dropdown value
+      _selectedGender = _mapGenderToDisplayValue(profile.gender);
     });
   }
 
