@@ -567,9 +567,9 @@ class UserProfilePage extends ConsumerWidget {
   Widget _buildProfessionalStats(UserModel? userProfile) {
     // TODO: Add these fields to UserModel in future iterations
     // For now using placeholder data - should be fetched from travel history
-    final totalTrips = 47; // Should be calculated from user's travel records
-    final totalDistance = 1234.5; // Should be sum of all trip distances  
-    final safetyScore = 98.0; // Should be calculated from safety incidents
+    const totalTrips = 47; // Should be calculated from user's travel records
+    const totalDistance = 1234.5; // Should be sum of all trip distances
+    const safetyScore = 98.0; // Should be calculated from safety incidents
 
     return Container(
       decoration: BoxDecoration(
