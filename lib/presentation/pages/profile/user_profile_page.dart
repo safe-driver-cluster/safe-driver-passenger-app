@@ -52,7 +52,7 @@ class UserProfilePage extends ConsumerWidget {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(userProfileProvider);
+              ref.invalidate(passengerProfileProvider);
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
