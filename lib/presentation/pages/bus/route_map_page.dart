@@ -33,7 +33,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
 
   final PageController _pageController = PageController();
   int _currentMapType = 0; // 0: Route View, 1: Stops View, 2: Live Buses
-  bool _isLoading = false;
+  final bool _isLoading = false;
   String _selectedRoute = 'Route 001 - City Express';
 
   // Sample route data
@@ -53,7 +53,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _fabAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -62,14 +62,14 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
-    
+
     _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
     );
-    
+
     _fabAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _fabAnimationController, 
+        parent: _fabAnimationController,
         curve: Curves.elasticOut,
       ),
     );
@@ -99,7 +99,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
           'isActive': true,
         },
         {
-          'id': 'route_002', 
+          'id': 'route_002',
           'name': 'University Line',
           'routeNumber': '002',
           'description': 'University ↔ Downtown',
@@ -114,7 +114,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
         {
           'id': 'route_003',
           'name': 'Residential Route',
-          'routeNumber': '003', 
+          'routeNumber': '003',
           'description': 'Mall ↔ Residential Area',
           'totalStops': 18,
           'estimatedTime': '28 min',
@@ -179,7 +179,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
         },
         {
           'id': 'bus_002',
-          'busNumber': 'B023', 
+          'busNumber': 'B023',
           'route': '002',
           'routeName': 'University Line',
           'currentLocation': 'Downtown Terminal',
@@ -361,7 +361,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                 child: DropdownButton<String>(
                   value: _selectedRoute,
                   isExpanded: true,
-                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
                   items: _routes.map((route) {
                     return DropdownMenuItem<String>(
                       value: '${route['routeNumber']} - ${route['name']}',
@@ -404,7 +405,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.errorColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusSM),
                               ),
                               child: Text(
                                 'Inactive',
@@ -453,7 +455,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
 
   Widget _buildViewTypeTab(String title, IconData icon, int index) {
     final isSelected = _currentMapType == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -522,7 +524,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
 
   Widget _buildRouteOverview() {
     final currentRoute = _routes.first;
-    
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -648,7 +650,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.successColor,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
                         ),
                         child: Text(
                           'ACTIVE',
@@ -932,7 +935,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                         vertical: AppDesign.spaceXS,
                       ),
                       decoration: BoxDecoration(
-                        color: bus['isOnTime'] 
+                        color: bus['isOnTime']
                             ? AppColors.successColor.withOpacity(0.1)
                             : AppColors.warningColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(AppDesign.radiusSM),
@@ -940,8 +943,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       child: Text(
                         bus['isOnTime'] ? 'ON TIME' : '+${bus['delay']} MIN',
                         style: AppTextStyles.caption.copyWith(
-                          color: bus['isOnTime'] 
-                              ? AppColors.successColor 
+                          color: bus['isOnTime']
+                              ? AppColors.successColor
                               : AppColors.warningColor,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1043,7 +1046,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       LinearProgressIndicator(
                         value: occupancyPercentage / 100,
                         backgroundColor: AppColors.borderColor,
-                        valueColor: AlwaysStoppedAnimation<Color>(occupancyColor),
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(occupancyColor),
                         minHeight: 6,
                       ),
                     ],
@@ -1102,7 +1106,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color textColor) {
+  Widget _buildStatItem(
+      String label, String value, IconData icon, Color textColor) {
     return Column(
       children: [
         Icon(
@@ -1279,10 +1284,26 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
 
   Widget _buildQuickActionsModal() {
     final actions = [
-      {'title': 'Report Issue', 'icon': Icons.report_problem_rounded, 'color': AppColors.warningColor},
-      {'title': 'Schedule Alert', 'icon': Icons.notifications_rounded, 'color': AppColors.primaryColor},
-      {'title': 'Share Route', 'icon': Icons.share_rounded, 'color': AppColors.successColor},
-      {'title': 'Save Route', 'icon': Icons.bookmark_add_rounded, 'color': AppColors.primaryColor},
+      {
+        'title': 'Report Issue',
+        'icon': Icons.report_problem_rounded,
+        'color': AppColors.warningColor
+      },
+      {
+        'title': 'Schedule Alert',
+        'icon': Icons.notifications_rounded,
+        'color': AppColors.primaryColor
+      },
+      {
+        'title': 'Share Route',
+        'icon': Icons.share_rounded,
+        'color': AppColors.successColor
+      },
+      {
+        'title': 'Save Route',
+        'icon': Icons.bookmark_add_rounded,
+        'color': AppColors.primaryColor
+      },
     ];
 
     return Container(
@@ -1317,24 +1338,25 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                 ),
                 const SizedBox(height: AppDesign.spaceLG),
                 ...actions.map((action) => ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(AppDesign.spaceMD),
-                    decoration: BoxDecoration(
-                      color: (action['color'] as Color).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                    ),
-                    child: Icon(
-                      action['icon'] as IconData,
-                      color: action['color'] as Color,
-                    ),
-                  ),
-                  title: Text(action['title'] as String),
-                  trailing: const Icon(Icons.chevron_right_rounded),
-                  onTap: () {
-                    Navigator.pop(context);
-                    HapticFeedback.lightImpact();
-                  },
-                )),
+                      leading: Container(
+                        padding: const EdgeInsets.all(AppDesign.spaceMD),
+                        decoration: BoxDecoration(
+                          color: (action['color'] as Color).withOpacity(0.1),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusLG),
+                        ),
+                        child: Icon(
+                          action['icon'] as IconData,
+                          color: action['color'] as Color,
+                        ),
+                      ),
+                      title: Text(action['title'] as String),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () {
+                        Navigator.pop(context);
+                        HapticFeedback.lightImpact();
+                      },
+                    )),
                 const SizedBox(height: AppDesign.spaceLG),
               ],
             ),
