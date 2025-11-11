@@ -411,7 +411,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             child: Row(
               children: [
                 _buildModernSearchTypeTab('Route', Icons.route_rounded, 0),
-                _buildModernSearchTypeTab('Bus #', Icons.directions_bus_rounded, 1),
+                _buildModernSearchTypeTab(
+                    'Bus #', Icons.directions_bus_rounded, 1),
                 _buildModernSearchTypeTab('Live', Icons.live_tv_rounded, 2),
               ],
             ),
@@ -533,7 +534,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                   'Nearby Stops',
                   Icons.location_on_rounded,
                   LinearGradient(
-                    colors: [AppColors.warningColor, AppColors.warningColor.withOpacity(0.8)],
+                    colors: [
+                      AppColors.warningColor,
+                      AppColors.warningColor.withOpacity(0.8)
+                    ],
                   ),
                   () => _showNearbyStops(),
                 ),
@@ -544,7 +548,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                   'Schedules',
                   Icons.schedule_rounded,
                   LinearGradient(
-                    colors: [AppColors.tealAccent, AppColors.tealAccent.withOpacity(0.8)],
+                    colors: [
+                      AppColors.tealAccent,
+                      AppColors.tealAccent.withOpacity(0.8)
+                    ],
                   ),
                   () => _showSchedules(),
                 ),
@@ -670,7 +677,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusLG),
                         ),
                         child: Text(
                           'View All',
@@ -688,7 +696,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _searchResults.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: AppDesign.spaceMD),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: AppDesign.spaceMD),
                   itemBuilder: (context, index) {
                     return _buildModernBusCard(_searchResults[index]);
                   },
@@ -824,7 +833,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _searchResults.length,
-            separatorBuilder: (context, index) => const SizedBox(height: AppDesign.spaceMD),
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppDesign.spaceMD),
             itemBuilder: (context, index) {
               return _buildModernBusCard(_searchResults[index]);
             },
@@ -944,7 +954,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                                   color: bus['isLive']
                                       ? AppColors.successColor.withOpacity(0.2)
                                       : Colors.grey.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                  borderRadius:
+                                      BorderRadius.circular(AppDesign.radiusLG),
                                 ),
                                 child: Text(
                                   bus['isLive'] ? 'LIVE' : 'OFFLINE',
@@ -978,7 +989,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       children: [
                         Text(
                           bus['nextArrival'],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                             color: Colors.white,
@@ -1319,7 +1330,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               Icon(
                 icon,
                 size: AppDesign.iconSM,
-                color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                color:
+                    isSelected ? Colors.white : Colors.white.withOpacity(0.7),
               ),
               const SizedBox(width: AppDesign.spaceXS),
               Text(
@@ -1327,7 +1339,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                  color:
+                      isSelected ? Colors.white : Colors.white.withOpacity(0.7),
                 ),
               ),
             ],
@@ -1382,7 +1395,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
       width: double.infinity,
       height: 56,
       decoration: BoxDecoration(
-        gradient: _isSearching 
+        gradient: _isSearching
             ? LinearGradient(
                 colors: [Colors.grey.shade400, Colors.grey.shade500],
               )
@@ -1400,10 +1413,12 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          onTap: _isSearching ? null : () {
-            HapticFeedback.mediumImpact();
-            _performSearch();
-          },
+          onTap: _isSearching
+              ? null
+              : () {
+                  HapticFeedback.mediumImpact();
+                  _performSearch();
+                },
           child: Center(
             child: _isSearching
                 ? const Row(
@@ -1413,7 +1428,8 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
                           strokeWidth: 2,
                         ),
                       ),
