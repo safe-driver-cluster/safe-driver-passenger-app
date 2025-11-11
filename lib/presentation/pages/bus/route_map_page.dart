@@ -488,7 +488,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
               const SizedBox(height: AppDesign.spaceXS),
               Text(
                 title,
-                style: AppTextStyles.caption.copyWith(
+                style: AppTextStyles.labelSmall.copyWith(
                   color: isSelected ? Colors.white : AppColors.textSecondary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 ),
