@@ -12,6 +12,7 @@ import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
+import 'passenger_profile_screen.dart';
 import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
@@ -762,7 +763,7 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   List<Widget> _buildMenuItems(BuildContext context, WidgetRef ref) {
-    final menuItems = [
+    final accountMenuItems = [
       MenuItemData('Edit Profile', Icons.person_outline_rounded, () {
         Navigator.push(
           context,
@@ -770,7 +771,11 @@ class UserProfilePage extends ConsumerWidget {
         );
       }),
       MenuItemData('Passenger Details', Icons.account_circle_outlined, () {
-        Navigator.pushNamed(context, '/passenger-profile');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const PassengerProfileScreen()),
+        );
       }),
       MenuItemData('Trip History', Icons.history_rounded, () {
         Navigator.push(
@@ -784,13 +789,16 @@ class UserProfilePage extends ConsumerWidget {
           MaterialPageRoute(builder: (context) => const PaymentMethodsPage()),
         );
       }),
+    ];
+
+    final settingsMenuItems = [
       MenuItemData('Notifications', Icons.notifications_outlined, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const NotificationsPage()),
         );
       }),
-      MenuItemData('Settings', Icons.settings_outlined, () {
+      MenuItemData('App Settings', Icons.settings_outlined, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SettingsPage()),
@@ -802,25 +810,35 @@ class UserProfilePage extends ConsumerWidget {
           MaterialPageRoute(builder: (context) => const HelpSupportPage()),
         );
       }),
-      MenuItemData('About', Icons.info_outline_rounded, () {
+      MenuItemData('About App', Icons.info_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AboutPage()),
         );
       }),
+    ];
+
+    final actionMenuItems = [
       MenuItemData('Sign Out', Icons.logout_rounded, () {
         _showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
 
-    return menuItems.asMap().entries.map((entry) {
+    // Combine all menu items
+    final allItems = [
+      ...accountMenuItems,
+      ...settingsMenuItems,
+      ...actionMenuItems
+    ];
+
+    return allItems.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
 
       return Column(
         children: [
           _buildMenuItem(item),
-          if (index < menuItems.length - 1)
+          if (index < allItems.length - 1)
             const Divider(
               height: 1,
               color: AppColors.greyLight,
