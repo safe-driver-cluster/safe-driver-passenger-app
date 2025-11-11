@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -32,26 +33,24 @@ class FeedbackHistoryPage extends StatelessWidget {
               // Content Area
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppDesign.spaceMD),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
                   child: Column(
                     children: [
                       const SizedBox(height: AppDesign.spaceLG),
-                      
+
                       // Coming Soon Card
                       ProfessionalCard(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.history_rounded,
                               size: 64,
                               color: AppColors.textSecondary,
                             ),
-                            
                             const SizedBox(height: AppDesign.spaceLG),
-                            
-                            Text(
+                            const Text(
                               'Feedback History',
                               style: TextStyle(
                                 fontSize: AppDesign.text2XL,
@@ -59,10 +58,8 @@ class FeedbackHistoryPage extends StatelessWidget {
                                 color: AppColors.textPrimary,
                               ),
                             ),
-                            
                             const SizedBox(height: AppDesign.spaceSM),
-                            
-                            Text(
+                            const Text(
                               'View your past feedback submissions and their status',
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -70,20 +67,20 @@ class FeedbackHistoryPage extends StatelessWidget {
                                 color: AppColors.textSecondary,
                               ),
                             ),
-                            
                             const SizedBox(height: AppDesign.spaceXL),
-                            
                             Container(
                               padding: const EdgeInsets.all(AppDesign.spaceLG),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusLG),
                                 border: Border.all(
-                                  color: AppColors.primaryColor.withOpacity(0.2),
+                                  color:
+                                      AppColors.primaryColor.withOpacity(0.2),
                                   width: 1,
                                 ),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Coming Soon',
                                 style: TextStyle(
                                   fontSize: AppDesign.textLG,
@@ -138,7 +135,6 @@ class FeedbackHistoryPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
               Container(
                 decoration: BoxDecoration(
                   gradient: AppColors.glassGradient,
@@ -161,16 +157,14 @@ class FeedbackHistoryPage extends StatelessWidget {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Feedback History',
                       style: TextStyle(
                         fontSize: AppDesign.text2XL,
@@ -179,9 +173,7 @@ class FeedbackHistoryPage extends StatelessWidget {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    
                     const SizedBox(height: AppDesign.spaceXS),
-                    
                     Text(
                       'Track all your feedback submissions',
                       style: TextStyle(
