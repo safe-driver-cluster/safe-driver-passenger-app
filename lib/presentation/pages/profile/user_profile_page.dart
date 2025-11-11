@@ -109,58 +109,67 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfessionalHeader() {
+  Widget _buildProfessionalHeader(
+    BuildContext context,
+    UserModel? userProfile,
+    User? firebaseUser,
+  ) {
+    final displayName = userProfile?.fullName ?? 
+                      firebaseUser?.displayName ?? 
+                      'User';
+    final email = userProfile?.email ?? 
+                  firebaseUser?.email ?? 
+                  'No email';
+    final phoneNumber = userProfile?.phoneNumber ?? 'Not provided';
+    
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
-        60,
+        AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.space2XL,
-      ),
-      decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
+        AppDesign.spaceLG,
       ),
       child: Column(
         children: [
-          // Profile Picture and Info
+          // Profile Header with user data
           Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: AppColors.glassGradient,
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 45,
                   backgroundColor: Colors.white,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.accentColor.withOpacity(0.2),
-                          AppColors.primaryColor.withOpacity(0.1),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.person_rounded,
-                      size: AppDesign.icon2XL,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
+                  backgroundImage: userProfile?.profileImageUrl != null
+                      ? NetworkImage(userProfile!.profileImageUrl!)
+                      : null,
+                  child: userProfile?.profileImageUrl == null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColors.accentGradient,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person_rounded,
+                            size: 45,
+                            color: Colors.white,
+                          ),
+                        )
+                      : null,
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
@@ -169,27 +178,58 @@ class UserProfilePage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'John Doe',
-                      style: AppTextStyles.headline4.copyWith(
+                      displayName,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
+                    const SizedBox(height: 4),
                     Text(
-                      'john.doe@email.com',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      email,
+                      style: TextStyle(
+                        fontSize: 14,
                         color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    const StatusBadge(
-                      text: 'Premium Member',
-                      color: AppColors.successColor,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD,
-                        vertical: AppDesign.spaceXS,
+                    if (phoneNumber != 'Not provided') ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        phoneNumber,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.successGradient,
+                        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.successColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Text(
+                        'Verified Member',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -197,12 +237,21 @@ class UserProfilePage extends ConsumerWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
                 ),
                 child: IconButton(
                   onPressed: () {
-                    // Handle settings
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    );
                   },
                   icon: const Icon(
                     Icons.settings_rounded,
