@@ -75,7 +75,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         : isQRScanMode
             ? 'Scan QR Code'
             : 'Give Feedback';
-    
+
     String headerSubtitle = selectedBusNumber != null
         ? 'Share your travel experience'
         : isQRScanMode
@@ -125,7 +125,6 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   ),
                 ),
               ),
-              
               Row(
                 children: [
                   if (!isQRScanMode)
@@ -173,9 +172,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
@@ -184,16 +181,14 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   children: [
                     Text(
                       headerTitle,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: AppDesign.text2XL,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),
                     ),
-                    
                     const SizedBox(height: AppDesign.spaceXS),
-                    
                     Text(
                       headerSubtitle,
                       style: TextStyle(
