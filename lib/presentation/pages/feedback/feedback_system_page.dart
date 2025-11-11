@@ -333,6 +333,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 180, // Fixed height to ensure same size
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
@@ -350,6 +351,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ],
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceMD),
