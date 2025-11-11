@@ -125,7 +125,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       if (profile.emergencyContact != null) {
         _emergencyNameController.text = profile.emergencyContact!.name;
         _emergencyPhoneController.text = profile.emergencyContact!.phoneNumber;
-        _emergencyRelationController.text = profile.emergencyContact!.relationship;
+        _emergencyRelationController.text =
+            profile.emergencyContact!.relationship;
       }
 
       // Preferences
@@ -735,7 +736,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: AppColors.greyLightest,
+        color: Colors.grey[100],
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
           color: AppColors.greyLight,
