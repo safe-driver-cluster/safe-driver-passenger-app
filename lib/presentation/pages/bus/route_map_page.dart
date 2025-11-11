@@ -1075,7 +1075,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       );
                     },
                     isOutlined: true,
-                    prefixIcon: Icons.my_location_rounded,
+                    icon: const Icon(Icons.my_location_rounded),
                     height: 36,
                   ),
                 ),
