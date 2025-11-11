@@ -299,26 +299,28 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
         ),
         const SizedBox(height: AppDesign.spaceMD),
-        Row(
-          children: [
-            Expanded(
-              child: _buildSelectionCard(
-                icon: Icons.directions_bus,
-                title: 'Select Bus',
-                subtitle: 'Choose from available buses',
-                onTap: _showBusSelection,
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildSelectionCard(
+                  icon: Icons.directions_bus,
+                  title: 'Select Bus',
+                  subtitle: 'Choose from available buses',
+                  onTap: _showBusSelection,
+                ),
               ),
-            ),
-            const SizedBox(width: AppDesign.spaceMD),
-            Expanded(
-              child: _buildSelectionCard(
-                icon: Icons.qr_code_scanner,
-                title: 'Scan QR',
-                subtitle: 'Scan bus QR code',
-                onTap: _showQRScanner,
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: _buildSelectionCard(
+                  icon: Icons.qr_code_scanner,
+                  title: 'Scan QR',
+                  subtitle: 'Scan bus QR code',
+                  onTap: _showQRScanner,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -333,7 +335,6 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 180, // Fixed height to ensure same size
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           color: AppColors.surfaceColor,
