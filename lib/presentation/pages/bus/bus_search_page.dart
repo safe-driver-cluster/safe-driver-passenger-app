@@ -664,7 +664,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                       'Popular Routes',
                       style: AppTextStyles.headline6.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: AppColors.textPrimary,
                         fontSize: 20,
                       ),
                     ),
@@ -683,14 +683,14 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           vertical: AppDesign.spaceXS,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: AppColors.primaryColor.withOpacity(0.1),
                           borderRadius:
                               BorderRadius.circular(AppDesign.radiusLG),
                         ),
                         child: Text(
                           'View All',
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: Colors.white,
+                            color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -816,12 +816,15 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        gradient: AppColors.glassGradient,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -830,7 +833,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
           Text(
             'Search Results',
             style: AppTextStyles.headline6.copyWith(
-              color: Colors.white,
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
               fontSize: 20,
             ),
