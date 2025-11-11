@@ -134,13 +134,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     });
   }
 
-
-
   void _performSearch() {
     HapticFeedback.mediumImpact();
     setState(() {
       _isSearching = true;
-      _showSearchResults = true;
     });
 
     if (_selectedSearchType == 0) {
