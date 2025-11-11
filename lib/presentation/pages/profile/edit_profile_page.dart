@@ -67,7 +67,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _phoneController = TextEditingController();
     _dateOfBirthController = TextEditingController();
     _genderController = TextEditingController();
-    _nationalIdController = TextEditingController();
 
     _streetController = TextEditingController();
     _cityController = TextEditingController();
