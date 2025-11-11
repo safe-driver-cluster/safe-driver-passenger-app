@@ -493,7 +493,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
               'Quick Actions',
               style: AppTextStyles.headline6.copyWith(
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 22,
               ),
             ),
