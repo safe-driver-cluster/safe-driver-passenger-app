@@ -99,15 +99,16 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
                   // Submit Button
                   _buildSubmitSection(),
                 ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProfessionalHeader() {
+  Widget _buildModernHeader() {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
