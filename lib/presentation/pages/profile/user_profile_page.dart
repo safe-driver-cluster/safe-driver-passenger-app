@@ -62,7 +62,7 @@ class UserProfilePage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Professional Header with user data
-                  userProfileAsync.when(
+                  passengerProfileAsync.when(
                     data: (userProfile) => _buildProfessionalHeader(
                       context,
                       userProfile,
@@ -87,7 +87,7 @@ class UserProfilePage extends ConsumerWidget {
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // User Stats Section
-                        userProfileAsync.when(
+                        passengerProfileAsync.when(
                           data: (userProfile) =>
                               _buildProfessionalStats(userProfile),
                           loading: () => _buildLoadingStats(),
@@ -112,7 +112,7 @@ class UserProfilePage extends ConsumerWidget {
 
   Widget _buildProfessionalHeader(
     BuildContext context,
-    UserModel? userProfile,
+    PassengerModel? userProfile,
     User? firebaseUser,
   ) {
     final displayName =
@@ -565,7 +565,7 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfessionalStats(UserModel? userProfile) {
+  Widget _buildProfessionalStats(PassengerModel? userProfile) {
     // TODO: Add these fields to UserModel in future iterations
     // For now using placeholder data - should be fetched from travel history
     const totalTrips = 47; // Should be calculated from user's travel records
