@@ -15,13 +15,14 @@ class FeedbackPage extends StatefulWidget {
   State<FeedbackPage> createState() => _FeedbackPageState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMixin {
+class _FeedbackPageState extends State<FeedbackPage>
+    with TickerProviderStateMixin {
   int selectedRating = 0;
   final TextEditingController _feedbackController = TextEditingController();
   String selectedCategory = 'General';
   late AnimationController _ratingAnimationController;
   late Animation<double> _ratingAnimation;
-  
+
   List<String> categories = [
     'General',
     'Driver',
@@ -69,38 +70,41 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
             children: [
               // Modern Header
               _buildModernHeader(),
-              
+
               // Feedback Content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
                   child: Column(
-                children: [
-                  // Trip Info Card
-                  if (widget.busId != null) _buildTripInfoCard(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Rating Section
-                  _buildRatingSection(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Category Selection
-                  _buildCategorySection(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Feedback Text
-                  _buildFeedbackSection(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Submit Button
-                  _buildSubmitSection(),
-                ],
+                    children: [
+                      // Trip Info Card
+                      if (widget.busId != null) _buildTripInfoCard(),
+
+                      const SizedBox(height: AppDesign.space2XL),
+
+                      // Rating Section
+                      _buildRatingSection(),
+
+                      const SizedBox(height: AppDesign.space2XL),
+
+                      // Category Selection
+                      _buildCategorySection(),
+
+                      const SizedBox(height: AppDesign.space2XL),
+
+                      // Feedback Text
+                      _buildFeedbackSection(),
+
+                      const SizedBox(height: AppDesign.space2XL),
+
+                      // Submit Button
+                      _buildSubmitSection(),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -141,7 +145,8 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -221,9 +226,7 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
@@ -290,24 +293,20 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Text(
             'How was your overall experience?',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: List.generate(5, (index) {
               final starIndex = index + 1;
               final isSelected = starIndex <= selectedRating;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -321,20 +320,24 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
                   animation: _ratingAnimation,
                   builder: (context, child) {
                     return Transform.scale(
-                      scale: isSelected && selectedRating == starIndex 
-                          ? _ratingAnimation.value 
+                      scale: isSelected && selectedRating == starIndex
+                          ? _ratingAnimation.value
                           : 1.0,
                       child: Container(
                         padding: const EdgeInsets.all(AppDesign.spaceMD),
                         decoration: BoxDecoration(
-                          color: isSelected 
-                              ? AppColors.warningColor.withOpacity(0.1) 
+                          color: isSelected
+                              ? AppColors.warningColor.withOpacity(0.1)
                               : Colors.transparent,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          isSelected ? Icons.star_rounded : Icons.star_border_rounded,
-                          color: isSelected ? AppColors.warningColor : AppColors.textHint,
+                          isSelected
+                              ? Icons.star_rounded
+                              : Icons.star_border_rounded,
+                          color: isSelected
+                              ? AppColors.warningColor
+                              : AppColors.textHint,
                           size: AppDesign.icon2XL,
                         ),
                       ),
@@ -344,7 +347,6 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               );
             }),
           ),
-          
           if (selectedRating > 0) ...[
             const SizedBox(height: AppDesign.spaceLG),
             Container(
@@ -407,15 +409,13 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Wrap(
             spacing: AppDesign.spaceMD,
             runSpacing: AppDesign.spaceMD,
             children: categories.map((category) {
               final isSelected = selectedCategory == category;
-              
+
               return GestureDetector(
                 onTap: () {
                   setState(() {
@@ -429,15 +429,16 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
                     vertical: AppDesign.spaceMD,
                   ),
                   decoration: BoxDecoration(
-                    color: isSelected 
-                        ? AppColors.primaryColor 
+                    color: isSelected
+                        ? AppColors.primaryColor
                         : AppColors.greyLight,
                     borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                   ),
                   child: Text(
                     category,
                     style: AppTextStyles.labelMedium.copyWith(
-                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                      color:
+                          isSelected ? Colors.white : AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -479,9 +480,7 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           TextField(
             controller: _feedbackController,
             maxLines: 5,
@@ -496,7 +495,8 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
+                borderSide:
+                    const BorderSide(color: AppColors.primaryColor, width: 2),
               ),
               contentPadding: const EdgeInsets.all(AppDesign.spaceLG),
             ),
@@ -514,7 +514,8 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
           child: ElevatedButton(
             onPressed: _canSubmit() ? _submitFeedback : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _canSubmit() ? AppColors.primaryColor : AppColors.greyLight,
+              backgroundColor:
+                  _canSubmit() ? AppColors.primaryColor : AppColors.greyLight,
               foregroundColor: _canSubmit() ? Colors.white : AppColors.textHint,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -524,9 +525,7 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
             child: const Text('Submit Feedback'),
           ),
         ),
-        
         const SizedBox(height: AppDesign.spaceMD),
-        
         Text(
           'Your feedback helps us improve our service',
           style: AppTextStyles.bodySmall.copyWith(
@@ -552,12 +551,18 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
 
   String _getRatingText() {
     switch (selectedRating) {
-      case 1: return 'Very Poor';
-      case 2: return 'Poor';
-      case 3: return 'Average';
-      case 4: return 'Good';
-      case 5: return 'Excellent';
-      default: return '';
+      case 1:
+        return 'Very Poor';
+      case 2:
+        return 'Poor';
+      case 3:
+        return 'Average';
+      case 4:
+        return 'Good';
+      case 5:
+        return 'Excellent';
+      default:
+        return '';
     }
   }
 
@@ -573,7 +578,7 @@ class _FeedbackPageState extends State<FeedbackPage> with TickerProviderStateMix
         backgroundColor: AppColors.successColor,
       ),
     );
-    
+
     Navigator.pop(context);
   }
 

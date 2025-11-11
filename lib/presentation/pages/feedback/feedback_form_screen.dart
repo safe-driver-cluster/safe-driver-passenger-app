@@ -134,14 +134,29 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
     final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Submit Feedback'),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: LoadingWidget(
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
+
+              // Content Area
+              Expanded(
+                child: LoadingWidget(
         isLoading: _isSubmitting,
         child: passengerAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -254,7 +269,105 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
               ),
             );
           },
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildModernHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        AppDesign.spaceSM,
+        AppDesign.spaceLG,
+        AppDesign.spaceLG,
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconSizeLG,
+                  ),
+                ),
+              ),
+              
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    // Add help functionality
+                  },
+                  icon: const Icon(
+                    Icons.help_outline_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconSizeLG,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: AppDesign.spaceLG),
+          
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Submit Feedback',
+                      style: TextStyle(
+                        fontSize: AppDesign.fontSizeXL,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: AppDesign.spaceXS),
+                    
+                    Text(
+                      'Share your experience and help us improve',
+                      style: TextStyle(
+                        fontSize: AppDesign.fontSizeMD,
+                        color: Colors.white.withOpacity(0.8),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
