@@ -864,10 +864,10 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppColors.greyExtraLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppColors.greyLight,
           width: 1,
         ),
       ),
