@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/services/dashboard_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
@@ -13,97 +16,157 @@ import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
+// User profile provider for Firebase data
+final userProfileProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return null;
+
+  final dashboardService = DashboardService();
+  return await dashboardService.getUserProfile(user.uid);
+});
+
 class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userProfileAsync = ref.watch(userProfileProvider);
+    final authState = ref.watch(authStateProvider);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Professional Header
-            _buildProfessionalHeader(),
-
-            // Profile Content
-            Padding(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.accentColor,
+              AppColors.primaryColor,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(userProfileProvider);
+            },
+            color: AppColors.primaryColor,
+            backgroundColor: Colors.white,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // User Stats Cards
-                  _buildUserStatsSection(),
+                  // Professional Header with user data
+                  userProfileAsync.when(
+                    data: (userProfile) => _buildProfessionalHeader(
+                      context,
+                      userProfile,
+                      authState.user,
+                    ),
+                    loading: () => _buildLoadingHeader(),
+                    error: (error, _) => _buildErrorHeader(context, error),
+                  ),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                  // Main Content
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDesign.spaceMD,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppDesign.spaceMD),
 
-                  // Quick Actions
-                  _buildQuickActionsSection(),
+                        // Quick Actions Grid - Professional Design
+                        _buildProfessionalQuickActions(context),
+                        const SizedBox(height: AppDesign.spaceLG),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                        // User Stats Section
+                        userProfileAsync.when(
+                          data: (userProfile) =>
+                              _buildProfessionalStats(userProfile),
+                          loading: () => _buildLoadingStats(),
+                          error: (_, __) => const SizedBox(),
+                        ),
+                        const SizedBox(height: AppDesign.spaceLG),
 
-                  // Menu Items
-                  _buildMenuSection(context, ref),
+                        // Account & Settings Section
+                        _buildProfessionalMenuSection(context, ref),
+                        const SizedBox(height: AppDesign.spaceLG),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProfessionalHeader() {
+  Widget _buildProfessionalHeader(
+    BuildContext context,
+    UserModel? userProfile,
+    User? firebaseUser,
+  ) {
+    final displayName =
+        userProfile?.fullName ?? firebaseUser?.displayName ?? 'User';
+    final email = userProfile?.email ?? firebaseUser?.email ?? 'No email';
+    final phoneNumber = userProfile?.phoneNumber ?? 'Not provided';
+
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
-        60,
+        AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.space2XL,
-      ),
-      decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
+        AppDesign.spaceLG,
       ),
       child: Column(
         children: [
-          // Profile Picture and Info
+          // Profile Header with user data
           Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: AppColors.glassGradient,
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
+                    width: 2,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 45,
                   backgroundColor: Colors.white,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.accentColor.withOpacity(0.2),
-                          AppColors.primaryColor.withOpacity(0.1),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.person_rounded,
-                      size: AppDesign.icon2XL,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
+                  backgroundImage: userProfile?.profileImageUrl != null
+                      ? NetworkImage(userProfile!.profileImageUrl!)
+                      : null,
+                  child: userProfile?.profileImageUrl == null
+                      ? Container(
+                          decoration: const BoxDecoration(
+                            gradient: AppColors.accentGradient,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.person_rounded,
+                            size: 45,
+                            color: Colors.white,
+                          ),
+                        )
+                      : null,
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
@@ -112,27 +175,59 @@ class UserProfilePage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'John Doe',
-                      style: AppTextStyles.headline4.copyWith(
+                      displayName,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
+                    const SizedBox(height: 4),
                     Text(
-                      'john.doe@email.com',
-                      style: AppTextStyles.bodyMedium.copyWith(
+                      email,
+                      style: TextStyle(
+                        fontSize: 14,
                         color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    const StatusBadge(
-                      text: 'Premium Member',
-                      color: AppColors.successColor,
-                      textColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD,
-                        vertical: AppDesign.spaceXS,
+                    if (phoneNumber != 'Not provided') ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        phoneNumber,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.successGradient,
+                        borderRadius:
+                            BorderRadius.circular(AppDesign.radiusFull),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.successColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Text(
+                        'Verified Member',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -140,21 +235,136 @@ class UserProfilePage extends ConsumerWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
                 ),
                 child: IconButton(
                   onPressed: () {
-                    // Handle settings
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    );
                   },
                   icon: const Icon(
                     Icons.settings_rounded,
                     color: Colors.white,
-                    size: AppDesign.iconMD,
+                    size: 22,
                   ),
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        AppDesign.spaceSM,
+        AppDesign.spaceLG,
+        AppDesign.spaceLG,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppDesign.spaceLG),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 24,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: 16,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorHeader(BuildContext context, Object error) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        AppDesign.spaceSM,
+        AppDesign.spaceLG,
+        AppDesign.spaceLG,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.error_outline,
+              color: Colors.white,
+              size: 40,
+            ),
+          ),
+          const SizedBox(width: AppDesign.spaceLG),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Profile Error',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Failed to load profile data',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
