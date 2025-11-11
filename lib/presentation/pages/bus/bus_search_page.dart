@@ -983,9 +983,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
                           const SizedBox(height: 4),
                           Text(
                             bus['routeName'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              color: Colors.white.withOpacity(0.8),
+                              color: AppColors.textSecondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
