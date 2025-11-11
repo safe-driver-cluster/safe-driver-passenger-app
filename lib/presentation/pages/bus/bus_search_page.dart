@@ -449,98 +449,68 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     );
   }
 
-  Widget _buildQuickSuggestions() {
+  Widget _buildQuickActionsSection() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Quick Actions',
+            style: AppTextStyles.headline6.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Quick Access',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+              Expanded(
+                child: _buildQuickActionCard(
+                  'Route Map',
+                  Icons.map_rounded,
+                  AppColors.primaryColor,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RouteMapPage(),
+                      ),
+                    );
+                  },
                 ),
               ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'See All',
-                  style: TextStyle(
-                    color: AppColors.primaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: _buildQuickActionCard(
+                  'Live Tracking',
+                  Icons.my_location_rounded,
+                  AppColors.successColor,
+                  () => _showLiveTracking(),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                final suggestions = [
-                  {
-                    'icon': Icons.location_city,
-                    'title': 'City Center',
-                    'color': Colors.blue
-                  },
-                  {
-                    'icon': Icons.local_airport,
-                    'title': 'Airport',
-                    'color': Colors.green
-                  },
-                  {
-                    'icon': Icons.school,
-                    'title': 'University',
-                    'color': Colors.orange
-                  },
-                  {
-                    'icon': Icons.local_mall,
-                    'title': 'Mall',
-                    'color': Colors.purple
-                  },
-                ];
-
-                return Container(
-                  width: 80,
-                  margin: EdgeInsets.only(right: index < 3 ? 12 : 0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: (suggestions[index]['color'] as Color)
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Icon(
-                          suggestions[index]['icon'] as IconData,
-                          color: suggestions[index]['color'] as Color,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        suggestions[index]['title'] as String,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickActionCard(
+                  'Nearby Stops',
+                  Icons.location_on_rounded,
+                  AppColors.warningColor,
+                  () => _showNearbyStops(),
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: _buildQuickActionCard(
+                  'Schedules',
+                  Icons.schedule_rounded,
+                  AppColors.tealAccent,
+                  () => _showSchedules(),
+                ),
+              ),
+            ],
           ),
         ],
       ),
