@@ -31,7 +31,7 @@ class UserProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userProfileAsync = ref.watch(userProfileProvider);
+    final passengerProfileAsync = ref.watch(passengerProfileProvider);
     final authState = ref.watch(authStateProvider);
 
     return Scaffold(
