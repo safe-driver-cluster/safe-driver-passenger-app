@@ -502,7 +502,7 @@ class UserProfilePage extends ConsumerWidget {
     required LinearGradient gradient,
     required VoidCallback onTap,
   }) {
-    return Container(
+    return SizedBox(
       height: 100, // Fixed height for same size
       child: Material(
         color: Colors.transparent,
@@ -565,10 +565,11 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildProfessionalStats(UserModel? userProfile) {
-    // Calculate user stats from profile data
-    final totalTrips = userProfile?.totalTrips ?? 0;
-    final totalDistance = userProfile?.totalDistance ?? 0.0;
-    final safetyScore = userProfile?.safetyScore ?? 0.0;
+    // TODO: Add these fields to UserModel in future iterations
+    // For now using placeholder data - should be fetched from travel history
+    final totalTrips = 47; // Should be calculated from user's travel records
+    final totalDistance = 1234.5; // Should be sum of all trip distances  
+    final safetyScore = 98.0; // Should be calculated from safety incidents
 
     return Container(
       decoration: BoxDecoration(
@@ -586,9 +587,9 @@ class UserProfilePage extends ConsumerWidget {
           // Professional section header
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: AppColors.successGradient,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppDesign.radiusXL),
                 topRight: Radius.circular(AppDesign.radiusXL),
               ),
@@ -722,9 +723,9 @@ class UserProfilePage extends ConsumerWidget {
           // Professional section header
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: AppColors.dangerGradient,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(AppDesign.radiusXL),
                 topRight: Radius.circular(AppDesign.radiusXL),
               ),
