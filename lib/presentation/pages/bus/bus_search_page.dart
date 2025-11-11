@@ -60,8 +60,6 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     );
 
     _loadPopularRoutes();
-    _loadRecentSearches();
-    _loadPopularDestinations();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
@@ -136,43 +134,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     });
   }
 
-  void _loadRecentSearches() {
-    setState(() {
-      _recentSearches = [
-        {
-          'type': 'route',
-          'from': 'City Center',
-          'to': 'Airport',
-          'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
-        },
-        {
-          'type': 'busNumber',
-          'busNumber': 'B023',
-          'timestamp': DateTime.now().subtract(const Duration(days: 1)),
-        },
-        {
-          'type': 'location',
-          'location': 'University',
-          'timestamp': DateTime.now().subtract(const Duration(days: 2)),
-        },
-      ];
-    });
-  }
 
-  void _loadPopularDestinations() {
-    setState(() {
-      _popularDestinations = [
-        'Airport',
-        'University',
-        'City Center',
-        'Downtown',
-        'Mall',
-        'Hospital',
-        'Train Station',
-        'Business District',
-      ];
-    });
-  }
 
   void _performSearch() {
     HapticFeedback.mediumImpact();
