@@ -654,7 +654,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                         ),
                         child: Text(
                           'ACTIVE',
-                          style: AppTextStyles.caption.copyWith(
+                          style: AppTextStyles.labelSmall.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                           ),
@@ -790,7 +790,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       ),
                       child: Text(
                         'Next: ${stop['nextBus']}',
-                        style: AppTextStyles.caption.copyWith(
+                        style: AppTextStyles.labelSmall.copyWith(
                           color: AppColors.successColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -832,7 +832,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                   ),
                   child: Text(
                     amenity,
-                    style: AppTextStyles.caption.copyWith(
+                    style: AppTextStyles.labelSmall.copyWith(
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -941,7 +941,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       ),
                       child: Text(
                         bus['isOnTime'] ? 'ON TIME' : '+${bus['delay']} MIN',
-                        style: AppTextStyles.caption.copyWith(
+                        style: AppTextStyles.labelSmall.copyWith(
                           color: bus['isOnTime']
                               ? AppColors.successColor
                               : AppColors.warningColor,
@@ -984,7 +984,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       children: [
                         Text(
                           'Current Location',
-                          style: AppTextStyles.caption.copyWith(
+                          style: AppTextStyles.labelSmall.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1124,7 +1124,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
         ),
         Text(
           label,
-          style: AppTextStyles.caption.copyWith(
+          style: AppTextStyles.labelSmall.copyWith(
             color: textColor.withOpacity(0.8),
             fontWeight: FontWeight.w500,
           ),
