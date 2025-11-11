@@ -32,10 +32,7 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   late Animation<double> _fabAnimation;
 
   List<Map<String, dynamic>> _searchResults = [];
-  List<Map<String, dynamic>> _recentSearches = [];
-  List<String> _popularDestinations = [];
   bool _isSearching = false;
-  bool _showSearchResults = false;
   int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Location
 
   @override
