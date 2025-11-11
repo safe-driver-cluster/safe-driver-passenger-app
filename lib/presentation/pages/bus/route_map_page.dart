@@ -1094,7 +1094,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       );
                     },
                     gradient: AppColors.primaryGradient,
-                    prefixIcon: Icons.info_outline_rounded,
+                    icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
                     height: 36,
                   ),
                 ),
