@@ -99,9 +99,9 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     _toController.dispose();
     _routeController.dispose();
     _searchController.dispose();
-    _tabController.dispose();
     _animationController.dispose();
     _fabAnimationController.dispose();
+    _cardAnimationController.dispose();
     super.dispose();
   }
 
