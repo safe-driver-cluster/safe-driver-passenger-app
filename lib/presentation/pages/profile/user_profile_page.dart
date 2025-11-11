@@ -114,14 +114,11 @@ class UserProfilePage extends ConsumerWidget {
     UserModel? userProfile,
     User? firebaseUser,
   ) {
-    final displayName = userProfile?.fullName ?? 
-                      firebaseUser?.displayName ?? 
-                      'User';
-    final email = userProfile?.email ?? 
-                  firebaseUser?.email ?? 
-                  'No email';
+    final displayName =
+        userProfile?.fullName ?? firebaseUser?.displayName ?? 'User';
+    final email = userProfile?.email ?? firebaseUser?.email ?? 'No email';
     final phoneNumber = userProfile?.phoneNumber ?? 'Not provided';
-    
+
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -159,7 +156,7 @@ class UserProfilePage extends ConsumerWidget {
                       : null,
                   child: userProfile?.profileImageUrl == null
                       ? Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: AppColors.accentGradient,
                             shape: BoxShape.circle,
                           ),
@@ -214,7 +211,8 @@ class UserProfilePage extends ConsumerWidget {
                       ),
                       decoration: BoxDecoration(
                         gradient: AppColors.successGradient,
-                        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                        borderRadius:
+                            BorderRadius.circular(AppDesign.radiusFull),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.successColor.withOpacity(0.3),
