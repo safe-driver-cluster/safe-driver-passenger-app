@@ -368,91 +368,99 @@ class DashboardHome extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickActionsGrid(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Actions',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
+  Widget _buildProfessionalQuickActions(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.cardGradient,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowLG,
+        border: Border.all(
+          color: AppColors.primaryColor.withOpacity(0.1),
+          width: 1,
         ),
-        const SizedBox(height: AppDesign.spaceLG),
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceLG),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Main action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      title: 'Scan QR Code',
-                      subtitle: 'Board your bus',
-                      icon: Icons.qr_code_scanner_rounded,
-                      color: AppColors.primaryColor,
-                      onTap: () => onNavigateToTab?.call(2),
-                    ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section header with gradient
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                   ),
-                  const SizedBox(width: AppDesign.spaceLG),
-                  Expanded(
-                    child: _buildActionButton(
-                      title: 'Find Routes',
-                      subtitle: 'Search buses',
-                      icon: Icons.directions_bus_rounded,
-                      color: AppColors.tealAccent,
-                      onTap: () => onNavigateToTab?.call(1),
-                    ),
+                  child: const Icon(
+                    Icons.flash_on_rounded,
+                    color: Colors.white,
+                    size: 18,
                   ),
-                ],
-              ),
-              const SizedBox(height: AppDesign.spaceLG),
-              // Secondary actions
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionButton(
-                      title: 'Emergency',
-                      subtitle: 'Get help now',
-                      icon: Icons.warning_rounded,
-                      color: AppColors.errorColor,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/emergency');
-                      },
-                    ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Quick Actions',
+                  style: AppTextStyles.headline6.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
-                  const SizedBox(width: AppDesign.spaceLG),
-                  Expanded(
-                    child: _buildActionButton(
-                      title: 'Feedback',
-                      subtitle: 'Share experience',
-                      icon: Icons.feedback_rounded,
-                      color: AppColors.successColor,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/feedback-system');
-                      },
-                    ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceLG),
+            // Action buttons grid with same sizes
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Scan QR',
+                    subtitle: 'Board bus',
+                    icon: Icons.qr_code_scanner_rounded,
+                    gradient: AppColors.primaryGradient,
+                    onTap: () => onNavigateToTab?.call(2),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Find Routes',
+                    subtitle: 'Search',
+                    icon: Icons.directions_bus_rounded,
+                    gradient: AppColors.accentGradient,
+                    onTap: () => onNavigateToTab?.call(1),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceMD),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Emergency',
+                    subtitle: 'Get help',
+                    icon: Icons.warning_rounded,
+                    gradient: AppColors.dangerGradient,
+                    onTap: () => Navigator.pushNamed(context, '/emergency'),
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Feedback',
+                    subtitle: 'Share',
+                    icon: Icons.feedback_rounded,
+                    gradient: AppColors.successGradient,
+                    onTap: () => Navigator.pushNamed(context, '/feedback-system'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
