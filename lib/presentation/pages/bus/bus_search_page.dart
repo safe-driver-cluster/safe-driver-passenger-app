@@ -558,8 +558,6 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     );
   }
 
-
-
   Widget _buildSearchResults() {
     if (_isSearching) {
       return const Center(
