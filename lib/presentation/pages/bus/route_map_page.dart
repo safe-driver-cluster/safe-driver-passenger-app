@@ -32,7 +32,6 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
 
   final PageController _pageController = PageController();
   int _currentMapType = 0; // 0: Route View, 1: Stops View, 2: Live Buses
-  final bool _isLoading = false;
   String _selectedRoute = 'Route 001 - City Express';
 
   // Sample route data
