@@ -103,15 +103,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   void _populateFormFields(PassengerModel profile) {
     setState(() {
       _currentProfile = profile;
-      _profileImageUrl = profile.profilePictureUrl;
+      _profileImageUrl = profile.profileImageUrl;
 
       // Basic info
       _firstNameController.text = profile.firstName;
       _lastNameController.text = profile.lastName;
       _phoneController.text = profile.phoneNumber;
-      _dateOfBirthController.text = profile.dateOfBirth ?? '';
+      _dateOfBirthController.text = profile.dateOfBirth?.toString() ?? '';
       _genderController.text = profile.gender ?? '';
-      _nationalIdController.text = profile.nationalId ?? '';
 
       // Address
       if (profile.address != null) {
