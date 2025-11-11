@@ -1357,24 +1357,24 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: AppColors.greyExtraLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: AppColors.greyLight,
           width: 1,
         ),
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: AppColors.textPrimary),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: TextStyle(color: Colors.white.withOpacity(0.9)),
+          labelStyle: const TextStyle(color: AppColors.textSecondary),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+          hintStyle: const TextStyle(color: AppColors.textHint),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.8),
+            color: AppColors.primaryColor,
             size: AppDesign.iconMD,
           ),
           border: OutlineInputBorder(
