@@ -52,7 +52,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   bool _notificationsEnabled = true;
   bool _locationSharingEnabled = true;
   String _preferredLanguage = 'English';
-  String _preferredPaymentMethod = 'Card';
+  String _selectedGender = 'Prefer not to say';
 
   @override
   void initState() {
@@ -493,9 +493,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           const SizedBox(height: AppDesign.spaceMD),
 
           // Gender
-          _buildFormField(
-            controller: _genderController,
+          _buildDropdownField(
             label: 'Gender',
+            value: _selectedGender,
+            items: const ['Male', 'Female', 'Other', 'Prefer not to say'],
+            onChanged: (value) => setState(() => _selectedGender = value!),
             icon: Icons.wc_outlined,
           ),
         ],
@@ -688,31 +690,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
           const SizedBox(height: AppDesign.spaceMD),
 
-          // Language and Payment preferences
-          Row(
-            children: [
-              Expanded(
-                child: _buildDropdownField(
-                  label: 'Language',
-                  value: _preferredLanguage,
-                  items: const ['English', 'Spanish', 'French', 'German'],
-                  onChanged: (value) =>
-                      setState(() => _preferredLanguage = value!),
-                  icon: Icons.language_outlined,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildDropdownField(
-                  label: 'Payment Method',
-                  value: _preferredPaymentMethod,
-                  items: const ['Card', 'Cash', 'Mobile Payment'],
-                  onChanged: (value) =>
-                      setState(() => _preferredPaymentMethod = value!),
-                  icon: Icons.payment_outlined,
-                ),
-              ),
-            ],
+          // Language preference
+          _buildDropdownField(
+            label: 'Language',
+            value: _preferredLanguage,
+            items: const ['English', 'Spanish', 'French', 'German'],
+            onChanged: (value) =>
+                setState(() => _preferredLanguage = value!),
+            icon: Icons.language_outlined,
           ),
         ],
       ),
