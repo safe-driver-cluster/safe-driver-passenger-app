@@ -409,7 +409,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                               ),
                               child: Text(
                                 'Inactive',
-                                style: AppTextStyles.caption.copyWith(
+                                style: AppTextStyles.labelSmall.copyWith(
                                   color: AppColors.errorColor,
                                   fontWeight: FontWeight.w600,
                                 ),
