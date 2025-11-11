@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -20,7 +20,7 @@ import 'trip_history_page.dart';
 final userProfileProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
   final user = FirebaseAuth.instance.currentUser;
   if (user == null) return null;
-  
+
   final dashboardService = DashboardService();
   return await dashboardService.getUserProfile(user.uid);
 });
@@ -30,35 +30,80 @@ class UserProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userProfileAsync = ref.watch(userProfileProvider);
+    final authState = ref.watch(authStateProvider);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Professional Header
-            _buildProfessionalHeader(),
-
-            // Profile Content
-            Padding(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.accentColor,
+              AppColors.primaryColor,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(userProfileProvider);
+            },
+            color: AppColors.primaryColor,
+            backgroundColor: Colors.white,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // User Stats Cards
-                  _buildUserStatsSection(),
+                  // Professional Header with user data
+                  userProfileAsync.when(
+                    data: (userProfile) => _buildProfessionalHeader(
+                      context,
+                      userProfile,
+                      authState.user,
+                    ),
+                    loading: () => _buildLoadingHeader(),
+                    error: (error, _) => _buildErrorHeader(context, error),
+                  ),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                  // Main Content
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDesign.spaceMD,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppDesign.spaceMD),
 
-                  // Quick Actions
-                  _buildQuickActionsSection(),
+                        // Quick Actions Grid - Professional Design
+                        _buildProfessionalQuickActions(context),
+                        const SizedBox(height: AppDesign.spaceLG),
 
-                  const SizedBox(height: AppDesign.space2XL),
+                        // User Stats Section
+                        userProfileAsync.when(
+                          data: (userProfile) =>
+                              _buildProfessionalStats(userProfile),
+                          loading: () => _buildLoadingStats(),
+                          error: (_, __) => const SizedBox(),
+                        ),
+                        const SizedBox(height: AppDesign.spaceLG),
 
-                  // Menu Items
-                  _buildMenuSection(context, ref),
+                        // Account & Settings Section
+                        _buildProfessionalMenuSection(context, ref),
+                        const SizedBox(height: AppDesign.spaceLG),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
