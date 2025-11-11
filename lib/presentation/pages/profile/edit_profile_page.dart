@@ -7,10 +7,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/passenger_service.dart';
-import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -31,14 +29,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _dateOfBirthController;
   late final TextEditingController _genderController;
   late final TextEditingController _nationalIdController;
-  
+
   // Address controllers
   late final TextEditingController _streetController;
   late final TextEditingController _cityController;
   late final TextEditingController _stateController;
   late final TextEditingController _zipCodeController;
   late final TextEditingController _countryController;
-  
+
   // Emergency contact controllers
   late final TextEditingController _emergencyNameController;
   late final TextEditingController _emergencyPhoneController;
@@ -50,7 +48,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   bool _isLoading = false;
   bool _isSaving = false;
   String? _profileImageUrl;
-  
+
   // Preference states
   bool _notificationsEnabled = true;
   bool _locationSharingEnabled = true;
@@ -71,13 +69,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _dateOfBirthController = TextEditingController();
     _genderController = TextEditingController();
     _nationalIdController = TextEditingController();
-    
+
     _streetController = TextEditingController();
     _cityController = TextEditingController();
     _stateController = TextEditingController();
     _zipCodeController = TextEditingController();
     _countryController = TextEditingController();
-    
+
     _emergencyNameController = TextEditingController();
     _emergencyPhoneController = TextEditingController();
     _emergencyRelationController = TextEditingController();
@@ -85,11 +83,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   Future<void> _loadUserProfile() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        final profile = await PassengerService.instance.getPassengerProfile(user.uid);
+        final profile =
+            await PassengerService.instance.getPassengerProfile(user.uid);
         if (profile != null) {
           _populateFormFields(profile);
         }
@@ -105,7 +104,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     setState(() {
       _currentProfile = profile;
       _profileImageUrl = profile.profilePictureUrl;
-      
+
       // Basic info
       _firstNameController.text = profile.firstName;
       _lastNameController.text = profile.lastName;
@@ -113,7 +112,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _dateOfBirthController.text = profile.dateOfBirth ?? '';
       _genderController.text = profile.gender ?? '';
       _nationalIdController.text = profile.nationalId ?? '';
-      
+
       // Address
       if (profile.address != null) {
         _streetController.text = profile.address!.street ?? '';
@@ -122,21 +121,23 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         _zipCodeController.text = profile.address!.zipCode ?? '';
         _countryController.text = profile.address!.country ?? '';
       }
-      
+
       // Emergency contact
       if (profile.emergencyContact != null) {
         _emergencyNameController.text = profile.emergencyContact!.name ?? '';
-        _emergencyPhoneController.text = profile.emergencyContact!.phoneNumber ?? '';
-        _emergencyRelationController.text = profile.emergencyContact!.relationship ?? '';
+        _emergencyPhoneController.text =
+            profile.emergencyContact!.phoneNumber ?? '';
+        _emergencyRelationController.text =
+            profile.emergencyContact!.relationship ?? '';
       }
-      
+
       // Preferences
-      if (profile.preferences != null) {
-        _notificationsEnabled = profile.preferences!.notificationsEnabled ?? true;
-        _locationSharingEnabled = profile.preferences!.locationSharingEnabled ?? true;
-        _preferredLanguage = profile.preferences!.preferredLanguage ?? 'English';
-        _preferredPaymentMethod = profile.preferences!.preferredPaymentMethod ?? 'Card';
-      }
+      _notificationsEnabled = profile.preferences.notificationsEnabled ?? true;
+      _locationSharingEnabled =
+          profile.preferences.locationSharingEnabled ?? true;
+      _preferredLanguage = profile.preferences.preferredLanguage ?? 'English';
+      _preferredPaymentMethod =
+          profile.preferences.preferredPaymentMethod ?? 'Card';
     });
   }
 
@@ -162,12 +163,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             children: [
               // Professional Header
               _buildProfessionalHeader(context),
-              
+
               // Form Content
               Expanded(
-                child: _isLoading 
-                  ? _buildLoadingState()
-                  : _buildFormContent(),
+                child: _isLoading ? _buildLoadingState() : _buildFormContent(),
               ),
             ],
           ),
@@ -200,9 +199,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
           ),
-          
+
           const SizedBox(width: AppDesign.spaceMD),
-          
+
           // Title
           Expanded(
             child: Text(
@@ -213,7 +212,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
             ),
           ),
-          
+
           // Save button
           Container(
             decoration: BoxDecoration(
@@ -237,19 +236,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
               ),
-              child: _isSaving 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text(
+                      'Save',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                  )
-                : const Text(
-                    'Save',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
             ),
           ),
         ],
@@ -286,19 +285,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             // Profile Picture Section
             _buildProfilePictureSection(),
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Basic Information
             _buildBasicInfoSection(),
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Address Information
             _buildAddressSection(),
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Emergency Contact
             _buildEmergencyContactSection(),
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Preferences
             _buildPreferencesSection(),
             const SizedBox(height: AppDesign.spaceXL),
@@ -331,7 +330,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Profile picture display and upload
           Center(
             child: GestureDetector(
@@ -375,7 +374,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ),
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           Center(
             child: TextButton.icon(
               onPressed: _selectImage,
@@ -393,7 +392,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   Widget _buildDefaultAvatar() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: AppColors.primaryGradient,
       ),
@@ -428,7 +427,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Email (non-editable)
           _buildReadOnlyField(
             'Email Address',
@@ -436,7 +435,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             Icons.email_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Name fields
           Row(
             children: [
@@ -470,7 +469,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Phone number
           _buildFormField(
             controller: _phoneController,
@@ -485,7 +484,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             },
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Date of birth
           _buildFormField(
             controller: _dateOfBirthController,
@@ -495,7 +494,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             onTap: () => _selectDate(context),
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Gender and National ID
           Row(
             children: [
@@ -524,7 +523,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   Widget _buildAddressSection() {
     return ProfessionalCard(
       child: Column(
-        crossAxisional: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section Header
           Row(
@@ -544,7 +543,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Street address
           _buildFormField(
             controller: _streetController,
@@ -552,7 +551,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             icon: Icons.home_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // City and State
           Row(
             children: [
@@ -575,7 +574,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // ZIP code and Country
           Row(
             children: [
@@ -626,7 +625,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Emergency contact name
           _buildFormField(
             controller: _emergencyNameController,
@@ -634,7 +633,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             icon: Icons.person_pin_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Emergency contact phone and relationship
           Row(
             children: [
@@ -685,7 +684,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Notification settings
           _buildSwitchTile(
             title: 'Push Notifications',
@@ -694,17 +693,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             onChanged: (value) => setState(() => _notificationsEnabled = value),
             icon: Icons.notifications_outlined,
           ),
-          
+
           _buildSwitchTile(
             title: 'Location Sharing',
             subtitle: 'Share location for better service',
             value: _locationSharingEnabled,
-            onChanged: (value) => setState(() => _locationSharingEnabled = value),
+            onChanged: (value) =>
+                setState(() => _locationSharingEnabled = value),
             icon: Icons.location_on_outlined,
           ),
-          
+
           const SizedBox(height: AppDesign.spaceMD),
-          
+
           // Language and Payment preferences
           Row(
             children: [
@@ -713,7 +713,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   label: 'Language',
                   value: _preferredLanguage,
                   items: const ['English', 'Spanish', 'French', 'German'],
-                  onChanged: (value) => setState(() => _preferredLanguage = value!),
+                  onChanged: (value) =>
+                      setState(() => _preferredLanguage = value!),
                   icon: Icons.language_outlined,
                 ),
               ),
@@ -723,7 +724,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   label: 'Payment Method',
                   value: _preferredPaymentMethod,
                   items: const ['Card', 'Cash', 'Mobile Payment'],
-                  onChanged: (value) => setState(() => _preferredPaymentMethod = value!),
+                  onChanged: (value) =>
+                      setState(() => _preferredPaymentMethod = value!),
                   icon: Icons.payment_outlined,
                 ),
               ),
@@ -775,7 +777,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ],
             ),
           ),
-          Icon(
+          const Icon(
             Icons.lock_outlined,
             color: AppColors.greyMedium,
             size: 16,
@@ -926,7 +928,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         maxHeight: 512,
         imageQuality: 70,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
@@ -940,24 +942,26 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
+      initialDate:
+          DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: AppColors.primaryColor,
-            ),
+                  primary: AppColors.primaryColor,
+                ),
           ),
           child: child!,
         );
       },
     );
-    
+
     if (picked != null) {
       setState(() {
-        _dateOfBirthController.text = '${picked.day}/${picked.month}/${picked.year}';
+        _dateOfBirthController.text =
+            '${picked.day}/${picked.month}/${picked.year}';
       });
     }
   }
@@ -991,54 +995,54 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
         phoneNumber: _phoneController.text.trim(),
-        dateOfBirth: _dateOfBirthController.text.isNotEmpty 
-            ? _dateOfBirthController.text.trim() 
+        dateOfBirth: _dateOfBirthController.text.isNotEmpty
+            ? _dateOfBirthController.text.trim()
             : null,
-        gender: _genderController.text.isNotEmpty 
-            ? _genderController.text.trim() 
+        gender: _genderController.text.isNotEmpty
+            ? _genderController.text.trim()
             : null,
-        nationalId: _nationalIdController.text.isNotEmpty 
-            ? _nationalIdController.text.trim() 
+        nationalId: _nationalIdController.text.isNotEmpty
+            ? _nationalIdController.text.trim()
             : null,
         profilePictureUrl: profileImageUrl,
-        
+
         address: AddressModel(
-          street: _streetController.text.isNotEmpty 
-              ? _streetController.text.trim() 
+          street: _streetController.text.isNotEmpty
+              ? _streetController.text.trim()
               : null,
-          city: _cityController.text.isNotEmpty 
-              ? _cityController.text.trim() 
+          city: _cityController.text.isNotEmpty
+              ? _cityController.text.trim()
               : null,
-          state: _stateController.text.isNotEmpty 
-              ? _stateController.text.trim() 
+          state: _stateController.text.isNotEmpty
+              ? _stateController.text.trim()
               : null,
-          zipCode: _zipCodeController.text.isNotEmpty 
-              ? _zipCodeController.text.trim() 
+          zipCode: _zipCodeController.text.isNotEmpty
+              ? _zipCodeController.text.trim()
               : null,
-          country: _countryController.text.isNotEmpty 
-              ? _countryController.text.trim() 
+          country: _countryController.text.isNotEmpty
+              ? _countryController.text.trim()
               : null,
         ),
-        
+
         emergencyContact: EmergencyContactModel(
-          name: _emergencyNameController.text.isNotEmpty 
-              ? _emergencyNameController.text.trim() 
+          name: _emergencyNameController.text.isNotEmpty
+              ? _emergencyNameController.text.trim()
               : null,
-          phoneNumber: _emergencyPhoneController.text.isNotEmpty 
-              ? _emergencyPhoneController.text.trim() 
+          phoneNumber: _emergencyPhoneController.text.isNotEmpty
+              ? _emergencyPhoneController.text.trim()
               : null,
-          relationship: _emergencyRelationController.text.isNotEmpty 
-              ? _emergencyRelationController.text.trim() 
+          relationship: _emergencyRelationController.text.isNotEmpty
+              ? _emergencyRelationController.text.trim()
               : null,
         ),
-        
+
         preferences: UserPreferencesModel(
           notificationsEnabled: _notificationsEnabled,
           locationSharingEnabled: _locationSharingEnabled,
           preferredLanguage: _preferredLanguage,
           preferredPaymentMethod: _preferredPaymentMethod,
         ),
-        
+
         // Keep existing values for other fields
         stats: _currentProfile?.stats,
         isActive: _currentProfile?.isActive ?? true,
@@ -1061,7 +1065,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ),
           ),
         );
-        
+
         Navigator.of(context).pop(true); // Return true to indicate success
       }
     } catch (e) {
@@ -1075,22 +1079,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   void _showErrorDialog(String message) {
     if (!mounted) return;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         ),
-        title: Row(
+        title: const Row(
           children: [
             Icon(
               Icons.error_outline_rounded,
               color: AppColors.errorColor,
               size: 28,
             ),
-            const SizedBox(width: AppDesign.spaceMD),
-            const Text('Error'),
+            SizedBox(width: AppDesign.spaceMD),
+            Text('Error'),
           ],
         ),
         content: Text(message),
