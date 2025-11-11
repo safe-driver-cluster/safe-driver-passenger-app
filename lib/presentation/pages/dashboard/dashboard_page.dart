@@ -256,7 +256,7 @@ class DashboardHome extends ConsumerWidget {
                   // Main Content
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceLG),
+                        horizontal: AppDesign.spaceMD),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -473,7 +473,7 @@ class DashboardHome extends ConsumerWidget {
     required LinearGradient gradient,
     required VoidCallback onTap,
   }) {
-    return Container(
+    return SizedBox(
       height: 100, // Fixed height for same size
       child: Material(
         color: Colors.transparent,
