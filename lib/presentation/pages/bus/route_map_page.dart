@@ -654,7 +654,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                         ),
                         child: Text(
                           'ACTIVE',
-                          style: AppTextStyles.caption.copyWith(
+                          style: AppTextStyles.labelSmall.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
                           ),
@@ -686,7 +686,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                     );
                   },
                   gradient: AppColors.primaryGradient,
-                  prefixIcon: Icons.location_on_rounded,
+                  icon: const Icon(Icons.location_on_rounded,
+                      color: Colors.white),
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
@@ -695,7 +696,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                   text: 'Route Details',
                   onPressed: () => _showRouteDetails(currentRoute),
                   isOutlined: true,
-                  prefixIcon: Icons.info_outline_rounded,
+                  icon: const Icon(Icons.info_outline_rounded),
                 ),
               ),
             ],
@@ -790,7 +791,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       ),
                       child: Text(
                         'Next: ${stop['nextBus']}',
-                        style: AppTextStyles.caption.copyWith(
+                        style: AppTextStyles.labelSmall.copyWith(
                           color: AppColors.successColor,
                           fontWeight: FontWeight.w600,
                         ),
@@ -832,7 +833,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                   ),
                   child: Text(
                     amenity,
-                    style: AppTextStyles.caption.copyWith(
+                    style: AppTextStyles.labelSmall.copyWith(
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -941,7 +942,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       ),
                       child: Text(
                         bus['isOnTime'] ? 'ON TIME' : '+${bus['delay']} MIN',
-                        style: AppTextStyles.caption.copyWith(
+                        style: AppTextStyles.labelSmall.copyWith(
                           color: bus['isOnTime']
                               ? AppColors.successColor
                               : AppColors.warningColor,
@@ -967,7 +968,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
-                color: AppColors.backgroundSecondary,
+                color: AppColors.greyExtraLight,
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
               ),
               child: Row(
@@ -984,7 +985,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       children: [
                         Text(
                           'Current Location',
-                          style: AppTextStyles.caption.copyWith(
+                          style: AppTextStyles.labelSmall.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1044,7 +1045,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       const SizedBox(height: AppDesign.spaceXS),
                       LinearProgressIndicator(
                         value: occupancyPercentage / 100,
-                        backgroundColor: AppColors.borderColor,
+                        backgroundColor: AppColors.greyLight,
                         valueColor:
                             AlwaysStoppedAnimation<Color>(occupancyColor),
                         minHeight: 6,
@@ -1074,7 +1075,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       );
                     },
                     isOutlined: true,
-                    prefixIcon: Icons.my_location_rounded,
+                    icon: const Icon(Icons.my_location_rounded),
                     height: 36,
                   ),
                 ),
@@ -1093,7 +1094,8 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
                       );
                     },
                     gradient: AppColors.primaryGradient,
-                    prefixIcon: Icons.info_outline_rounded,
+                    icon: const Icon(Icons.info_outline_rounded,
+                        color: Colors.white),
                     height: 36,
                   ),
                 ),
@@ -1124,7 +1126,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
         ),
         Text(
           label,
-          style: AppTextStyles.caption.copyWith(
+          style: AppTextStyles.labelSmall.copyWith(
             color: textColor.withOpacity(0.8),
             fontWeight: FontWeight.w500,
           ),
@@ -1204,7 +1206,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1251,7 +1253,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -1321,7 +1323,7 @@ class _RouteMapPageState extends ConsumerState<RouteMapPage>
             height: 4,
             margin: const EdgeInsets.only(top: AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.borderColor,
+              color: AppColors.greyLight,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
