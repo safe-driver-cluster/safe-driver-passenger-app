@@ -695,8 +695,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             label: 'Language',
             value: _preferredLanguage,
             items: const ['English', 'Spanish', 'French', 'German'],
-            onChanged: (value) =>
-                setState(() => _preferredLanguage = value!),
+            onChanged: (value) => setState(() => _preferredLanguage = value!),
             icon: Icons.language_outlined,
           ),
         ],
