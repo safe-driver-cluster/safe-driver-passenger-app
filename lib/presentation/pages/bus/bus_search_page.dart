@@ -213,29 +213,27 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
             child: SlideTransition(
               position: _slideAnimation,
               child: Column(
-                    children: [
-                      _buildModernHeader(),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              _buildSearchSection(),
-                              _buildQuickActionsSection(),
-                              _buildPopularRoutesSection(),
-                            ],
-                          ),
-                        ),
+                children: [
+                  _buildModernHeader(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          _buildSearchSection(),
+                          _buildQuickActionsSection(),
+                          _buildPopularRoutesSection(),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            },
+                ],
+              ),
+            ),
           ),
         ),
       ),
       floatingActionButton: _buildAnimatedFAB(),
-    );
+    )
   }
 
   Widget _buildModernHeader() {
