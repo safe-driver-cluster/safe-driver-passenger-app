@@ -180,68 +180,69 @@ class _SplashPageState extends ConsumerState<SplashPage>
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Animated Logo
-                    AnimatedBuilder(
-                      animation: _logoController,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _logoScaleAnimation.value,
-                          child: Opacity(
-                            opacity: _logoOpacityAnimation.value,
-                            child: Container(
-                              width: 140,
-                              height: 140,
-                              decoration: BoxDecoration(
-                                gradient: AppColors.glassGradient,
-                                borderRadius:
-                                    BorderRadius.circular(AppDesign.radius2XL),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.3),
-                                  width: 2,
+                children: [
+                  // Animated Logo - Larger and more prominent
+                  AnimatedBuilder(
+                    animation: _logoController,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _logoScaleAnimation.value,
+                        child: Opacity(
+                          opacity: _logoOpacityAnimation.value,
+                          child: Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.glassGradient,
+                              borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.4),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 60,
+                                  offset: const Offset(0, 30),
                                 ),
+                                BoxShadow(
+                                  color: AppColors.primaryColor.withOpacity(0.3),
+                                  blurRadius: 100,
+                                  offset: const Offset(0, 50),
+                                ),
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, -10),
+                                ),
+                              ],
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.all(30),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 40,
-                                    offset: const Offset(0, 20),
-                                  ),
-                                  BoxShadow(
-                                    color:
-                                        AppColors.primaryColor.withOpacity(0.2),
-                                    blurRadius: 60,
-                                    offset: const Offset(0, 30),
+                                    color: AppColors.primaryColor.withOpacity(0.2),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
                                   ),
                                 ],
                               ),
-                              child: Container(
-                                margin: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.circular(AppDesign.radiusLG),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primaryColor
-                                          .withOpacity(0.1),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.directions_bus_rounded,
-                                  size: AppDesign.icon3XL,
-                                  color: AppColors.primaryColor,
-                                ),
+                              child: const Icon(
+                                Icons.directions_bus_rounded,
+                                size: 80,
+                                color: AppColors.primaryColor,
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
 
-                    const SizedBox(height: 40),
+                  const SizedBox(height: AppDesign.space3XL),
 
                     // Animated Text
                     AnimatedBuilder(
