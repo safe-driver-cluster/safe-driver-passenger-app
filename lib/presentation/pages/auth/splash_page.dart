@@ -338,17 +338,27 @@ class _SplashPageState extends ConsumerState<SplashPage>
                     height: 60,
                     padding: const EdgeInsets.all(AppDesign.spaceMD),
                     decoration: BoxDecoration(
-                      gradient: AppColors.glassGradient,
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryColor.withOpacity(0.8),
+                          AppColors.primaryDark.withOpacity(0.6),
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: AppColors.primaryColor.withOpacity(0.6),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withOpacity(0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: AppColors.primaryColor.withOpacity(0.3),
+                          blurRadius: 30,
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
@@ -361,20 +371,30 @@ class _SplashPageState extends ConsumerState<SplashPage>
                   const SizedBox(height: AppDesign.spaceLG),
 
                   // Loading text
-                  const Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: AppDesign.textMD,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.0,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black26,
-                          offset: Offset(0, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDesign.spaceLG,
+                      vertical: AppDesign.spaceSM,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    child: const Text(
+                      'Loading...',
+                      style: TextStyle(
+                        fontSize: AppDesign.textMD,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black54,
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -387,9 +407,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         'Version 1.0.0',
                         style: TextStyle(
                           fontSize: AppDesign.textXS,
-                          color: Colors.white.withOpacity(0.8),
-                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary.withOpacity(0.8),
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: AppDesign.spaceXS),
@@ -397,9 +424,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         'Powered by SafeDriver Technologies',
                         style: TextStyle(
                           fontSize: 10,
-                          color: Colors.white.withOpacity(0.6),
-                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.3,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
                         ),
                       ),
                     ],
