@@ -244,40 +244,60 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
                   const SizedBox(height: AppDesign.space3XL),
 
-                    // Animated Text
-                    AnimatedBuilder(
-                      animation: _textController,
-                      builder: (context, child) {
-                        return SlideTransition(
-                          position: _textSlideAnimation,
-                          child: FadeTransition(
-                            opacity: _textOpacityAnimation,
-                            child: Column(
-                              children: [
-                                const Text(
-                                  'SafeDriver',
-                                  style: TextStyle(
-                                    fontSize: AppDesign.text4XL,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: -1.0,
-                                  ),
+                  // Animated Text - Larger and more prominent
+                  AnimatedBuilder(
+                    animation: _textController,
+                    builder: (context, child) {
+                      return SlideTransition(
+                        position: _textSlideAnimation,
+                        child: FadeTransition(
+                          opacity: _textOpacityAnimation,
+                          child: Column(
+                            children: [
+                              const Text(
+                                'SafeDriver',
+                                style: TextStyle(
+                                  fontSize: 56,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: -2.0,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0, 4),
+                                      blurRadius: 8,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: AppDesign.spaceMD),
-                                const Text(
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: AppDesign.spaceLG),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppDesign.space2XL,
+                                ),
+                                child: const Text(
                                   'Your Safety, Our Priority',
                                   style: TextStyle(
-                                    fontSize: AppDesign.textLG,
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.5,
+                                    fontSize: AppDesign.textXL,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.0,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0, 2),
+                                        blurRadius: 4,
+                                      ),
+                                    ],
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: AppDesign.spaceLG),
-                                Container(
-                                  width: 100,
-                                  height: 4,
+                              ),
+                              const SizedBox(height: AppDesign.space2XL),
+                              Container(
+                                width: 150,
+                                height: 6,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
