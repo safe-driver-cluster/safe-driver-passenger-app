@@ -324,7 +324,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
               bottom: AppDesign.space3XL,
               left: 0,
               right: 0,
-                child: Column(
+              child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // Modern Loading indicator
