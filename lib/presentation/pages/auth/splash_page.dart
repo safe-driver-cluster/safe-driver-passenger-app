@@ -298,16 +298,17 @@ class _SplashPageState extends ConsumerState<SplashPage>
                               Container(
                                 width: 150,
                                 height: 6,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.white.withOpacity(0.9),
-                                        Colors.white.withOpacity(0.3),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                        AppDesign.radiusSM),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.9),
+                                      Colors.white.withOpacity(0.3),
+                                      Colors.transparent,
+                                    ],
                                   ),
+                                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                ),
+                              ),
                                 ),
                               ],
                             ),
