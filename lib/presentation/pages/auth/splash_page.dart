@@ -175,7 +175,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                 ),
               ),
             ),
-            
+
             // Main content
             Center(
               child: Column(
@@ -194,7 +194,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             height: 200,
                             decoration: BoxDecoration(
                               gradient: AppColors.glassGradient,
-                              borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                              borderRadius:
+                                  BorderRadius.circular(AppDesign.radiusFull),
                               border: Border.all(
                                 color: Colors.white.withOpacity(0.4),
                                 width: 3,
@@ -206,7 +207,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                   offset: const Offset(0, 30),
                                 ),
                                 BoxShadow(
-                                  color: AppColors.primaryColor.withOpacity(0.3),
+                                  color:
+                                      AppColors.primaryColor.withOpacity(0.3),
                                   blurRadius: 100,
                                   offset: const Offset(0, 50),
                                 ),
@@ -221,10 +223,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
                               margin: const EdgeInsets.all(30),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusFull),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primaryColor.withOpacity(0.2),
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.2),
                                     blurRadius: 30,
                                     offset: const Offset(0, 15),
                                   ),
@@ -306,7 +310,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                       Colors.transparent,
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                  borderRadius:
+                                      BorderRadius.circular(AppDesign.radiusLG),
                                 ),
                               ),
                             ],
@@ -318,7 +323,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                 ],
               ),
             ),
-            
+
             // Bottom loading section - positioned at bottom
             Positioned(
               bottom: AppDesign.space3XL,
