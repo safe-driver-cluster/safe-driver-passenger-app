@@ -157,7 +157,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                               height: 140,
                               decoration: BoxDecoration(
                                 gradient: AppColors.glassGradient,
-                                borderRadius: BorderRadius.circular(AppDesign.radius2XL),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radius2XL),
                                 border: Border.all(
                                   color: Colors.white.withOpacity(0.3),
                                   width: 2,
@@ -169,7 +170,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                     offset: const Offset(0, 20),
                                   ),
                                   BoxShadow(
-                                    color: AppColors.primaryColor.withOpacity(0.2),
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.2),
                                     blurRadius: 60,
                                     offset: const Offset(0, 30),
                                   ),
@@ -179,10 +181,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                 margin: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                  borderRadius:
+                                      BorderRadius.circular(AppDesign.radiusLG),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.primaryColor.withOpacity(0.1),
+                                      color: AppColors.primaryColor
+                                          .withOpacity(0.1),
                                       blurRadius: 20,
                                       offset: const Offset(0, 10),
                                     ),
@@ -243,7 +247,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                         Colors.white.withOpacity(0.3),
                                       ],
                                     ),
-                                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+                                    borderRadius: BorderRadius.circular(
+                                        AppDesign.radiusSM),
                                   ),
                                 ),
                               ],
@@ -269,7 +274,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                       padding: const EdgeInsets.all(AppDesign.spaceSM),
                       decoration: BoxDecoration(
                         gradient: AppColors.glassGradient,
-                        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                        borderRadius:
+                            BorderRadius.circular(AppDesign.radiusFull),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.2),
                           width: 1,
