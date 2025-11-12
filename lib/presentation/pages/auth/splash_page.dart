@@ -309,20 +309,21 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                                 ),
                               ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-
-              // Loading indicator and version
-              Expanded(
-                flex: 1,
+            ),
+            
+            // Bottom loading section - positioned at bottom
+            Positioned(
+              bottom: AppDesign.space3XL,
+              left: 0,
+              right: 0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
