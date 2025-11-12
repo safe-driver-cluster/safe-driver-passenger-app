@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/constants/design_constants.dart';
 import '../../../providers/auth_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -129,8 +130,10 @@ class _SplashPageState extends ConsumerState<SplashPage>
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
-              AppColors.secondaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
             ],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -150,23 +153,46 @@ class _SplashPageState extends ConsumerState<SplashPage>
                           child: Opacity(
                             opacity: _logoOpacityAnimation.value,
                             child: Container(
-                              width: 120,
-                              height: 120,
+                              width: 140,
+                              height: 140,
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(60),
+                                gradient: AppColors.glassGradient,
+                                borderRadius: BorderRadius.circular(AppDesign.radius2XL),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 2,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 40,
+                                    offset: const Offset(0, 20),
+                                  ),
+                                  BoxShadow(
+                                    color: AppColors.primaryColor.withOpacity(0.2),
+                                    blurRadius: 60,
+                                    offset: const Offset(0, 30),
                                   ),
                                 ],
                               ),
-                              child: const Icon(
-                                Icons.directions_bus,
-                                size: 60,
-                                color: AppColors.primaryColor,
+                              child: Container(
+                                margin: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primaryColor.withOpacity(0.1),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.directions_bus_rounded,
+                                  size: AppDesign.icon3XL,
+                                  color: AppColors.primaryColor,
+                                ),
                               ),
                             ),
                           ),
@@ -189,29 +215,35 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                 const Text(
                                   'SafeDriver',
                                   style: TextStyle(
-                                    fontSize: 36,
+                                    fontSize: AppDesign.text4XL,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
-                                    letterSpacing: 1.2,
+                                    letterSpacing: -1.0,
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: AppDesign.spaceMD),
                                 const Text(
                                   'Your Safety, Our Priority',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: AppDesign.textLG,
                                     color: Colors.white70,
-                                    fontWeight: FontWeight.w300,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.5,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: AppDesign.spaceLG),
                                 Container(
-                                  width: 80,
-                                  height: 3,
+                                  width: 100,
+                                  height: 4,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(2),
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.white.withOpacity(0.9),
+                                        Colors.white.withOpacity(0.3),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
                                   ),
                                 ),
                               ],
@@ -230,29 +262,39 @@ class _SplashPageState extends ConsumerState<SplashPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // Loading indicator
-                    const SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
+                    // Modern Loading indicator
+                    Container(
+                      width: 50,
+                      height: 50,
+                      padding: const EdgeInsets.all(AppDesign.spaceSM),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.glassGradient,
+                        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2.5,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppDesign.spaceLG),
 
                     // Loading text
                     const Text(
                       'Loading...',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: AppDesign.textMD,
                         color: Colors.white70,
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.5,
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: AppDesign.space2XL),
 
                     // Version and powered by
                     Column(
@@ -260,22 +302,26 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         Text(
                           'Version 1.0.0',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                            fontSize: AppDesign.textXS,
+                            color: Colors.white.withOpacity(0.7),
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppDesign.spaceXS),
                         Text(
                           'Powered by SafeDriver Technologies',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.white.withOpacity(0.5),
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: AppDesign.spaceLG),
                   ],
                 ),
               ),
