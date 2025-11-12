@@ -387,9 +387,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         'Version 1.0.0',
                         style: TextStyle(
                           fontSize: AppDesign.textXS,
-                          color: Colors.white.withOpacity(0.8),
-                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary.withOpacity(0.8),
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: AppDesign.spaceXS),
@@ -397,9 +404,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         'Powered by SafeDriver Technologies',
                         style: TextStyle(
                           fontSize: 10,
-                          color: Colors.white.withOpacity(0.6),
-                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.3,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
                         ),
                       ),
                     ],
