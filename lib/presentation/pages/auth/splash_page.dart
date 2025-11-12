@@ -175,7 +175,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                 ),
               ),
             ),
-            
+
             // Main content
             Center(
               child: Column(
@@ -194,7 +194,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             height: 200,
                             decoration: BoxDecoration(
                               gradient: AppColors.glassGradient,
-                              borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                              borderRadius:
+                                  BorderRadius.circular(AppDesign.radiusFull),
                               border: Border.all(
                                 color: Colors.white.withOpacity(0.4),
                                 width: 3,
@@ -206,7 +207,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                   offset: const Offset(0, 30),
                                 ),
                                 BoxShadow(
-                                  color: AppColors.primaryColor.withOpacity(0.3),
+                                  color:
+                                      AppColors.primaryColor.withOpacity(0.3),
                                   blurRadius: 100,
                                   offset: const Offset(0, 50),
                                 ),
@@ -221,10 +223,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
                               margin: const EdgeInsets.all(30),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusFull),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.primaryColor.withOpacity(0.2),
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.2),
                                     blurRadius: 30,
                                     offset: const Offset(0, 15),
                                   ),
@@ -298,101 +302,114 @@ class _SplashPageState extends ConsumerState<SplashPage>
                               Container(
                                 width: 150,
                                 height: 6,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.white.withOpacity(0.9),
-                                        Colors.white.withOpacity(0.3),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(
-                                        AppDesign.radiusSM),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.9),
+                                      Colors.white.withOpacity(0.3),
+                                      Colors.transparent,
+                                    ],
                                   ),
+                                  borderRadius:
+                                      BorderRadius.circular(AppDesign.radiusLG),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
+            ),
 
-              // Loading indicator and version
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // Modern Loading indicator
-                    Container(
-                      width: 50,
-                      height: 50,
-                      padding: const EdgeInsets.all(AppDesign.spaceSM),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.glassGradient,
-                        borderRadius:
-                            BorderRadius.circular(AppDesign.radiusFull),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
+            // Bottom loading section - positioned at bottom
+            Positioned(
+              bottom: AppDesign.space3XL,
+              left: 0,
+              right: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Modern Loading indicator - centered and larger
+                  Container(
+                    width: 60,
+                    height: 60,
+                    padding: const EdgeInsets.all(AppDesign.spaceMD),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.glassGradient,
+                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 2,
                       ),
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-
-                    const SizedBox(height: AppDesign.spaceLG),
-
-                    // Loading text
-                    const Text(
-                      'Loading...',
-                      style: TextStyle(
-                        fontSize: AppDesign.textMD,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-
-                    const SizedBox(height: AppDesign.space2XL),
-
-                    // Version and powered by
-                    Column(
-                      children: [
-                        Text(
-                          'Version 1.0.0',
-                          style: TextStyle(
-                            fontSize: AppDesign.textXS,
-                            color: Colors.white.withOpacity(0.7),
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: AppDesign.spaceXS),
-                        Text(
-                          'Powered by SafeDriver Technologies',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.white.withOpacity(0.5),
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0.3,
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
                         ),
                       ],
                     ),
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
 
-                    const SizedBox(height: AppDesign.spaceLG),
-                  ],
-                ),
+                  const SizedBox(height: AppDesign.spaceLG),
+
+                  // Loading text
+                  const Text(
+                    'Loading...',
+                    style: TextStyle(
+                      fontSize: AppDesign.textMD,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1.0,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black26,
+                          offset: Offset(0, 2),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: AppDesign.spaceLG),
+
+                  // Version and powered by
+                  Column(
+                    children: [
+                      Text(
+                        'Version 1.0.0',
+                        style: TextStyle(
+                          fontSize: AppDesign.textXS,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceXS),
+                      Text(
+                        'Powered by SafeDriver Technologies',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.white.withOpacity(0.6),
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    )
+    );
   }
 }
