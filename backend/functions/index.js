@@ -106,7 +106,7 @@ async function sendSMS(phoneNumber, message) {
         // Text.lk API v3 request format
         const requestData = {
             recipient: phoneNumber.replace('+', ''),
-            message_body: message,
+            message: message,
             sender_id: config.textlk.senderId,
         };
 
@@ -209,11 +209,17 @@ exports.sendOTP = functions
             const smsResult = await sendSMS(formattedPhone, message);
 
             // Update verification record with SMS status
-            await db.collection('otp_verifications').doc(verificationId).update({
+            const updateData = {
                 smsStatus: smsResult.success ? 'sent' : 'failed',
-                smsMessageId: smsResult.messageId,
                 smsResponse: smsResult.response,
-            });
+            };
+            
+            // Only add messageId if it exists
+            if (smsResult.messageId) {
+                updateData.smsMessageId = smsResult.messageId;
+            }
+            
+            await db.collection('otp_verifications').doc(verificationId).update(updateData);
 
             if (!smsResult.success) {
                 throw new functions.https.HttpsError(
