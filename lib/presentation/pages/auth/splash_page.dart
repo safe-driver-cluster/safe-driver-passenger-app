@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -96,11 +97,22 @@ class _SplashPageState extends ConsumerState<SplashPage>
     });
   }
 
-  void _checkAuthenticationState() {
+  void _checkAuthenticationState() async {
     print('🔍 Checking authentication state...');
     final authState = ref.read(authStateProvider);
     print('🔍 Auth state: ${authState.toString()}');
     print('🔍 User: ${authState.user?.uid ?? 'null'}');
+
+    // Check onboarding status first
+    final onboardingNotifier = ref.read(onboardingProvider.notifier);
+    await onboardingNotifier.checkOnboardingStatus();
+    final onboardingState = ref.read(onboardingProvider);
+
+    if (!onboardingState.isCompleted) {
+      print('📚 First time user, navigating to onboarding');
+      Navigator.pushReplacementNamed(context, '/onboarding');
+      return;
+    }
 
     if (authState.user != null) {
       print('✅ User is authenticated, navigating to dashboard');
