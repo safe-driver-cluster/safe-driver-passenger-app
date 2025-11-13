@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import '../../../core/constants/color_constants.dart';
-import '../../../providers/simple_providers.dart';
+import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../widgets/common/custom_snackbar.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -89,25 +90,21 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
   Future<void> _verifyOtp() async {
     if (_otpCode.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the complete OTP'),
-          backgroundColor: AppColors.errorColor,
-        ),
+      CustomSnackBar.showError(
+        context,
+        'Please enter the complete 6-digit OTP',
       );
       return;
     }
 
     try {
-      final authController = ref.read(authControllerProvider.notifier);
-      await authController.verifyOtp(widget.verificationId, _otpCode);
+      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.verifyOtp(_otpCode);
     } catch (e) {
       print('OTP verification error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Verification failed: ${e.toString()}'),
-          backgroundColor: AppColors.errorColor,
-        ),
+      CustomSnackBar.showError(
+        context,
+        'Verification failed: ${e.toString()}',
       );
     }
   }
@@ -116,8 +113,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     if (!_canResend) return;
 
     try {
-      final authController = ref.read(authControllerProvider.notifier);
-      await authController.resendOtp(widget.phoneNumber);
+      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.resendOtp();
 
       // Clear current OTP
       for (var controller in _otpControllers) {
@@ -127,27 +124,39 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
       _startTimer();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP sent successfully'),
-          backgroundColor: AppColors.successColor,
-        ),
+      CustomSnackBar.showSuccess(
+        context,
+        'OTP sent successfully to ${widget.phoneNumber}',
       );
     } catch (e) {
       print('Resend OTP error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to resend OTP: ${e.toString()}'),
-          backgroundColor: AppColors.errorColor,
-        ),
+      CustomSnackBar.showError(
+        context,
+        'Failed to resend OTP: ${e.toString()}',
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authControllerProvider);
-    final isLoading = authState.isLoading;
+    final phoneAuthState = ref.watch(phoneAuthControllerProvider);
+    final isLoading = phoneAuthState.isLoading;
+
+    // Listen for authentication state changes
+    ref.listen<PhoneAuthState>(phoneAuthControllerProvider, (previous, next) {
+      if (next.error != null) {
+        CustomSnackBar.showError(context, next.error!);
+      }
+      
+      if (next.currentStep == PhoneAuthStep.complete) {
+        // Navigate to dashboard or onboarding based on user status
+        if (next.isNewUser || next.passengerProfile?.firstName.isEmpty == true) {
+          Navigator.of(context).pushReplacementNamed('/onboarding');
+        } else {
+          Navigator.of(context).pushReplacementNamed('/dashboard');
+        }
+      }
+    });
 
     return LoadingWidget(
       isLoading: isLoading,
