@@ -5,9 +5,13 @@ import '../core/services/firebase_service.dart';
 import '../data/models/passenger_model.dart';
 import '../data/services/auth_service.dart';
 import '../data/services/passenger_service.dart';
+import '../data/services/phone_auth_service.dart';
+import '../data/services/sms_gateway_service.dart';
 
-// Auth service provider
+// Auth service providers
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+final phoneAuthServiceProvider = Provider<PhoneAuthService>((ref) => PhoneAuthService());
+final smsGatewayServiceProvider = Provider<SmsGatewayService>((ref) => SmsGatewayService());
 
 // Firebase user provider that listens to Firebase Auth state
 final firebaseUserProvider = StreamProvider<User?>((ref) {
@@ -187,6 +191,19 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         error: e.toString(),
       );
     }
+  }
+
+  // Set phone auth user after successful SMS verification
+  void setPhoneAuthUser(User user, PassengerModel? profile, bool isNewUser) {
+    state = state.copyWith(
+      user: user,
+      passengerProfile: profile,
+      isLoading: false,
+      error: null,
+      currentStep: isNewUser || profile?.firstName.isEmpty == true 
+          ? AuthStep.signUp 
+          : AuthStep.signIn,
+    );
   }
 
   // Sign in with email and password
