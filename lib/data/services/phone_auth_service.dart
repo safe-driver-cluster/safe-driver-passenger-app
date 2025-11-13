@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'sms_gateway_service.dart';
+
 import '../models/passenger_model.dart';
 import 'passenger_service.dart';
+import 'sms_gateway_service.dart';
 
 class PhoneAuthService {
   static final PhoneAuthService _instance = PhoneAuthService._internal();
@@ -16,17 +17,19 @@ class PhoneAuthService {
   Future<PhoneAuthResult> sendOtp(String phoneNumber) async {
     try {
       // Format and validate phone number
-      final formattedPhone = _smsGateway.formatSriLankanPhoneNumber(phoneNumber);
-      
+      final formattedPhone =
+          _smsGateway.formatSriLankanPhoneNumber(phoneNumber);
+
       if (!_smsGateway.isValidSriLankanPhoneNumber(formattedPhone)) {
-        return PhoneAuthResult.error('Please enter a valid Sri Lankan phone number');
+        return PhoneAuthResult.error(
+            'Please enter a valid Sri Lankan phone number');
       }
 
       print('📱 Sending OTP to: $formattedPhone');
-      
+
       // Send OTP via SMS gateway
       final result = await _smsGateway.sendOtp(formattedPhone);
-      
+
       if (result.success) {
         return PhoneAuthResult(
           success: true,
@@ -51,27 +54,28 @@ class PhoneAuthService {
   }) async {
     try {
       print('🔐 Verifying OTP: $otpCode');
-      
+
       // Verify OTP via SMS gateway
       final result = await _smsGateway.verifyOtp(
         verificationId: verificationId,
         otpCode: otpCode,
         phoneNumber: phoneNumber,
       );
-      
+
       if (result.success && result.user != null) {
         // Check if user has a passenger profile
         PassengerModel? passengerProfile;
         try {
-          passengerProfile = await _passengerService.getPassengerProfile(result.userId!);
+          passengerProfile =
+              await _passengerService.getPassengerProfile(result.userId!);
         } catch (e) {
           print('No existing passenger profile found, will create one');
         }
-        
+
         // If new user or no profile, create passenger profile
         if (result.isNewUser || passengerProfile == null) {
           print('Creating new passenger profile for: ${result.userId}');
-          
+
           await _passengerService.createPassengerProfile(
             userId: result.userId!,
             firstName: '', // Will be updated during onboarding
@@ -79,11 +83,12 @@ class PhoneAuthService {
             email: '', // Optional
             phoneNumber: result.phoneNumber!,
           );
-          
+
           // Get the newly created profile
-          passengerProfile = await _passengerService.getPassengerProfile(result.userId!);
+          passengerProfile =
+              await _passengerService.getPassengerProfile(result.userId!);
         }
-        
+
         return PhoneAuthResult(
           success: true,
           user: result.user!,
@@ -133,7 +138,7 @@ class PhoneAuthService {
       } catch (e) {
         print('Error deleting passenger profile: $e');
       }
-      
+
       // Delete Firebase Auth user
       await user.delete();
     }
