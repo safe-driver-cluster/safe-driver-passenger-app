@@ -1,11 +1,12 @@
 import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path/path.dart' as path;
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -79,7 +80,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         vsync: this,
       ),
     );
-    
+
     _getCurrentLocation();
   }
 
@@ -140,7 +141,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ],
         ),
       ),
-
     );
   }
 
