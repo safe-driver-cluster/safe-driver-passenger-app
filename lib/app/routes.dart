@@ -36,6 +36,7 @@ import '../presentation/pages/safety/safety_hub_page.dart';
 class AppRoutes {
   // Route names
   static const String splash = '/';
+  static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
   static const String forgotPassword = '/forgot-password';
