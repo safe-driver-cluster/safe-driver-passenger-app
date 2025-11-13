@@ -441,7 +441,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildLocationSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -606,7 +606,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildContactOptionsSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
