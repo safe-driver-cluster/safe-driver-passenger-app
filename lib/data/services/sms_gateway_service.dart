@@ -66,19 +66,13 @@ class SmsGatewayService {
       if (data['success'] == true) {
         // For now, we'll create an anonymous user and associate the phone number with it
         // This is a workaround since we can't create custom tokens without IAM permissions
-        UserCredential userCredential;
+        User? user = _auth.currentUser;
 
-        if (_auth.currentUser == null) {
+        if (user == null) {
           // Sign in anonymously first
-          userCredential = await _auth.signInAnonymously();
-        } else {
-          userCredential = UserCredential(
-            user: _auth.currentUser,
-            credential: null,
-          );
+          final userCredential = await _auth.signInAnonymously();
+          user = userCredential.user!;
         }
-
-        final user = userCredential.user!;
         print('✅ OTP verified and user authenticated: ${user.uid}');
 
         // Store the phone verification status in Firestore
