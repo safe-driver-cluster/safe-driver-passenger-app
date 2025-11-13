@@ -267,7 +267,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
     try {
       // Sign out from Firebase Auth
       await FirebaseAuth.instance.signOut();
-      
+
       // Reset state
       state = const PhoneAuthState();
     } catch (e) {
