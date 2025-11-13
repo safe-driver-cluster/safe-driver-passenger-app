@@ -26,11 +26,11 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   Future<void> checkOnboardingStatus() async {
     state = state.copyWith(isLoading: true);
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final isCompleted = prefs.getBool('onboarding_completed') ?? false;
-      
+
       state = state.copyWith(
         isCompleted: isCompleted,
         isLoading: false,
@@ -44,7 +44,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('onboarding_completed', true);
-      
+
       state = state.copyWith(isCompleted: true);
     } catch (e) {
       // Handle error if needed
@@ -55,7 +55,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('onboarding_completed', false);
-      
+
       state = state.copyWith(isCompleted: false);
     } catch (e) {
       // Handle error if needed
@@ -63,6 +63,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   }
 }
 
-final onboardingProvider = StateNotifierProvider<OnboardingNotifier, OnboardingState>(
+final onboardingProvider =
+    StateNotifierProvider<OnboardingNotifier, OnboardingState>(
   (ref) => OnboardingNotifier(),
 );
