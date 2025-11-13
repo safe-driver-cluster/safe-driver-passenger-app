@@ -153,7 +153,7 @@ async function sendSMS(phoneNumber, message) {
     }
 }// Cloud Function: Send OTP
 exports.sendOTP = functions
-    .region('asia-south1') // Choose closest region to Sri Lanka
+    .region('asia-south1')
     .https.onCall(async (data, context) => {
         try {
             // Validate input
