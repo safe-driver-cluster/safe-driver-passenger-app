@@ -19,7 +19,7 @@ Edit `.env` file with your Text.lk API credentials:
 
 ```env
 TEXTLK_API_TOKEN=2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b
-TEXTLK_SENDER_ID=SafeDriver
+TEXTLK_SENDER_ID=TextLKDemo
 ```
 
 ### 3. Deploy
@@ -100,7 +100,7 @@ Scheduled function (runs hourly) to clean up expired OTP records.
 |----------|-------------|---------|
 | `TEXTLK_API_TOKEN` | Text.lk API token | Required |
 | `TEXTLK_API_URL` | Text.lk API endpoint | `https://app.text.lk/api/v3/sms/send` |
-| `TEXTLK_SENDER_ID` | Approved sender ID | `SafeDriver` |
+| `TEXTLK_SENDER_ID` | Approved sender ID | `TextLKDemo` |
 | `OTP_EXPIRY_MINUTES` | OTP expiration time | `10` |
 | `OTP_MAX_ATTEMPTS` | Max verification attempts | `3` |
 | `OTP_LENGTH` | OTP code length | `6` |
