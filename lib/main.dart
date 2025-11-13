@@ -71,7 +71,8 @@ void main() async {
           appleProvider: AppleProvider.debug,
         );
         debugPrint('✅ Firebase App Check initialized with DEBUG provider');
-        debugPrint('🔑 Make sure debug secret is added to Firebase Console: b233b275-5b4c-4933-b79e-d22f6bf4cfc4');
+        debugPrint(
+            '🔑 Make sure debug secret is added to Firebase Console: b233b275-5b4c-4933-b79e-d22f6bf4cfc4');
       } else {
         // Production mode with proper App Check
         await FirebaseAppCheck.instance.activate(
