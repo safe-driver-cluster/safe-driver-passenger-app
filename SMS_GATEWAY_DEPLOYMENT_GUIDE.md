@@ -108,7 +108,7 @@ Update the `.env` file with your actual Text.lk API credentials:
 
 ```env
 # Text.lk API Configuration
-TEXTLK_API_TOKEN=2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b
+TEXTLK_API_TOKEN=
 TEXTLK_API_URL=https://app.text.lk/api/v3/sms/send
 TEXTLK_SENDER_ID=SafeDriver
 
