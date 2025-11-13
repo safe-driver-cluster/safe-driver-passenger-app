@@ -314,7 +314,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       throw Exception('Failed to create user account');
     } catch (e) {
       // Handle errors gracefully
-      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      String errorMessage = _getFirebaseErrorMessage(e.toString());
 
       // Check if user was actually created despite the error
       if (e.toString().contains('PigeonUserDetails') ||
@@ -365,12 +365,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       state = state.copyWith(
         isLoading: false,
-        error: _getFirebaseErrorMessage(e.toString()),
+        error: errorMessage,
       );
 
       return AuthResult(
         success: false,
-        message: _getFirebaseErrorMessage(e.toString()),
+        message: errorMessage,
       );
     }
   }
