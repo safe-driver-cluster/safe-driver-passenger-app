@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isValidPhoneNumber(phone) {
+      return phone.matches('^\\+94[1-9][0-9]{8}$');
+    }
+    
+    function hasValidUserData() {
+      return 'phoneNumber' in request.resource.data &&
+             'isVerified' in request.resource.data &&
+             'createdAt' in request.resource.data;
+    }
+    
+    // Users collection - users can only access their own data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) && 
+                       hasValidUserData() &&
+                       isValidPhoneNumber(request.resource.data.phoneNumber);
+      
+      // User preferences subcollection
+      match /preferences/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // User stats subcollection
+      match /stats/{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+    
+    // OTP verifications - only Cloud Functions can write, users cannot directly access
+    match /otp_verifications/{verificationId} {
+      allow read, write: if false; // Only Cloud Functions can access
+    }
+    
+    // Buses collection - public read access for authenticated users
+    match /buses/{busId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin/system writes via Cloud Functions
+      
+      // Bus real-time data subcollection
+      match /realtime/{document=**} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+    
+    // Routes collection - public read access
+    match /routes/{routeId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin/system writes
+      
+      // Route stops subcollection
+      match /stops/{document=**} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+    
+    // Safety alerts - read-only for authenticated users
+    match /safety_alerts/{alertId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only system writes
+    }
+    
+    // Emergency contacts - users can only access their own
+    match /emergency_contacts/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Journeys - users can only access their own journeys
+    match /journeys/{journeyId} {
+      allow read, write: if isAuthenticated() && 
+                            request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Feedback - users can create and read their own feedback
+    match /feedback/{feedbackId} {
+      allow read, write: if isAuthenticated() && 
+                            request.auth.uid == resource.data.userId;
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Notifications - users can only access their own
+    match /notifications/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only system writes notifications
+      
+      match /messages/{messageId} {
+        allow read: if isOwner(userId);
+        allow update: if isOwner(userId) && 
+                         // Only allow updating read status
+                         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read', 'readAt']);
+      }
+    }
+    
+    // Analytics and logs - no direct access (system only)
+    match /analytics/{document=**} {
+      allow read, write: if false;
+    }
+    
+    match /audit_logs/{document=**} {
+      allow read, write: if false;
+    }
+    
+    // System configuration - read-only for authenticated users
+    match /system_config/{configId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+    
+    // Default deny rule
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
