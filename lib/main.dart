@@ -1,5 +1,7 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -58,6 +60,22 @@ void main() async {
         rethrow;
       }
       debugPrint('Firebase already initialized, continuing...');
+    }
+
+    // Initialize Firebase App Check for security
+    try {
+      await FirebaseAppCheck.instance.activate(
+        androidProvider: kDebugMode 
+            ? AndroidProvider.debug 
+            : AndroidProvider.playIntegrity,
+        appleProvider: kDebugMode 
+            ? AppleProvider.debug 
+            : AppleProvider.appAttest,
+      );
+      debugPrint('✅ Firebase App Check initialized');
+    } catch (e) {
+      debugPrint('⚠️ Firebase App Check initialization failed: $e');
+      // Continue without App Check in development
     }
 
     // Initialize Firebase services
