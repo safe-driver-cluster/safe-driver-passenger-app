@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
 
 import '../../../core/constants/color_constants.dart';
-import '../../../providers/phone_auth_provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -110,9 +111,10 @@ class _AccountVerificationPageState
 
   Future<void> _sendInitialOtp() async {
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.sendOtp(widget.phoneNumber);
-      
+
       final state = ref.read(phoneAuthControllerProvider);
       if (state.isOtpSent && state.verificationId != null) {
         setState(() {
@@ -128,7 +130,8 @@ class _AccountVerificationPageState
     } catch (e) {
       print('Error sending initial OTP: $e');
       if (mounted) {
-        CustomSnackBar.showError(context, 'Failed to send OTP: ${e.toString()}');
+        CustomSnackBar.showError(
+            context, 'Failed to send OTP: ${e.toString()}');
       }
     }
   }
@@ -140,30 +143,33 @@ class _AccountVerificationPageState
     }
 
     if (_verificationId == null) {
-      CustomSnackBar.showError(context, 'Verification ID not found. Please try again.');
+      CustomSnackBar.showError(
+          context, 'Verification ID not found. Please try again.');
       return;
     }
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
 
       final phoneAuthState = ref.read(phoneAuthControllerProvider);
-      
+
       if (phoneAuthState.isAuthenticated && phoneAuthState.user != null) {
         // Create user account with email/password for future login
         await _createUserAccount(phoneAuthState.user!.uid);
-        
+
         // Show success message and navigate to login
         if (mounted) {
           CustomSnackBar.showSuccess(context, 'Account verified successfully!');
-          
+
           // Navigate to login page
           Navigator.of(context).pushNamedAndRemoveUntil(
             '/login',
             (route) => false,
             arguments: {
-              'message': 'Account created and verified successfully! Please login with your credentials.',
+              'message':
+                  'Account created and verified successfully! Please login with your credentials.',
               'email': widget.email,
             },
           );
@@ -176,7 +182,8 @@ class _AccountVerificationPageState
     } catch (e) {
       print('OTP verification error: $e');
       if (mounted) {
-        CustomSnackBar.showError(context, 'Verification failed: ${e.toString()}');
+        CustomSnackBar.showError(
+            context, 'Verification failed: ${e.toString()}');
       }
     }
   }
@@ -185,7 +192,7 @@ class _AccountVerificationPageState
     try {
       // Import auth service
       final authService = ref.read(authStateProvider.notifier);
-      
+
       // Create Firebase Auth account with email/password
       await authService.signUp(
         email: widget.email,
@@ -194,10 +201,9 @@ class _AccountVerificationPageState
         lastName: widget.lastName,
         phoneNumber: widget.phoneNumber,
       );
-      
+
       // Sign out the phone auth user
       await ref.read(phoneAuthControllerProvider.notifier).signOut();
-      
     } catch (e) {
       print('Error creating user account: $e');
       // Don't throw error here, phone verification was successful
@@ -208,7 +214,8 @@ class _AccountVerificationPageState
     if (!_canResend) return;
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.sendOtp(widget.phoneNumber);
 
       final state = ref.read(phoneAuthControllerProvider);
@@ -236,7 +243,8 @@ class _AccountVerificationPageState
     } catch (e) {
       print('Resend OTP error: $e');
       if (mounted) {
-        CustomSnackBar.showError(context, 'Failed to resend OTP: ${e.toString()}');
+        CustomSnackBar.showError(
+            context, 'Failed to resend OTP: ${e.toString()}');
       }
     }
   }
