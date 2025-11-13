@@ -144,6 +144,707 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
+  // Location services
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      isLoadingLocation = true;
+    });
+
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          isLoadingLocation = false;
+        });
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            isLoadingLocation = false;
+          });
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          isLoadingLocation = false;
+        });
+        return;
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        currentLocation = position;
+        isLoadingLocation = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoadingLocation = false;
+      });
+    }
+  }
+
+  Widget _buildModernAppBar() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryColor.withOpacity(0.9),
+            AppColors.primaryDark.withOpacity(0.9),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          child: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: AppDesign.textXL,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      'Share your experience',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: AppDesign.textSM,
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black26,
+                            offset: Offset(0, 1),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaUploadSection() {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.attach_file,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
+                child: Text(
+                  'Add Photos or Videos (Optional)',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          Text(
+            'Upload images or videos to better explain your feedback (Max 10MB)',
+            style: TextStyle(
+              fontSize: AppDesign.textSM,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          
+          // Upload button
+          GestureDetector(
+            onTap: _pickMediaFile,
+            child: Container(
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppColors.primaryColor.withOpacity(0.3),
+                  width: 2,
+                  style: BorderStyle.solid,
+                ),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                color: AppColors.primaryColor.withOpacity(0.05),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.cloud_upload_outlined,
+                    size: 48,
+                    color: AppColors.primaryColor,
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  Text(
+                    'Tap to select photos or videos',
+                    style: TextStyle(
+                      fontSize: AppDesign.textMD,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    'PNG, JPG, MP4 (Max 10MB)',
+                    style: TextStyle(
+                      fontSize: AppDesign.textSM,
+                      color: AppColors.textHint,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Selected files display
+          if (selectedMediaFiles.isNotEmpty) ...[
+            const SizedBox(height: AppDesign.spaceLG),
+            ...selectedMediaFiles.map((file) => _buildMediaFileItem(file)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMediaFileItem(File file) {
+    final fileName = file.path.split('/').last;
+    final fileSize = (file.lengthSync() / (1024 * 1024)).toStringAsFixed(2);
+    final isVideo = fileName.toLowerCase().endsWith('.mp4') || 
+                   fileName.toLowerCase().endsWith('.mov') ||
+                   fileName.toLowerCase().endsWith('.avi');
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppDesign.spaceSM),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      decoration: BoxDecoration(
+        color: AppColors.greyExtraLight,
+        borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+        border: Border.all(
+          color: AppColors.greyLight,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isVideo ? Icons.videocam : Icons.image,
+            color: AppColors.primaryColor,
+            size: 24,
+          ),
+          const SizedBox(width: AppDesign.spaceMD),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  fileName,
+                  style: const TextStyle(
+                    fontSize: AppDesign.textSM,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '${fileSize}MB',
+                  style: const TextStyle(
+                    fontSize: AppDesign.textXS,
+                    color: AppColors.textHint,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () => _removeMediaFile(file),
+            icon: const Icon(
+              Icons.close,
+              color: AppColors.dangerColor,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationSection() {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.successColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.location_on,
+                  color: AppColors.successColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
+                child: Text(
+                  'Location Information',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          Text(
+            'Your location helps us understand the context of your feedback',
+            style: TextStyle(
+              fontSize: AppDesign.textSM,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          
+          if (isLoadingLocation)
+            Row(
+              children: [
+                const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceSM),
+                Text(
+                  'Getting your location...',
+                  style: TextStyle(
+                    fontSize: AppDesign.textSM,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            )
+          else if (currentLocation != null)
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.successColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                border: Border.all(
+                  color: AppColors.successColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    color: AppColors.successColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppDesign.spaceSM),
+                  Expanded(
+                    child: Text(
+                      'Location captured successfully',
+                      style: TextStyle(
+                        fontSize: AppDesign.textSM,
+                        color: AppColors.successColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _getCurrentLocation,
+                    child: Text(
+                      'Refresh',
+                      style: TextStyle(
+                        fontSize: AppDesign.textSM,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.warningColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                border: Border.all(
+                  color: AppColors.warningColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.warning,
+                    color: AppColors.warningColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppDesign.spaceSM),
+                  Expanded(
+                    child: Text(
+                      'Location not available',
+                      style: TextStyle(
+                        fontSize: AppDesign.textSM,
+                        color: AppColors.warningColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _getCurrentLocation,
+                    child: Text(
+                      'Try Again',
+                      style: TextStyle(
+                        fontSize: AppDesign.textSM,
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactOptionsSection() {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.accentColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.contact_support,
+                  color: AppColors.accentColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
+                child: Text(
+                  'Need More Help?',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          Text(
+            'For large files or detailed discussions, contact us directly',
+            style: TextStyle(
+              fontSize: AppDesign.textSM,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          
+          Row(
+            children: [
+              Expanded(
+                child: _buildContactButton(
+                  'WhatsApp',
+                  Icons.message,
+                  AppColors.successColor,
+                  _shareViaWhatsApp,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: _buildContactButton(
+                  'Email',
+                  Icons.email,
+                  AppColors.primaryColor,
+                  _shareViaEmail,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactButton(
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppDesign.spaceMD,
+          horizontal: AppDesign.spaceLG,
+        ),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+            const SizedBox(width: AppDesign.spaceSM),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: AppDesign.textMD,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Media and contact methods
+  Future<void> _pickMediaFile() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
+      );
+
+      if (result != null) {
+        List<File> newFiles = [];
+        for (PlatformFile file in result.files) {
+          if (file.path != null) {
+            File mediaFile = File(file.path!);
+            
+            // Check file size (10MB limit)
+            int fileSizeInBytes = mediaFile.lengthSync();
+            double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+            
+            if (fileSizeInMB <= 10) {
+              newFiles.add(mediaFile);
+            } else {
+              _showFileSizeError(file.name);
+            }
+          }
+        }
+        
+        setState(() {
+          selectedMediaFiles.addAll(newFiles);
+        });
+      }
+    } catch (e) {
+      _showError('Failed to pick media files: $e');
+    }
+  }
+
+  void _removeMediaFile(File file) {
+    setState(() {
+      selectedMediaFiles.remove(file);
+    });
+  }
+
+  void _shareViaWhatsApp() {
+    // WhatsApp sharing logic
+    final message = _buildShareMessage();
+    final whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
+    _launchUrl(whatsappUrl);
+  }
+
+  void _shareViaEmail() {
+    // Email sharing logic
+    final message = _buildShareMessage();
+    final subject = 'SafeDriver Feedback - Bus ${widget.busNumber}';
+    final emailUrl = 'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
+    _launchUrl(emailUrl);
+  }
+
+  String _buildShareMessage() {
+    final buffer = StringBuffer();
+    buffer.writeln('SafeDriver Feedback');
+    buffer.writeln('');
+    buffer.writeln('Bus Number: ${widget.busNumber}');
+    buffer.writeln('Feedback Type: ${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'}');
+    buffer.writeln('Rating: $selectedRating/5 stars');
+    buffer.writeln('');
+    if (selectedQuickActions.isNotEmpty) {
+      buffer.writeln('Quick Feedback:');
+      for (String action in selectedQuickActions) {
+        buffer.writeln('• $action');
+      }
+      buffer.writeln('');
+    }
+    if (_commentController.text.trim().isNotEmpty) {
+      buffer.writeln('Comments:');
+      buffer.writeln(_commentController.text.trim());
+      buffer.writeln('');
+    }
+    if (currentLocation != null) {
+      buffer.writeln('Location: ${currentLocation!.latitude}, ${currentLocation!.longitude}');
+    }
+    return buffer.toString();
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        _showError('Could not launch $url');
+      }
+    } catch (e) {
+      _showError('Error launching URL: $e');
+    }
+  }
+
+  void _showFileSizeError(String fileName) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$fileName is too large. Maximum size is 10MB.'),
+        backgroundColor: AppColors.dangerColor,
+      ),
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.dangerColor,
+      ),
+    );
+  }
+
   Widget _buildBusInfoHeader() {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
