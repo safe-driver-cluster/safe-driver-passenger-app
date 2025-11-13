@@ -7,15 +7,19 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
-// Load environment variables
-require('dotenv').config();
+// Load environment variables (only in local development)
+try {
+    require('dotenv').config();
+} catch (error) {
+    console.log('dotenv not loaded, using environment variables');
+}
 
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
 const auth = admin.auth();
 
-// Environment configuration
+// Environment configuration with fallbacks
 const config = {
     textlk: {
         apiToken: process.env.TEXTLK_API_TOKEN || functions.config().textlk?.apitoken,
