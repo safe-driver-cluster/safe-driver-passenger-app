@@ -1069,19 +1069,38 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Quick feedback (optional)',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.accentColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.quick_contacts_dialer,
+                  color: AppColors.accentColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
+                child: Text(
+                  'Quick Feedback (Select Multiple)',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
           const Text(
-            'Select a common feedback or write your own below',
+            'Choose one or more options that match your experience',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: AppDesign.textSM,
               color: AppColors.textSecondary,
             ),
           ),
@@ -1139,26 +1158,51 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: AppDesign.shadowMD,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Additional comments',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.comment,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Expanded(
+                child: Text(
+                  'Additional Comments',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
           const Text(
             'Share more details about your experience (optional)',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: AppDesign.textSM,
               color: AppColors.textSecondary,
             ),
           ),
@@ -1203,46 +1247,76 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   Widget _buildSubmitButton() {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceColor,
+      decoration: BoxDecoration(
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 10,
-            offset: Offset(0, -2),
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
       child: SafeArea(
         child: SizedBox(
           width: double.infinity,
+          height: 56,
           child: ElevatedButton(
             onPressed: _canSubmit() ? _submitFeedback : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              foregroundColor: AppColors.white,
-              padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
-              elevation: 0,
             ),
-            child: isSubmitting
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      color: AppColors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text(
-                    'Submit Feedback',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: _canSubmit()
+                    ? const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.primaryColor, AppColors.primaryDark],
+                      )
+                    : const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.greyLight, AppColors.greyMedium],
+                      ),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                boxShadow: _canSubmit()
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primaryColor.withOpacity(0.4),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                child: isSubmitting
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : const Text(
+                        'Submit Feedback',
+                        style: TextStyle(
+                          fontSize: AppDesign.textLG,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+              ),
+            ),
           ),
         ),
       ),
