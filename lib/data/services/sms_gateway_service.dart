@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SmsGatewayService {
   static final SmsGatewayService _instance = SmsGatewayService._internal();
@@ -67,7 +67,7 @@ class SmsGatewayService {
         // For now, we'll create an anonymous user and associate the phone number with it
         // This is a workaround since we can't create custom tokens without IAM permissions
         UserCredential userCredential;
-        
+
         if (_auth.currentUser == null) {
           // Sign in anonymously first
           userCredential = await _auth.signInAnonymously();
@@ -82,10 +82,7 @@ class SmsGatewayService {
         print('✅ OTP verified and user authenticated: ${user.uid}');
 
         // Store the phone verification status in Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .set({
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'phoneNumber': data['phoneNumber'],
           'phoneVerified': true,
           'verificationId': verificationId,
