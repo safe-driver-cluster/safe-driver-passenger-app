@@ -77,7 +77,7 @@ Text.lk provides two API endpoints:
 - **HTTP API**: `https://app.text.lk/api/http/` (Legacy)
 
 For this integration, we use the **OAuth 2.0 API v3** with:
-- **API Token**: `2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b`
+- **API Token**: ``
 - **Sender ID**: Approved sender name (e.g., `SafeDriver`)
 - **API Endpoint**: `https://app.text.lk/api/v3/sms/send`
 
