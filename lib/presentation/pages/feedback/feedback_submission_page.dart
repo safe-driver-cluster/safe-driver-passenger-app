@@ -1305,7 +1305,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 alignment: Alignment.center,
                 child: isSubmitting
                     ? const SizedBox(
-                        height: 24,
+                        height: 12,
                         width: 24,
                         child: CircularProgressIndicator(
                           color: Colors.white,
