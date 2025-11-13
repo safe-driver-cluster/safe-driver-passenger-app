@@ -1,5 +1,12 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -27,8 +34,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     with TickerProviderStateMixin {
   int selectedRating = 0;
   final TextEditingController _commentController = TextEditingController();
-  String? selectedQuickAction;
+  Set<String> selectedQuickActions = <String>{};
+  List<File> selectedMediaFiles = [];
+  Position? currentLocation;
   bool isSubmitting = false;
+  bool isLoadingLocation = false;
 
   late AnimationController _starAnimationController;
   late List<AnimationController> _starControllers;
@@ -70,6 +80,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         vsync: this,
       ),
     );
+
+    _getCurrentLocation();
   }
 
   @override
@@ -85,48 +97,49 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.surfaceColor,
-        elevation: 0,
-        title: Text(
-          '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.backgroundColor,
+            ],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(
-            Icons.arrow_back,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildBusInfoHeader(),
-                  const SizedBox(height: AppDesign.spaceXL),
-                  _buildRatingSection(),
-                  const SizedBox(height: AppDesign.spaceXL),
-                  _buildQuickActionsSection(),
-                  const SizedBox(height: AppDesign.spaceXL),
-                  _buildCommentSection(),
-                  const SizedBox(height: AppDesign.spaceXL),
-                ],
+        child: Column(
+          children: [
+            _buildModernAppBar(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppDesign.spaceLG),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBusInfoHeader(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildRatingSection(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildQuickActionsSection(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildCommentSection(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildMediaUploadSection(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildLocationSection(),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    _buildContactOptionsSection(),
+                    const SizedBox(height: AppDesign.space3XL),
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildSubmitButton(),
-        ],
+            _buildSubmitButton(),
+          ],
+        ),
       ),
     );
   }
@@ -333,7 +346,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildQuickActionChip(String action) {
-    final isSelected = selectedQuickAction == action;
+    final isSelected = selectedQuickActions.contains(action);
     final isPositive = _isPositiveAction(action);
 
     return GestureDetector(
@@ -508,10 +521,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   void _selectQuickAction(String action) {
     setState(() {
-      if (selectedQuickAction == action) {
-        selectedQuickAction = null;
+      if (selectedQuickActions.contains(action)) {
+        selectedQuickActions.remove(action);
       } else {
-        selectedQuickAction = action;
+        selectedQuickActions.add(action);
       }
     });
   }
