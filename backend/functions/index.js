@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 const axios = require('axios');
 const crypto = require('crypto');
@@ -38,8 +38,8 @@ const config = {
         verificationDuration: parseInt(process.env.VERIFICATION_RATE_LIMIT_DURATION) || 300,
     },
     firebase: {
-        projectId: process.env.FIREBASE_PROJECT_ID || 'safe-driver-system',
-        region: process.env.FIREBASE_REGION || 'asia-south1',
+        projectId: process.env.PROJECT_ID || 'safe-driver-system',
+        region: process.env.REGION || 'asia-south1',
     },
     debug: process.env.DEBUG_MODE === 'true' || false,
 };
