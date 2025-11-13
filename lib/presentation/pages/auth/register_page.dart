@@ -79,8 +79,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
   }
 
-
-
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
