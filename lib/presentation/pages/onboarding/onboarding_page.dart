@@ -20,7 +20,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
+
   int _currentPage = 0;
   final List<OnboardingModel> _onboardingData = OnboardingModel.onboardingData;
 
@@ -32,7 +32,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -40,7 +40,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
@@ -48,7 +48,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     _animationController.forward();
   }
 
@@ -163,7 +163,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         foregroundColor: Colors.white,
                         elevation: AppDesign.elevationMD,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusLG),
                         ),
                         shadowColor: AppColors.primaryColor.withOpacity(0.3),
                       ),
@@ -222,7 +223,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                       return Container(
                         decoration: BoxDecoration(
                           color: AppColors.greyExtraLight,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusXL),
                         ),
                         child: const Center(
                           child: Icon(
@@ -277,8 +279,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
       height: 8,
       width: _currentPage == index ? 32 : 8,
       decoration: BoxDecoration(
-        color: _currentPage == index 
-            ? AppColors.primaryColor 
+        color: _currentPage == index
+            ? AppColors.primaryColor
             : AppColors.greyLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusFull),
       ),
