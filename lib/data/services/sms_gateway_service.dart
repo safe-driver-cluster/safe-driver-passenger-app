@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SmsGatewayService {
   static final SmsGatewayService _instance = SmsGatewayService._internal();
@@ -63,16 +64,38 @@ class SmsGatewayService {
       final data = result.data as Map<String, dynamic>;
 
       if (data['success'] == true) {
-        // Sign in with custom token
-        final customToken = data['customToken'] as String;
-        final userCredential = await _auth.signInWithCustomToken(customToken);
+        // For now, we'll create an anonymous user and associate the phone number with it
+        // This is a workaround since we can't create custom tokens without IAM permissions
+        UserCredential userCredential;
+        
+        if (_auth.currentUser == null) {
+          // Sign in anonymously first
+          userCredential = await _auth.signInAnonymously();
+        } else {
+          userCredential = UserCredential(
+            user: _auth.currentUser,
+            credential: null,
+          );
+        }
 
-        print('✅ OTP verified and user signed in: ${userCredential.user?.uid}');
+        final user = userCredential.user!;
+        print('✅ OTP verified and user authenticated: ${user.uid}');
+
+        // Store the phone verification status in Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({
+          'phoneNumber': data['phoneNumber'],
+          'phoneVerified': true,
+          'verificationId': verificationId,
+          'verifiedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
 
         return OtpVerifyResult(
           success: true,
-          user: userCredential.user,
-          userId: data['userId'] as String,
+          user: user,
+          userId: user.uid,
           phoneNumber: data['phoneNumber'] as String,
           isNewUser: data['isNewUser'] as bool? ?? false,
         );
