@@ -94,6 +94,12 @@ class AppRoutes {
           settings: settings,
         );
 
+      case onboarding:
+        return MaterialPageRoute(
+          builder: (_) => const OnboardingPage(),
+          settings: settings,
+        );
+
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginPage(),
