@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/color_constants.dart';
 import '../../../data/services/sms_gateway_service.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
-import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/custom_snackbar.dart';
+import '../../widgets/common/loading_widget.dart';
 import 'otp_verification_page.dart';
 
 class PhoneInputPage extends ConsumerStatefulWidget {
@@ -31,12 +32,12 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
     }
-    
+
     final formatted = _smsGateway.formatSriLankanPhoneNumber(value);
     if (!_smsGateway.isValidSriLankanPhoneNumber(formatted)) {
       return 'Please enter a valid Sri Lankan phone number';
     }
-    
+
     return null;
   }
 
@@ -45,10 +46,12 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
       return;
     }
 
-    final phoneNumber = _smsGateway.formatSriLankanPhoneNumber(_phoneController.text.trim());
-    
+    final phoneNumber =
+        _smsGateway.formatSriLankanPhoneNumber(_phoneController.text.trim());
+
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.sendOtp(phoneNumber);
     } catch (e) {
       print('Send OTP error: $e');
@@ -69,8 +72,9 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
       if (next.error != null) {
         CustomSnackBar.showError(context, next.error!);
       }
-      
-      if (next.currentStep == PhoneAuthStep.verifyOtp && next.verificationId != null) {
+
+      if (next.currentStep == PhoneAuthStep.verifyOtp &&
+          next.verificationId != null) {
         // Navigate to OTP verification page
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -333,11 +337,11 @@ class _PhoneNumberFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final text = newValue.text;
-    
+
     if (text.length <= 2) {
       return newValue;
     }
-    
+
     String formatted = '';
     for (int i = 0; i < text.length; i++) {
       if (i == 2 || i == 5) {
@@ -345,7 +349,7 @@ class _PhoneNumberFormatter extends TextInputFormatter {
       }
       formatted += text[i];
     }
-    
+
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),
