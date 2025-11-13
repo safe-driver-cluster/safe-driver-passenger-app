@@ -734,7 +734,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   Future<void> _pickMediaFile() async {
     try {
       final ImagePicker picker = ImagePicker();
-      
+
       // Show dialog to choose between camera and gallery
       final source = await showDialog<ImageSource>(
         context: context,
@@ -757,17 +757,17 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
         ),
       );
-      
+
       if (source != null) {
         final XFile? pickedFile = await picker.pickImage(source: source);
-        
+
         if (pickedFile != null) {
           File mediaFile = File(pickedFile.path);
-          
+
           // Check file size (10MB limit)
           int fileSizeInBytes = mediaFile.lengthSync();
           double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-          
+
           if (fileSizeInMB <= 10) {
             setState(() {
               selectedMediaFiles.add(mediaFile);
@@ -780,7 +780,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     } catch (e) {
       _showError('Failed to pick media files: $e');
     }
-  }  void _removeMediaFile(File file) {
+  }
+
+  void _removeMediaFile(File file) {
     setState(() {
       selectedMediaFiles.remove(file);
     });
@@ -1334,14 +1336,18 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         busNumber: widget.busNumber,
         rating: selectedRating,
         comment: _commentController.text.trim().isEmpty
-            ? selectedQuickActions.join(', ').isEmpty ? _getRatingText() : selectedQuickActions.join(', ')
+            ? selectedQuickActions.join(', ').isEmpty
+                ? _getRatingText()
+                : selectedQuickActions.join(', ')
             : _commentController.text.trim(),
         category: widget.feedbackTarget == FeedbackTarget.bus
             ? FeedbackCategory.vehicle
             : FeedbackCategory.driver,
         type:
             selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
-        title: selectedQuickActions.join(', ').isEmpty ? _getRatingText() : selectedQuickActions.first,
+        title: selectedQuickActions.join(', ').isEmpty
+            ? _getRatingText()
+            : selectedQuickActions.first,
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
           'quickActions': selectedQuickActions.toList(),
