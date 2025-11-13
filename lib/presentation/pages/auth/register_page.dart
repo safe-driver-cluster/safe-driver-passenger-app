@@ -48,27 +48,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     HapticFeedback.lightImpact();
 
-    final authNotifier = ref.read(authStateProvider.notifier);
-    final result = await authNotifier.signUp(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      firstName: _firstNameController.text.trim(),
-      lastName: _lastNameController.text.trim(),
-      phoneNumber: _phoneController.text.trim(),
+    // Navigate to account verification page with user details
+    Navigator.pushNamed(
+      context,
+      '/account-verification',
+      arguments: {
+        'phoneNumber': _phoneController.text.trim(),
+        'email': _emailController.text.trim(),
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'password': _passwordController.text.trim(),
+      },
     );
-
-    if (mounted) {
-      if (result.success) {
-        HapticFeedback.mediumImpact();
-        _showSuccessSnackBar(result.message ?? 'Account created successfully!');
-
-        // Show email verification dialog
-        _showEmailVerificationDialog();
-      } else {
-        HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Registration failed');
-      }
-    }
   }
 
   Future<void> _googleSignUp() async {
@@ -88,46 +79,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
   }
 
-  void _showEmailVerificationDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
-            SizedBox(width: 12),
-            Text('Verify Email'),
-          ],
-        ),
-        content: const Text(
-          'We\'ve sent a verification email to your address. Please check your inbox and click the verification link to activate your account.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Go back to login
-            },
-            child: const Text('OK'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final result = await ref
-                  .read(authStateProvider.notifier)
-                  .sendEmailVerification();
-              if (mounted) {
-                _showSuccessSnackBar(
-                    result.message ?? 'Verification email sent');
-              }
-            },
-            child: const Text('Resend'),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
