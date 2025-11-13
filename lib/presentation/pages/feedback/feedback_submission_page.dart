@@ -272,7 +272,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildMediaUploadSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
