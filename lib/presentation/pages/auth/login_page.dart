@@ -34,7 +34,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Load saved credentials after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSavedCredentials();
+      _checkForSuccessMessage();
     });
+  }
+
+  void _checkForSuccessMessage() {
+    // Check if we're coming from account verification
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args['message'] != null) {
+      // Pre-fill email if provided
+      if (args['email'] != null) {
+        _emailController.text = args['email'];
+      }
+      
+      // Show success message
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showSuccessSnackBar(args['message']);
+      });
+    }
   }
 
   Future<void> _loadSavedCredentials() async {
