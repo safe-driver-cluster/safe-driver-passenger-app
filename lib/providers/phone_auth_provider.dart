@@ -1,8 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/services/phone_auth_service.dart';
 import '../data/models/passenger_model.dart';
+import '../data/services/phone_auth_service.dart';
 import 'auth_provider.dart';
 
 // Phone auth controller provider
@@ -81,11 +81,6 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   final Ref _ref;
   late final PhoneAuthService _phoneAuthService;
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   // Initialize services
   void _initializeServices() {
     _phoneAuthService = _ref.read(phoneAuthServiceProvider);
@@ -94,9 +89,9 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   /// Send OTP to phone number
   Future<void> sendOtp(String phoneNumber) async {
     if (!mounted) return;
-    
+
     _initializeServices();
-    
+
     state = state.copyWith(
       isLoading: true,
       error: null,
@@ -105,9 +100,9 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
 
     try {
       final result = await _phoneAuthService.sendOtp(phoneNumber);
-      
+
       if (!mounted) return;
-      
+
       if (result.success) {
         state = state.copyWith(
           isLoading: false,
@@ -125,7 +120,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -136,7 +131,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   /// Verify OTP code
   Future<void> verifyOtp(String otpCode) async {
     if (!mounted) return;
-    
+
     if (state.verificationId == null || state.phoneNumber == null) {
       state = state.copyWith(
         error: 'Invalid verification session. Please start over.',
@@ -155,14 +150,15 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
         otpCode: otpCode,
         phoneNumber: state.phoneNumber!,
       );
-      
+
       if (!mounted) return;
-      
+
       if (result.success) {
-        final nextStep = result.isNewUser || result.passengerProfile?.firstName.isEmpty == true
+        final nextStep = result.isNewUser ||
+                result.passengerProfile?.firstName.isEmpty == true
             ? PhoneAuthStep.onboarding
             : PhoneAuthStep.complete;
-            
+
         state = state.copyWith(
           isLoading: false,
           user: result.user,
@@ -170,13 +166,13 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
           isNewUser: result.isNewUser,
           currentStep: nextStep,
         );
-        
+
         // Update the main auth provider
         _ref.read(authStateProvider.notifier).setPhoneAuthUser(
-          result.user!,
-          result.passengerProfile,
-          result.isNewUser,
-        );
+              result.user!,
+              result.passengerProfile,
+              result.isNewUser,
+            );
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -185,7 +181,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
@@ -201,21 +197,21 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
       );
       return;
     }
-    
+
     await sendOtp(state.phoneNumber!);
   }
 
   /// Reset state
   void reset() {
     if (!mounted) return;
-    
+
     state = const PhoneAuthState();
   }
 
   /// Go to next step
   void goToNextStep() {
     if (!mounted) return;
-    
+
     switch (state.currentStep) {
       case PhoneAuthStep.enterPhone:
         // This should be handled by sendOtp
@@ -235,7 +231,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   /// Go to previous step
   void goToPreviousStep() {
     if (!mounted) return;
-    
+
     switch (state.currentStep) {
       case PhoneAuthStep.enterPhone:
         // Already at first step
@@ -260,7 +256,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   /// Clear error
   void clearError() {
     if (!mounted) return;
-    
+
     state = state.copyWith(error: null);
   }
 }
