@@ -1251,7 +1251,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
         padding: const EdgeInsets.symmetric(
           horizontal: AppDesign.spaceLG,
-          vertical: AppDesign.spaceXS,
+          //vertical: AppDesign.spaceXS,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
