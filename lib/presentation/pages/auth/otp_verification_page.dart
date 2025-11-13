@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
+
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
-import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/custom_snackbar.dart';
+import '../../widgets/common/loading_widget.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -98,7 +100,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     }
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
     } catch (e) {
       print('OTP verification error: $e');
@@ -113,7 +116,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     if (!_canResend) return;
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.resendOtp();
 
       // Clear current OTP
@@ -147,10 +151,11 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
       if (next.error != null) {
         CustomSnackBar.showError(context, next.error!);
       }
-      
+
       if (next.currentStep == PhoneAuthStep.complete) {
         // Navigate to dashboard or onboarding based on user status
-        if (next.isNewUser || next.passengerProfile?.firstName.isEmpty == true) {
+        if (next.isNewUser ||
+            next.passengerProfile?.firstName.isEmpty == true) {
           Navigator.of(context).pushReplacementNamed('/onboarding');
         } else {
           Navigator.of(context).pushReplacementNamed('/dashboard');
