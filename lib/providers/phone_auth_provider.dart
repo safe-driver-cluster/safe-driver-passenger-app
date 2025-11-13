@@ -259,4 +259,19 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
 
     state = state.copyWith(error: null);
   }
+
+  /// Sign out phone auth user
+  Future<void> signOut() async {
+    if (!mounted) return;
+
+    try {
+      // Sign out from Firebase Auth
+      await FirebaseAuth.instance.signOut();
+      
+      // Reset state
+      state = const PhoneAuthState();
+    } catch (e) {
+      print('Error signing out phone auth user: $e');
+    }
+  }
 }
