@@ -4,8 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -745,12 +743,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primaryColor),
+                leading:
+                    const Icon(Icons.camera_alt, color: AppColors.primaryColor),
                 title: const Text('Take Photo'),
                 onTap: () => Navigator.pop(context, 'camera'),
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primaryColor),
+                leading: const Icon(Icons.photo_library,
+                    color: AppColors.primaryColor),
                 title: const Text('Choose from Gallery'),
                 onTap: () => Navigator.pop(context, 'gallery'),
               ),
@@ -758,12 +758,13 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
         ),
       );
-      
+
       if (action != null) {
         // For now, just show a placeholder message since image_picker is not available
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$action selected - Media upload will be available in the next update'),
+            content: Text(
+                '$action selected - Media upload will be available in the next update'),
             backgroundColor: AppColors.primaryColor,
           ),
         );
@@ -771,7 +772,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     } catch (e) {
       _showError('Failed to pick media files: $e');
     }
-  }  void _removeMediaFile(File file) {
+  }
+
+  void _removeMediaFile(File file) {
     setState(() {
       selectedMediaFiles.remove(file);
     });
@@ -856,31 +859,49 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: AppDesign.shadowMD,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppDesign.spaceMD),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
             decoration: BoxDecoration(
-              color: widget.feedbackTarget == FeedbackTarget.bus
-                  ? AppColors.primaryColor.withOpacity(0.1)
-                  : AppColors.accentColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: widget.feedbackTarget == FeedbackTarget.bus
+                    ? [AppColors.primaryColor, AppColors.primaryDark]
+                    : [AppColors.accentColor, AppColors.accentDark],
+              ),
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: (widget.feedbackTarget == FeedbackTarget.bus
+                          ? AppColors.primaryColor
+                          : AppColors.accentColor)
+                      .withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Icon(
               widget.feedbackTarget == FeedbackTarget.bus
                   ? Icons.directions_bus
                   : Icons.person,
-              color: widget.feedbackTarget == FeedbackTarget.bus
-                  ? AppColors.primaryColor
-                  : AppColors.accentColor,
-              size: AppDesign.iconLG,
+              color: Colors.white,
+              size: 32,
             ),
           ),
-          const SizedBox(width: AppDesign.spaceMD),
+          const SizedBox(width: AppDesign.spaceLG),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -888,17 +909,28 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 Text(
                   'Bus ${widget.busNumber}',
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontSize: AppDesign.text2XL,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceXS),
-                Text(
-                  '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDesign.spaceMD,
+                    vertical: AppDesign.spaceXS,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  ),
+                  child: Text(
+                    '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
+                    style: const TextStyle(
+                      fontSize: AppDesign.textSM,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
