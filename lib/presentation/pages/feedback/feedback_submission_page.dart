@@ -272,7 +272,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildMediaUploadSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -441,7 +441,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildLocationSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -606,7 +606,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildContactOptionsSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -860,7 +860,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildBusInfoHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -946,7 +946,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildRatingSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1159,7 +1159,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildCommentSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
