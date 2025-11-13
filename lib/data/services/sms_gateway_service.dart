@@ -15,14 +15,14 @@ class SmsGatewayService {
   Future<OtpSendResult> sendOtp(String phoneNumber) async {
     try {
       print('🔐 Sending OTP to: $phoneNumber');
-      
+
       final HttpsCallable callable = _functions.httpsCallable('sendOTP');
       final result = await callable.call({
         'phoneNumber': phoneNumber,
       });
 
       final data = result.data as Map<String, dynamic>;
-      
+
       if (data['success'] == true) {
         print('✅ OTP sent successfully');
         return OtpSendResult(
@@ -32,7 +32,8 @@ class SmsGatewayService {
           expiresAt: DateTime.parse(data['expiresAt'] as String),
         );
       } else {
-        throw Exception('Failed to send OTP: ${data['message'] ?? 'Unknown error'}');
+        throw Exception(
+            'Failed to send OTP: ${data['message'] ?? 'Unknown error'}');
       }
     } on FirebaseFunctionsException catch (e) {
       print('❌ Firebase Functions error: ${e.code} - ${e.message}');
@@ -51,7 +52,7 @@ class SmsGatewayService {
   }) async {
     try {
       print('🔐 Verifying OTP: $otpCode for verification: $verificationId');
-      
+
       final HttpsCallable callable = _functions.httpsCallable('verifyOTP');
       final result = await callable.call({
         'verificationId': verificationId,
@@ -60,14 +61,14 @@ class SmsGatewayService {
       });
 
       final data = result.data as Map<String, dynamic>;
-      
+
       if (data['success'] == true) {
         // Sign in with custom token
         final customToken = data['customToken'] as String;
         final userCredential = await _auth.signInWithCustomToken(customToken);
-        
+
         print('✅ OTP verified and user signed in: ${userCredential.user?.uid}');
-        
+
         return OtpVerifyResult(
           success: true,
           user: userCredential.user,
@@ -76,7 +77,8 @@ class SmsGatewayService {
           isNewUser: data['isNewUser'] as bool? ?? false,
         );
       } else {
-        throw Exception('Failed to verify OTP: ${data['message'] ?? 'Unknown error'}');
+        throw Exception(
+            'Failed to verify OTP: ${data['message'] ?? 'Unknown error'}');
       }
     } on FirebaseFunctionsException catch (e) {
       print('❌ Firebase Functions error: ${e.code} - ${e.message}');
@@ -91,7 +93,7 @@ class SmsGatewayService {
   String formatSriLankanPhoneNumber(String phoneNumber) {
     // Remove all non-digit characters
     String cleaned = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    
+
     // Handle different input formats
     if (cleaned.startsWith('0')) {
       // Remove leading 0 and add +94
@@ -106,7 +108,7 @@ class SmsGatewayService {
       // If it doesn't start with +94, assume it needs it
       cleaned = '+94$cleaned';
     }
-    
+
     return cleaned;
   }
 
