@@ -1251,7 +1251,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDesign.spaceLG,
-        vertical: AppDesign.spaceSM,
+        vertical: AppDesign.spaceXS,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1266,7 +1266,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: SafeArea(
         child: SizedBox(
           width: double.infinity,
-          height: 48,
+          height: 40,
           child: ElevatedButton(
             onPressed: _canSubmit() ? _submitFeedback : null,
             style: ElevatedButton.styleFrom(
