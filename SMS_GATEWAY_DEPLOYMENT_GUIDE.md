@@ -72,10 +72,14 @@ firebase use <your-project-id>
 
 ### 2.2 API Credentials
 
-Once approved, obtain:
-- **User ID**: Your Text.lk user identifier
-- **API Key**: Secret key for API access
-- **Sender ID**: Approved sender name
+Text.lk provides two API endpoints:
+- **OAuth 2.0 API**: `https://app.text.lk/api/v3/` (Recommended)
+- **HTTP API**: `https://app.text.lk/api/http/` (Legacy)
+
+For this integration, we use the **OAuth 2.0 API v3** with:
+- **API Token**: `2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b`
+- **Sender ID**: Approved sender name (e.g., `SafeDriver`)
+- **API Endpoint**: `https://app.text.lk/api/v3/sms/send`
 
 ## 🔧 Step 3: Cloud Functions Deployment
 
@@ -88,10 +92,34 @@ npm install
 
 ### 3.2 Configure Environment Variables
 
+**New Method (Recommended): Using .env file**
+
 ```bash
-# Set Text.lk credentials
-firebase functions:config:set textlk.userid="YOUR_USER_ID"
-firebase functions:config:set textlk.apikey="YOUR_API_KEY" 
+cd backend/functions
+
+# Create .env file from template
+cp .env.example .env
+
+# Edit .env file with your Text.lk credentials
+nano .env  # or use your preferred editor
+```
+
+Update the `.env` file with your actual Text.lk API credentials:
+
+```env
+# Text.lk API Configuration
+TEXTLK_API_TOKEN=2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b
+TEXTLK_API_URL=https://app.text.lk/api/v3/sms/send
+TEXTLK_SENDER_ID=SafeDriver
+
+# Other configurations...
+```
+
+**Alternative Method: Firebase Functions Config**
+
+```bash
+# Set Text.lk credentials (legacy method)
+firebase functions:config:set textlk.apitoken="2171|Hp874DmptWQNEk16DOGaXvvORW7lQwVIz0YAuYhB5ea59f6b"
 firebase functions:config:set textlk.senderid="SafeDriver"
 
 # Verify configuration
@@ -100,13 +128,36 @@ firebase functions:config:get
 
 ### 3.3 Deploy Functions
 
+**Quick Deployment (Recommended)**
+
 ```bash
+# Make deployment script executable
+chmod +x deploy.sh
+
+# Run deployment script (includes validation)
+./deploy.sh
+```
+
+**Manual Deployment**
+
+```bash
+# Install dependencies
+npm install
+
 # Deploy all functions
 firebase deploy --only functions
 
 # Deploy specific function
 firebase deploy --only functions:sendOTP
 firebase deploy --only functions:verifyOTP
+```
+
+**Quick Setup**
+
+```bash
+# Run setup script for first-time setup
+chmod +x setup.sh
+./setup.sh
 ```
 
 ### 3.4 Verify Deployment
