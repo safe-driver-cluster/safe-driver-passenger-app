@@ -10,8 +10,10 @@ import '../data/services/sms_gateway_service.dart';
 
 // Auth service providers
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
-final phoneAuthServiceProvider = Provider<PhoneAuthService>((ref) => PhoneAuthService());
-final smsGatewayServiceProvider = Provider<SmsGatewayService>((ref) => SmsGatewayService());
+final phoneAuthServiceProvider =
+    Provider<PhoneAuthService>((ref) => PhoneAuthService());
+final smsGatewayServiceProvider =
+    Provider<SmsGatewayService>((ref) => SmsGatewayService());
 
 // Firebase user provider that listens to Firebase Auth state
 final firebaseUserProvider = StreamProvider<User?>((ref) {
@@ -200,8 +202,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       passengerProfile: profile,
       isLoading: false,
       error: null,
-      currentStep: isNewUser || profile?.firstName.isEmpty == true 
-          ? AuthStep.signUp 
+      currentStep: isNewUser || profile?.firstName.isEmpty == true
+          ? AuthStep.signUp
           : AuthStep.signIn,
     );
   }
