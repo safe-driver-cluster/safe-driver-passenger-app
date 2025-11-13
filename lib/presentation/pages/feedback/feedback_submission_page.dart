@@ -1263,11 +1263,12 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
         ],
       ),
-      child: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: 40,
-          child: ElevatedButton(
+      child: Center(
+        child: SafeArea(
+          child: SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton(
             onPressed: _canSubmit() ? _submitFeedback : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
