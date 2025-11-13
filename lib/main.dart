@@ -1,5 +1,7 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -58,6 +60,30 @@ void main() async {
         rethrow;
       }
       debugPrint('Firebase already initialized, continuing...');
+    }
+
+    // Initialize Firebase App Check for security
+    try {
+      if (kDebugMode) {
+        // Use debug provider in debug mode
+        await FirebaseAppCheck.instance.activate(
+          androidProvider: AndroidProvider.debug,
+          appleProvider: AppleProvider.debug,
+        );
+        debugPrint('✅ Firebase App Check initialized with DEBUG provider');
+        debugPrint(
+            '🔑 Make sure debug secret is added to Firebase Console: b233b275-5b4c-4933-b79e-d22f6bf4cfc4');
+      } else {
+        // Production mode with proper App Check
+        await FirebaseAppCheck.instance.activate(
+          androidProvider: AndroidProvider.playIntegrity,
+          appleProvider: AppleProvider.appAttest,
+        );
+        debugPrint('✅ Firebase App Check initialized in PRODUCTION mode');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Firebase App Check initialization failed: $e');
+      // Continue without App Check in development
     }
 
     // Initialize Firebase services

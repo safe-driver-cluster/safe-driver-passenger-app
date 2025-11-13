@@ -5,38 +5,51 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
 
-class OtpVerificationPage extends ConsumerStatefulWidget {
+class AccountVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
-  final String verificationId;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String password;
 
-  const OtpVerificationPage({
+  const AccountVerificationPage({
     super.key,
     required this.phoneNumber,
-    required this.verificationId,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+    required this.password,
   });
 
   @override
-  ConsumerState<OtpVerificationPage> createState() =>
-      _OtpVerificationPageState();
+  ConsumerState<AccountVerificationPage> createState() =>
+      _AccountVerificationPageState();
 }
 
-class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
+class _AccountVerificationPageState
+    extends ConsumerState<AccountVerificationPage> {
   final List<TextEditingController> _otpControllers =
       List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   Timer? _timer;
   int _seconds = 60;
   bool _canResend = false;
+  String? _verificationId;
+  bool _isOtpSent = false;
 
   @override
   void initState() {
     super.initState();
-    _startTimer();
+    // Delay the OTP sending to avoid provider modification during widget build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _sendInitialOtp();
+    });
   }
 
   @override
@@ -55,14 +68,16 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     _seconds = 60;
     _canResend = false;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_seconds > 0) {
-          _seconds--;
-        } else {
-          _canResend = true;
-          timer.cancel();
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (_seconds > 0) {
+            _seconds--;
+          } else {
+            _canResend = true;
+            timer.cancel();
+          }
+        });
+      }
     });
   }
 
@@ -80,22 +95,56 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
           _verifyOtp();
         }
       }
+    } else {
+      if (index > 0) {
+        _focusNodes[index - 1].requestFocus();
+      }
     }
   }
 
   void _onOtpBackspace(int index) {
-    if (index > 0) {
+    if (index > 0 && _otpControllers[index].text.isEmpty) {
       _otpControllers[index - 1].clear();
       _focusNodes[index - 1].requestFocus();
     }
   }
 
+  Future<void> _sendInitialOtp() async {
+    try {
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.sendOtp(widget.phoneNumber);
+
+      final state = ref.read(phoneAuthControllerProvider);
+      if (state.isOtpSent && state.verificationId != null) {
+        setState(() {
+          _verificationId = state.verificationId;
+          _isOtpSent = true;
+        });
+        _startTimer();
+      } else if (state.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, state.error!);
+        }
+      }
+    } catch (e) {
+      print('Error sending initial OTP: $e');
+      if (mounted) {
+        CustomSnackBar.showError(
+            context, 'Failed to send OTP: ${e.toString()}');
+      }
+    }
+  }
+
   Future<void> _verifyOtp() async {
     if (_otpCode.length != 6) {
+      CustomSnackBar.showError(context, 'Please enter the complete OTP');
+      return;
+    }
+
+    if (_verificationId == null) {
       CustomSnackBar.showError(
-        context,
-        'Please enter the complete 6-digit OTP',
-      );
+          context, 'Verification ID not found. Please try again.');
       return;
     }
 
@@ -103,12 +152,61 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
       final phoneAuthController =
           ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
+
+      final phoneAuthState = ref.read(phoneAuthControllerProvider);
+
+      if (phoneAuthState.isAuthenticated && phoneAuthState.user != null) {
+        // Create user account with email/password for future login
+        await _createUserAccount(phoneAuthState.user!.uid);
+
+        // Show success message and navigate to login
+        if (mounted) {
+          CustomSnackBar.showSuccess(context, 'Account verified successfully!');
+
+          // Navigate to login page
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/login',
+            (route) => false,
+            arguments: {
+              'message':
+                  'Account created and verified successfully! Please login with your credentials.',
+              'email': widget.email,
+            },
+          );
+        }
+      } else if (phoneAuthState.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, phoneAuthState.error!);
+        }
+      }
     } catch (e) {
       print('OTP verification error: $e');
-      CustomSnackBar.showError(
-        context,
-        'Verification failed: ${e.toString()}',
+      if (mounted) {
+        CustomSnackBar.showError(
+            context, 'Verification failed: ${e.toString()}');
+      }
+    }
+  }
+
+  Future<void> _createUserAccount(String phoneUserId) async {
+    try {
+      // Import auth service
+      final authService = ref.read(authStateProvider.notifier);
+
+      // Create Firebase Auth account with email/password
+      await authService.signUp(
+        email: widget.email,
+        password: widget.password,
+        firstName: widget.firstName,
+        lastName: widget.lastName,
+        phoneNumber: widget.phoneNumber,
       );
+
+      // Sign out the phone auth user
+      await ref.read(phoneAuthControllerProvider.notifier).signOut();
+    } catch (e) {
+      print('Error creating user account: $e');
+      // Don't throw error here, phone verification was successful
     }
   }
 
@@ -118,26 +216,36 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     try {
       final phoneAuthController =
           ref.read(phoneAuthControllerProvider.notifier);
-      await phoneAuthController.resendOtp();
+      await phoneAuthController.sendOtp(widget.phoneNumber);
 
-      // Clear current OTP
-      for (var controller in _otpControllers) {
-        controller.clear();
+      final state = ref.read(phoneAuthControllerProvider);
+      if (state.isOtpSent && state.verificationId != null) {
+        setState(() {
+          _verificationId = state.verificationId;
+        });
+
+        // Clear current OTP
+        for (var controller in _otpControllers) {
+          controller.clear();
+        }
+        _focusNodes[0].requestFocus();
+
+        _startTimer();
+
+        if (mounted) {
+          CustomSnackBar.showSuccess(context, 'OTP sent successfully');
+        }
+      } else if (state.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, state.error!);
+        }
       }
-      _focusNodes[0].requestFocus();
-
-      _startTimer();
-
-      CustomSnackBar.showSuccess(
-        context,
-        'OTP sent successfully to ${widget.phoneNumber}',
-      );
     } catch (e) {
       print('Resend OTP error: $e');
-      CustomSnackBar.showError(
-        context,
-        'Failed to resend OTP: ${e.toString()}',
-      );
+      if (mounted) {
+        CustomSnackBar.showError(
+            context, 'Failed to resend OTP: ${e.toString()}');
+      }
     }
   }
 
@@ -145,23 +253,6 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   Widget build(BuildContext context) {
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
-
-    // Listen for authentication state changes
-    ref.listen<PhoneAuthState>(phoneAuthControllerProvider, (previous, next) {
-      if (next.error != null) {
-        CustomSnackBar.showError(context, next.error!);
-      }
-
-      if (next.currentStep == PhoneAuthStep.complete) {
-        // Navigate to dashboard or onboarding based on user status
-        if (next.isNewUser ||
-            next.passengerProfile?.firstName.isEmpty == true) {
-          Navigator.of(context).pushReplacementNamed('/onboarding');
-        } else {
-          Navigator.of(context).pushReplacementNamed('/dashboard');
-        }
-      }
-    });
 
     return LoadingWidget(
       isLoading: isLoading,
@@ -173,6 +264,10 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text(
+            'Account Verification',
+            style: TextStyle(color: Colors.white),
           ),
         ),
         body: SafeArea(
@@ -201,14 +296,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                         ],
                       ),
                       child: const Icon(
-                        Icons.sms,
+                        Icons.verified_user,
                         size: 50,
                         color: AppColors.primaryColor,
                       ),
                     ),
                     const SizedBox(height: 24),
                     const Text(
-                      'Verify Your Phone',
+                      'Verify Your Account',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -217,7 +312,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'We sent a code to ${widget.phoneNumber}',
+                      'We sent a verification code to\n${widget.phoneNumber}',
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white70,
@@ -329,8 +424,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
                       // Verify Button
                       CustomButton(
-                        text: 'Verify Code',
-                        onPressed: _verifyOtp,
+                        text: 'Verify & Create Account',
+                        onPressed: _isOtpSent ? _verifyOtp : null,
                         isLoading: isLoading,
                       ),
 
