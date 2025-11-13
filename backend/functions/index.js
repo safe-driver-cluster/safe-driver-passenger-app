@@ -407,17 +407,20 @@ exports.verifyOTP = functions
                 }
             }
 
-            // Generate custom token for client authentication
-            customToken = await auth.createCustomToken(userId, {
+            // Instead of custom token, we'll use Firebase Auth to verify and authenticate
+            // Update user claims to mark phone as verified
+            await auth.setCustomUserClaims(userId, {
                 phoneVerified: true,
                 verificationId,
+                verifiedAt: admin.firestore.FieldValue.serverTimestamp(),
             });
 
             console.log(`OTP verified successfully for ${formattedPhone}, userId: ${userId}`);
 
             return {
                 success: true,
-                customToken,
+                message: 'Phone number verified successfully',
+                userId,
                 userId,
                 phoneNumber: formattedPhone,
                 isNewUser: !userRecord,
