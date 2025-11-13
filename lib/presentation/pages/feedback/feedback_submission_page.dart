@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -707,19 +706,23 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: color,
-              size: 20,
+              size: 18,
             ),
-            const SizedBox(width: AppDesign.spaceSM),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: AppDesign.textMD,
-                color: color,
-                fontWeight: FontWeight.w600,
+            const SizedBox(width: AppDesign.spaceXS),
+            Flexible(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: AppDesign.textSM,
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -857,7 +860,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildBusInfoHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -943,7 +946,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildRatingSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1054,7 +1057,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         : driverQuickActions;
 
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1156,7 +1159,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildCommentSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.all(AppDesign.space2XL),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1246,7 +1249,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildSubmitButton() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDesign.spaceLG,
+        vertical: AppDesign.spaceMD,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -1260,7 +1266,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: SafeArea(
         child: SizedBox(
           width: double.infinity,
-          height: 56,
+          height: 48,
           child: ElevatedButton(
             onPressed: _canSubmit() ? _submitFeedback : null,
             style: ElevatedButton.styleFrom(
