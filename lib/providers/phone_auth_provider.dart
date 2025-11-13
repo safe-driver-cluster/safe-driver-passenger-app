@@ -76,21 +76,16 @@ enum PhoneAuthStep {
 
 // Phone auth controller
 class PhoneAuthController extends StateNotifier<PhoneAuthState> {
-  PhoneAuthController(this._ref) : super(const PhoneAuthState());
+  PhoneAuthController(this._ref) : super(const PhoneAuthState()) {
+    _phoneAuthService = _ref.read(phoneAuthServiceProvider);
+  }
 
   final Ref _ref;
   late final PhoneAuthService _phoneAuthService;
 
-  // Initialize services
-  void _initializeServices() {
-    _phoneAuthService = _ref.read(phoneAuthServiceProvider);
-  }
-
   /// Send OTP to phone number
   Future<void> sendOtp(String phoneNumber) async {
     if (!mounted) return;
-
-    _initializeServices();
 
     state = state.copyWith(
       isLoading: true,
