@@ -1,103 +1,103 @@
 {
-  "indexes": [
-    {
-      "collectionGroup": "otp_verifications",
-      "queryScope": "COLLECTION",
-      "fields": [
+    "indexes": [
         {
-          "fieldPath": "phoneNumber",
-          "order": "ASCENDING"
+            "collectionGroup": "otp_verifications",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "phoneNumber",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "status",
-          "order": "ASCENDING"
+            "collectionGroup": "otp_verifications",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "expiresAt",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                }
+            ]
         },
         {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
+            "collectionGroup": "users",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "phoneNumber",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "isVerified",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "buses",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "currentLocation.timestamp",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "journeys",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "userId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "notifications",
+            "queryScope": "COLLECTION_GROUP",
+            "fields": [
+                {
+                    "fieldPath": "read",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "createdAt",
+                    "order": "DESCENDING"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "collectionGroup": "otp_verifications",
-      "queryScope": "COLLECTION",
-      "fields": [
+    ],
+    "fieldOverrides": [
         {
-          "fieldPath": "expiresAt",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
+            "collectionGroup": "otp_verifications",
+            "fieldPath": "expiresAt",
+            "ttl": true
         }
-      ]
-    },
-    {
-      "collectionGroup": "users",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "phoneNumber",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "isVerified",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "buses",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "currentLocation.timestamp",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "journeys",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "userId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "notifications",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        {
-          "fieldPath": "read",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "createdAt",
-          "order": "DESCENDING"
-        }
-      ]
-    }
-  ],
-  "fieldOverrides": [
-    {
-      "collectionGroup": "otp_verifications",
-      "fieldPath": "expiresAt",
-      "ttl": true
-    }
-  ]
+    ]
 }
