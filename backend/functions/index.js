@@ -347,6 +347,7 @@ exports.verifyOTP = functions
             // Create or update Firebase Auth user
             let customToken;
             let userId;
+            let isNewUser = false;
 
             try {
                 // Try to get existing user by phone number
@@ -362,6 +363,7 @@ exports.verifyOTP = functions
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
                     // Create new user
+                    isNewUser = true;
                     const newUser = await auth.createUser({
                         phoneNumber: formattedPhone,
                         emailVerified: false,
@@ -428,9 +430,6 @@ exports.verifyOTP = functions
                 userId,
                 phoneNumber: formattedPhone,
                 isNewUser: isNewUser,
-                userId,
-                phoneNumber: formattedPhone,
-                isNewUser: !userRecord,
             };
 
         } catch (error) {
