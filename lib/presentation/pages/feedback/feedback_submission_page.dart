@@ -112,24 +112,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             _buildModernAppBar(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppDesign.spaceLG),
+                padding: const EdgeInsets.all(AppDesign.spaceMD),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildBusInfoHeader(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildRatingSection(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildQuickActionsSection(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildCommentSection(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildMediaUploadSection(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildLocationSection(),
-                    const SizedBox(height: AppDesign.spaceXL),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildContactOptionsSection(),
-                    const SizedBox(height: AppDesign.space3XL),
+                    const SizedBox(height: AppDesign.spaceMD),
                   ],
                 ),
               ),
@@ -226,7 +226,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   ),
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,7 +272,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildMediaUploadSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -301,7 +301,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               const Expanded(
                 child: Text(
                   'Add Photos or Videos (Optional)',
@@ -385,7 +385,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceSM),
-      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: AppColors.greyExtraLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -401,7 +401,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             color: AppColors.primaryColor,
             size: 24,
           ),
-          const SizedBox(width: AppDesign.spaceMD),
+          const SizedBox(width: AppDesign.spaceLG),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +441,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildLocationSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -470,7 +470,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               const Expanded(
                 child: Text(
                   'Location Information',
@@ -515,7 +515,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             )
           else if (currentLocation != null)
             Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 color: AppColors.successColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -558,7 +558,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             )
           else
             Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 color: AppColors.warningColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -606,7 +606,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildContactOptionsSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -635,7 +635,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               const Expanded(
                 child: Text(
                   'Need More Help?',
@@ -667,7 +667,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   _shareViaWhatsApp,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: _buildContactButton(
                   'Email',
@@ -693,7 +693,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          vertical: AppDesign.spaceMD,
+          vertical: AppDesign.spaceLG,
           horizontal: AppDesign.spaceLG,
         ),
         decoration: BoxDecoration(
@@ -860,7 +860,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildBusInfoHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -920,7 +920,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 const SizedBox(height: AppDesign.spaceXS),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
+                    horizontal: AppDesign.spaceLG,
                     vertical: AppDesign.spaceXS,
                   ),
                   decoration: BoxDecoration(
@@ -946,7 +946,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildRatingSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -969,7 +969,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppDesign.spaceMD),
+          const SizedBox(height: AppDesign.spaceLG),
           Text(
             _getRatingDescription(),
             style: const TextStyle(
@@ -981,7 +981,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           const SizedBox(height: AppDesign.spaceLG),
           _buildStarRating(),
           if (selectedRating > 0) ...[
-            const SizedBox(height: AppDesign.spaceMD),
+            const SizedBox(height: AppDesign.spaceLG),
             _buildRatingFeedback(),
           ],
         ],
@@ -1021,7 +1021,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildRatingFeedback() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: _getRatingColor().withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppDesign.radiusMD),
@@ -1057,7 +1057,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         : driverQuickActions;
 
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space2XL),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1086,7 +1086,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               const Expanded(
                 child: Text(
                   'Quick Feedback (Select Multiple)',
@@ -1128,7 +1128,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-          horizontal: AppDesign.spaceMD,
+          horizontal: AppDesign.spaceLG,
           vertical: AppDesign.spaceSM,
         ),
         decoration: BoxDecoration(
@@ -1159,7 +1159,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildCommentSection() {
     return Container(
-      padding: const EdgeInsets.all(AppDesign.space3XL),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -1188,7 +1188,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   size: 20,
                 ),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
+              const SizedBox(width: AppDesign.spaceLG),
               const Expanded(
                 child: Text(
                   'Additional Comments',
@@ -1209,7 +1209,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               color: AppColors.textSecondary,
             ),
           ),
-          const SizedBox(height: AppDesign.spaceMD),
+          const SizedBox(height: AppDesign.spaceLG),
           TextField(
             controller: _commentController,
             maxLines: 4,
@@ -1251,7 +1251,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDesign.spaceLG,
-        vertical: AppDesign.spaceMD,
+        vertical: AppDesign.spaceLG,
       ),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1524,7 +1524,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 color: AppColors.successColor.withOpacity(0.1),
                 shape: BoxShape.circle,
@@ -1586,7 +1586,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 color: AppColors.errorColor.withOpacity(0.1),
                 shape: BoxShape.circle,
