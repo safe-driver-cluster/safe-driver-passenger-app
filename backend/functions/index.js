@@ -7,38 +7,66 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
+// Load environment variables
+require('dotenv').config();
+
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
 const auth = admin.auth();
 
+// Environment configuration
+const config = {
+  textlk: {
+    apiToken: process.env.TEXTLK_API_TOKEN || functions.config().textlk?.apitoken,
+    apiUrl: process.env.TEXTLK_API_URL || 'https://app.text.lk/api/v3/sms/send',
+    senderId: process.env.TEXTLK_SENDER_ID || functions.config().textlk?.senderid || 'SafeDriver',
+  },
+  otp: {
+    expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES) || 10,
+    maxAttempts: parseInt(process.env.OTP_MAX_ATTEMPTS) || 3,
+    length: parseInt(process.env.OTP_LENGTH) || 6,
+  },
+  rateLimits: {
+    otpPoints: parseInt(process.env.OTP_RATE_LIMIT_POINTS) || 3,
+    otpDuration: parseInt(process.env.OTP_RATE_LIMIT_DURATION) || 3600,
+    verificationPoints: parseInt(process.env.VERIFICATION_RATE_LIMIT_POINTS) || 5,
+    verificationDuration: parseInt(process.env.VERIFICATION_RATE_LIMIT_DURATION) || 300,
+  },
+  firebase: {
+    projectId: process.env.FIREBASE_PROJECT_ID || 'safe-driver-system',
+    region: process.env.FIREBASE_REGION || 'asia-south1',
+  },
+  debug: process.env.DEBUG_MODE === 'true' || false,
+};
+
 // Rate limiter configuration
 const otpRateLimiter = new RateLimiterMemory({
-    keyGenerator: (req) => req.body.phoneNumber || req.ip,
-    points: 3, // Number of requests
-    duration: 3600, // Per hour
+  keyGenerator: (req) => req.body.phoneNumber || req.ip,
+  points: config.rateLimits.otpPoints,
+  duration: config.rateLimits.otpDuration,
 });
 
 const verificationRateLimiter = new RateLimiterMemory({
-    keyGenerator: (req) => req.body.phoneNumber || req.ip,
-    points: 5, // Number of attempts
-    duration: 300, // Per 5 minutes
-});
-
-// Text.lk SMS Gateway Configuration
-const SMS_CONFIG = {
-    apiUrl: 'https://api.text.lk/sms/send',
-    userId: functions.config().textlk?.userid || process.env.TEXTLK_USER_ID,
-    apiKey: functions.config().textlk?.apikey || process.env.TEXTLK_API_KEY,
-    senderId: functions.config().textlk?.senderid || process.env.TEXTLK_SENDER_ID || 'SafeDriver',
-};
-
-// Utility functions
+  keyGenerator: (req) => req.body.phoneNumber || req.ip,
+  points: config.rateLimits.verificationPoints,
+  duration: config.rateLimits.verificationDuration,
+});// Utility functions
 function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+  const otpLength = config.otp.length;
+  const min = Math.pow(10, otpLength - 1);
+  const max = Math.pow(10, otpLength) - 1;
+  return Math.floor(min + Math.random() * (max - min + 1)).toString();
 }
 
-function hashOTP(otp) {
+function formatSMSMessage(otp) {
+  const template = process.env.SMS_TEMPLATE || 
+    'Your SafeDriver verification code is: {OTP}. Valid for {MINUTES} minutes. Do not share this code with anyone.';
+  
+  return template
+    .replace('{OTP}', otp)
+    .replace('{MINUTES}', config.otp.expiryMinutes.toString());
+}function hashOTP(otp) {
     return crypto.createHash('sha256').update(otp).digest('hex');
 }
 
@@ -64,36 +92,60 @@ function validateSriLankanPhoneNumber(phoneNumber) {
 }
 
 async function sendSMS(phoneNumber, message) {
-    try {
-        const response = await axios.post(SMS_CONFIG.apiUrl, {
-            user_id: SMS_CONFIG.userId,
-            api_key: SMS_CONFIG.apiKey,
-            sender_id: SMS_CONFIG.senderId,
-            to: phoneNumber.replace('+', ''),
-            message: message,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            timeout: 10000,
-        });
-
-        return {
-            success: response.data.status === 'success',
-            response: response.data,
-            messageId: response.data.message_id,
-        };
-    } catch (error) {
-        console.error('SMS sending failed:', error.response?.data || error.message);
-        throw new functions.https.HttpsError(
-            'internal',
-            'Failed to send SMS',
-            error.response?.data || error.message
-        );
+  try {
+    if (config.debug) {
+      console.log(`Sending SMS to ${phoneNumber} via Text.lk API v3`);
     }
-}
 
-// Cloud Function: Send OTP
+    // Text.lk API v3 request format
+    const requestData = {
+      recipient: phoneNumber.replace('+', ''),
+      message_body: message,
+      sender_id: config.textlk.senderId,
+    };
+
+    const response = await axios.post(config.textlk.apiUrl, requestData, {
+      headers: {
+        'Authorization': `Bearer ${config.textlk.apiToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      timeout: 15000, // Increased timeout for API v3
+    });
+
+    if (config.debug) {
+      console.log('Text.lk API Response:', response.data);
+    }
+
+    // Text.lk API v3 response format
+    const isSuccess = response.status === 200 && response.data.status === 'success';
+    
+    return {
+      success: isSuccess,
+      response: response.data,
+      messageId: response.data.data?.message_id || response.data.message_id,
+      status: response.data.status,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.error('SMS sending failed:', {
+      error: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      phoneNumber: phoneNumber,
+    });
+    
+    throw new functions.https.HttpsError(
+      'internal',
+      'Failed to send SMS via Text.lk',
+      {
+        error: error.message,
+        apiResponse: error.response?.data,
+        phoneNumber: phoneNumber,
+      }
+    );
+  }
+}// Cloud Function: Send OTP
 exports.sendOTP = functions
     .region('asia-south1') // Choose closest region to Sri Lanka
     .https.onCall(async (data, context) => {
@@ -131,11 +183,9 @@ exports.sendOTP = functions
             const otp = generateOTP();
             const verificationId = crypto.randomUUID();
             const hashedOTP = hashOTP(otp);
-            const expiresAt = admin.firestore.Timestamp.fromDate(
-                new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
-            );
-
-            // Store verification record in Firestore
+      const expiresAt = admin.firestore.Timestamp.fromDate(
+        new Date(Date.now() + config.otp.expiryMinutes * 60 * 1000)
+      );            // Store verification record in Firestore
             await db.collection('otp_verifications').doc(verificationId).set({
                 phoneNumber: formattedPhone,
                 hashedOTP,
@@ -148,10 +198,8 @@ exports.sendOTP = functions
                 userAgent: context.rawRequest?.get('user-agent'),
             });
 
-            // Prepare SMS message
-            const message = `Your SafeDriver verification code is: ${otp}. Valid for 10 minutes. Do not share this code with anyone.`;
-
-            // Send SMS
+      // Prepare SMS message using template
+      const message = formatSMSMessage(otp);            // Send SMS
             const smsResult = await sendSMS(formattedPhone, message);
 
             // Update verification record with SMS status
