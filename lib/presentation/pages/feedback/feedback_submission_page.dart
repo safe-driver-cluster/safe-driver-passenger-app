@@ -318,7 +318,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          Text(
+          const Text(
             'Upload images or videos to better explain your feedback (Max 10MB)',
             style: TextStyle(
               fontSize: AppDesign.textSM,
@@ -326,7 +326,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Upload button
           GestureDetector(
             onTap: _pickMediaFile,
@@ -341,14 +341,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 color: AppColors.primaryColor.withOpacity(0.05),
               ),
-              child: Column(
+              child: const Column(
                 children: [
                   Icon(
                     Icons.cloud_upload_outlined,
                     size: 48,
                     color: AppColors.primaryColor,
                   ),
-                  const SizedBox(height: AppDesign.spaceSM),
+                  SizedBox(height: AppDesign.spaceSM),
                   Text(
                     'Tap to select photos or videos',
                     style: TextStyle(
@@ -368,7 +368,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ),
             ),
           ),
-          
+
           // Selected files display
           if (selectedMediaFiles.isNotEmpty) ...[
             const SizedBox(height: AppDesign.spaceLG),
@@ -382,9 +382,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   Widget _buildMediaFileItem(File file) {
     final fileName = file.path.split('/').last;
     final fileSize = (file.lengthSync() / (1024 * 1024)).toStringAsFixed(2);
-    final isVideo = fileName.toLowerCase().endsWith('.mp4') || 
-                   fileName.toLowerCase().endsWith('.mov') ||
-                   fileName.toLowerCase().endsWith('.avi');
+    final isVideo = fileName.toLowerCase().endsWith('.mp4') ||
+        fileName.toLowerCase().endsWith('.mov') ||
+        fileName.toLowerCase().endsWith('.avi');
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceSM),
@@ -487,7 +487,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          Text(
+          const Text(
             'Your location helps us understand the context of your feedback',
             style: TextStyle(
               fontSize: AppDesign.textSM,
@@ -495,11 +495,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
           if (isLoadingLocation)
-            Row(
+            const Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -507,7 +506,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     color: AppColors.primaryColor,
                   ),
                 ),
-                const SizedBox(width: AppDesign.spaceSM),
+                SizedBox(width: AppDesign.spaceSM),
                 Text(
                   'Getting your location...',
                   style: TextStyle(
@@ -536,7 +535,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     size: 20,
                   ),
                   const SizedBox(width: AppDesign.spaceSM),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Location captured successfully',
                       style: TextStyle(
@@ -548,7 +547,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   ),
                   TextButton(
                     onPressed: _getCurrentLocation,
-                    child: Text(
+                    child: const Text(
                       'Refresh',
                       style: TextStyle(
                         fontSize: AppDesign.textSM,
@@ -579,7 +578,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     size: 20,
                   ),
                   const SizedBox(width: AppDesign.spaceSM),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Location not available',
                       style: TextStyle(
@@ -591,7 +590,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   ),
                   TextButton(
                     onPressed: _getCurrentLocation,
-                    child: Text(
+                    child: const Text(
                       'Try Again',
                       style: TextStyle(
                         fontSize: AppDesign.textSM,
@@ -653,7 +652,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          Text(
+          const Text(
             'For large files or detailed discussions, contact us directly',
             style: TextStyle(
               fontSize: AppDesign.textSM,
@@ -661,7 +660,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
@@ -745,11 +743,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         for (PlatformFile file in result.files) {
           if (file.path != null) {
             File mediaFile = File(file.path!);
-            
+
             // Check file size (10MB limit)
             int fileSizeInBytes = mediaFile.lengthSync();
             double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-            
+
             if (fileSizeInMB <= 10) {
               newFiles.add(mediaFile);
             } else {
@@ -757,7 +755,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             }
           }
         }
-        
+
         setState(() {
           selectedMediaFiles.addAll(newFiles);
         });
@@ -784,7 +782,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     // Email sharing logic
     final message = _buildShareMessage();
     final subject = 'SafeDriver Feedback - Bus ${widget.busNumber}';
-    final emailUrl = 'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
+    final emailUrl =
+        'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
     _launchUrl(emailUrl);
   }
 
@@ -793,7 +792,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     buffer.writeln('SafeDriver Feedback');
     buffer.writeln('');
     buffer.writeln('Bus Number: ${widget.busNumber}');
-    buffer.writeln('Feedback Type: ${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'}');
+    buffer.writeln(
+        'Feedback Type: ${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'}');
     buffer.writeln('Rating: $selectedRating/5 stars');
     buffer.writeln('');
     if (selectedQuickActions.isNotEmpty) {
@@ -809,7 +809,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       buffer.writeln('');
     }
     if (currentLocation != null) {
-      buffer.writeln('Location: ${currentLocation!.latitude}, ${currentLocation!.longitude}');
+      buffer.writeln(
+          'Location: ${currentLocation!.latitude}, ${currentLocation!.longitude}');
     }
     return buffer.toString();
   }
