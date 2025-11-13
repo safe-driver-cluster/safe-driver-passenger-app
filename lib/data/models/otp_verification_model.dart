@@ -106,7 +106,8 @@ class OtpVerificationModel {
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
   bool get isVerified => status == OtpStatus.verified;
-  bool get canRetry => attempts < maxAttempts && !isExpired && status == OtpStatus.pending;
+  bool get canRetry =>
+      attempts < maxAttempts && !isExpired && status == OtpStatus.pending;
 
   @override
   String toString() {
