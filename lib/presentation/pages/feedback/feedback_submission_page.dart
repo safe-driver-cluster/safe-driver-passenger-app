@@ -733,39 +733,54 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   // Media and contact methods
   Future<void> _pickMediaFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.media,
-        allowMultiple: true,
+      final ImagePicker picker = ImagePicker();
+      
+      // Show dialog to choose between camera and gallery
+      final source = await showDialog<ImageSource>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Select Source'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
       );
-
-      if (result != null) {
-        List<File> newFiles = [];
-        for (PlatformFile file in result.files) {
-          if (file.path != null) {
-            File mediaFile = File(file.path!);
-
-            // Check file size (10MB limit)
-            int fileSizeInBytes = mediaFile.lengthSync();
-            double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
-            if (fileSizeInMB <= 10) {
-              newFiles.add(mediaFile);
-            } else {
-              _showFileSizeError(file.name);
-            }
+      
+      if (source != null) {
+        final XFile? pickedFile = await picker.pickImage(source: source);
+        
+        if (pickedFile != null) {
+          File mediaFile = File(pickedFile.path);
+          
+          // Check file size (10MB limit)
+          int fileSizeInBytes = mediaFile.lengthSync();
+          double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+          
+          if (fileSizeInMB <= 10) {
+            setState(() {
+              selectedMediaFiles.add(mediaFile);
+            });
+          } else {
+            _showFileSizeError(pickedFile.name);
           }
         }
-
-        setState(() {
-          selectedMediaFiles.addAll(newFiles);
-        });
       }
     } catch (e) {
       _showError('Failed to pick media files: $e');
     }
-  }
-
-  void _removeMediaFile(File file) {
+  }  void _removeMediaFile(File file) {
     setState(() {
       selectedMediaFiles.remove(file);
     });
@@ -1319,17 +1334,17 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         busNumber: widget.busNumber,
         rating: selectedRating,
         comment: _commentController.text.trim().isEmpty
-            ? selectedQuickAction ?? _getRatingText()
+            ? selectedQuickActions.join(', ').isEmpty ? _getRatingText() : selectedQuickActions.join(', ')
             : _commentController.text.trim(),
         category: widget.feedbackTarget == FeedbackTarget.bus
             ? FeedbackCategory.vehicle
             : FeedbackCategory.driver,
         type:
             selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
-        title: selectedQuickAction ?? _getRatingText(),
+        title: selectedQuickActions.join(', ').isEmpty ? _getRatingText() : selectedQuickActions.first,
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
-          'quickAction': selectedQuickAction,
+          'quickActions': selectedQuickActions.toList(),
           'platform': 'mobile',
           'userEmail': user['email']!,
           'submittedAt': DateTime.now().toIso8601String(),
@@ -1361,8 +1376,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     tags.add('bus-${widget.busNumber}');
     tags.add('rating-$selectedRating');
 
-    if (selectedQuickAction != null) {
-      if (_isPositiveAction(selectedQuickAction!)) {
+    for (String action in selectedQuickActions) {
+      if (_isPositiveAction(action)) {
         tags.add('positive');
       } else {
         tags.add('negative');
