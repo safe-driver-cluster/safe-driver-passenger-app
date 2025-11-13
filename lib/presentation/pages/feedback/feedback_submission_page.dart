@@ -733,56 +733,45 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   // Media and contact methods
   Future<void> _pickMediaFile() async {
     try {
-      final ImagePicker picker = ImagePicker();
-
       // Show dialog to choose between camera and gallery
-      final source = await showDialog<ImageSource>(
+      final action = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Select Source'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          title: const Text('Add Media'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Camera'),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
+                leading: const Icon(Icons.camera_alt, color: AppColors.primaryColor),
+                title: const Text('Take Photo'),
+                onTap: () => Navigator.pop(context, 'camera'),
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Gallery'),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
+                leading: const Icon(Icons.photo_library, color: AppColors.primaryColor),
+                title: const Text('Choose from Gallery'),
+                onTap: () => Navigator.pop(context, 'gallery'),
               ),
             ],
           ),
         ),
       );
-
-      if (source != null) {
-        final XFile? pickedFile = await picker.pickImage(source: source);
-
-        if (pickedFile != null) {
-          File mediaFile = File(pickedFile.path);
-
-          // Check file size (10MB limit)
-          int fileSizeInBytes = mediaFile.lengthSync();
-          double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
-          if (fileSizeInMB <= 10) {
-            setState(() {
-              selectedMediaFiles.add(mediaFile);
-            });
-          } else {
-            _showFileSizeError(pickedFile.name);
-          }
-        }
+      
+      if (action != null) {
+        // For now, just show a placeholder message since image_picker is not available
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$action selected - Media upload will be available in the next update'),
+            backgroundColor: AppColors.primaryColor,
+          ),
+        );
       }
     } catch (e) {
       _showError('Failed to pick media files: $e');
     }
-  }
-
-  void _removeMediaFile(File file) {
+  }  void _removeMediaFile(File file) {
     setState(() {
       selectedMediaFiles.remove(file);
     });
