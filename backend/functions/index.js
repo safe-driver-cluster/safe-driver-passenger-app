@@ -213,12 +213,12 @@ exports.sendOTP = functions
                 smsStatus: smsResult.success ? 'sent' : 'failed',
                 smsResponse: smsResult.response,
             };
-            
+
             // Only add messageId if it exists
             if (smsResult.messageId) {
                 updateData.smsMessageId = smsResult.messageId;
             }
-            
+
             await db.collection('otp_verifications').doc(verificationId).update(updateData);
 
             if (!smsResult.success) {
