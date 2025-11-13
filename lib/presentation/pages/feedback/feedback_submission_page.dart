@@ -1249,88 +1249,56 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildSubmitButton() {
     return Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDesign.spaceLG,
-          vertical: AppDesign.spaceXS,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: ElevatedButton(
+          onPressed: _canSubmit() ? _submitFeedback : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                _canSubmit() ? AppColors.primaryColor : AppColors.greyMedium,
+            foregroundColor: Colors.white,
+            elevation: _canSubmit() ? 8 : 0,
+            shadowColor: AppColors.primaryColor.withOpacity(0.4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
             ),
-          ],
-        ),
-        child: Center(
-          child: SafeArea(
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: ElevatedButton(
-                onPressed: _canSubmit() ? _submitFeedback : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                ),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: _canSubmit()
-                        ? const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.primaryColor,
-                              AppColors.primaryDark
-                            ],
-                          )
-                        : const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [AppColors.greyLight, AppColors.greyMedium],
-                          ),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                    boxShadow: _canSubmit()
-                        ? [
-                            BoxShadow(
-                              color: AppColors.primaryColor.withOpacity(0.4),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: isSubmitting
-                        ? const SizedBox(
-                            height: 12,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : const Text(
-                            'Submit Feedback',
-                            style: TextStyle(
-                              fontSize: AppDesign.textLG,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
+            padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            child: Center(
+              child: isSubmitting
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    )
+                  : const Text(
+                      'Submit Feedback',
+                      style: TextStyle(
+                        fontSize: AppDesign.textLG,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   String _getRatingDescription() {
