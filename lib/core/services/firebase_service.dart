@@ -4,8 +4,8 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -49,15 +49,11 @@ class FirebaseService {
       // Initialize Firebase Core (already done in main.dart)
       // await Firebase.initializeApp();
 
-      // Initialize Firebase App Check with debug providers
-      // Note: In production, replace with proper providers:
-      // - webProvider: ReCaptchaV3Provider('your-recaptcha-site-key')
-      // - androidProvider: AndroidProvider.playIntegrity
-      // - appleProvider: AppleProvider.appAttest
-      await FirebaseAppCheck.instance.activate(
-        androidProvider: AndroidProvider.debug,
-        appleProvider: AppleProvider.debug,
-      );
+      // Firebase App Check is now handled in main.dart
+      // Skipping initialization here to avoid conflicts
+      if (kDebugMode) {
+        print('📄 Firebase App Check handled in main.dart');
+      }
 
       // Initialize services
       _auth = FirebaseAuth.instance;
