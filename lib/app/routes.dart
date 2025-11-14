@@ -3,9 +3,11 @@ import 'package:safedriver_passenger_app/presentation/pages/onboarding/onboardin
 
 import '../presentation/pages/auth/account_verification_page.dart';
 import '../presentation/pages/auth/forgot_password_page.dart';
+import '../presentation/pages/auth/forgot_password_otp_page.dart';
 import '../presentation/pages/auth/login_page.dart';
 import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
+import '../presentation/pages/auth/reset_password_page.dart';
 import '../presentation/pages/auth/splash_page.dart';
 import '../presentation/pages/bus/bus_details_page.dart';
 import '../presentation/pages/bus/bus_history_page.dart';
