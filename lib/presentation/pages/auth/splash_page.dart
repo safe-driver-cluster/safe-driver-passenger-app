@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/constants/design_constants.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -95,11 +97,22 @@ class _SplashPageState extends ConsumerState<SplashPage>
     });
   }
 
-  void _checkAuthenticationState() {
+  void _checkAuthenticationState() async {
     print('🔍 Checking authentication state...');
     final authState = ref.read(authStateProvider);
     print('🔍 Auth state: ${authState.toString()}');
     print('🔍 User: ${authState.user?.uid ?? 'null'}');
+
+    // Check onboarding status first
+    final onboardingNotifier = ref.read(onboardingProvider.notifier);
+    await onboardingNotifier.checkOnboardingStatus();
+    final onboardingState = ref.read(onboardingProvider);
+
+    if (!onboardingState.isCompleted) {
+      print('📚 First time user, navigating to onboarding');
+      Navigator.pushReplacementNamed(context, '/onboarding');
+      return;
+    }
 
     if (authState.user != null) {
       print('✅ User is authenticated, navigating to dashboard');
@@ -123,164 +136,324 @@ class _SplashPageState extends ConsumerState<SplashPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
-              AppColors.secondaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
             ],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Animated Logo
-                    AnimatedBuilder(
-                      animation: _logoController,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _logoScaleAnimation.value,
-                          child: Opacity(
-                            opacity: _logoOpacityAnimation.value,
+        child: Stack(
+          children: [
+            // Background decorative elements
+            Positioned(
+              top: -100,
+              right: -100,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -150,
+              left: -150,
+              child: Container(
+                width: 400,
+                height: 400,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.primaryLight.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Main content
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Animated Logo - Larger and more prominent
+                  AnimatedBuilder(
+                    animation: _logoController,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _logoScaleAnimation.value,
+                        child: Opacity(
+                          opacity: _logoOpacityAnimation.value,
+                          child: Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.glassGradient,
+                              borderRadius:
+                                  BorderRadius.circular(AppDesign.radiusFull),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.4),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 60,
+                                  offset: const Offset(0, 30),
+                                ),
+                                BoxShadow(
+                                  color:
+                                      AppColors.primaryColor.withOpacity(0.3),
+                                  blurRadius: 100,
+                                  offset: const Offset(0, 50),
+                                ),
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.1),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, -10),
+                                ),
+                              ],
+                            ),
                             child: Container(
-                              width: 120,
-                              height: 120,
+                              margin: const EdgeInsets.all(30),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(60),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusFull),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.2),
                                     blurRadius: 30,
                                     offset: const Offset(0, 15),
                                   ),
                                 ],
                               ),
                               child: const Icon(
-                                Icons.directions_bus,
-                                size: 60,
+                                Icons.directions_bus_rounded,
+                                size: 80,
                                 color: AppColors.primaryColor,
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
+                  ),
 
-                    const SizedBox(height: 40),
+                  const SizedBox(height: AppDesign.space3XL),
 
-                    // Animated Text
-                    AnimatedBuilder(
-                      animation: _textController,
-                      builder: (context, child) {
-                        return SlideTransition(
-                          position: _textSlideAnimation,
-                          child: FadeTransition(
-                            opacity: _textOpacityAnimation,
-                            child: Column(
-                              children: [
-                                const Text(
-                                  'SafeDriver',
-                                  style: TextStyle(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    letterSpacing: 1.2,
-                                  ),
+                  // Animated Text - Larger and more prominent
+                  AnimatedBuilder(
+                    animation: _textController,
+                    builder: (context, child) {
+                      return SlideTransition(
+                        position: _textSlideAnimation,
+                        child: FadeTransition(
+                          opacity: _textOpacityAnimation,
+                          child: Column(
+                            children: [
+                              const Text(
+                                'SafeDriver',
+                                style: TextStyle(
+                                  fontSize: 56,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: -2.0,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0, 4),
+                                      blurRadius: 8,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 12),
-                                const Text(
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: AppDesign.spaceLG),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppDesign.space2XL,
+                                ),
+                                child: const Text(
                                   'Your Safety, Our Priority',
                                   style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.w300,
+                                    fontSize: AppDesign.textXL,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.0,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(0, 2),
+                                        blurRadius: 4,
+                                      ),
+                                    ],
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  width: 80,
-                                  height: 3,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.8),
-                                    borderRadius: BorderRadius.circular(2),
+                              ),
+                              const SizedBox(height: AppDesign.space2XL),
+                              Container(
+                                width: 150,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white.withOpacity(0.9),
+                                      Colors.white.withOpacity(0.3),
+                                      Colors.transparent,
+                                    ],
                                   ),
+                                  borderRadius:
+                                      BorderRadius.circular(AppDesign.radiusLG),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              // Loading indicator and version
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // Loading indicator
-                    const SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Loading text
-                    const Text(
-                      'Loading...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // Version and powered by
-                    Column(
-                      children: [
-                        Text(
-                          'Version 1.0.0',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Powered by SafeDriver Technologies',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.white.withOpacity(0.5),
-                          ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            // Bottom loading section - positioned at bottom
+            Positioned(
+              bottom: AppDesign.space3XL,
+              left: 0,
+              right: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Modern Loading indicator - centered and larger
+                  Container(
+                    width: 60,
+                    height: 60,
+                    padding: const EdgeInsets.all(AppDesign.spaceMD),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryColor.withOpacity(0.8),
+                          AppColors.primaryDark.withOpacity(0.6),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                      border: Border.all(
+                        color: AppColors.primaryColor.withOpacity(0.6),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                        BoxShadow(
+                          color: AppColors.primaryColor.withOpacity(0.3),
+                          blurRadius: 30,
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
 
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                  const SizedBox(height: AppDesign.spaceLG),
+
+                  // Loading text
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDesign.spaceLG,
+                      vertical: AppDesign.spaceSM,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    child: const Text(
+                      'Loading...',
+                      style: TextStyle(
+                        fontSize: AppDesign.textMD,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.0,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black54,
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: AppDesign.spaceLG),
+
+                  // Version and powered by
+                  Column(
+                    children: [
+                      Text(
+                        'Version 1.0.0',
+                        style: TextStyle(
+                          fontSize: AppDesign.textXS,
+                          color: AppColors.textPrimary.withOpacity(0.8),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceXS),
+                      Text(
+                        'Powered by SafeDriver Technologies',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textSecondary.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.3,
+                          shadows: [
+                            Shadow(
+                              color: Colors.white.withOpacity(0.5),
+                              offset: const Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -5,14 +5,11 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
-import '../../widgets/dashboard/modern_safety_overview_widget.dart';
-import '../../widgets/dashboard/quick_actions_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 import '../qr/qr_scanner_page.dart';
-import '../safety/emergency_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -229,13 +226,14 @@ class DashboardHome extends ConsumerWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.centerLeft,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              AppColors.backgroundColor,
+              AppColors.primaryColor,
+              AppColors.primaryDark,
               AppColors.scaffoldBackground,
             ],
-            stops: [0.0, 0.6],
+            stops: [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -252,70 +250,39 @@ class DashboardHome extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Professional Header
-                  _buildModernHeader(context, dashboardState),
+                  // Redesigned Header
+                  _buildRedesignedHeader(context, dashboardState),
 
                   // Main Content
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceLG),
+                        horizontal: AppDesign.spaceMD),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: AppDesign.spaceXL),
+                        const SizedBox(height: AppDesign.spaceMD),
 
-                        // Safety Overview
-                        _buildProfessionalSection(
-                          title: 'Safety Overview',
-                          icon: Icons.security_rounded,
-                          iconColor: AppColors.successColor,
-                          child: const ModernSafetyOverviewWidget(),
-                        ),
-                        const SizedBox(height: AppDesign.space2XL),
-
-                        // Quick Actions Section
-                        _buildProfessionalSection(
-                          title: 'Quick Actions',
-                          icon: Icons.flash_on_rounded,
-                          iconColor: AppColors.accentColor,
-                          child: QuickActionsWidget(
-                            onQrScan: () => onNavigateToTab?.call(2),
-                            onSearch: () => onNavigateToTab?.call(1),
-                            onEmergency: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const EmergencyPage(),
-                                ),
-                              );
-                            },
-                            onFeedback: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/feedback-system',
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: AppDesign.space2XL),
+                        // Quick Actions Grid - Main Feature
+                        _buildProfessionalQuickActions(context),
+                        const SizedBox(height: AppDesign.spaceLG),
 
                         // Active Journey Section
                         _buildProfessionalSection(
-                          title: 'Active Journey',
+                          title: 'Current Journey',
                           icon: Icons.directions_bus_rounded,
-                          iconColor: AppColors.primaryColor,
+                          gradient: AppColors.primaryGradient,
                           child: const ActiveJourneyWidget(),
                         ),
-                        const SizedBox(height: AppDesign.space2XL),
+                        const SizedBox(height: AppDesign.spaceLG),
 
                         // Recent Activity Section
                         _buildProfessionalSection(
                           title: 'Recent Activity',
                           icon: Icons.history_rounded,
-                          iconColor: AppColors.tealAccent,
+                          gradient: AppColors.accentGradient,
                           child: const RecentActivityWidget(),
                         ),
-                        const SizedBox(height: AppDesign.space3XL),
+                        const SizedBox(height: AppDesign.spaceLG),
                       ],
                     ),
                   ),
@@ -328,80 +295,43 @@ class DashboardHome extends ConsumerWidget {
     );
   }
 
-  Widget _buildModernHeader(BuildContext context, dynamic dashboardState) {
+  Widget _buildRedesignedHeader(BuildContext context, dynamic dashboardState) {
     final greeting = _getGreeting();
-    final time = _getTimeOfDay();
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
-        60,
+        AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.space2XL,
-      ),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
-        boxShadow: AppDesign.shadowLG,
+        AppDesign.spaceLG,
       ),
       child: Column(
         children: [
-          // Top Row - Greeting and Notifications
+          // Top Row - Greeting and notifications
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Good $greeting!',
-                      style: AppTextStyles.headline3.copyWith(
-                        color: Colors.white,
+                      'Good $greeting',
+                      style: const TextStyle(
+                        fontSize: 26,
                         fontWeight: FontWeight.w800,
+                        color: Colors.white,
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
+                    const SizedBox(height: 2),
                     Text(
-                      'Ready for a safe journey?',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: Colors.white.withOpacity(0.85),
-                      ),
-                    ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD,
-                        vertical: AppDesign.spaceXS,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.access_time_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                          const SizedBox(width: AppDesign.spaceXS),
-                          Text(
-                            time,
-                            style: AppTextStyles.labelMedium.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      'Ready for your journey?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -409,8 +339,12 @@ class DashboardHome extends ConsumerWidget {
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  gradient: AppColors.glassGradient,
                   borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
                 ),
                 child: IconButton(
                   onPressed: () {
@@ -421,86 +355,182 @@ class DashboardHome extends ConsumerWidget {
                       ),
                     );
                   },
-                  icon: Stack(
-                    children: [
-                      const Icon(
-                        Icons.notifications_rounded,
-                        size: AppDesign.iconLG,
-                        color: Colors.white,
-                      ),
-                      if (dashboardState.activeIncidents > 0)
-                        Positioned(
-                          right: 2,
-                          top: 2,
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: AppColors.dangerColor,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                  icon: const Icon(
+                    Icons.notifications_rounded,
+                    color: Colors.white,
+                    size: 22,
                   ),
                 ),
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
 
-          const SizedBox(height: AppDesign.space2XL),
-
-          // Quick Stats Row
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-              ),
-            ),
-            child: Row(
+  Widget _buildProfessionalQuickActions(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.cardGradient,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowLG,
+        border: Border.all(
+          color: AppColors.primaryColor.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section header with gradient
+            Row(
               children: [
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.directions_bus_rounded,
-                    label: 'Trips',
-                    value: '24',
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                  ),
+                  child: const Icon(
+                    Icons.flash_on_rounded,
+                    color: Colors.white,
+                    size: 18,
                   ),
                 ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.white.withOpacity(0.2),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.route_rounded,
-                    label: 'Distance',
-                    value: '847km',
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.white.withOpacity(0.2),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    icon: Icons.security_rounded,
-                    label: 'Safety',
-                    value: '98%',
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Quick Actions',
+                  style: AppTextStyles.headline6.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: AppDesign.spaceLG),
+            // Action buttons grid with same sizes
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Scan QR',
+                    subtitle: 'Board bus',
+                    icon: Icons.qr_code_scanner_rounded,
+                    gradient: AppColors.primaryGradient,
+                    onTap: () => onNavigateToTab?.call(2),
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Find Routes',
+                    subtitle: 'Search',
+                    icon: Icons.directions_bus_rounded,
+                    gradient: AppColors.accentGradient,
+                    onTap: () => onNavigateToTab?.call(1),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceMD),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Emergency',
+                    subtitle: 'Get help',
+                    icon: Icons.warning_rounded,
+                    gradient: AppColors.dangerGradient,
+                    onTap: () => Navigator.pushNamed(context, '/emergency'),
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Feedback',
+                    subtitle: 'Share',
+                    icon: Icons.feedback_rounded,
+                    gradient: AppColors.successGradient,
+                    onTap: () =>
+                        Navigator.pushNamed(context, '/feedback-system'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfessionalActionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required LinearGradient gradient,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      height: 100, // Fixed height for same size
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          child: Container(
+            padding: const EdgeInsets.all(AppDesign.spaceMD),
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: gradient.colors.first.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  icon,
+                  size: 28,
+                  color: Colors.white,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -508,57 +538,54 @@ class DashboardHome extends ConsumerWidget {
   Widget _buildProfessionalSection({
     required String title,
     required IconData icon,
-    required Color iconColor,
+    required LinearGradient gradient,
     required Widget child,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section Header
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    iconColor.withOpacity(0.15),
-                    iconColor.withOpacity(0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                border: Border.all(
-                  color: iconColor.withOpacity(0.1),
-                ),
-              ),
-              child: Icon(
-                icon,
-                size: AppDesign.iconSM,
-                color: iconColor,
-              ),
-            ),
-            const SizedBox(width: AppDesign.spaceMD),
-            Text(
-              title,
-              style: AppTextStyles.headline6.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: AppColors.textHint,
-              size: AppDesign.iconSM,
-            ),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: AppDesign.shadowMD,
+        border: Border.all(
+          color: AppColors.greyLight,
+          width: 1,
         ),
-        const SizedBox(height: AppDesign.spaceLG),
-        // Section Content
-        child,
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Professional section header
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppDesign.radiusXL),
+                topRight: Radius.circular(AppDesign.radiusXL),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  title,
+                  style: AppTextStyles.headline6.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Section content
+          child,
+        ],
+      ),
     );
   }
 
@@ -571,44 +598,5 @@ class DashboardHome extends ConsumerWidget {
     } else {
       return 'Evening';
     }
-  }
-
-  String _getTimeOfDay() {
-    final now = DateTime.now();
-    final hour = now.hour;
-    final minute = now.minute;
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
-    return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
-  }
-
-  Widget _buildStatItem({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: Colors.white.withOpacity(0.8),
-          size: AppDesign.iconMD,
-        ),
-        const SizedBox(height: AppDesign.spaceXS),
-        Text(
-          value,
-          style: AppTextStyles.headline6.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Text(
-          label,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
-      ],
-    );
   }
 }

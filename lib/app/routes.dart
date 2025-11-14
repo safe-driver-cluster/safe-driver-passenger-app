@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/presentation/pages/onboarding/onboarding_page.dart';
 
+import '../presentation/pages/auth/account_verification_page.dart';
 import '../presentation/pages/auth/forgot_password_page.dart';
 import '../presentation/pages/auth/login_page.dart';
 import '../presentation/pages/auth/otp_verification_page.dart';
@@ -36,8 +38,10 @@ import '../presentation/pages/safety/safety_hub_page.dart';
 class AppRoutes {
   // Route names
   static const String splash = '/';
+  static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
+  static const String accountVerification = '/account-verification';
   static const String forgotPassword = '/forgot-password';
   static const String otpVerification = '/otp-verification';
   static const String dashboard = '/dashboard';
@@ -93,6 +97,12 @@ class AppRoutes {
           settings: settings,
         );
 
+      case onboarding:
+        return MaterialPageRoute(
+          builder: (_) => const OnboardingPage(),
+          settings: settings,
+        );
+
       case login:
         return MaterialPageRoute(
           builder: (_) => const LoginPage(),
@@ -102,6 +112,19 @@ class AppRoutes {
       case register:
         return MaterialPageRoute(
           builder: (_) => const RegisterPage(),
+          settings: settings,
+        );
+
+      case accountVerification:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => AccountVerificationPage(
+            phoneNumber: args?['phoneNumber'] ?? '',
+            email: args?['email'] ?? '',
+            firstName: args?['firstName'] ?? '',
+            lastName: args?['lastName'] ?? '',
+            password: args?['password'] ?? '',
+          ),
           settings: settings,
         );
 

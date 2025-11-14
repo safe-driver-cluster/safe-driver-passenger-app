@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/constants/design_constants.dart';
 
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/feedback_service.dart';
@@ -134,127 +136,239 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
     final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Submit Feedback'),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: LoadingWidget(
-        isLoading: _isSubmitting,
-        child: passengerAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load passenger data',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Please try again later',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 0.7],
           ),
-          data: (passenger) {
-            if (passenger == null) {
-              return const Center(
-                child: Text('No passenger profile found'),
-              );
-            }
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Modern Header
+              _buildModernHeader(),
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
+              // Content Area
+              Expanded(
+                child: LoadingWidget(
+                  isLoading: _isSubmitting,
+                  child: passengerAsync.when(
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stackTrace) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Failed to load passenger data',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Please try again later',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    data: (passenger) {
+                      if (passenger == null) {
+                        return const Center(
+                          child: Text('No passenger profile found'),
+                        );
+                      }
+
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Passenger Info Card (shows passenger details being used)
+                              _buildPassengerInfoCard(passenger),
+
+                              const SizedBox(height: 16),
+
+                              // Feedback Type and Category
+                              _buildBasicInfoCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Ratings
+                              _buildRatingsCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Feedback Content
+                              _buildContentCard(),
+
+                              const SizedBox(height: 16),
+
+                              // Options
+                              _buildOptionsCard(),
+
+                              const SizedBox(height: 24),
+
+                              // Submit Button
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _isSubmitting
+                                      ? null
+                                      : () => _submitFeedback(passenger),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF2563EB),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  child: _isSubmitting
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Submit Feedback',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 32),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        AppDesign.spaceSM,
+        AppDesign.spaceLG,
+        AppDesign.spaceLG,
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconLG,
+                  ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.glassGradient,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    // Add help functionality
+                  },
+                  icon: const Icon(
+                    Icons.help_outline_rounded,
+                    color: Colors.white,
+                    size: AppDesign.iconLG,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          Row(
+            children: [
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Passenger Info Card (shows passenger details being used)
-                    _buildPassengerInfoCard(passenger),
-
-                    const SizedBox(height: 16),
-
-                    // Feedback Type and Category
-                    _buildBasicInfoCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Ratings
-                    _buildRatingsCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Feedback Content
-                    _buildContentCard(),
-
-                    const SizedBox(height: 16),
-
-                    // Options
-                    _buildOptionsCard(),
-
-                    const SizedBox(height: 24),
-
-                    // Submit Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () => _submitFeedback(passenger),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2563EB),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: _isSubmitting
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
-                                ),
-                              )
-                            : const Text(
-                                'Submit Feedback',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                    const Text(
+                      'Submit Feedback',
+                      style: TextStyle(
+                        fontSize: AppDesign.text2XL,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
                       ),
                     ),
-
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppDesign.spaceXS),
+                    Text(
+                      'Share your experience and help us improve',
+                      style: TextStyle(
+                        fontSize: AppDesign.textMD,
+                        color: Colors.white.withOpacity(0.8),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
