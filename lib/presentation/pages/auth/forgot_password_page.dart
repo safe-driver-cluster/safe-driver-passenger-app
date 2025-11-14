@@ -17,7 +17,7 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  String _selectedCountryCode = '+94'; // Default to Sri Lanka
+  final String _selectedCountryCode = '+94'; // Default to Sri Lanka
   bool _isLoading = false;
 
   @override
