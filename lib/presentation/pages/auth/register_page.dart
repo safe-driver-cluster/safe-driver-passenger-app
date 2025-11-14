@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/country_code_picker.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -430,7 +430,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                       // Phone Field with Country Code
                                       PhoneNumberField(
                                         controller: _phoneController,
-                                        selectedCountryCode: _selectedCountryCode,
+                                        selectedCountryCode:
+                                            _selectedCountryCode,
                                         onCountryCodeChanged: (code) {
                                           setState(() {
                                             _selectedCountryCode = code;
