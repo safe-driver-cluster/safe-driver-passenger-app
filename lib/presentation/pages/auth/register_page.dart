@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -21,6 +22,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String _selectedCountryCode = '+94'; // Default to Sri Lanka
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _acceptTerms = false;
@@ -53,7 +55,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       context,
       '/account-verification',
       arguments: {
-        'phoneNumber': _phoneController.text.trim(),
+        'phoneNumber': '$_selectedCountryCode${_phoneController.text.trim()}',
         'email': _emailController.text.trim(),
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
@@ -425,31 +427,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                                       const SizedBox(height: 16),
 
-                                      // Phone Field
-                                      TextFormField(
+                                      // Phone Field with Country Code
+                                      PhoneNumberField(
                                         controller: _phoneController,
-                                        keyboardType: TextInputType.phone,
-                                        decoration: InputDecoration(
-                                          labelText: 'Phone Number',
-                                          prefixIcon:
-                                              const Icon(Icons.phone_outlined),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            borderSide: BorderSide(
-                                                color: Colors.grey[300]!),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            borderSide: const BorderSide(
-                                                color: Color(0xFF2563EB)),
-                                          ),
-                                        ),
+                                        selectedCountryCode:
+                                            _selectedCountryCode,
+                                        onCountryCodeChanged: (code) {
+                                          setState(() {
+                                            _selectedCountryCode = code;
+                                          });
+                                        },
+                                        labelText: 'Phone Number',
                                         validator: _validatePhoneNumber,
                                       ),
 
