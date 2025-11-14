@@ -15,11 +15,11 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
-  
+
   String _phoneNumber = '';
   String _otpCode = '';
 
@@ -27,7 +27,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (args != null) {
         _phoneNumber = args['phoneNumber'] ?? '';
         _otpCode = args['otpCode'] ?? '';
@@ -127,7 +128,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                     (route) => false,
                     arguments: {
                       'phoneNumber': _phoneNumber,
-                      'message': 'Password reset successful. Please sign in with your new password.',
+                      'message':
+                          'Password reset successful. Please sign in with your new password.',
                     },
                   );
                 },
@@ -222,7 +224,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               // Icon and Title
               const Icon(
                 Icons.lock_reset,
@@ -230,7 +232,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                 color: Color(0xFF2563EB),
               ),
               const SizedBox(height: 24),
-              
+
               const Text(
                 'Create New Password',
                 style: TextStyle(
@@ -241,7 +243,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              
+
               const Text(
                 'Enter your new password below',
                 style: TextStyle(
@@ -251,9 +253,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Password Form
               Form(
                 key: _formKey,
@@ -270,7 +272,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
                           ),
                           onPressed: () {
                             setState(() {
@@ -287,14 +291,15 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF2563EB)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF2563EB)),
                         ),
                       ),
                       validator: _validatePassword,
                     ),
-                    
+
                     const SizedBox(height: 20),
-                    
+
                     // Confirm Password Field
                     TextFormField(
                       controller: _confirmPasswordController,
@@ -305,11 +310,14 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            _obscureConfirmPassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
                             });
                           },
                         ),
@@ -322,14 +330,15 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF2563EB)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF2563EB)),
                         ),
                       ),
                       validator: _validateConfirmPassword,
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Password Requirements
                     Container(
                       padding: const EdgeInsets.all(16),
@@ -349,15 +358,18 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                             ),
                           ),
                           SizedBox(height: 8),
-                          Text('• At least 8 characters long', style: TextStyle(fontSize: 12)),
-                          Text('• Contains uppercase and lowercase letters', style: TextStyle(fontSize: 12)),
-                          Text('• Contains at least one number', style: TextStyle(fontSize: 12)),
+                          Text('• At least 8 characters long',
+                              style: TextStyle(fontSize: 12)),
+                          Text('• Contains uppercase and lowercase letters',
+                              style: TextStyle(fontSize: 12)),
+                          Text('• Contains at least one number',
+                              style: TextStyle(fontSize: 12)),
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Reset Password Button
                     SizedBox(
                       height: 56,
@@ -378,7 +390,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : const Text(
@@ -393,9 +406,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                   ],
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Back to Login
               GestureDetector(
                 onTap: () => Navigator.pushNamedAndRemoveUntil(
@@ -412,7 +425,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const SizedBox(height: 20),
             ],
           ),
