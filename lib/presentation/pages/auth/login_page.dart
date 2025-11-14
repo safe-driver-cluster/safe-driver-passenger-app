@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 import 'register_page.dart';
@@ -16,14 +17,15 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _selectedCountryCode = '+94'; // Default to Sri Lanka
   bool _rememberMe = false;
   bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -43,9 +45,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['message'] != null) {
-      // Pre-fill email if provided
-      if (args['email'] != null) {
-        _emailController.text = args['email'];
+      // Pre-fill phone if provided
+      if (args['phoneNumber'] != null) {
+        _phoneController.text = args['phoneNumber'];
       }
 
       // Show success message
@@ -61,7 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final savedEmail = await authNotifier.getSavedEmail();
 
       if (savedEmail != null && mounted) {
-        _emailController.text = savedEmail;
+        _phoneController.text = savedEmail; // Will be changed to savedPhone
         setState(() {
           _rememberMe = true;
         });
@@ -80,16 +82,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     print(
-        '✅ Form validated, attempting login with email: ${_emailController.text.trim()}');
+        '✅ Form validated, attempting login with phone: $_selectedCountryCode${_phoneController.text.trim()}');
 
     // Add haptic feedback
     HapticFeedback.lightImpact();
 
     final authNotifier = ref.read(authStateProvider.notifier);
-    final result = await authNotifier.signIn(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      rememberMe: _rememberMe,
+    // TODO: Update auth provider to support phone login
+    // final result = await authNotifier.signInWithPhone(
+    //   phoneNumber: '$_selectedCountryCode${_phoneController.text.trim()}',
+    //   password: _passwordController.text.trim(),
+    //   rememberMe: _rememberMe,
+    // );
+
+    // Temporary placeholder
+    const result = AuthResult(
+      success: false,
+      message: 'Phone login not yet implemented',
     );
 
     if (mounted) {
@@ -130,26 +139,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _forgotPassword() async {
-    final email = _emailController.text.trim();
-    if (email.isEmpty) {
-      _showErrorSnackBar('Please enter your email address first');
+    final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
+    if (phoneNumber.isEmpty || phoneNumber == _selectedCountryCode) {
+      _showErrorSnackBar('Please enter your phone number first');
       return;
     }
 
     HapticFeedback.lightImpact();
 
-    final authNotifier = ref.read(authStateProvider.notifier);
-    final result = await authNotifier.sendPasswordResetEmail(email);
+    // TODO: Implement password reset for phone numbers
+    _showErrorSnackBar(
+        'Password reset for phone numbers not yet implemented. Please contact support.');
 
-    if (mounted) {
-      if (result.success) {
-        HapticFeedback.mediumImpact();
-        _showSuccessSnackBar('Password reset email sent to $email');
-      } else {
-        HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Failed to send reset email');
-      }
-    }
+    // final authNotifier = ref.read(authStateProvider.notifier);
+    // final result = await authNotifier.sendPasswordResetSMS(phoneNumber);
+    // if (mounted) {
+    //   if (result.success) {
+    //     HapticFeedback.mediumImpact();
+    //     _showSuccessSnackBar('Password reset SMS sent to $phoneNumber');
+    //   } else {
+    //     HapticFeedback.heavyImpact();
+    //     _showErrorSnackBar(result.message ?? 'Failed to send reset SMS');
+    //   }
+    // }
   }
 
   void _showEmailVerificationDialog() {
@@ -354,48 +366,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Email Field with modern design
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[50],
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: Colors.grey[200]!,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: TextFormField(
-                                    controller: _emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                      labelText: 'Email Address',
-                                      prefixIcon: Icon(
-                                        Icons.email_outlined,
-                                        color: Colors.grey[600],
-                                      ),
-                                      border: InputBorder.none,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 20,
-                                      ),
-                                      labelStyle: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
-                                      }
-                                      if (!RegExp(
-                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                          .hasMatch(value)) {
-                                        return 'Please enter a valid email';
-                                      }
-                                      return null;
-                                    },
-                                  ),
+                                // Phone Number Field with Country Code
+                                PhoneNumberField(
+                                  controller: _phoneController,
+                                  selectedCountryCode: _selectedCountryCode,
+                                  onCountryCodeChanged: (code) {
+                                    setState(() {
+                                      _selectedCountryCode = code;
+                                    });
+                                  },
+                                  labelText: 'Phone Number',
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your phone number';
+                                    }
+                                    if (value.length < 9) {
+                                      return 'Please enter a valid phone number';
+                                    }
+                                    return null;
+                                  },
                                 ),
 
                                 const SizedBox(height: 20),
