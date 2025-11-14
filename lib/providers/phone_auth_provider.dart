@@ -82,15 +82,6 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
 
   final Ref _ref;
   late final PhoneAuthService _phoneAuthService;
-  Map<String, dynamic>? _registrationData;
-
-  /// Set registration data for new users
-  Future<void> setRegistrationData(Map<String, dynamic> data) async {
-    _registrationData = data;
-  }
-
-  /// Get stored registration data
-  Map<String, dynamic>? get registrationData => _registrationData;
 
   /// Send OTP to phone number
   Future<void> sendOtp(String phoneNumber) async {
