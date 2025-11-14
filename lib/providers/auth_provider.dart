@@ -675,7 +675,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       // For now, just simulate sending OTP
       await Future.delayed(const Duration(seconds: 1));
-      
+
       return const AuthResult(
         success: true,
         message: 'OTP sent successfully',
@@ -715,7 +715,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       }
 
       // Get the Firebase Auth user by email
-      final userRecord = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      final userRecord =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
       if (userRecord.isEmpty) {
         throw Exception('No authentication record found');
       }
@@ -743,7 +744,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       print('Password reset error: $e');
       return AuthResult(
         success: false,
-        message: e.toString().contains('Exception:') 
+        message: e.toString().contains('Exception:')
             ? e.toString().split('Exception:').last.trim()
             : 'Failed to reset password',
       );
