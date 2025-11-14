@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/auth_provider.dart';
+import '../../../core/constants/color_constants.dart';
+import '../../../providers/phone_auth_provider.dart';
+import '../../widgets/common/country_code_selector.dart';
+import '../../widgets/common/phone_input_widget.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../widgets/common/custom_snackbar.dart';
 import 'register_page.dart';
+import 'otp_verification_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -16,15 +21,13 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  CountryCode _selectedCountry = CountryCodeSelector.sriLanka;
   bool _rememberMe = false;
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
