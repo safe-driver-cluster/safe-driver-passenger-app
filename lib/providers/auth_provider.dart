@@ -274,7 +274,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       // For now, we'll query Firestore to find user by phone number
       // then use their email to sign in with Firebase Auth
       final querySnapshot = await FirebaseFirestore.instance
-          .collection('passengers')
+          .collection('passenger_details')
           .where('phoneNumber', isEqualTo: phoneNumber)
           .limit(1)
           .get();
@@ -299,17 +299,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         rememberMe: rememberMe,
       );
 
-      // Check if email is verified (same logic as email sign in)
-      if (userCredential.user != null && !userCredential.user!.emailVerified) {
-        state = state.copyWith(
-          isLoading: false,
-          currentStep: AuthStep.emailVerification,
-        );
-        return const AuthResult(
-          success: false,
-          message: 'Please verify your email before signing in',
-        );
-      }
+      // For phone-based login, skip email verification since phone was already verified during registration
 
       print('🎉 Phone sign in successful!');
       state = state.copyWith(
