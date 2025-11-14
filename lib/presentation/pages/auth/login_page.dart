@@ -40,13 +40,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _checkForSuccessMessage() {
     // Check if we're coming from account verification
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['message'] != null) {
       // Pre-fill email if provided
       if (args['email'] != null) {
         _emailController.text = args['email'];
       }
-      
+
       // Show success message
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSuccessSnackBar(args['message']);
