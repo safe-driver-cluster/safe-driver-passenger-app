@@ -154,7 +154,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (value == null || value.isEmpty) {
       return 'Phone number is required';
     }
-    if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value.replaceAll(' ', ''))) {
+    // For Sri Lankan numbers, expect 9 digits (without country code)
+    if (_selectedCountryCode == '+94' && value.length != 9) {
+      return 'Please enter a valid Sri Lankan phone number (9 digits)';
+    }
+    // For other countries, basic length check
+    if (value.length < 7 || value.length > 15) {
       return 'Please enter a valid phone number';
     }
     return null;

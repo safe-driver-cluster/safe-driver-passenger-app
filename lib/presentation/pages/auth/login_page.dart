@@ -88,17 +88,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     HapticFeedback.lightImpact();
 
     final authNotifier = ref.read(authStateProvider.notifier);
-    // TODO: Update auth provider to support phone login
-    // final result = await authNotifier.signInWithPhone(
-    //   phoneNumber: '$_selectedCountryCode${_phoneController.text.trim()}',
-    //   password: _passwordController.text.trim(),
-    //   rememberMe: _rememberMe,
-    // );
-
-    // Temporary placeholder
-    const result = AuthResult(
-      success: false,
-      message: 'Phone login not yet implemented',
+    final result = await authNotifier.signInWithPhone(
+      phoneNumber: '$_selectedCountryCode${_phoneController.text.trim()}',
+      password: _passwordController.text.trim(),
+      rememberMe: _rememberMe,
     );
 
     if (mounted) {
