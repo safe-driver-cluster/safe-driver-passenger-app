@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -30,7 +29,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     }
 
     final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -114,7 +113,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               // Icon and Title
               const Icon(
                 Icons.lock_reset,
@@ -122,7 +121,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 color: Color(0xFF2563EB),
               ),
               const SizedBox(height: 24),
-              
+
               const Text(
                 'Reset Password',
                 style: TextStyle(
@@ -133,7 +132,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              
+
               const Text(
                 'Enter your phone number to receive an OTP for password reset',
                 style: TextStyle(
@@ -143,9 +142,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // Phone Number Form
               Form(
                 key: _formKey,
@@ -166,7 +165,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number';
                         }
-                        if (_selectedCountryCode == '+94' && value.length != 9) {
+                        if (_selectedCountryCode == '+94' &&
+                            value.length != 9) {
                           return 'Please enter a valid Sri Lankan phone number';
                         }
                         if (value.length < 7 || value.length > 15) {
@@ -175,9 +175,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         return null;
                       },
                     ),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // Send OTP Button
                     SizedBox(
                       height: 56,
@@ -198,7 +198,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
                                 ),
                               )
                             : const Text(
@@ -213,9 +214,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   ],
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Back to Login
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -236,7 +237,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 20),
             ],
           ),
