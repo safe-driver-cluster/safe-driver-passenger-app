@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/country_code_selector.dart';
-import '../../widgets/common/phone_input_widget.dart';
+import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/custom_snackbar.dart';
-import 'register_page.dart';
+import '../../widgets/common/phone_input_widget.dart';
 import 'otp_verification_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -41,7 +41,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   void _checkForSuccessMessage() {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['message'] != null) {
       if (args['phoneNumber'] != null) {
         _phoneController.text = args['phoneNumber'];
@@ -68,13 +69,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
 
-    final phoneNumber = _selectedCountry.dialCode + _phoneController.text.trim();
+    final phoneNumber =
+        _selectedCountry.dialCode + _phoneController.text.trim();
     print('✅ Form validated, sending OTP to: $phoneNumber');
 
     HapticFeedback.lightImpact();
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.sendOtp(phoneNumber);
     } catch (e) {
       print('Send OTP error: $e');
@@ -177,9 +180,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               color: AppColors.primaryColor,
                             ),
                           ),
-
                           const SizedBox(height: 24),
-
                           const Text(
                             'Welcome Back',
                             style: TextStyle(
@@ -189,9 +190,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-
                           const SizedBox(height: 8),
-
                           Text(
                             'Sign in to continue your safe journey',
                             style: TextStyle(
@@ -282,7 +281,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryColor,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -294,7 +294,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         width: 20,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
                                             Colors.white,
                                           ),
                                         ),
@@ -320,7 +321,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     child: Text(
                                       'OR',
                                       style: TextStyle(
@@ -343,10 +345,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                               // Google Sign In Button
                               OutlinedButton.icon(
-                                onPressed: isLoading ? null : () {
-                                  // TODO: Implement Google Sign In
-                                  _showErrorSnackBar('Google Sign In coming soon!');
-                                },
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        // TODO: Implement Google Sign In
+                                        _showErrorSnackBar(
+                                            'Google Sign In coming soon!');
+                                      },
                                 icon: const GoogleIcon(),
                                 label: const Text(
                                   'Continue with Google',
@@ -357,7 +362,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   ),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -392,7 +398,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const RegisterPage(),
+                                        builder: (context) =>
+                                            const RegisterPage(),
                                       ),
                                     );
                                   },
