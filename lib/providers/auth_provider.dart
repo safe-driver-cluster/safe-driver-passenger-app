@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/services/firebase_service.dart';
@@ -288,7 +288,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       final email = userData['email'] as String?;
 
       if (email == null || email.isEmpty) {
-        throw Exception('Account found but no email associated. Please contact support.');
+        throw Exception(
+            'Account found but no email associated. Please contact support.');
       }
 
       // Use the existing email-based sign in
@@ -304,7 +305,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
           isLoading: false,
           currentStep: AuthStep.emailVerification,
         );
-        return AuthResult(
+        return const AuthResult(
           success: false,
           message: 'Please verify your email before signing in',
         );
