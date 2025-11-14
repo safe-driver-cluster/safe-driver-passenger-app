@@ -1,19 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:async';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
   const ForgotPasswordOtpPage({super.key});
 
   @override
-  ConsumerState<ForgotPasswordOtpPage> createState() => _ForgotPasswordOtpPageState();
+  ConsumerState<ForgotPasswordOtpPage> createState() =>
+      _ForgotPasswordOtpPageState();
 }
 
 class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
-  final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _controllers =
+      List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-  
+
   String _phoneNumber = '';
   String _verificationId = '';
   bool _isLoading = false;
@@ -25,7 +28,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (args != null) {
         _phoneNumber = args['phoneNumber'] ?? '';
         _verificationId = args['verificationId'] ?? '';
@@ -82,7 +86,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     try {
       // Simulate OTP verification - for demo purposes
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (mounted) {
         HapticFeedback.mediumImpact();
         // Navigate to reset password screen
@@ -121,12 +125,12 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     try {
       // Simulate resending OTP
       await Future.delayed(const Duration(seconds: 1));
-      
+
       if (mounted) {
         HapticFeedback.mediumImpact();
         _showSuccessSnackBar('OTP sent successfully');
         _startCountdown();
-        
+
         // Clear existing OTP
         for (var controller in _controllers) {
           controller.clear();
@@ -222,7 +226,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               // Icon and Title
               const Icon(
                 Icons.sms,
@@ -230,7 +234,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                 color: Color(0xFF2563EB),
               ),
               const SizedBox(height: 24),
-              
+
               const Text(
                 'Enter Verification Code',
                 style: TextStyle(
@@ -241,7 +245,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              
+
               Text(
                 'We sent a 6-digit code to\\n$_phoneNumber',
                 style: const TextStyle(
@@ -251,9 +255,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               // OTP Input Fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -279,7 +283,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Color(0xFF2563EB), width: 2),
+                          borderSide: const BorderSide(
+                              color: Color(0xFF2563EB), width: 2),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -296,14 +301,15 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                   );
                 }),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Verify Button
               SizedBox(
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: (_isLoading || _otpCode.length != 6) ? null : _verifyOtp,
+                  onPressed:
+                      (_isLoading || _otpCode.length != 6) ? null : _verifyOtp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2563EB),
                     foregroundColor: Colors.white,
@@ -319,7 +325,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text(
@@ -331,15 +338,15 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                         ),
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Resend OTP
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Didn\\'t receive the code? ',
+                    'Didn\'t receive the code? ',
                     style: TextStyle(color: Colors.grey),
                   ),
                   if (_countdown > 0)
@@ -353,16 +360,18 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       child: Text(
                         _isResending ? 'Sending...' : 'Resend OTP',
                         style: TextStyle(
-                          color: _isResending ? Colors.grey : const Color(0xFF2563EB),
+                          color: _isResending
+                              ? Colors.grey
+                              : const Color(0xFF2563EB),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                 ],
               ),
-              
+
               const Spacer(),
-              
+
               // Change Phone Number
               GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -375,7 +384,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const SizedBox(height: 20),
             ],
           ),
