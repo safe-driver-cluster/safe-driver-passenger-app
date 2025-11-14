@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/country_code_picker.dart';
 import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -82,7 +82,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     print(
-        '✅ Form validated, attempting login with phone: ${_selectedCountryCode}${_phoneController.text.trim()}');
+        '✅ Form validated, attempting login with phone: $_selectedCountryCode${_phoneController.text.trim()}');
 
     // Add haptic feedback
     HapticFeedback.lightImpact();
@@ -94,9 +94,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     //   password: _passwordController.text.trim(),
     //   rememberMe: _rememberMe,
     // );
-    
+
     // Temporary placeholder
-    final result = AuthResult(
+    const result = AuthResult(
       success: false,
       message: 'Phone login not yet implemented',
     );
@@ -148,8 +148,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     HapticFeedback.lightImpact();
 
     // TODO: Implement password reset for phone numbers
-    _showErrorSnackBar('Password reset for phone numbers not yet implemented. Please contact support.');
-    
+    _showErrorSnackBar(
+        'Password reset for phone numbers not yet implemented. Please contact support.');
+
     // final authNotifier = ref.read(authStateProvider.notifier);
     // final result = await authNotifier.sendPasswordResetSMS(phoneNumber);
     // if (mounted) {
