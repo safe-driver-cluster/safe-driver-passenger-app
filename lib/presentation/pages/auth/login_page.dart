@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
+import '../../../app/routes.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -527,6 +528,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               color: Colors.white,
                                             ),
                                           ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                // Forgot Password Link
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                                    },
+                                    child: const Text(
+                                      'Forgot Password?',
+                                      style: TextStyle(
+                                        color: Color(0xFF2563EB),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
                                 ),
 
