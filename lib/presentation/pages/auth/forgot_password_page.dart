@@ -31,7 +31,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     }
 
     final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -41,8 +41,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     try {
       // Check if account exists with this phone number
       final authNotifier = ref.read(authStateProvider.notifier);
-      final accountExists = await authNotifier.checkPhoneNumberExists(phoneNumber);
-      
+      final accountExists =
+          await authNotifier.checkPhoneNumberExists(phoneNumber);
+
       if (!accountExists) {
         _showErrorSnackBar('No account found with this phone number');
         return;
@@ -50,7 +51,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
       // Send OTP for password reset
       final result = await authNotifier.sendPasswordResetOTP(phoneNumber);
-      
+
       if (mounted) {
         if (result.success) {
           HapticFeedback.mediumImpact();
