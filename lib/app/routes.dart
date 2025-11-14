@@ -3,8 +3,6 @@ import 'package:safedriver_passenger_app/presentation/pages/onboarding/onboardin
 
 import '../presentation/pages/auth/account_verification_page.dart';
 import '../presentation/pages/auth/forgot_password_page.dart';
-import '../presentation/pages/auth/forgot_password_otp_page.dart';
-import '../presentation/pages/auth/reset_password_page.dart';
 import '../presentation/pages/auth/login_page.dart';
 import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
@@ -45,6 +43,8 @@ class AppRoutes {
   static const String register = '/register';
   static const String accountVerification = '/account-verification';
   static const String forgotPassword = '/forgot-password';
+  static const String forgotPasswordOtp = '/forgot-password-otp';
+  static const String resetPassword = '/reset-password';
   static const String otpVerification = '/otp-verification';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';
