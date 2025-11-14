@@ -73,7 +73,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
   Future<void> _verifyOtp() async {
     final otpCode = _otpCode;
     if (otpCode.length != 6) {
-      _showErrorSnackBar('Please enter the complete 6-digit OTP');
+      CustomSnackBar.showError(
+          context, 'Please enter the complete 6-digit OTP');
+      return;
+    }
+
+    if (_verificationId.isEmpty) {
+      CustomSnackBar.showError(
+          context, 'Verification ID not found. Please try again.');
       return;
     }
 
@@ -84,25 +91,36 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // Simulate OTP verification - for demo purposes
-      await Future.delayed(const Duration(seconds: 2));
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.verifyOtp(otpCode);
 
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        // Navigate to reset password screen
-        Navigator.pushReplacementNamed(
-          context,
-          '/reset-password',
-          arguments: {
-            'phoneNumber': _phoneNumber,
-            'otpCode': otpCode,
-          },
-        );
+      final phoneAuthState = ref.read(phoneAuthControllerProvider);
+
+      if (phoneAuthState.isAuthenticated) {
+        if (mounted) {
+          HapticFeedback.mediumImpact();
+          // Navigate to reset password screen
+          Navigator.pushReplacementNamed(
+            context,
+            '/reset-password',
+            arguments: {
+              'phoneNumber': _phoneNumber,
+              'otpCode': otpCode,
+            },
+          );
+        }
+      } else if (phoneAuthState.error != null) {
+        if (mounted) {
+          HapticFeedback.heavyImpact();
+          CustomSnackBar.showError(context, phoneAuthState.error!);
+        }
       }
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar('Invalid OTP. Please try again.');
+        CustomSnackBar.showError(
+            context, 'Verification failed: ${e.toString()}');
       }
     } finally {
       if (mounted) {
