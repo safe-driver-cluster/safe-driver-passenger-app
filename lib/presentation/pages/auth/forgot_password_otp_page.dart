@@ -339,7 +339,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Didn\\'t receive the code? ',
+                    'Didn\'t receive the code? ',
                     style: TextStyle(color: Colors.grey),
                   ),
                   if (_countdown > 0)
