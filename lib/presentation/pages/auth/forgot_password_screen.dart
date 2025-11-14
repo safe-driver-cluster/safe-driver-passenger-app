@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../providers/auth_provider.dart';
@@ -39,8 +38,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
     try {
       final authProvider = ref.read(authStateProvider.notifier);
-      final phoneExists = await authProvider.checkPhoneNumberExists(phoneNumber);
-      
+      final phoneExists =
+          await authProvider.checkPhoneNumberExists(phoneNumber);
+
       if (!phoneExists) {
         setState(() {
           _isLoading = false;
@@ -54,11 +54,12 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         return;
       }
 
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.sendOtp(phoneNumber);
-      
+
       final phoneAuthState = ref.read(phoneAuthControllerProvider);
-      
+
       if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
         if (mounted) {
           Navigator.pushNamed(
@@ -142,7 +143,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _sendOTP,
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
                             : const Text('Send OTP'),
                       ),
                     ),
