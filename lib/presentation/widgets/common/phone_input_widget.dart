@@ -59,7 +59,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> {
 
   String _getHintText() {
     if (widget.hintText != null) return widget.hintText!;
-    
+
     switch (widget.selectedCountry.code) {
       case 'LK':
         return '77 123 4567';
@@ -131,9 +131,9 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> {
               onCountryChanged: widget.onCountryChanged,
               enabled: widget.enabled,
             ),
-            
+
             const SizedBox(width: 12),
-            
+
             // Phone Number Input
             Expanded(
               child: TextFormField(
