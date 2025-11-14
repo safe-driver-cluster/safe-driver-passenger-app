@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/auth_provider.dart';
 import '../../../app/routes.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -538,7 +538,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(
                                     onTap: () {
-                                      Navigator.pushNamed(context, AppRoutes.forgotPassword);
+                                      Navigator.pushNamed(
+                                          context, AppRoutes.forgotPassword);
                                     },
                                     child: const Text(
                                       'Forgot Password?',
