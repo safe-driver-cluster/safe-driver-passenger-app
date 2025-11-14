@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/color_constants.dart';
-import '../../../core/constants/string_constants.dart';
-import '../../../providers/app_providers.dart';
-import '../../widgets/common/custom_button.dart';
-import '../../widgets/common/custom_text_field.dart';
+import '../../../providers/auth_provider.dart';
+import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/loading_widget.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -17,12 +15,13 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
 
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  bool _isEmailSent = false;
+  final _phoneController = TextEditingController();
+  String _selectedCountryCode = '+94'; // Default to Sri Lanka
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
