@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -251,6 +252,79 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       );
     } catch (e) {
       print('💥 Sign in error in provider: $e');
+      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return AuthResult(success: false, message: errorMessage);
+    }
+  }
+
+  // Sign in with phone number and password
+  Future<AuthResult> signInWithPhone({
+    required String phoneNumber,
+    required String password,
+    bool rememberMe = false,
+  }) async {
+    try {
+      print('🎯 Starting phone sign in process for: $phoneNumber');
+      state = state.copyWith(isLoading: true, error: null);
+
+      // For now, we'll query Firestore to find user by phone number
+      // then use their email to sign in with Firebase Auth
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('passengers')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        throw Exception('No account found with this phone number');
+      }
+
+      final userDoc = querySnapshot.docs.first;
+      final userData = userDoc.data();
+      final email = userData['email'] as String?;
+
+      if (email == null || email.isEmpty) {
+        throw Exception(
+            'Account found but no email associated. Please contact support.');
+      }
+
+      // Use the existing email-based sign in
+      final userCredential = await _authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+        rememberMe: rememberMe,
+      );
+
+      // Check if email is verified (same logic as email sign in)
+      if (userCredential.user != null && !userCredential.user!.emailVerified) {
+        state = state.copyWith(
+          isLoading: false,
+          currentStep: AuthStep.emailVerification,
+        );
+        return const AuthResult(
+          success: false,
+          message: 'Please verify your email before signing in',
+        );
+      }
+
+      print('🎉 Phone sign in successful!');
+      state = state.copyWith(
+        isLoading: false,
+        isRemembered: rememberMe,
+        currentStep: AuthStep.signIn,
+      );
+
+      return AuthResult(
+        success: true,
+        message: 'Sign in successful',
+        user: userCredential.user,
+      );
+    } catch (e) {
+      print('💥 Phone sign in error in provider: $e');
       final errorMessage = _getFirebaseErrorMessage(e.toString());
       state = state.copyWith(
         isLoading: false,
