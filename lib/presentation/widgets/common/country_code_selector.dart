@@ -29,8 +29,10 @@ class CountryCodeSelector extends StatelessWidget {
   static const List<CountryCode> countries = [
     CountryCode(name: 'Sri Lanka', code: 'LK', dialCode: '+94', flag: '🇱🇰'),
     CountryCode(name: 'India', code: 'IN', dialCode: '+91', flag: '🇮🇳'),
-    CountryCode(name: 'United States', code: 'US', dialCode: '+1', flag: '🇺🇸'),
-    CountryCode(name: 'United Kingdom', code: 'GB', dialCode: '+44', flag: '🇬🇧'),
+    CountryCode(
+        name: 'United States', code: 'US', dialCode: '+1', flag: '🇺🇸'),
+    CountryCode(
+        name: 'United Kingdom', code: 'GB', dialCode: '+44', flag: '🇬🇧'),
     CountryCode(name: 'Australia', code: 'AU', dialCode: '+61', flag: '🇦🇺'),
     CountryCode(name: 'Canada', code: 'CA', dialCode: '+1', flag: '🇨🇦'),
     CountryCode(name: 'Germany', code: 'DE', dialCode: '+49', flag: '🇩🇪'),
@@ -120,7 +122,7 @@ class CountryCodeSelector extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             // Header
             const Padding(
               padding: EdgeInsets.all(20),
@@ -132,7 +134,7 @@ class CountryCodeSelector extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Search field
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -154,9 +156,9 @@ class CountryCodeSelector extends StatelessWidget {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Country list
             Expanded(
               child: ListView.builder(
@@ -164,7 +166,7 @@ class CountryCodeSelector extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final country = countries[index];
                   final isSelected = country.code == selectedCountry.code;
-                  
+
                   return ListTile(
                     leading: Text(
                       country.flag,
@@ -173,7 +175,8 @@ class CountryCodeSelector extends StatelessWidget {
                     title: Text(
                       country.name,
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                     trailing: Text(
@@ -181,11 +184,14 @@ class CountryCodeSelector extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: isSelected ? Theme.of(context).primaryColor : Colors.grey[600],
+                        color: isSelected
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey[600],
                       ),
                     ),
                     selected: isSelected,
-                    selectedTileColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                    selectedTileColor:
+                        Theme.of(context).primaryColor.withOpacity(0.1),
                     onTap: () {
                       Navigator.of(context).pop();
                       onCountryChanged(country);
