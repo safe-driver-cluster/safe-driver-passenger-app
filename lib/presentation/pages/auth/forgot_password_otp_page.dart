@@ -94,13 +94,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      final phoneAuthController =
-          ref.read(phoneAuthControllerProvider.notifier);
-      await phoneAuthController.verifyOtp(otpCode);
+      final smsGateway = SmsGatewayService();
+      final result = await smsGateway.verifyOtp(
+        verificationId: _verificationId,
+        otpCode: otpCode,
+        phoneNumber: _phoneNumber,
+      );
 
-      final phoneAuthState = ref.read(phoneAuthControllerProvider);
-
-      if (phoneAuthState.isAuthenticated) {
+      if (result.success) {
         if (mounted) {
           HapticFeedback.mediumImpact();
           // Navigate to reset password screen
@@ -110,13 +111,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
             arguments: {
               'phoneNumber': _phoneNumber,
               'otpCode': otpCode,
+              'userId': result.userId,
             },
           );
         }
-      } else if (phoneAuthState.error != null) {
+      } else {
         if (mounted) {
           HapticFeedback.heavyImpact();
-          CustomSnackBar.showError(context, phoneAuthState.error!);
+          CustomSnackBar.showError(context, 'Invalid OTP. Please try again.');
         }
       }
     } catch (e) {
