@@ -138,7 +138,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     if (_isResending || _countdown > 0) return;
 
     if (_phoneNumber.isEmpty) {
-      CustomSnackBar.showError(context, 'Phone number not found. Please try again.');
+      CustomSnackBar.showError(
+          context, 'Phone number not found. Please try again.');
       return;
     }
 
@@ -149,11 +150,12 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.resendOtp();
-      
+
       final phoneAuthState = ref.read(phoneAuthControllerProvider);
-      
+
       if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
         _verificationId = phoneAuthState.verificationId!;
         if (mounted) {
@@ -175,7 +177,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
-        CustomSnackBar.showError(context, 'Failed to resend OTP: ${e.toString()}');
+        CustomSnackBar.showError(
+            context, 'Failed to resend OTP: ${e.toString()}');
       }
     } finally {
       if (mounted) {
