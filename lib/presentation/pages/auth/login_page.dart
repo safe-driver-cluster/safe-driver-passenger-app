@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/auth_provider.dart';
+import '../../../core/constants/color_constants.dart';
+import '../../../providers/phone_auth_provider.dart';
+import '../../widgets/common/country_code_selector.dart';
+import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../widgets/common/phone_input_widget.dart';
+import 'otp_verification_page.dart';
 import 'register_page.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -16,15 +21,13 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final CountryCode _selectedCountry = CountryCodeSelector.sriLanka;
   bool _rememberMe = false;
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -43,9 +46,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['message'] != null) {
-      // Pre-fill email if provided
-      if (args['email'] != null) {
-        _emailController.text = args['email'];
+      // Pre-fill phone if provided
+      if (args['phoneNumber'] != null) {
+        _phoneController.text = args['phoneNumber'];
       }
 
       // Show success message
