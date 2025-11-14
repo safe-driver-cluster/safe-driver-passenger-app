@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/country_code_selector.dart';
-import '../../widgets/common/phone_input_widget.dart';
+import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/custom_snackbar.dart';
+import '../../widgets/common/phone_input_widget.dart';
 import 'login_page.dart';
 import 'otp_verification_page.dart';
 
@@ -73,25 +73,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       return;
     }
 
-    final phoneNumber = _selectedCountry.dialCode + _phoneController.text.trim();
+    final phoneNumber =
+        _selectedCountry.dialCode + _phoneController.text.trim();
     print('✅ Form validated, registering with phone: $phoneNumber');
 
     HapticFeedback.lightImpact();
 
     try {
-      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
-      
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
+
       // Set user details for registration
       await phoneAuthController.setRegistrationData({
         'firstName': _firstNameController.text.trim(),
         'lastName': _lastNameController.text.trim(),
-        'email': _emailController.text.trim().isNotEmpty ? _emailController.text.trim() : null,
+        'email': _emailController.text.trim().isNotEmpty
+            ? _emailController.text.trim()
+            : null,
         'phoneNumber': phoneNumber,
       });
 
       // Send OTP
       await phoneAuthController.sendOtp(phoneNumber);
-      
     } catch (e) {
       print('Registration error: $e');
       CustomSnackBar.showError(
@@ -214,9 +217,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               color: AppColors.primaryColor,
                             ),
                           ),
-
                           const SizedBox(height: 24),
-
                           const Text(
                             'Create Account',
                             style: TextStyle(
@@ -226,9 +227,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-
                           const SizedBox(height: 8),
-
                           Text(
                             'Join SafeDriver for a secure journey',
                             style: TextStyle(
@@ -280,23 +279,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     child: TextFormField(
                                       controller: _firstNameController,
                                       enabled: !isLoading,
-                                      textCapitalization: TextCapitalization.words,
-                                      validator: (value) => _validateName(value, 'First name'),
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      validator: (value) =>
+                                          _validateName(value, 'First name'),
                                       decoration: InputDecoration(
                                         labelText: 'First Name',
                                         hintText: 'Enter your first name',
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           borderSide: BorderSide(
                                             color: Colors.grey[300]!,
                                             width: 2,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           borderSide: const BorderSide(
                                             color: AppColors.primaryColor,
                                             width: 2,
@@ -310,23 +314,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     child: TextFormField(
                                       controller: _lastNameController,
                                       enabled: !isLoading,
-                                      textCapitalization: TextCapitalization.words,
-                                      validator: (value) => _validateName(value, 'Last name'),
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      validator: (value) =>
+                                          _validateName(value, 'Last name'),
                                       decoration: InputDecoration(
                                         labelText: 'Last Name',
                                         hintText: 'Enter your last name',
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           borderSide: BorderSide(
                                             color: Colors.grey[300]!,
                                             width: 2,
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           borderSide: const BorderSide(
                                             color: AppColors.primaryColor,
                                             width: 2,
@@ -401,26 +410,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     child: GestureDetector(
                                       onTap: _showTermsDialog,
                                       child: RichText(
-                                        text: TextSpan(
-                                          style: const TextStyle(
+                                        text: const TextSpan(
+                                          style: TextStyle(
                                             fontSize: 14,
                                             color: AppColors.textSecondary,
                                           ),
                                           children: [
-                                            const TextSpan(text: 'I agree to the '),
+                                            TextSpan(text: 'I agree to the '),
                                             TextSpan(
                                               text: 'Terms and Conditions',
                                               style: TextStyle(
                                                 color: AppColors.primaryColor,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                               ),
                                             ),
-                                            const TextSpan(text: ' and '),
+                                            TextSpan(text: ' and '),
                                             TextSpan(
                                               text: 'Privacy Policy',
                                               style: TextStyle(
                                                 color: AppColors.primaryColor,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                               ),
                                             ),
                                           ],
@@ -435,11 +446,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                               // Register Button
                               ElevatedButton(
-                                onPressed: (isLoading || !_acceptTerms) ? null : _register,
+                                onPressed: (isLoading || !_acceptTerms)
+                                    ? null
+                                    : _register,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryColor,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -451,7 +465,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                         width: 20,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
                                             Colors.white,
                                           ),
                                         ),
@@ -477,7 +492,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
                                     child: Text(
                                       'OR',
                                       style: TextStyle(
@@ -500,10 +516,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                               // Google Sign In Button
                               OutlinedButton.icon(
-                                onPressed: isLoading ? null : () {
-                                  // TODO: Implement Google Sign In
-                                  _showErrorSnackBar('Google Sign In coming soon!');
-                                },
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        // TODO: Implement Google Sign In
+                                        _showErrorSnackBar(
+                                            'Google Sign In coming soon!');
+                                      },
                                 icon: const GoogleIcon(),
                                 label: const Text(
                                   'Continue with Google',
@@ -514,7 +533,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   ),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
