@@ -136,6 +136,18 @@ class AppRoutes {
           settings: settings,
         );
 
+      case forgotPasswordOtp:
+        return MaterialPageRoute(
+          builder: (_) => const ForgotPasswordOtpPage(),
+          settings: settings,
+        );
+
+      case resetPassword:
+        return MaterialPageRoute(
+          builder: (_) => const ResetPasswordPage(),
+          settings: settings,
+        );
+
       case otpVerification:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
