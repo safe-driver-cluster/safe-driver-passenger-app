@@ -46,9 +46,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['message'] != null) {
-      // Pre-fill email if provided
-      if (args['email'] != null) {
-        _emailController.text = args['email'];
+      // Pre-fill phone if provided
+      if (args['phoneNumber'] != null) {
+        _phoneController.text = args['phoneNumber'];
       }
 
       // Show success message
