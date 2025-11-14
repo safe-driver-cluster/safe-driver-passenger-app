@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../providers/auth_provider.dart';
+import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
+import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -37,22 +40,52 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // For now, we'll assume the phone number exists and proceed with OTP
-      // Navigate to OTP verification screen directly
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        Navigator.pushNamed(
-          context,
-          '/forgot-password-otp',
-          arguments: {
-            'phoneNumber': phoneNumber,
-          },
-        );
+      // Check if phone number exists in the system
+      final authProvider = ref.read(authStateProvider.notifier);
+      final phoneExists = await authProvider.checkPhoneNumberExists(phoneNumber);
+      
+      if (!phoneExists) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          CustomSnackBar.showError(
+            context,
+            'No account found with this phone number. Please check and try again.',
+          );
+        }
+        return;
+      }
+
+      // Send OTP using phone auth provider
+      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.sendOtp(phoneNumber);
+      
+      final phoneAuthState = ref.read(phoneAuthControllerProvider);
+      
+      if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
+        if (mounted) {
+          HapticFeedback.mediumImpact();
+          Navigator.pushNamed(
+            context,
+            '/forgot-password-otp',
+            arguments: {
+              'phoneNumber': phoneNumber,
+              'verificationId': phoneAuthState.verificationId,
+            },
+          );
+        }
+      } else if (phoneAuthState.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, phoneAuthState.error!);
+        }
       }
     } catch (e) {
       if (mounted) {
-        HapticFeedback.heavyImpact();
-        _showErrorSnackBar('An error occurred. Please try again.');
+        CustomSnackBar.showError(
+          context,
+          'Failed to send OTP: ${e.toString()}',
+        );
       }
     } finally {
       if (mounted) {
@@ -63,95 +96,57 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     }
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        action: SnackBarAction(
-          label: 'Dismiss',
-          textColor: Colors.white,
-          onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8FAFF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF1A1E25)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Forgot Password',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-
-              // Icon and Title
-              const Icon(
-                Icons.lock_reset,
-                size: 80,
-                color: Color(0xFF2563EB),
-              ),
-              const SizedBox(height: 24),
-
+              
+              // Title
               const Text(
-                'Reset Password',
+                'Forgot Password?',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Color(0xFF1A1E25),
                 ),
-                textAlign: TextAlign.center,
               ),
+              
               const SizedBox(height: 12),
-
+              
+              // Subtitle
               const Text(
-                'Enter your phone number to receive an OTP for password reset',
+                'Don\\'t worry! Enter your phone number and we\\'ll send you a code to reset your password.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
-                  height: 1.4,
+                  color: Color(0xFF64748B),
+                  height: 1.5,
                 ),
-                textAlign: TextAlign.center,
               ),
-
+              
               const SizedBox(height: 40),
-
-              // Phone Number Form
+              
+              // Form
               Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Phone Number Field with Country Code
+                    // Phone Number Field
                     PhoneNumberField(
                       controller: _phoneController,
                       selectedCountryCode: _selectedCountryCode,
@@ -160,26 +155,25 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                           _selectedCountryCode = code;
                         });
                       },
-                      labelText: 'Phone Number',
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Phone number is required';
                         }
+                        
                         if (_selectedCountryCode == '+94' &&
-                            value.length != 9) {
-                          return 'Please enter a valid Sri Lankan phone number';
+                            !RegExp(r'^[0-9]{9}$').hasMatch(value.trim())) {
+                          return 'Please enter a valid 9-digit phone number';
                         }
-                        if (value.length < 7 || value.length > 15) {
-                          return 'Please enter a valid phone number';
-                        }
+                        
                         return null;
                       },
                     ),
-
+                    
                     const SizedBox(height: 32),
-
+                    
                     // Send OTP Button
                     SizedBox(
+                      width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _sendOTP,
@@ -190,23 +184,22 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          disabledBackgroundColor: Colors.grey[300],
+                          disabledBackgroundColor: const Color(0xFF2563EB).withOpacity(0.6),
                         ),
                         child: _isLoading
                             ? const SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: 24,
+                                width: 24,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white),
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                 ),
                               )
                             : const Text(
                                 'Send OTP',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                       ),
@@ -214,30 +207,34 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   ],
                 ),
               ),
-
+              
               const Spacer(),
-
+              
               // Back to Login
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Remember your password? ',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Text(
-                      'Sign In',
+              Center(
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: RichText(
+                    text: const TextSpan(
+                      text: 'Remember your password? ',
                       style: TextStyle(
-                        color: Color(0xFF2563EB),
-                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF64748B),
+                        fontSize: 16,
                       ),
+                      children: [
+                        TextSpan(
+                          text: 'Sign In',
+                          style: TextStyle(
+                            color: Color(0xFF2563EB),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-
+              
               const SizedBox(height: 20),
             ],
           ),
