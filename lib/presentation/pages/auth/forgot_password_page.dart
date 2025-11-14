@@ -25,31 +25,59 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     super.dispose();
   }
 
-  Future<void> _sendResetEmail() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final authController = ref.read(authControllerProvider.notifier);
-        await authController
-            .sendPasswordResetEmail(_emailController.text.trim());
+  Future<void> _sendOTP() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
+    final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
+    
+    setState(() {
+      _isLoading = true;
+    });
+
+    HapticFeedback.lightImpact();
+
+    try {
+      // Check if account exists with this phone number
+      final authNotifier = ref.read(authStateProvider.notifier);
+      final accountExists = await authNotifier.checkPhoneNumberExists(phoneNumber);
+      
+      if (!accountExists) {
+        _showErrorSnackBar('No account found with this phone number');
+        return;
+      }
+
+      // Send OTP for password reset
+      final result = await authNotifier.sendPasswordResetOTP(phoneNumber);
+      
+      if (mounted) {
+        if (result.success) {
+          HapticFeedback.mediumImpact();
+          // Navigate to OTP verification screen
+          Navigator.pushNamed(
+            context,
+            '/forgot-password-otp',
+            arguments: {
+              'phoneNumber': phoneNumber,
+              'verificationId': result.verificationId,
+            },
+          );
+        } else {
+          HapticFeedback.heavyImpact();
+          _showErrorSnackBar(result.message ?? 'Failed to send OTP');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        HapticFeedback.heavyImpact();
+        _showErrorSnackBar('An error occurred. Please try again.');
+      }
+    } finally {
+      if (mounted) {
         setState(() {
-          _isEmailSent = true;
+          _isLoading = false;
         });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password reset email sent successfully'),
-            backgroundColor: AppColors.successColor,
-          ),
-        );
-      } catch (e) {
-        print('Password reset error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: AppColors.errorColor,
-          ),
-        );
       }
     }
   }
