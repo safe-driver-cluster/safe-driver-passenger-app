@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../providers/phone_auth_provider.dart';
+import '../../widgets/common/custom_snackbar.dart';
+
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
   const ForgotPasswordOtpPage({super.key});
 
@@ -134,6 +137,12 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
   Future<void> _resendOtp() async {
     if (_isResending || _countdown > 0) return;
 
+    if (_phoneNumber.isEmpty) {
+      CustomSnackBar.showError(
+          context, 'Phone number not found. Please try again.');
+      return;
+    }
+
     setState(() {
       _isResending = true;
     });
@@ -141,24 +150,35 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // Simulate resending OTP
-      await Future.delayed(const Duration(seconds: 1));
+      final phoneAuthController =
+          ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.resendOtp();
 
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        _showSuccessSnackBar('OTP sent successfully');
-        _startCountdown();
+      final phoneAuthState = ref.read(phoneAuthControllerProvider);
 
-        // Clear existing OTP
-        for (var controller in _controllers) {
-          controller.clear();
+      if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
+        _verificationId = phoneAuthState.verificationId!;
+        if (mounted) {
+          HapticFeedback.mediumImpact();
+          CustomSnackBar.showSuccess(context, 'OTP sent successfully');
+          _startCountdown();
+
+          // Clear existing OTP
+          for (var controller in _controllers) {
+            controller.clear();
+          }
+          _focusNodes[0].requestFocus();
         }
-        _focusNodes[0].requestFocus();
+      } else if (phoneAuthState.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, phoneAuthState.error!);
+        }
       }
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar('Failed to resend OTP. Please try again.');
+        CustomSnackBar.showError(
+            context, 'Failed to resend OTP: ${e.toString()}');
       }
     } finally {
       if (mounted) {
