@@ -43,6 +43,8 @@ class AppRoutes {
   static const String register = '/register';
   static const String accountVerification = '/account-verification';
   static const String forgotPassword = '/forgot-password';
+  static const String forgotPasswordOtp = '/forgot-password-otp';
+  static const String resetPassword = '/reset-password';
   static const String otpVerification = '/otp-verification';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';

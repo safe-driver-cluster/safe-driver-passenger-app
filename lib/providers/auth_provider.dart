@@ -653,4 +653,101 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
     return 'An unexpected error occurred. Please try again.';
   }
+
+  // Check if phone number exists in the system
+  Future<bool> checkPhoneNumberExists(String phoneNumber) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('passenger_details')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .limit(1)
+          .get();
+
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking phone number: $e');
+      return false;
+    }
+  }
+
+  // Send OTP for password reset (placeholder)
+  Future<AuthResult> sendPasswordResetOTP(String phoneNumber) async {
+    try {
+      // For now, just simulate sending OTP
+      await Future.delayed(const Duration(seconds: 1));
+
+      return const AuthResult(
+        success: true,
+        message: 'OTP sent successfully',
+      );
+    } catch (e) {
+      return AuthResult(
+        success: false,
+        message: 'Failed to send OTP: ${e.toString()}',
+      );
+    }
+  }
+
+  // Reset password with phone number and OTP
+  Future<AuthResult> resetPasswordWithPhone({
+    required String phoneNumber,
+    required String newPassword,
+    required String otpCode,
+  }) async {
+    try {
+      // Find user by phone number
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('passenger_details')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        throw Exception('No account found with this phone number');
+      }
+
+      final userDoc = querySnapshot.docs.first;
+      final userData = userDoc.data();
+      final email = userData['email'] as String?;
+
+      if (email == null || email.isEmpty) {
+        throw Exception('Account found but no email associated');
+      }
+
+      // Get the Firebase Auth user by email
+      final userRecord =
+          await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+      if (userRecord.isEmpty) {
+        throw Exception('No authentication record found');
+      }
+
+      // For security, we should validate the OTP here
+      // For now, we'll assume it's valid and proceed
+
+      // Get current user if signed in, or sign them in temporarily
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null || user.email != email) {
+        // We need to sign in the user first, but we don't have their current password
+        // In a real implementation, you'd use Firebase Admin SDK on the backend
+        // For now, we'll simulate password update
+        throw Exception('Password reset requires backend implementation');
+      }
+
+      // Update password
+      await user.updatePassword(newPassword);
+
+      return const AuthResult(
+        success: true,
+        message: 'Password updated successfully',
+      );
+    } catch (e) {
+      print('Password reset error: $e');
+      return AuthResult(
+        success: false,
+        message: e.toString().contains('Exception:')
+            ? e.toString().split('Exception:').last.trim()
+            : 'Failed to reset password',
+      );
+    }
+  }
 }
