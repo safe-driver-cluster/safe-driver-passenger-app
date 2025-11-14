@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../providers/auth_provider.dart';
+import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
+import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -37,17 +40,46 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // For now, we'll assume the phone number exists and proceed with OTP
-      // Navigate to OTP verification screen directly
-      if (mounted) {
-        HapticFeedback.mediumImpact();
-        Navigator.pushNamed(
-          context,
-          '/forgot-password-otp',
-          arguments: {
-            'phoneNumber': phoneNumber,
-          },
-        );
+      // Check if phone number exists in the system
+      final authProvider = ref.read(authStateProvider.notifier);
+      final phoneExists = await authProvider.checkPhoneNumberExists(phoneNumber);
+      
+      if (!phoneExists) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          CustomSnackBar.showError(
+            context,
+            'No account found with this phone number. Please check and try again.',
+          );
+        }
+        return;
+      }
+
+      // Send OTP using phone auth provider
+      final phoneAuthController = ref.read(phoneAuthControllerProvider.notifier);
+      await phoneAuthController.sendOtp(phoneNumber);
+      
+      final phoneAuthState = ref.read(phoneAuthControllerProvider);
+      
+      if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
+        if (mounted) {
+          HapticFeedback.mediumImpact();
+          Navigator.pushNamed(
+            context,
+            '/forgot-password-otp',
+            arguments: {
+              'phoneNumber': phoneNumber,
+              'verificationId': phoneAuthState.verificationId,
+            },
+          );
+        }
+      } else if (phoneAuthState.error != null) {
+        if (mounted) {
+          CustomSnackBar.showError(context, phoneAuthState.error!);
+        }
+      }
       }
     } catch (e) {
       if (mounted) {
