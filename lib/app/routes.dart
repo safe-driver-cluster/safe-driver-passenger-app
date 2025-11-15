@@ -3,7 +3,7 @@ import 'package:safedriver_passenger_app/presentation/pages/onboarding/onboardin
 
 import '../presentation/pages/auth/account_verification_page.dart';
 import '../presentation/pages/auth/forgot_password_otp_page.dart';
-import '../presentation/pages/auth/forgot_password_screen.dart';
+import '../presentation/pages/auth/forgot_password_page.dart';
 import '../presentation/pages/auth/login_page.dart';
 import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
