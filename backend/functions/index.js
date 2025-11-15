@@ -538,11 +538,11 @@ exports.resetPassword = functions
 
         } catch (error) {
             console.error('Password reset error:', error);
-            
+
             if (error instanceof functions.https.HttpsError) {
                 throw error;
             }
-            
+
             throw new functions.https.HttpsError(
                 'internal',
                 'Failed to reset password: ' + error.message
