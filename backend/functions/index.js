@@ -474,6 +474,82 @@ exports.cleanupExpiredOTPs = functions
         return null;
     });
 
+// Reset password with phone verification
+exports.resetPassword = functions
+    .region('asia-south1')
+    .https.onCall(async (data, context) => {
+        const { email, phoneNumber, newPassword, otpCode } = data;
+
+        // Validate input
+        if (!email || !phoneNumber || !newPassword || !otpCode) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Missing required parameters: email, phoneNumber, newPassword, otpCode'
+            );
+        }
+
+        try {
+            // Verify the user exists in passenger_details
+            const passengerQuery = await db.collection('passenger_details')
+                .where('email', '==', email)
+                .where('phoneNumber', '==', phoneNumber)
+                .limit(1)
+                .get();
+
+            if (passengerQuery.empty) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    'No account found with this email and phone number'
+                );
+            }
+
+            // Get Firebase Auth user
+            let user;
+            try {
+                user = await auth.getUserByEmail(email);
+            } catch (error) {
+                if (error.code === 'auth/user-not-found') {
+                    throw new functions.https.HttpsError(
+                        'not-found',
+                        'No authentication record found'
+                    );
+                }
+                throw error;
+            }
+
+            // Update password in Firebase Auth
+            await auth.updateUser(user.uid, {
+                password: newPassword,
+            });
+
+            // Update password updated timestamp in Firestore
+            const passengerDoc = passengerQuery.docs[0];
+            await passengerDoc.ref.update({
+                passwordUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            console.log(`Password reset successful for user ${user.uid}`);
+
+            return {
+                success: true,
+                message: 'Password reset successfully',
+                uid: user.uid,
+            };
+
+        } catch (error) {
+            console.error('Password reset error:', error);
+            
+            if (error instanceof functions.https.HttpsError) {
+                throw error;
+            }
+            
+            throw new functions.https.HttpsError(
+                'internal',
+                'Failed to reset password: ' + error.message
+            );
+        }
+    });
+
 // Health check endpoint
 exports.healthCheck = functions
     .region('asia-south1')
