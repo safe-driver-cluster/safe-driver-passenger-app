@@ -99,6 +99,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
         verificationId: _verificationId,
         otpCode: otpCode,
         phoneNumber: _phoneNumber,
+        skipAuthentication: true, // Skip Firebase Auth for forgot password flow
       );
 
       if (result.success) {

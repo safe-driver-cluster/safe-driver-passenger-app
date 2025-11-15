@@ -50,6 +50,7 @@ class SmsGatewayService {
     required String verificationId,
     required String otpCode,
     required String phoneNumber,
+    bool skipAuthentication = false,
   }) async {
     try {
       print('🔐 Verifying OTP: $otpCode for verification: $verificationId');
@@ -64,32 +65,47 @@ class SmsGatewayService {
       final data = result.data as Map<String, dynamic>;
 
       if (data['success'] == true) {
-        // For now, we'll create an anonymous user and associate the phone number with it
-        // This is a workaround since we can't create custom tokens without IAM permissions
-        User? user = _auth.currentUser;
+        if (skipAuthentication) {
+          // For forgot password flow, just return success without Firebase Auth
+          print('✅ OTP verified (skip authentication mode)');
+          return OtpVerifyResult(
+            success: true,
+            user: null,
+            userId: 'temp_user_id', // Temporary ID for forgot password flow
+            phoneNumber: data['phoneNumber'] as String,
+            isNewUser: false,
+          );
+        } else {
+          // For registration flow, create an anonymous user and associate the phone number with it
+          // This is a workaround since we can't create custom tokens without IAM permissions
+          User? user = _auth.currentUser;
 
-        if (user == null) {
-          // Sign in anonymously first
-          final userCredential = await _auth.signInAnonymously();
-          user = userCredential.user!;
+          if (user == null) {
+            // Sign in anonymously first
+            final userCredential = await _auth.signInAnonymously();
+            user = userCredential.user!;
+          }
+          print('✅ OTP verified and user authenticated: ${user.uid}');
+
+          // Store the phone verification status in Firestore
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'phoneNumber': data['phoneNumber'],
+            'phoneVerified': true,
+            'verificationId': verificationId,
+            'verifiedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+          return OtpVerifyResult(
+            success: true,
+            user: user,
+            userId: user.uid,
+            phoneNumber: data['phoneNumber'] as String,
+            isNewUser: data['isNewUser'] as bool? ?? false,
+          );
         }
-        print('✅ OTP verified and user authenticated: ${user.uid}');
-
-        // Store the phone verification status in Firestore
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'phoneNumber': data['phoneNumber'],
-          'phoneVerified': true,
-          'verificationId': verificationId,
-          'verifiedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
-
-        return OtpVerifyResult(
-          success: true,
-          user: user,
-          userId: user.uid,
-          phoneNumber: data['phoneNumber'] as String,
-          isNewUser: data['isNewUser'] as bool? ?? false,
-        );
       } else {
         throw Exception(
             'Failed to verify OTP: ${data['message'] ?? 'Unknown error'}');

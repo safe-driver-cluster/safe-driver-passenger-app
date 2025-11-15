@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/routes.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
@@ -133,29 +132,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _forgotPassword() async {
-    final phoneNumber = '$_selectedCountryCode${_phoneController.text.trim()}';
-    if (phoneNumber.isEmpty || phoneNumber == _selectedCountryCode) {
-      _showErrorSnackBar('Please enter your phone number first');
-      return;
-    }
-
     HapticFeedback.lightImpact();
 
-    // TODO: Implement password reset for phone numbers
-    _showErrorSnackBar(
-        'Password reset for phone numbers not yet implemented. Please contact support.');
-
-    // final authNotifier = ref.read(authStateProvider.notifier);
-    // final result = await authNotifier.sendPasswordResetSMS(phoneNumber);
-    // if (mounted) {
-    //   if (result.success) {
-    //     HapticFeedback.mediumImpact();
-    //     _showSuccessSnackBar('Password reset SMS sent to $phoneNumber');
-    //   } else {
-    //     HapticFeedback.heavyImpact();
-    //     _showErrorSnackBar(result.message ?? 'Failed to send reset SMS');
-    //   }
-    // }
+    // Navigate to forgot password screen
+    Navigator.pushNamed(context, '/forgot-password');
   }
 
   void _showEmailVerificationDialog() {
@@ -528,27 +508,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               color: Colors.white,
                                             ),
                                           ),
-                                  ),
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Forgot Password Link
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, AppRoutes.forgotPassword);
-                                    },
-                                    child: const Text(
-                                      'Forgot Password?',
-                                      style: TextStyle(
-                                        color: Color(0xFF2563EB),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
                                   ),
                                 ),
 
