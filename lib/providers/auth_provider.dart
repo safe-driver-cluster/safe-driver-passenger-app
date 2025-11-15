@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -715,47 +714,23 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         throw Exception('Account found but no email associated');
       }
 
-      // Use Firebase Cloud Function to reset password securely
-      // This avoids the need for the user to be signed in
-      try {
-        final HttpsCallable callable =
-            FirebaseFunctions.instance.httpsCallable('resetPassword');
-        final result = await callable.call({
-          'email': email,
-          'phoneNumber': phoneNumber,
-          'newPassword': newPassword,
-          'otpCode': otpCode,
-        });
+      // For forgot password flow, update password directly in Firestore
+      // Hash the new password (simple hash for demo - use proper hashing in production)
+      final hashedPassword = _hashPassword(newPassword);
+      
+      // Update password in Firestore
+      await userDoc.reference.update({
+        'password': hashedPassword, // Update the password field used during login
+        'passwordUpdatedAt': FieldValue.serverTimestamp(),
+        'resetViaOTP': true, // Flag to indicate password was reset via OTP
+      });
 
-        final data = result.data as Map<String, dynamic>;
-
-        if (data['success'] == true) {
-          return const AuthResult(
-            success: true,
-            message: 'Password reset successfully',
-          );
-        } else {
-          throw Exception(data['message'] ?? 'Failed to reset password');
-        }
-      } on FirebaseFunctionsException catch (e) {
-        print('Firebase Functions error: ${e.code} - ${e.message}');
-        // If cloud function doesn't exist, fall back to local password hash update
-        // This is a temporary workaround - in production, always use cloud functions
-
-        // Hash the new password (simple hash for demo - use proper hashing in production)
-        final hashedPassword = _hashPassword(newPassword);
-
-        // Update password hash in Firestore
-        await userDoc.reference.update({
-          'passwordHash': hashedPassword,
-          'passwordUpdatedAt': FieldValue.serverTimestamp(),
-        });
-
-        return const AuthResult(
-          success: true,
-          message: 'Password reset successfully',
-        );
-      }
+      print('✅ Password reset successful for phone: $phoneNumber');
+      
+      return const AuthResult(
+        success: true,
+        message: 'Password reset successfully',
+      );
     } catch (e) {
       print('Password reset error: $e');
       return AuthResult(
