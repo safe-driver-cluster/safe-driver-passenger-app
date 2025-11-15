@@ -199,55 +199,93 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Reset Password',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF2563EB),
+              Color(0xFF1E40AF),
+              Color(0xFF1E3A8A),
+            ],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-
-              // Icon and Title
-              const Icon(
-                Icons.lock_reset,
-                size: 80,
-                color: Color(0xFF2563EB),
-              ),
-              const SizedBox(height: 24),
-
-              const Text(
-                'Create New Password',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-
-              const Text(
-                'Enter your new password below',
-                style: TextStyle(
-                  fontSize: 16,
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header Section
+                Container(
+                  padding: const EdgeInsets.only(
+                    top: 20,
+                    left: 24,
+                    right: 24,
+                    bottom: 40,
+                  ),
+                  child: Column(
+                    children: [
+                      // Back Button
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.white,
+                              ),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+                      
+                      // Icon with glow effect
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.3),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Icon(
+                            Icons.lock_reset,
+                            size: 60,
+                            color: Color(0xFF2563EB),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      const Text(
+                        'Reset Password',
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Create a strong new password\\nfor your account',
+                        style: TextStyle(
+                          fontSize: 16,
                   color: Colors.grey,
                   height: 1.4,
                 ),
