@@ -137,7 +137,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         ],
                       ),
                       const SizedBox(height: 40),
-                      
+
                       // Icon with glow effect
                       Container(
                         decoration: BoxDecoration(
@@ -202,7 +202,6 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 8),
-
                         Form(
                           key: _formKey,
                           child: Column(
