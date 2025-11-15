@@ -88,7 +88,10 @@ class SmsGatewayService {
           print('✅ OTP verified and user authenticated: ${user.uid}');
 
           // Store the phone verification status in Firestore
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
             'phoneNumber': data['phoneNumber'],
             'phoneVerified': true,
             'verificationId': verificationId,
