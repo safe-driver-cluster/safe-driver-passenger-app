@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/phone_auth_provider.dart';
 import '../../../data/services/sms_gateway_service.dart';
+import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
