@@ -97,7 +97,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       // Use Firebase Cloud Functions directly to verify OTP without authentication
       final functions = FirebaseFunctions.instance;
       final callable = functions.httpsCallable('verifyOTP');
-      
+
       final result = await callable.call({
         'verificationId': _verificationId,
         'otp': otpCode,
@@ -105,7 +105,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       });
 
       final data = result.data as Map<String, dynamic>;
-      
+
       if (data['success'] == true) {
         if (mounted) {
           HapticFeedback.mediumImpact();
@@ -123,7 +123,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       } else {
         if (mounted) {
           HapticFeedback.heavyImpact();
-          CustomSnackBar.showError(context, data['message'] ?? 'Invalid OTP. Please try again.');
+          CustomSnackBar.showError(
+              context, data['message'] ?? 'Invalid OTP. Please try again.');
         }
       }
     } catch (e) {
@@ -160,13 +161,13 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       // Use Firebase Cloud Functions directly to resend OTP
       final functions = FirebaseFunctions.instance;
       final callable = functions.httpsCallable('sendOTP');
-      
+
       final result = await callable.call({
         'phoneNumber': _phoneNumber,
       });
 
       final data = result.data as Map<String, dynamic>;
-      
+
       if (data['success'] == true) {
         _verificationId = data['verificationId'] as String;
         if (mounted) {
@@ -182,7 +183,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(context, data['message'] ?? 'Failed to resend OTP');
+          CustomSnackBar.showError(
+              context, data['message'] ?? 'Failed to resend OTP');
         }
       }
     } catch (e) {
@@ -212,10 +214,6 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       _verifyOtp();
     }
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
