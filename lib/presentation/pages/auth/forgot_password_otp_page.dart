@@ -153,14 +153,11 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      final phoneAuthController =
-          ref.read(phoneAuthControllerProvider.notifier);
-      await phoneAuthController.resendOtp();
+      final smsGateway = SmsGatewayService();
+      final result = await smsGateway.sendOtp(_phoneNumber);
 
-      final phoneAuthState = ref.read(phoneAuthControllerProvider);
-
-      if (phoneAuthState.isOtpSent && phoneAuthState.verificationId != null) {
-        _verificationId = phoneAuthState.verificationId!;
+      if (result.success && result.verificationId != null) {
+        _verificationId = result.verificationId!;
         if (mounted) {
           HapticFeedback.mediumImpact();
           CustomSnackBar.showSuccess(context, 'OTP sent successfully');
@@ -172,9 +169,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
           }
           _focusNodes[0].requestFocus();
         }
-      } else if (phoneAuthState.error != null) {
+      } else {
         if (mounted) {
-          CustomSnackBar.showError(context, phoneAuthState.error!);
+          CustomSnackBar.showError(context, result.error ?? 'Failed to resend OTP');
         }
       }
     } catch (e) {
