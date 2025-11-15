@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/auth_provider.dart';
 import '../../../data/services/sms_gateway_service.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
@@ -71,7 +71,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(context, result.error ?? 'Failed to send OTP');
+          CustomSnackBar.showError(
+              context, result.error ?? 'Failed to send OTP');
         }
       }
     } catch (e) {
