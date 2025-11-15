@@ -282,7 +282,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
+                      const Text(
                         'Create a strong new password\\nfor your account',
                         style: TextStyle(
                           fontSize: 16,
