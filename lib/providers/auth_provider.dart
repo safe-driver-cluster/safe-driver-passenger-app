@@ -718,7 +718,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       // Use Firebase Cloud Function to reset password securely
       // This avoids the need for the user to be signed in
       try {
-        final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('resetPassword');
+        final HttpsCallable callable =
+            FirebaseFunctions.instance.httpsCallable('resetPassword');
         final result = await callable.call({
           'email': email,
           'phoneNumber': phoneNumber,
@@ -727,7 +728,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         });
 
         final data = result.data as Map<String, dynamic>;
-        
+
         if (data['success'] == true) {
           return const AuthResult(
             success: true,
@@ -740,10 +741,10 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         print('Firebase Functions error: ${e.code} - ${e.message}');
         // If cloud function doesn't exist, fall back to local password hash update
         // This is a temporary workaround - in production, always use cloud functions
-        
+
         // Hash the new password (simple hash for demo - use proper hashing in production)
         final hashedPassword = _hashPassword(newPassword);
-        
+
         // Update password hash in Firestore
         await userDoc.reference.update({
           'passwordHash': hashedPassword,
