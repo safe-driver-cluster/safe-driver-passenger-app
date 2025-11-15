@@ -107,21 +107,18 @@ class PhoneNumberField extends StatelessWidget {
             enabled: enabled,
             decoration: InputDecoration(
               labelText: labelText,
-              prefixIcon: const Icon(Icons.phone_outlined),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+              prefixIcon: Icon(
+                Icons.phone_outlined,
+                color: Colors.grey[600],
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 20,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFF2563EB)),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
+              labelStyle: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 16,
               ),
             ),
             validator: validator,
