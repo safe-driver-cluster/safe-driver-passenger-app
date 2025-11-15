@@ -1,7 +1,7 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/services/sms_gateway_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/custom_snackbar.dart';
@@ -54,31 +54,25 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         return;
       }
 
-      // Send OTP using Firebase Cloud Functions directly
-      final functions = FirebaseFunctions.instance;
-      final callable = functions.httpsCallable('sendOTP');
+      // Send OTP using SMS gateway service directly
+      final smsGateway = SmsGatewayService();
+      final result = await smsGateway.sendOtp(phoneNumber);
 
-      final functionResult = await callable.call({
-        'phoneNumber': phoneNumber,
-      });
-
-      final data = functionResult.data as Map<String, dynamic>;
-
-      if (data['success'] == true) {
+      if (result.success && result.verificationId != null) {
         if (mounted) {
           Navigator.pushNamed(
             context,
             '/forgot-password-otp',
             arguments: {
               'phoneNumber': phoneNumber,
-              'verificationId': data['verificationId'],
+              'verificationId': result.verificationId,
             },
           );
         }
       } else {
         if (mounted) {
           CustomSnackBar.showError(
-              context, data['message'] ?? 'Failed to send OTP');
+              context, result.error ?? 'Failed to send OTP');
         }
       }
     } catch (e) {
