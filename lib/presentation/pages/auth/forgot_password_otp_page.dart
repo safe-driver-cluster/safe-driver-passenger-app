@@ -285,7 +285,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                         ],
                       ),
                       const SizedBox(height: 40),
-                      
+
                       // Icon with glow effect
                       Container(
                         decoration: BoxDecoration(
@@ -368,7 +368,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                                   color: _controllers[index].text.isNotEmpty
                                       ? const Color(0xFF2563EB)
                                       : Colors.grey[200]!,
-                                  width: _controllers[index].text.isNotEmpty ? 2 : 1,
+                                  width: _controllers[index].text.isNotEmpty
+                                      ? 2
+                                      : 1,
                                 ),
                                 boxShadow: _controllers[index].text.isNotEmpty
                                     ? [
@@ -397,7 +399,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.zero,
                                 ),
-                                onChanged: (value) => _onOtpChanged(index, value),
+                                onChanged: (value) =>
+                                    _onOtpChanged(index, value),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                 ],
@@ -437,9 +440,10 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                                 ? null
                                 : _verifyOtp,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: (_isLoading || _otpCode.length != 6)
-                                  ? Colors.grey[300]
-                                  : Colors.transparent,
+                              backgroundColor:
+                                  (_isLoading || _otpCode.length != 6)
+                                      ? Colors.grey[300]
+                                      : Colors.transparent,
                               shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -460,9 +464,10 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: (_isLoading || _otpCode.length != 6)
-                                          ? Colors.grey[600]
-                                          : Colors.white,
+                                      color:
+                                          (_isLoading || _otpCode.length != 6)
+                                              ? Colors.grey[600]
+                                              : Colors.white,
                                     ),
                                   ),
                           ),
