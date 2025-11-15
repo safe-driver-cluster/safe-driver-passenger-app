@@ -717,16 +717,17 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       // For forgot password flow, update password directly in Firestore
       // Hash the new password (simple hash for demo - use proper hashing in production)
       final hashedPassword = _hashPassword(newPassword);
-      
+
       // Update password in Firestore
       await userDoc.reference.update({
-        'password': hashedPassword, // Update the password field used during login
+        'password':
+            hashedPassword, // Update the password field used during login
         'passwordUpdatedAt': FieldValue.serverTimestamp(),
         'resetViaOTP': true, // Flag to indicate password was reset via OTP
       });
 
       print('✅ Password reset successful for phone: $phoneNumber');
-      
+
       return const AuthResult(
         success: true,
         message: 'Password reset successfully',
