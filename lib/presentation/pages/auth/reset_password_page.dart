@@ -180,7 +180,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
     if (value.length < 8) {
       return 'Password must be at least 8 characters long';
     }
-    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)').hasMatch(value)) {
+    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
       return 'Password must contain uppercase, lowercase, and numbers';
     }
     return null;

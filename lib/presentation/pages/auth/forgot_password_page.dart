@@ -189,6 +189,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
                 // Form Section
                 Container(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height * 0.6,
+                  ),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
