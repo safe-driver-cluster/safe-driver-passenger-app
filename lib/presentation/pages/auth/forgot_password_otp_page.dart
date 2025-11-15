@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/services/sms_gateway_service.dart';
-import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
@@ -171,7 +170,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(context, result.error ?? 'Failed to resend OTP');
+          CustomSnackBar.showError(
+              context, result.error ?? 'Failed to resend OTP');
         }
       }
     } catch (e) {
