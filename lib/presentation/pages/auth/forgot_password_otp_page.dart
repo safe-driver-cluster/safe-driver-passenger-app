@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/services/sms_gateway_service.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
@@ -94,19 +94,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // Use Firebase Cloud Functions directly to verify OTP without authentication
-      final functions = FirebaseFunctions.instance;
-      final callable = functions.httpsCallable('verifyOTP');
+      final smsGateway = SmsGatewayService();
+      final result = await smsGateway.verifyOtp(
+        verificationId: _verificationId,
+        otpCode: otpCode,
+        phoneNumber: _phoneNumber,
+      );
 
-      final result = await callable.call({
-        'verificationId': _verificationId,
-        'otp': otpCode,
-        'phoneNumber': _phoneNumber,
-      });
-
-      final data = result.data as Map<String, dynamic>;
-
-      if (data['success'] == true) {
+      if (result.success) {
         if (mounted) {
           HapticFeedback.mediumImpact();
           // Navigate to reset password screen
@@ -116,15 +111,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
             arguments: {
               'phoneNumber': _phoneNumber,
               'otpCode': otpCode,
-              'isVerified': true,
+              'userId': result.userId,
             },
           );
         }
       } else {
         if (mounted) {
           HapticFeedback.heavyImpact();
-          CustomSnackBar.showError(
-              context, data['message'] ?? 'Invalid OTP. Please try again.');
+          CustomSnackBar.showError(context, 'Invalid OTP. Please try again.');
         }
       }
     } catch (e) {
@@ -158,18 +152,11 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     HapticFeedback.lightImpact();
 
     try {
-      // Use Firebase Cloud Functions directly to resend OTP
-      final functions = FirebaseFunctions.instance;
-      final callable = functions.httpsCallable('sendOTP');
+      final smsGateway = SmsGatewayService();
+      final result = await smsGateway.sendOtp(_phoneNumber);
 
-      final result = await callable.call({
-        'phoneNumber': _phoneNumber,
-      });
-
-      final data = result.data as Map<String, dynamic>;
-
-      if (data['success'] == true) {
-        _verificationId = data['verificationId'] as String;
+      if (result.success && result.verificationId != null) {
+        _verificationId = result.verificationId!;
         if (mounted) {
           HapticFeedback.mediumImpact();
           CustomSnackBar.showSuccess(context, 'OTP sent successfully');
@@ -184,7 +171,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       } else {
         if (mounted) {
           CustomSnackBar.showError(
-              context, data['message'] ?? 'Failed to resend OTP');
+              context, result.error ?? 'Failed to resend OTP');
         }
       }
     } catch (e) {
@@ -213,6 +200,40 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     if (_otpCode.length == 6) {
       _verifyOtp();
     }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.red.shade600,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
+  }
+
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.green.shade600,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
   }
 
   @override
