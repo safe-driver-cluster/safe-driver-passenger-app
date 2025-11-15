@@ -245,7 +245,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         ],
                       ),
                       const SizedBox(height: 40),
-                      
+
                       // Icon with glow effect
                       Container(
                         decoration: BoxDecoration(
@@ -418,10 +418,12 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF2563EB).withOpacity(0.05),
+                                  color:
+                                      const Color(0xFF2563EB).withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: const Color(0xFF2563EB).withOpacity(0.1),
+                                    color: const Color(0xFF2563EB)
+                                        .withOpacity(0.1),
                                   ),
                                 ),
                                 child: const Column(
@@ -441,7 +443,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                           fontSize: 13,
                                           color: Color(0xFF64748B),
                                         )),
-                                    Text('• Contains uppercase and lowercase letters',
+                                    Text(
+                                        '• Contains uppercase and lowercase letters',
                                         style: TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF64748B),
@@ -513,7 +516,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                               // Back to Login Link
                               Center(
                                 child: GestureDetector(
-                                  onTap: () => Navigator.pushNamedAndRemoveUntil(
+                                  onTap: () =>
+                                      Navigator.pushNamedAndRemoveUntil(
                                     context,
                                     '/login',
                                     (route) => false,
