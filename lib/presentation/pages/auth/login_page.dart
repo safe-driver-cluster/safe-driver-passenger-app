@@ -133,7 +133,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> _forgotPassword() async {
     HapticFeedback.lightImpact();
-    
+
     // Navigate to forgot password screen
     Navigator.pushNamed(context, '/forgot-password');
   }
