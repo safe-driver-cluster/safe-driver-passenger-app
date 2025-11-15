@@ -57,13 +57,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       // Send OTP using Firebase Cloud Functions directly
       final functions = FirebaseFunctions.instance;
       final callable = functions.httpsCallable('sendOTP');
-      
+
       final functionResult = await callable.call({
         'phoneNumber': phoneNumber,
       });
 
       final data = functionResult.data as Map<String, dynamic>;
-      
+
       if (data['success'] == true) {
         if (mounted) {
           Navigator.pushNamed(
@@ -77,7 +77,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(context, data['message'] ?? 'Failed to send OTP');
+          CustomSnackBar.showError(
+              context, data['message'] ?? 'Failed to send OTP');
         }
       }
     } catch (e) {
