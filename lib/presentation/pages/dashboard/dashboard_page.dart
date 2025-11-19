@@ -9,7 +9,7 @@ import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
-import '../qr/qr_scanner_page.dart';
+import '../maps/maps_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -43,7 +43,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         onNavigateToTab: _onNavigateToTab,
       ),
       const BusSearchPage(),
-      const QrScannerPage(),
+      const MapsPage(),
       const UserProfilePage(),
     ];
 
