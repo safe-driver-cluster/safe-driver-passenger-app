@@ -7,9 +7,9 @@ import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
+import '../maps/maps_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
-import '../maps/maps_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
