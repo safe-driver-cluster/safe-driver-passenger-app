@@ -101,11 +101,9 @@ class _MapsPageState extends ConsumerState<MapsPage> {
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location services are disabled')),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location services are disabled')),
+        );
         setState(() => _isLoading = false);
         return;
       }
@@ -115,23 +113,19 @@ class _MapsPageState extends ConsumerState<MapsPage> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Location permission denied')),
-            );
-          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission denied')),
+          );
           setState(() => _isLoading = false);
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Location permissions are permanently denied')),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Location permissions are permanently denied')),
+        );
         setState(() => _isLoading = false);
         return;
       }
@@ -141,38 +135,34 @@ class _MapsPageState extends ConsumerState<MapsPage> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      if (mounted) {
-        setState(() {
-          _currentPosition = position;
-          _markers.add(
-            Marker(
-              markerId: const MarkerId('current_location'),
-              position: LatLng(position.latitude, position.longitude),
-              infoWindow: const InfoWindow(title: 'Your Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueBlue),
-            ),
-          );
-          _isLoading = false;
-        });
+      setState(() {
+        _currentPosition = position;
+        _markers.add(
+          Marker(
+            markerId: const MarkerId('current_location'),
+            position: LatLng(position.latitude, position.longitude),
+            infoWindow: const InfoWindow(title: 'Your Location'),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+          ),
+        );
+        _isLoading = false;
+      });
 
-        // Move camera to current location
-        if (_mapController != null) {
-          _mapController!.animateCamera(
-            CameraUpdate.newLatLngZoom(
-              LatLng(position.latitude, position.longitude),
-              15.0,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error getting location: $e')),
+      // Move camera to current location
+      if (_mapController != null) {
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            LatLng(position.latitude, position.longitude),
+            15.0,
+          ),
         );
       }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error getting location: $e')),
+      );
     }
   }
 
@@ -212,10 +202,10 @@ class _MapsPageState extends ConsumerState<MapsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: AppColors.primary,
         title: const Text(
           'Maps & Navigation',
           style: TextStyle(
@@ -232,7 +222,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              color: AppColors.primaryColor,
+              color: AppColors.primary,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
@@ -256,7 +246,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                   hintText: 'Search for places, bus stops...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
                   prefixIcon:
-                      const Icon(Icons.search, color: AppColors.primaryColor),
+                      const Icon(Icons.search, color: AppColors.primary),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () => _searchController.clear(),
@@ -278,21 +268,21 @@ class _MapsPageState extends ConsumerState<MapsPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: _ActionCard(
+                  child: DashboardActionCard(
                     icon: Icons.directions_bus,
                     title: 'Bus Routes',
                     subtitle: 'View nearby routes',
-                    color: AppColors.secondaryColor,
+                    color: AppColors.secondary,
                     onTap: _showBusRoutes,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _ActionCard(
+                  child: DashboardActionCard(
                     icon: Icons.navigation,
                     title: 'Navigate',
                     subtitle: 'Get directions',
-                    color: AppColors.accentColor,
+                    color: AppColors.accent,
                     onTap: _navigateToLocation,
                   ),
                 ),
@@ -321,8 +311,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircularProgressIndicator(
-                                color: AppColors.primaryColor),
+                            CircularProgressIndicator(color: AppColors.primary),
                             SizedBox(height: 16),
                             Text(
                               'Getting your location...',
