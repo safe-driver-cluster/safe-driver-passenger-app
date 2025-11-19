@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/constants/color_constants.dart';
 
 class MapsPage extends ConsumerStatefulWidget {
@@ -112,9 +113,9 @@ class _MapsPageState extends ConsumerState<MapsPage> {
           // Search Bar
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryColor,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
               ),
@@ -136,7 +137,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                 decoration: InputDecoration(
                   hintText: 'Search for places, bus stops...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
-                  prefixIcon: Icon(Icons.search, color: AppColors.primaryColor),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.primaryColor),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () => _searchController.clear(),
@@ -151,7 +153,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               ),
             ),
           ),
-          
+
           // Quick Action Cards
           Container(
             padding: const EdgeInsets.all(16),
@@ -198,7 +200,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   color: Colors.grey[100],
-                  child: Center(
+                  child: const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -207,7 +209,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                           size: 64,
                           color: AppColors.primaryColor,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Text(
                           'Google Maps Integration',
                           style: TextStyle(
@@ -216,8 +218,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                             color: AppColors.primaryColor,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        const Text(
+                        SizedBox(height: 8),
+                        Text(
                           'Map will show your location and nearby bus routes',
                           style: TextStyle(
                             color: Colors.grey,
