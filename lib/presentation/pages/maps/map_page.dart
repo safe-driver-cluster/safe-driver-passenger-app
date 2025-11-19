@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 
 class MapPage extends ConsumerStatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  const MapPage({super.key});
 
   @override
   ConsumerState<MapPage> createState() => _MapPageState();
@@ -26,9 +26,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   // Map types
   MapType _currentMapType = MapType.normal;
   bool _trafficEnabled = false;
-  
+
   // Location tracking
-  bool _isTrackingLocation = false;
+  final bool _isTrackingLocation = false;
 
   @override
   void initState() {
@@ -61,7 +61,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() {
-          _errorMessage = 'Location services are disabled. Please enable location services.';
+          _errorMessage =
+              'Location services are disabled. Please enable location services.';
           _isLoading = false;
         });
         return;
@@ -73,7 +74,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           setState(() {
-            _errorMessage = 'Location permission denied. Please grant location access.';
+            _errorMessage =
+                'Location permission denied. Please grant location access.';
             _isLoading = false;
           });
           return;
@@ -82,7 +84,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
       if (permission == LocationPermission.deniedForever) {
         setState(() {
-          _errorMessage = 'Location permissions are permanently denied. Please enable in settings.';
+          _errorMessage =
+              'Location permissions are permanently denied. Please enable in settings.';
           _isLoading = false;
         });
         return;
@@ -114,7 +117,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   void _updateCurrentLocationMarker(Position position) {
-    _markers.removeWhere((marker) => marker.markerId.value == 'current_location');
+    _markers
+        .removeWhere((marker) => marker.markerId.value == 'current_location');
     _markers.add(
       Marker(
         markerId: const MarkerId('current_location'),
@@ -182,7 +186,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     try {
       // TODO: Implement actual place search with Google Places API
       await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -229,8 +233,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   void _toggleMapType() {
     setState(() {
-      _currentMapType = _currentMapType == MapType.normal 
-          ? MapType.satellite 
+      _currentMapType = _currentMapType == MapType.normal
+          ? MapType.satellite
           : MapType.normal;
     });
   }
@@ -268,7 +272,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         decoration: InputDecoration(
           hintText: 'Search places, bus stops, routes...',
           hintStyle: TextStyle(color: Colors.grey[500]),
-          prefixIcon: Icon(Icons.search, color: AppColors.primaryColor),
+          prefixIcon: const Icon(Icons.search, color: AppColors.primaryColor),
           suffixIcon: _isSearching
               ? const Padding(
                   padding: EdgeInsets.all(12.0),
@@ -329,7 +333,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       child: Column(
         children: [
           _MapControlButton(
-            icon: _currentMapType == MapType.normal ? Icons.satellite : Icons.map,
+            icon:
+                _currentMapType == MapType.normal ? Icons.satellite : Icons.map,
             onTap: _toggleMapType,
             tooltip: 'Toggle Map Type',
           ),
@@ -402,13 +407,13 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildLoadingState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(color: AppColors.primaryColor),
-          const SizedBox(height: AppDesign.spaceLG),
-          const Text(
+          SizedBox(height: AppDesign.spaceLG),
+          Text(
             'Loading map...',
             style: TextStyle(
               color: Colors.grey,
@@ -468,8 +473,10 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                         onMapCreated: _onMapCreated,
                         initialCameraPosition: CameraPosition(
                           target: _currentPosition != null
-                              ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                              : const LatLng(6.9271, 79.8612), // Colombo default
+                              ? LatLng(_currentPosition!.latitude,
+                                  _currentPosition!.longitude)
+                              : const LatLng(
+                                  6.9271, 79.8612), // Colombo default
                           zoom: 14.0,
                         ),
                         markers: _markers,
