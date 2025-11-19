@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../../core/constants/color_constants.dart';
 
 class _ActionCard extends StatelessWidget {
@@ -76,7 +77,7 @@ class _ActionCard extends StatelessWidget {
 }
 
 class MapsPage extends ConsumerStatefulWidget {
-  const MapsPage({Key? key}) : super(key: key);
+  const MapsPage({super.key});
 
   @override
   ConsumerState<MapsPage> createState() => _MapsPageState();
@@ -122,7 +123,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
 
       if (permission == LocationPermission.deniedForever) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permissions are permanently denied')),
+          const SnackBar(
+              content: Text('Location permissions are permanently denied')),
         );
         setState(() => _isLoading = false);
         return;
@@ -140,7 +142,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
             markerId: const MarkerId('current_location'),
             position: LatLng(position.latitude, position.longitude),
             infoWindow: const InfoWindow(title: 'Your Location'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
           ),
         );
         _isLoading = false;
@@ -242,7 +245,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                 decoration: InputDecoration(
                   hintText: 'Search for places, bus stops...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
-                  prefixIcon: const Icon(Icons.search, color: AppColors.primary),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.primary),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () => _searchController.clear(),
@@ -257,7 +261,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               ),
             ),
           ),
-          
+
           // Quick Action Cards
           Container(
             padding: const EdgeInsets.all(16),
@@ -323,8 +327,10 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                         onMapCreated: _onMapCreated,
                         initialCameraPosition: CameraPosition(
                           target: _currentPosition != null
-                              ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                              : const LatLng(6.9271, 79.8612), // Colombo default
+                              ? LatLng(_currentPosition!.latitude,
+                                  _currentPosition!.longitude)
+                              : const LatLng(
+                                  6.9271, 79.8612), // Colombo default
                           zoom: 15.0,
                         ),
                         markers: _markers,
