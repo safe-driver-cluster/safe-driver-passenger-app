@@ -7,9 +7,9 @@ import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
+import '../maps/maps_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
-import '../qr/qr_scanner_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   const DashboardPage({super.key});
@@ -43,7 +43,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         onNavigateToTab: _onNavigateToTab,
       ),
       const BusSearchPage(),
-      const QrScannerPage(),
+      const MapsPage(),
       const UserProfilePage(),
     ];
 
@@ -177,13 +177,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                   ),
                   child: Icon(
-                    _selectedIndex == 2
-                        ? Icons.qr_code_scanner
-                        : Icons.qr_code_scanner_outlined,
+                    _selectedIndex == 2 ? Icons.map : Icons.map_outlined,
                     size: AppDesign.iconMD,
                   ),
                 ),
-                label: 'QR Scanner',
+                label: 'Maps',
               ),
               BottomNavigationBarItem(
                 icon: Container(
