@@ -177,13 +177,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                     borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                   ),
                   child: Icon(
-                    _selectedIndex == 2
-                        ? Icons.qr_code_scanner
-                        : Icons.qr_code_scanner_outlined,
+                    _selectedIndex == 2 ? Icons.map : Icons.map_outlined,
                     size: AppDesign.iconMD,
                   ),
                 ),
-                label: 'QR Scanner',
+                label: 'Maps',
               ),
               BottomNavigationBarItem(
                 icon: Container(
