@@ -7,7 +7,7 @@ import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
-import '../maps/simple_maps_page.dart';
+import '../maps/map_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
@@ -43,7 +43,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         onNavigateToTab: _onNavigateToTab,
       ),
       const BusSearchPage(),
-      const MapsPage(),
+      const MapPage(),
       const UserProfilePage(),
     ];
 
