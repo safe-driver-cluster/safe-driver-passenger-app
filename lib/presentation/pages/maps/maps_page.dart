@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../../core/constants/color_constants.dart';
 
 class _ActionCard extends StatelessWidget {
@@ -76,7 +77,7 @@ class _ActionCard extends StatelessWidget {
 }
 
 class MapsPage extends ConsumerStatefulWidget {
-  const MapsPage({Key? key}) : super(key: key);
+  const MapsPage({super.key});
 
   @override
   ConsumerState<MapsPage> createState() => _MapsPageState();
@@ -127,7 +128,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
       if (permission == LocationPermission.deniedForever) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are permanently denied')),
+            const SnackBar(
+                content: Text('Location permissions are permanently denied')),
           );
         }
         setState(() => _isLoading = false);
@@ -147,7 +149,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               markerId: const MarkerId('current_location'),
               position: LatLng(position.latitude, position.longitude),
               infoWindow: const InfoWindow(title: 'Your Location'),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue),
             ),
           );
           _isLoading = false;
@@ -228,9 +231,9 @@ class _MapsPageState extends ConsumerState<MapsPage> {
           // Search Bar
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryColor,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
               ),
@@ -252,7 +255,8 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                 decoration: InputDecoration(
                   hintText: 'Search for places, bus stops...',
                   hintStyle: TextStyle(color: Colors.grey[500]),
-                  prefixIcon: Icon(Icons.search, color: AppColors.primaryColor),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.primaryColor),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () => _searchController.clear(),
@@ -267,7 +271,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               ),
             ),
           ),
-          
+
           // Quick Action Cards
           Container(
             padding: const EdgeInsets.all(16),
@@ -313,13 +317,14 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: _isLoading
-                    ? Center(
+                    ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            CircularProgressIndicator(color: AppColors.primaryColor),
-                            const SizedBox(height: 16),
-                            const Text(
+                            CircularProgressIndicator(
+                                color: AppColors.primaryColor),
+                            SizedBox(height: 16),
+                            Text(
                               'Getting your location...',
                               style: TextStyle(
                                 color: Colors.grey,
@@ -333,8 +338,10 @@ class _MapsPageState extends ConsumerState<MapsPage> {
                         onMapCreated: _onMapCreated,
                         initialCameraPosition: CameraPosition(
                           target: _currentPosition != null
-                              ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
-                              : const LatLng(6.9271, 79.8612), // Colombo default
+                              ? LatLng(_currentPosition!.latitude,
+                                  _currentPosition!.longitude)
+                              : const LatLng(
+                                  6.9271, 79.8612), // Colombo default
                           zoom: 15.0,
                         ),
                         markers: _markers,
