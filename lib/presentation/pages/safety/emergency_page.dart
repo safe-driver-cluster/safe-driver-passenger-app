@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -563,15 +563,16 @@ class EmergencyPage extends StatelessWidget {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      
-      String locationUrl = 'https://maps.google.com/?q=${position.latitude},${position.longitude}';
-      
+
+      String locationUrl =
+          'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+
       // Create SOS message
       String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
           'I need immediate help!\n'
           'My location: $locationUrl\n'
           'Time: ${DateTime.now().toString()}';
-      
+
       // Share SOS message
       await Share.share(
         sosMessage,
@@ -582,7 +583,7 @@ class EmergencyPage extends StatelessWidget {
       String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
           'I need immediate help!\n'
           'Time: ${DateTime.now().toString()}';
-      
+
       await Share.share(
         sosMessage,
         subject: '🆘 Emergency SOS Alert',
@@ -600,7 +601,8 @@ class EmergencyPage extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Location permission is required to share location'),
+                content:
+                    Text('Location permission is required to share location'),
                 backgroundColor: AppColors.dangerColor,
               ),
             );
@@ -608,33 +610,35 @@ class EmergencyPage extends StatelessWidget {
           return;
         }
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Location permission is permanently denied. Please enable it from settings.'),
+              content: Text(
+                  'Location permission is permanently denied. Please enable it from settings.'),
               backgroundColor: AppColors.dangerColor,
             ),
           );
         }
         return;
       }
-      
+
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      
+
       // Create Google Maps link
-      String locationUrl = 'https://maps.google.com/?q=${position.latitude},${position.longitude}';
-      
+      String locationUrl =
+          'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+
       // Create share message
       String shareMessage = '📍 My Current Location\n'
           'Latitude: ${position.latitude}\n'
           'Longitude: ${position.longitude}\n'
           'View on map: $locationUrl';
-      
+
       // Share location
       await Share.share(
         shareMessage,
@@ -660,7 +664,7 @@ class EmergencyPage extends StatelessWidget {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? emergencyNumber = prefs.getString('emergency_contact_number');
-      
+
       if (emergencyNumber == null || emergencyNumber.isEmpty) {
         // Show dialog to set emergency contact
         if (context.mounted) {
@@ -681,7 +685,7 @@ class EmergencyPage extends StatelessWidget {
       }
     }
   }
-  
+
   void _showSetEmergencyContactDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -759,7 +763,7 @@ class EmergencyPage extends StatelessWidget {
       },
     );
   }
-  
+
   void _navigateToProfile(BuildContext context) {
     // Navigate to profile/edit profile page
     Navigator.pushNamed(context, '/profile');
