@@ -1,0 +1,194 @@
+name: Commit-based Task Tracking
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+  pull_request:
+    types: [opened, synchronize, closed]
+
+jobs:
+  track_commit_work:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          
+      - name: Link commits to issues and update project
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commits = context.payload.commits || [];
+            
+            for (const commit of commits) {
+              const message = commit.message;
+              
+              // Look for issue references in commit messages
+              const issueRefs = message.match(/#(\d+)/g);
+              const fixesRefs = message.match(/(?:fixes?|closes?|resolves?)\s+#(\d+)/gi);
+              
+              if (issueRefs) {
+                for (const ref of issueRefs) {
+                  const issueNumber = ref.replace('#', '');
+                  
+                  // Add comment to issue with commit info
+                  try {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: parseInt(issueNumber),
+                      body: `🔗 **Commit linked**: [${commit.id.substring(0, 7)}](${commit.url})
+                      
+**Message**: ${commit.message}
+**Author**: ${commit.author.name}
+**Files changed**: ${commit.added.length + commit.removed.length + commit.modified.length} files`
+                    });
+                  } catch (error) {
+                    console.log(`Could not comment on issue #${issueNumber}: ${error.message}`);
+                  }
+                }
+              }
+              
+              // Auto-close issues if commit message indicates completion
+              if (fixesRefs) {
+                for (const match of fixesRefs) {
+                  const issueNumber = match.match(/\d+/)[0];
+                  
+                  try {
+                    await github.rest.issues.update({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: parseInt(issueNumber),
+                      state: 'closed'
+                    });
+                    
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: parseInt(issueNumber),
+                      body: `✅ **Auto-closed** by commit [${commit.id.substring(0, 7)}](${commit.url})
+                      
+**Commit message**: ${commit.message}`
+                    });
+                  } catch (error) {
+                    console.log(`Could not close issue #${issueNumber}: ${error.message}`);
+                  }
+                }
+              }
+            }
+
+  auto_create_issue_from_commit:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[create-issue]')
+    steps:
+      - name: Create issue from commit message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commit = context.payload.head_commit;
+            const message = commit.message;
+            
+            // Extract issue title from commit message
+            const titleMatch = message.match(/\[create-issue\]\s*(.+)/i);
+            const title = titleMatch ? titleMatch[1].trim() : `Task from commit ${commit.id.substring(0, 7)}`;
+            
+            const body = `**Auto-created from commit**: [${commit.id.substring(0, 7)}](${commit.url})
+
+**Original commit message**: ${message}
+
+**Author**: ${commit.author.name}
+**Files modified**: 
+${commit.added.map(f => `+ ${f}`).join('\n')}
+${commit.modified.map(f => `~ ${f}`).join('\n')}
+${commit.removed.map(f => `- ${f}`).join('\n')}
+
+---
+*This issue was automatically created from a commit message containing [create-issue]*`;
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['auto-created', 'from-commit']
+            });
+            
+            console.log(`Created issue #${issue.data.number}: ${title}`);
+
+  track_pr_work:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Track PR work and link to issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const action = context.payload.action;
+            
+            if (action === 'opened') {
+              // Look for issue references in PR title and body
+              const text = `${pr.title} ${pr.body || ''}`;
+              const issueRefs = text.match(/#(\d+)/g);
+              
+              if (issueRefs) {
+                let comment = '🔗 **Linked Pull Request**: This PR references the following issues:\n\n';
+                
+                for (const ref of issueRefs) {
+                  const issueNumber = ref.replace('#', '');
+                  comment += `- Closes #${issueNumber}\n`;
+                  
+                  // Add comment to referenced issues
+                  try {
+                    await github.rest.issues.createComment({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      issue_number: parseInt(issueNumber),
+                      body: `🔗 **Pull Request Created**: #${pr.number} - ${pr.title}
+                      
+**Description**: ${pr.body ? pr.body.substring(0, 200) + '...' : 'No description provided'}
+**Author**: @${pr.user.login}`
+                    });
+                  } catch (error) {
+                    console.log(`Could not comment on issue #${issueNumber}: ${error.message}`);
+                  }
+                }
+              }
+              
+              // Auto-label PRs based on files changed
+              const { data: files } = await github.rest.pulls.listFiles({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number
+              });
+              
+              let labels = [];
+              
+              const fileTypes = files.map(f => f.filename);
+              
+              if (fileTypes.some(f => f.includes('lib/presentation') || f.includes('ui'))) {
+                labels.push('ui/ux');
+              }
+              
+              if (fileTypes.some(f => f.includes('backend/') || f.includes('functions/'))) {
+                labels.push('backend');
+              }
+              
+              if (fileTypes.some(f => f.endsWith('.dart'))) {
+                labels.push('flutter');
+              }
+              
+              if (fileTypes.some(f => f.includes('test'))) {
+                labels.push('testing');
+              }
+              
+              if (labels.length > 0) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  labels: labels
+                });
+              }
+            }
