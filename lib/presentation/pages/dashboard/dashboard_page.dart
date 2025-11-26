@@ -44,7 +44,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       DashboardHome(
         onNavigateToTab: _onNavigateToTab,
       ),
-      const BusSearchPage(),
+      const BusListPage(),
       const MapPage(),
       const UserProfilePage(),
     ];
