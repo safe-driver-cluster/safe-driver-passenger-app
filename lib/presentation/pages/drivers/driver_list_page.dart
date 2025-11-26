@@ -150,21 +150,8 @@ class _DriverListPageState extends State<DriverListPage> {
   }
 
   Widget _buildDriverList() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppDesign.space2XL),
-          topRight: Radius.circular(AppDesign.space2XL),
-        ),
-        boxShadow: AppDesign.shadowLG,
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppDesign.space2XL),
-          topRight: Radius.circular(AppDesign.space2XL),
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('drivers').snapshots(),
           builder: (context, snapshot) {
