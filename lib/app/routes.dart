@@ -161,8 +161,10 @@ class AppRoutes {
         );
 
       case dashboard:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final initialTab = args?['initialTab'] as int?;
         return MaterialPageRoute(
-          builder: (_) => const DashboardPage(),
+          builder: (_) => DashboardPage(initialTab: initialTab),
           settings: settings,
         );
 
