@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../widgets/common/bottom_navigation_widget.dart';
 
 class BusListPage extends StatefulWidget {
   const BusListPage({super.key});
@@ -49,24 +48,6 @@ class _BusListPageState extends State<BusListPage> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationWidget(
-        currentIndex: 1, // Search tab is selected
-        onTap: (index) {
-          switch (index) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-              // Navigate back to dashboard with correct tab
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/dashboard',
-                (route) => false,
-                arguments: {'initialTab': index},
-              );
-              break;
-          }
-        },
       ),
     );
   }
