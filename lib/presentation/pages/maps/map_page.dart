@@ -341,23 +341,27 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     if (_currentPosition == null) {
       await _getCurrentLocation();
       if (_currentPosition == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Unable to get current location'),
-            backgroundColor: AppColors.dangerColor,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Unable to get current location'),
+              backgroundColor: AppColors.dangerColor,
+            ),
+          );
+        }
         return;
       }
     }
 
     if (_searchedDestination == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please search for a destination first'),
-          backgroundColor: AppColors.warningColor,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please search for a destination first'),
+            backgroundColor: AppColors.warningColor,
+          ),
+        );
+      }
       return;
     }
 
