@@ -1,0 +1,92 @@
+name: TODO to GitHub Issues
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  todo_to_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create GitHub Issues from TODO comments
+        uses: alstr/todo-to-issue-action@v4
+        with:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLOSE_ISSUES: true
+          AUTO_P: true
+          PROJECTS_SECRET: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_URL: https://github.com/orgs/safe-driver-cluster/projects/1
+          LABEL: "todo"
+          COMMENT_MARKER: "#"
+          
+  scan_todos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Comment TODO findings on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Function to scan files for TODOs
+            function scanForTodos(dir, results = []) {
+              const files = fs.readdirSync(dir);
+              
+              for (const file of files) {
+                const filePath = path.join(dir, file);
+                const stat = fs.statSync(filePath);
+                
+                if (stat.isDirectory() && !filePath.includes('node_modules') && !filePath.includes('.git')) {
+                  scanForTodos(filePath, results);
+                } else if (stat.isFile() && (filePath.endsWith('.dart') || filePath.endsWith('.js') || filePath.endsWith('.md'))) {
+                  const content = fs.readFileSync(filePath, 'utf8');
+                  const lines = content.split('\n');
+                  
+                  lines.forEach((line, index) => {
+                    const todoMatch = line.match(/\/\/\s*(TODO|FIXME|HACK|NOTE):\s*(.+)/i) || 
+                                     line.match(/#\s*(TODO|FIXME|HACK|NOTE):\s*(.+)/i);
+                    
+                    if (todoMatch) {
+                      results.push({
+                        file: filePath,
+                        line: index + 1,
+                        type: todoMatch[1],
+                        text: todoMatch[2].trim()
+                      });
+                    }
+                  });
+                }
+              }
+              
+              return results;
+            }
+            
+            const todos = scanForTodos('.');
+            
+            if (todos.length > 0) {
+              let comment = "## 📝 TODOs Found in this PR\n\n";
+              comment += `Found ${todos.length} TODO comments:\n\n`;
+              
+              todos.forEach(todo => {
+                comment += `- **${todo.type}** in \`${todo.file}:${todo.line}\`: ${todo.text}\n`;
+              });
+              
+              comment += "\n💡 *These TODOs will be automatically converted to GitHub Issues when merged to main branch.*";
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
