@@ -35,16 +35,13 @@ class _BusListPageState extends State<BusListPage> {
               AppColors.primaryDark,
               AppColors.scaffoldBackground,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header with search
               _buildHeader(),
-
-              // Bus list
               Expanded(
                 child: _buildBusList(),
               ),
@@ -57,12 +54,7 @@ class _BusListPageState extends State<BusListPage> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        AppDesign.spaceSM,
-        AppDesign.spaceLG,
-        AppDesign.spaceMD,
-      ),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -97,12 +89,18 @@ class _BusListPageState extends State<BusListPage> {
           ),
           const SizedBox(height: AppDesign.spaceLG),
 
-          // Search bar
+          // Simple Search Bar
           Container(
             decoration: BoxDecoration(
-              gradient: AppColors.cardGradient,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              boxShadow: AppDesign.shadowMD,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: TextField(
               controller: _searchController,
@@ -112,7 +110,7 @@ class _BusListPageState extends State<BusListPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by route, bus number...',
+                hintText: 'Search by bus number, route, driver...',
                 hintStyle: const TextStyle(
                   color: AppColors.textHint,
                   fontSize: 16,
@@ -150,111 +148,116 @@ class _BusListPageState extends State<BusListPage> {
   }
 
   Widget _buildBusList() {
-    return Padding(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('vehicles')
-            .where('status', isEqualTo: 'active')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline_rounded,
-                    size: 64,
-                    color: AppColors.errorColor,
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 64,
+                  color: AppColors.errorColor,
+                ),
+                SizedBox(height: AppDesign.spaceMD),
+                Text(
+                  'Error loading buses',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
-                  const SizedBox(height: AppDesign.spaceMD),
-                  Text(
-                    'Error loading buses',
-                    style: AppTextStyles.headline6.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
+                ),
+                SizedBox(height: AppDesign.spaceSM),
+                Text(
+                  'Please try again later',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
                   ),
-                  const SizedBox(height: AppDesign.spaceSM),
-                  Text(
-                    'Please try again later',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
-              ),
-            );
-          }
-
-          final buses = snapshot.data?.docs ?? [];
-
-          // Filter buses based on search query
-          final filteredBuses = buses.where((bus) {
-            final data = bus.data() as Map<String, dynamic>;
-            final route = (data['route'] ?? '').toString().toLowerCase();
-            final busNumber =
-                (data['busNumberPlate'] ?? '').toString().toLowerCase();
-            final driverName =
-                (data['driverName'] ?? '').toString().toLowerCase();
-
-            return route.contains(_searchQuery) ||
-                busNumber.contains(_searchQuery) ||
-                driverName.contains(_searchQuery);
-          }).toList();
-
-          if (filteredBuses.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.directions_bus_rounded,
-                    size: 64,
-                    color: AppColors.textHint,
-                  ),
-                  const SizedBox(height: AppDesign.spaceMD),
-                  Text(
-                    _searchQuery.isEmpty
-                        ? 'No buses available'
-                        : 'No buses found',
-                    style: AppTextStyles.headline6.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: AppDesign.spaceSM),
-                  Text(
-                    _searchQuery.isEmpty
-                        ? 'Check back later for available buses'
-                        : 'Try a different search term',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: filteredBuses.length,
-            itemBuilder: (context, index) {
-              final busData =
-                  filteredBuses[index].data() as Map<String, dynamic>;
-              return _buildBusCard(busData);
-            },
+                ),
+              ],
+            ),
           );
-        },
-      ),
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+            ),
+          );
+        }
+
+        final buses = snapshot.data?.docs ?? [];
+
+        // Filter buses based on search query
+        final filteredBuses = buses.where((bus) {
+          final data = bus.data() as Map<String, dynamic>;
+          final route = (data['route'] ?? '').toString().toLowerCase();
+          final busNumber =
+              (data['busNumberPlate'] ?? '').toString().toLowerCase();
+          final driverName =
+              (data['driverName'] ?? '').toString().toLowerCase();
+          final location = data['location'] as Map<String, dynamic>?;
+          final address = (location?['address'] ?? '').toString().toLowerCase();
+
+          if (_searchQuery.isEmpty) return true;
+
+          return route.contains(_searchQuery) ||
+              busNumber.contains(_searchQuery) ||
+              driverName.contains(_searchQuery) ||
+              address.contains(_searchQuery);
+        }).toList();
+
+        if (filteredBuses.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.directions_bus_rounded,
+                  size: 64,
+                  color: AppColors.textHint,
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+                Text(
+                  _searchQuery.isEmpty
+                      ? 'No buses available'
+                      : 'No buses found',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceSM),
+                Text(
+                  _searchQuery.isEmpty
+                      ? 'Check back later for available buses'
+                      : 'Try adjusting your search terms',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          itemCount: filteredBuses.length,
+          itemBuilder: (context, index) {
+            final busData = filteredBuses[index].data() as Map<String, dynamic>;
+            return _buildBusCard(busData);
+          },
+        );
+      },
     );
   }
 
@@ -272,13 +275,15 @@ class _BusListPageState extends State<BusListPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: AppDesign.shadowMD,
-        border: Border.all(
-          color: AppColors.primaryColor.withOpacity(0.1),
-          width: 1,
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppDesign.spaceMD),
@@ -295,46 +300,42 @@ class _BusListPageState extends State<BusListPage> {
                     vertical: AppDesign.spaceXS,
                   ),
                   decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                   ),
                   child: Text(
                     busNumber,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
                       fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceSM,
-                    vertical: 4,
+                    horizontal: AppDesign.spaceMD,
+                    vertical: AppDesign.spaceXS,
                   ),
                   decoration: BoxDecoration(
-                    color: _getSafetyColor(safetyScore).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
-                    border: Border.all(
-                      color: _getSafetyColor(safetyScore).withOpacity(0.3),
-                      width: 1,
-                    ),
+                    color: _getSafetyScoreColor(safetyScore).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
                         Icons.security_rounded,
-                        size: 14,
-                        color: _getSafetyColor(safetyScore),
+                        size: 16,
+                        color: _getSafetyScoreColor(safetyScore),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppDesign.spaceXS),
                       Text(
                         '$safetyScore%',
                         style: TextStyle(
-                          color: _getSafetyColor(safetyScore),
-                          fontSize: 12,
+                          color: _getSafetyScoreColor(safetyScore),
                           fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -348,23 +349,17 @@ class _BusListPageState extends State<BusListPage> {
             // Route information
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
-                  ),
-                  child: const Icon(
-                    Icons.route_rounded,
-                    size: 16,
-                    color: AppColors.accentColor,
-                  ),
+                const Icon(
+                  Icons.route_rounded,
+                  color: AppColors.primaryColor,
+                  size: 20,
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Expanded(
                   child: Text(
                     route,
-                    style: AppTextStyles.bodyLarge.copyWith(
+                    style: const TextStyle(
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
@@ -375,70 +370,34 @@ class _BusListPageState extends State<BusListPage> {
 
             const SizedBox(height: AppDesign.spaceSM),
 
-            // Driver and model info
-            Row(
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.person_rounded,
-                        size: 16,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: AppDesign.spaceXS),
-                      Flexible(
-                        child: Text(
-                          driverName,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceSM),
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.directions_bus_rounded,
-                        size: 16,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: AppDesign.spaceXS),
-                      Flexible(
-                        child: Text(
-                          model,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppDesign.spaceSM),
-
-            // Location
+            // Driver and location
             Row(
               children: [
                 const Icon(
-                  Icons.location_on_rounded,
-                  size: 16,
+                  Icons.person_rounded,
                   color: AppColors.textSecondary,
+                  size: 18,
                 ),
-                const SizedBox(width: AppDesign.spaceXS),
+                const SizedBox(width: AppDesign.spaceSM),
+                Text(
+                  driverName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceLG),
+                const Icon(
+                  Icons.location_on_rounded,
+                  color: AppColors.textSecondary,
+                  size: 18,
+                ),
+                const SizedBox(width: AppDesign.spaceSM),
                 Expanded(
                   child: Text(
                     address,
-                    style: AppTextStyles.bodyMedium.copyWith(
+                    style: const TextStyle(
+                      fontSize: 14,
                       color: AppColors.textSecondary,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -449,19 +408,34 @@ class _BusListPageState extends State<BusListPage> {
 
             const SizedBox(height: AppDesign.spaceMD),
 
-            // Status indicators
+            // Bus details and status indicators
             Row(
               children: [
-                _buildStatusIndicator(
-                  icon: Icons.battery_charging_full_rounded,
-                  value: '$batteryLevel%',
-                  color: _getBatteryColor(batteryLevel),
+                Expanded(
+                  child: _buildStatusIndicator(
+                    'Model',
+                    model,
+                    Icons.directions_bus_rounded,
+                    AppColors.primaryColor,
+                  ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
-                _buildStatusIndicator(
-                  icon: Icons.local_gas_station_rounded,
-                  value: '$fuel%',
-                  color: _getFuelColor(fuel),
+                Expanded(
+                  child: _buildStatusIndicator(
+                    'Battery',
+                    '$batteryLevel%',
+                    Icons.battery_full_rounded,
+                    _getBatteryColor(batteryLevel),
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildStatusIndicator(
+                    'Fuel',
+                    '$fuel%',
+                    Icons.local_gas_station_rounded,
+                    _getFuelColor(fuel),
+                  ),
                 ),
               ],
             ),
@@ -471,34 +445,35 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildStatusIndicator({
-    required IconData icon,
-    required String value,
-    required Color color,
-  }) {
+  Widget _buildStatusIndicator(
+      String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDesign.spaceSM,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.all(AppDesign.spaceSM),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(AppDesign.radiusSM),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
         children: [
           Icon(
             icon,
-            size: 14,
             color: color,
+            size: 16,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           Text(
             value,
             style: TextStyle(
+              fontSize: 13,
               color: color,
-              fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -507,21 +482,21 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Color _getSafetyColor(int score) {
+  Color _getSafetyScoreColor(int score) {
     if (score >= 90) return AppColors.successColor;
-    if (score >= 70) return AppColors.warningColor;
+    if (score >= 75) return AppColors.warningColor;
     return AppColors.errorColor;
   }
 
-  Color _getBatteryColor(int level) {
-    if (level >= 70) return AppColors.successColor;
-    if (level >= 30) return AppColors.warningColor;
+  Color _getBatteryColor(int battery) {
+    if (battery >= 70) return AppColors.successColor;
+    if (battery >= 30) return AppColors.warningColor;
     return AppColors.errorColor;
   }
 
-  Color _getFuelColor(int level) {
-    if (level >= 50) return AppColors.successColor;
-    if (level >= 25) return AppColors.warningColor;
+  Color _getFuelColor(int fuel) {
+    if (fuel >= 50) return AppColors.successColor;
+    if (fuel >= 25) return AppColors.warningColor;
     return AppColors.errorColor;
   }
 }
