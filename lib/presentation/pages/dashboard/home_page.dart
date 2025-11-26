@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final void Function(int)? onNavigateToTab;
+
+  const HomePage({super.key, this.onNavigateToTab});
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +104,11 @@ class HomePage extends StatelessWidget {
                                 icon: Icons.search,
                                 title: 'Find Bus',
                                 subtitle: 'Search routes',
-                                onTap: () =>
-                                    Navigator.pushNamed(context, '/bus-search'),
+                                onTap: () {
+                                  if (onNavigateToTab != null) {
+                                    onNavigateToTab!(1);
+                                  }
+                                },
                               ),
                             ),
                             const SizedBox(width: 12),

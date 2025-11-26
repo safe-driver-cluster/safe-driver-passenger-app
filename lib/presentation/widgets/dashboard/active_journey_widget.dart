@@ -287,7 +287,10 @@ class ActiveJourneyWidget extends ConsumerWidget {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/bus-search');
+                  // Navigate to search tab instead of pushing new page
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
                 },
                 icon: const Icon(Icons.search, size: 20),
                 label: const Text('Search'),
