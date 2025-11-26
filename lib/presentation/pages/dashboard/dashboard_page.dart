@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../controllers/dashboard_controller.dart';
+import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../buses/bus_list_page.dart';
@@ -13,7 +14,9 @@ import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
-  const DashboardPage({super.key});
+  final int? initialTab;
+
+  const DashboardPage({super.key, this.initialTab});
 
   @override
   ConsumerState<DashboardPage> createState() => _DashboardPageState();
@@ -25,6 +28,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
   @override
   void initState() {
     super.initState();
+    // Set initial tab if provided
+    if (widget.initialTab != null) {
+      _selectedIndex = widget.initialTab!;
+    }
+
     // Initialize dashboard data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(dashboardControllerProvider.notifier).loadDashboardData();
@@ -43,6 +51,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       DashboardHome(
         onNavigateToTab: _onNavigateToTab,
       ),
+      const BusListPage(), // Search tab shows bus list
       const MapPage(),
       const UserProfilePage(),
     ];
@@ -83,128 +92,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(AppDesign.space2XL),
-            topRight: Radius.circular(AppDesign.space2XL),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(AppDesign.space2XL),
-            topRight: Radius.circular(AppDesign.space2XL),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: Colors.white,
-            selectedItemColor: AppColors.primaryColor,
-            unselectedItemColor: AppColors.textSecondary,
-            selectedLabelStyle: AppTextStyles.labelMedium.copyWith(
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.2,
-            ),
-            unselectedLabelStyle: AppTextStyles.labelSmall.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-            showUnselectedLabels: true,
-            elevation: 0,
-            items: [
-              BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedIndex == 0
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Icon(
-                    _selectedIndex == 0
-                        ? Icons.dashboard
-                        : Icons.dashboard_outlined,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-                label: 'Dashboard',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedIndex == 1
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Icon(
-                    _selectedIndex == 1 ? Icons.search : Icons.search_outlined,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-                label: 'Search',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedIndex == 2
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Icon(
-                    _selectedIndex == 2 ? Icons.map : Icons.map_outlined,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-                label: 'Maps',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedIndex == 3
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Icon(
-                    _selectedIndex == 3 ? Icons.person : Icons.person_outlined,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-                label: 'Profile',
-              ),
-            ],
-          ),
-        ),
+      bottomNavigationBar: BottomNavigationWidget(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
     );
   }
