@@ -51,20 +51,19 @@ class _BusListPageState extends State<BusListPage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationWidget(
-        currentIndex: 1, // Buses tab is selected
+        currentIndex: 1, // Search tab is selected
         onTap: (index) {
           switch (index) {
             case 0:
-              Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
-              break;
             case 1:
-              // Already on buses page
-              break;
             case 2:
-              Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
-              break;
             case 3:
-              Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
+              // Navigate back to dashboard with correct tab
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/dashboard',
+                (route) => false,
+                arguments: {'initialTab': index},
+              );
               break;
           }
         },
@@ -519,6 +518,4 @@ class _BusListPageState extends State<BusListPage> {
     if (fuel >= 25) return AppColors.warningColor;
     return AppColors.errorColor;
   }
-
-
 }
