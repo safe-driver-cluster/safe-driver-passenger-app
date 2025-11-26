@@ -63,7 +63,7 @@ class _DriverListPageState extends State<DriverListPage> {
             case 3:
               // Navigate back to dashboard with correct tab
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/dashboard', 
+                '/dashboard',
                 (route) => false,
                 arguments: {'initialTab': index},
               );
@@ -575,6 +575,4 @@ class _DriverListPageState extends State<DriverListPage> {
     if (score >= 70) return AppColors.warningColor;
     return AppColors.errorColor;
   }
-
-
 }
