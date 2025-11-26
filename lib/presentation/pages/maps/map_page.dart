@@ -1,6 +1,8 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
+import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -22,13 +24,13 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   bool _isLoading = true;
   bool _isSearching = false;
   String? _errorMessage;
+  bool _showingBusStops = false;
+  bool _showingBusRoute = false;
+  String? _searchedDestination;
 
   // Map types
   MapType _currentMapType = MapType.normal;
   bool _trafficEnabled = false;
-
-  // Location tracking
-  final bool _isTrackingLocation = false;
 
   @override
   void initState() {
@@ -93,7 +95,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        desiredAccuracy: geo.LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
 
@@ -145,29 +147,94 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   void _addSampleBusStops() {
-    // Add some sample bus stops around Colombo
-    final busStops = [
-      {'name': 'Fort Railway Station', 'lat': 6.9344, 'lng': 79.8428},
-      {'name': 'Pettah Bus Stand', 'lat': 6.9367, 'lng': 79.8505},
-      {'name': 'Town Hall', 'lat': 6.9147, 'lng': 79.8774},
-      {'name': 'Bambalapitiya Junction', 'lat': 6.8918, 'lng': 79.8509},
-      {'name': 'Kollupitiya Junction', 'lat': 6.9069, 'lng': 79.8562},
-    ];
+    // This is now called when user clicks "Bus Stop" button
+    // Will be implemented in _showBusStops method
+  }
+
+  void _showBusStops() async {
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+      if (_currentPosition == null) return;
+    }
+
+    setState(() => _showingBusStops = true);
+
+    // Clear existing bus stop markers
+    _markers.removeWhere((marker) => marker.markerId.value.contains('bus_stop'));
+    
+    // Sample bus stops around current location (within ~2km radius)
+    final busStops = _getBusStopsAroundLocation(_currentPosition!);
 
     for (var stop in busStops) {
       _markers.add(
         Marker(
-          markerId: MarkerId(stop['name'] as String),
+          markerId: MarkerId('bus_stop_${stop['name']}'),
           position: LatLng(stop['lat'] as double, stop['lng'] as double),
           infoWindow: InfoWindow(
             title: stop['name'] as String,
-            snippet: 'Bus Stop',
+            snippet: 'Bus Stop • ${stop['routes']}',
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
         ),
       );
     }
-    setState(() {});
+
+    setState(() => _showingBusStops = false);
+    
+    // Show success message
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Found ${busStops.length} bus stops nearby'),
+          backgroundColor: AppColors.successColor,
+        ),
+      );
+    }
+  }
+
+  List<Map<String, dynamic>> _getBusStopsAroundLocation(Position position) {
+    // Generate bus stops within 2km of current location
+    final baseLatOffset = 0.01; // ~1km
+    final baseLngOffset = 0.01; // ~1km
+    
+    return [
+      {
+        'name': 'Main Bus Terminal',
+        'lat': position.latitude + (baseLatOffset * 0.5),
+        'lng': position.longitude + (baseLngOffset * 0.3),
+        'routes': 'Routes 101, 105, 138'
+      },
+      {
+        'name': 'Shopping Complex Stop',
+        'lat': position.latitude - (baseLatOffset * 0.7),
+        'lng': position.longitude + (baseLngOffset * 0.8),
+        'routes': 'Routes 205, 220'
+      },
+      {
+        'name': 'Hospital Junction',
+        'lat': position.latitude + (baseLatOffset * 0.9),
+        'lng': position.longitude - (baseLngOffset * 0.4),
+        'routes': 'Routes 150, 176, 185'
+      },
+      {
+        'name': 'University Gate',
+        'lat': position.latitude - (baseLatOffset * 0.3),
+        'lng': position.longitude - (baseLngOffset * 0.9),
+        'routes': 'Routes 301, 307'
+      },
+      {
+        'name': 'City Center Plaza',
+        'lat': position.latitude + (baseLatOffset * 0.2),
+        'lng': position.longitude + (baseLngOffset * 0.6),
+        'routes': 'Routes 110, 125, 240'
+      },
+      {
+        'name': 'Railway Station Stop',
+        'lat': position.latitude - (baseLatOffset * 0.5),
+        'lng': position.longitude + (baseLngOffset * 0.2),
+        'routes': 'Routes 101, 138, 205'
+      },
+    ];
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -184,14 +251,64 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     setState(() => _isSearching = true);
 
     try {
-      // TODO: Implement actual place search with Google Places API
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      // Store the searched destination for navigation
+      _searchedDestination = query;
+      
+      // Simulate place search - in real app, use Google Places API
+      await Future.delayed(const Duration(seconds: 1));
 
+      // Add a sample marker for searched location
+      final searchLat = _currentPosition?.latitude ?? 6.9271;
+      final searchLng = _currentPosition?.longitude ?? 79.8612;
+      
+      // Offset slightly to simulate different location
+      final destinationLat = searchLat + 0.02;
+      final destinationLng = searchLng + 0.015;
+      
+      _markers.removeWhere((marker) => marker.markerId.value == 'search_destination');
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('search_destination'),
+          position: LatLng(destinationLat, destinationLng),
+          infoWindow: InfoWindow(
+            title: query,
+            snippet: 'Searched destination',
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+        ),
+      );
+      
+      // Animate to show both current location and destination
+      if (_mapController != null) {
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngBounds(
+            LatLngBounds(
+              southwest: LatLng(
+                math.min(searchLat, destinationLat) - 0.005,
+                math.min(searchLng, destinationLng) - 0.005,
+              ),
+              northeast: LatLng(
+                math.max(searchLat, destinationLat) + 0.005,
+                math.max(searchLng, destinationLng) + 0.005,
+              ),
+            ),
+            100.0, // padding
+          ),
+        );
+      }
+
+      setState(() {});
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Searching for "$query"...'),
+            content: Text('Found "$query". Tap Navigate to see bus route!'),
             backgroundColor: AppColors.primaryColor,
+            action: SnackBarAction(
+              label: 'Navigate',
+              textColor: Colors.white,
+              onPressed: _navigateToDestination,
+            ),
           ),
         );
       }
