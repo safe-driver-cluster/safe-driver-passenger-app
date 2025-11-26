@@ -150,21 +150,8 @@ class _BusListPageState extends State<BusListPage> {
   }
 
   Widget _buildBusList() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppDesign.space2XL),
-          topRight: Radius.circular(AppDesign.space2XL),
-        ),
-        boxShadow: AppDesign.shadowLG,
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppDesign.space2XL),
-          topRight: Radius.circular(AppDesign.space2XL),
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('vehicles')
@@ -259,7 +246,6 @@ class _BusListPageState extends State<BusListPage> {
             }
 
             return ListView.builder(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
               itemCount: filteredBuses.length,
               itemBuilder: (context, index) {
                 final busData =
@@ -269,7 +255,6 @@ class _BusListPageState extends State<BusListPage> {
             );
           },
         ),
-      ),
     );
   }
 
