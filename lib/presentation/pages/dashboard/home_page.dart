@@ -4,7 +4,7 @@ import '../../../core/constants/color_constants.dart';
 
 class HomePage extends StatelessWidget {
   final void Function(int)? onNavigateToTab;
-  
+
   const HomePage({super.key, this.onNavigateToTab});
 
   @override
