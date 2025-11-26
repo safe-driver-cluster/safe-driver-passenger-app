@@ -104,8 +104,8 @@ class HomePage extends StatelessWidget {
                                 icon: Icons.directions_bus_rounded,
                                 title: 'View Bus',
                                 subtitle: 'Available buses',
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/buses'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/buses'),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -114,8 +114,8 @@ class HomePage extends StatelessWidget {
                                 icon: Icons.person_rounded,
                                 title: 'View Driver Details',
                                 subtitle: 'Driver information',
-                                onTap: () => Navigator.pushNamed(
-                                    context, '/drivers'),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/drivers'),
                               ),
                             ),
                           ],
