@@ -16,7 +16,7 @@ import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final int? initialTab;
-  
+
   const DashboardPage({super.key, this.initialTab});
 
   @override
@@ -33,7 +33,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     if (widget.initialTab != null) {
       _selectedIndex = widget.initialTab!;
     }
-    
+
     // Initialize dashboard data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(dashboardControllerProvider.notifier).loadDashboardData();
