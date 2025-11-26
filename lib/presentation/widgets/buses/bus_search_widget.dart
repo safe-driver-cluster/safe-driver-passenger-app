@@ -228,15 +228,18 @@ class _BusSearchWidgetState extends State<BusSearchWidget> {
         // Filter buses based on search query
         final buses = snapshot.data!.docs.where((doc) {
           if (_searchQuery.isEmpty) return true;
-          
+
           final data = doc.data() as Map<String, dynamic>;
-          final routeNumber = (data['routeNumber'] ?? '').toString().toLowerCase();
-          final destination = (data['destination'] ?? '').toString().toLowerCase();
-          final driverName = (data['driverName'] ?? '').toString().toLowerCase();
-          
+          final routeNumber =
+              (data['routeNumber'] ?? '').toString().toLowerCase();
+          final destination =
+              (data['destination'] ?? '').toString().toLowerCase();
+          final driverName =
+              (data['driverName'] ?? '').toString().toLowerCase();
+
           return routeNumber.contains(_searchQuery) ||
-                 destination.contains(_searchQuery) ||
-                 driverName.contains(_searchQuery);
+              destination.contains(_searchQuery) ||
+              driverName.contains(_searchQuery);
         }).toList();
 
         if (buses.isEmpty) {
@@ -319,14 +322,16 @@ class _BusSearchWidgetState extends State<BusSearchWidget> {
                   Container(
                     padding: const EdgeInsets.all(AppDesign.spaceSM),
                     decoration: BoxDecoration(
-                      color: isActive 
+                      color: isActive
                           ? AppColors.primaryColor.withOpacity(0.1)
                           : AppColors.textSecondary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                     ),
                     child: Icon(
                       Icons.directions_bus,
-                      color: isActive ? AppColors.primaryColor : AppColors.textSecondary,
+                      color: isActive
+                          ? AppColors.primaryColor
+                          : AppColors.textSecondary,
                       size: AppDesign.iconMD,
                     ),
                   ),
@@ -352,17 +357,20 @@ class _BusSearchWidgetState extends State<BusSearchWidget> {
                                 vertical: AppDesign.spaceXS,
                               ),
                               decoration: BoxDecoration(
-                                color: isActive 
+                                color: isActive
                                     ? AppColors.successColor.withOpacity(0.1)
                                     : AppColors.errorColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+                                borderRadius:
+                                    BorderRadius.circular(AppDesign.radiusSM),
                               ),
                               child: Text(
                                 isActive ? 'Active' : 'Inactive',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: isActive ? AppColors.successColor : AppColors.errorColor,
+                                  color: isActive
+                                      ? AppColors.successColor
+                                      : AppColors.errorColor,
                                 ),
                               ),
                             ),
@@ -384,7 +392,7 @@ class _BusSearchWidgetState extends State<BusSearchWidget> {
               const SizedBox(height: AppDesign.spaceMD),
               Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.person_outline,
                     size: AppDesign.iconSM,
                     color: AppColors.textSecondary,
@@ -398,7 +406,7 @@ class _BusSearchWidgetState extends State<BusSearchWidget> {
                     ),
                   ),
                   const Spacer(),
-                  Icon(
+                  const Icon(
                     Icons.people_outline,
                     size: AppDesign.iconSM,
                     color: AppColors.textSecondary,
