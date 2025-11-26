@@ -584,16 +584,16 @@ class _DriverListPageState extends State<DriverListPage> {
           onTap: (index) {
             switch (index) {
               case 0:
-                Navigator.of(context).pushReplacementNamed('/dashboard');
+                Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
                 break;
               case 1:
-                Navigator.of(context).pushReplacementNamed('/buses');
+                Navigator.of(context).pushNamedAndRemoveUntil('/buses', (route) => false);
                 break;
               case 2:
-                Navigator.of(context).pushReplacementNamed('/dashboard');
+                Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
                 break;
               case 3:
-                Navigator.of(context).pushReplacementNamed('/dashboard');
+                Navigator.of(context).pushNamedAndRemoveUntil('/dashboard', (route) => false);
                 break;
             }
           },
