@@ -278,10 +278,10 @@ class _BusListPageState extends State<BusListPage> {
           ),
         ),
       ),
-    )
+    );
   }
 
-  Widget _buildAdvancedSearchSection() {
+  Widget _buildBusCard(Map<String, dynamic> busData) {
     return Column(
       children: [
         // Search Type Selector
