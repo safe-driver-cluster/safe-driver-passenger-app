@@ -13,11 +13,13 @@ import '../presentation/pages/bus/bus_details_page.dart';
 import '../presentation/pages/bus/bus_history_page.dart';
 import '../presentation/pages/bus/bus_search_page.dart';
 import '../presentation/pages/bus/live_tracking_page.dart';
+import '../presentation/pages/buses/bus_list_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
+import '../presentation/pages/drivers/driver_list_page.dart';
 import '../presentation/pages/feedback/feedback_form_screen.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
@@ -52,12 +54,14 @@ class AppRoutes {
   static const String notifications = '/notifications';
 
   // Bus routes
+  static const String buses = '/buses';
   static const String busSearch = '/bus-search';
   static const String busDetails = '/bus-details';
   static const String liveTracking = '/live-tracking';
   static const String busHistory = '/bus-history';
 
   // Driver routes
+  static const String drivers = '/drivers';
   static const String driverProfile = '/driver-profile';
   static const String driverHistory = '/driver-history';
   static const String driverPerformance = '/driver-performance';
