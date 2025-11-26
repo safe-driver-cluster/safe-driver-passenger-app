@@ -12,29 +12,127 @@ class EmergencyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.dangerColor,
+              AppColors.criticalColor,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: _buildEmergencyContent(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Professional Emergency Header
-          _buildEmergencyHeader(context),
+          // Title and back button
+          Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/dashboard',
+                    (route) => false,
+                  ),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: AppColors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Text(
+                'Emergency',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.white,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.warning_rounded,
+                  color: AppColors.white,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
 
-          // Emergency Content
-          Expanded(
-            child: SingleChildScrollView(
+          // Emergency message
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
-              child: Column(
+              child: Row(
                 children: [
-                  // Emergency Contacts
-                  _buildEmergencyContactsSection(),
-
-                  const SizedBox(height: AppDesign.space2XL),
-
-                  // Quick Actions
-                  _buildQuickActionsSection(),
-
-                  const SizedBox(height: AppDesign.space2XL),
-
-                  // Safety Tips
-                  _buildSafetyTipsSection(),
+                  Container(
+                    padding: const EdgeInsets.all(AppDesign.spaceSM),
+                    decoration: BoxDecoration(
+                      color: AppColors.dangerColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    child: const Icon(
+                      Icons.info_rounded,
+                      color: AppColors.dangerColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  const Expanded(
+                    child: Text(
+                      'Tap any contact below for immediate assistance',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -44,146 +142,78 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmergencyHeader(BuildContext context) {
+  Widget _buildEmergencyContent() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        60,
-        AppDesign.spaceLG,
-        AppDesign.space2XL,
-      ),
+      margin: const EdgeInsets.only(top: AppDesign.spaceLG),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.dangerColor,
-            AppColors.criticalColor,
+        color: AppColors.scaffoldBackground,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          children: [
+            _buildEmergencyContactsSection(),
+            const SizedBox(height: AppDesign.space2XL),
+            _buildQuickActionsSection(),
+            const SizedBox(height: AppDesign.space2XL),
+            _buildSafetyTipsSection(),
           ],
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Header with back button
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: AppDesign.spaceLG),
-
-              Expanded(
-                child: Text(
-                  'Emergency',
-                  style: AppTextStyles.headline3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-
-              // Emergency indicator
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceMD),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.warning_rounded,
-                  color: Colors.white,
-                  size: AppDesign.iconLG,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: AppDesign.space2XL),
-
-          // Emergency message
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.info_rounded,
-                  color: Colors.white,
-                  size: AppDesign.iconMD,
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: Text(
-                    'Tap any contact below for immediate assistance',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildEmergencyContactsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.dangerColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.phone_enabled_rounded,
-                  color: AppColors.dangerColor,
-                  size: AppDesign.iconMD,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                'Emergency Contacts',
-                style: AppTextStyles.headline6.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: AppDesign.spaceLG),
-          ..._buildEmergencyContacts(),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceSM),
+                  decoration: BoxDecoration(
+                    color: AppColors.dangerColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.phone_enabled_rounded,
+                    color: AppColors.dangerColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                const Text(
+                  'Emergency Contacts',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceLG),
+            ..._buildEmergencyContacts(),
+          ],
+        ),
       ),
     );
   }
@@ -310,34 +340,48 @@ class EmergencyPage extends StatelessWidget {
   }
 
   Widget _buildQuickActionsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.accentColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.flash_on_rounded,
-                  color: AppColors.accentColor,
-                  size: AppDesign.iconMD,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                'Quick Actions',
-                style: AppTextStyles.headline6.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceSM),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.flash_on_rounded,
+                    color: AppColors.accentColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                const Text(
+                  'Quick Actions',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           const SizedBox(height: AppDesign.spaceLG),
           Row(
             children: [
