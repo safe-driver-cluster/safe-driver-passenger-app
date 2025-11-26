@@ -7,6 +7,8 @@ import '../../controllers/dashboard_controller.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
 import '../bus/bus_search_page.dart';
+import '../buses/bus_list_page.dart';
+import '../drivers/driver_list_page.dart';
 import '../maps/map_page.dart';
 import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
@@ -414,21 +416,31 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Scan QR',
-                    subtitle: 'Board bus',
-                    icon: Icons.qr_code_scanner_rounded,
+                    title: 'View Buses',
+                    subtitle: 'Available',
+                    icon: Icons.directions_bus_rounded,
                     gradient: AppColors.primaryGradient,
-                    onTap: () => onNavigateToTab?.call(2),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BusListPage(),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Find Routes',
-                    subtitle: 'Search',
-                    icon: Icons.directions_bus_rounded,
+                    title: 'Our Drivers',
+                    subtitle: 'Details',
+                    icon: Icons.person_rounded,
                     gradient: AppColors.accentGradient,
-                    onTap: () => onNavigateToTab?.call(1),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DriverListPage(),
+                      ),
+                    ),
                   ),
                 ),
               ],
