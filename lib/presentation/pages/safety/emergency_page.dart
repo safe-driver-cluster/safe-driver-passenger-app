@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -29,7 +32,7 @@ class EmergencyPage extends StatelessWidget {
             children: [
               _buildHeader(context),
               Expanded(
-                child: _buildEmergencyContent(),
+                child: _buildEmergencyContent(context),
               ),
             ],
           ),
@@ -137,7 +140,7 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmergencyContent() {
+  Widget _buildEmergencyContent(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: AppDesign.spaceLG),
       decoration: const BoxDecoration(
@@ -153,7 +156,7 @@ class EmergencyPage extends StatelessWidget {
           children: [
             _buildEmergencyContactsSection(),
             const SizedBox(height: AppDesign.space2XL),
-            _buildQuickActionsSection(),
+            _buildQuickActionsSection(context),
             const SizedBox(height: AppDesign.space2XL),
             _buildSafetyTipsSection(),
           ],
@@ -321,7 +324,7 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
           color: AppColors.white,
@@ -381,7 +384,7 @@ class EmergencyPage extends StatelessWidget {
                       'Share Location',
                       Icons.my_location_rounded,
                       AppColors.primaryColor,
-                      () => _shareLocation(),
+                      () => _shareLocation(context),
                     ),
                   ),
                 ],
@@ -403,7 +406,7 @@ class EmergencyPage extends StatelessWidget {
                       'Emergency Contacts',
                       Icons.contacts_rounded,
                       AppColors.successColor,
-                      () => _viewEmergencyContacts(),
+                      () => _viewEmergencyContacts(context),
                     ),
                   ),
                 ],
@@ -418,7 +421,8 @@ class EmergencyPage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        height: 100,
+        padding: const EdgeInsets.all(AppDesign.spaceMD),
         decoration: BoxDecoration(
           color: color.withOpacity(0.08),
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -427,21 +431,26 @@ class EmergencyPage extends StatelessWidget {
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
               color: color,
-              size: AppDesign.iconLG,
+              size: 28,
             ),
             const SizedBox(height: AppDesign.spaceXS),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -548,20 +557,212 @@ class EmergencyPage extends StatelessWidget {
     }
   }
 
-  void _sendSOSAlert() {
-    // Implement SOS alert functionality
+  void _sendSOSAlert() async {
+    try {
+      // Get current location
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      String locationUrl = 'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+      
+      // Create SOS message
+      String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
+          'I need immediate help!\n'
+          'My location: $locationUrl\n'
+          'Time: ${DateTime.now().toString()}';
+      
+      // Share SOS message
+      await Share.share(
+        sosMessage,
+        subject: '🆘 Emergency SOS Alert',
+      );
+    } catch (e) {
+      // If location access fails, send SOS without location
+      String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
+          'I need immediate help!\n'
+          'Time: ${DateTime.now().toString()}';
+      
+      await Share.share(
+        sosMessage,
+        subject: '🆘 Emergency SOS Alert',
+      );
+    }
   }
 
-  void _shareLocation() {
-    // Implement location sharing functionality
+  void _shareLocation(BuildContext context) async {
+    try {
+      // Request location permission if not granted
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Location permission is required to share location'),
+                backgroundColor: AppColors.dangerColor,
+              ),
+            );
+          }
+          return;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Location permission is permanently denied. Please enable it from settings.'),
+              backgroundColor: AppColors.dangerColor,
+            ),
+          );
+        }
+        return;
+      }
+      
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      // Create Google Maps link
+      String locationUrl = 'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+      
+      // Create share message
+      String shareMessage = '📍 My Current Location\n'
+          'Latitude: ${position.latitude}\n'
+          'Longitude: ${position.longitude}\n'
+          'View on map: $locationUrl';
+      
+      // Share location
+      await Share.share(
+        shareMessage,
+        subject: '📍 My Current Location',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to get location: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    }
   }
 
   void _reportIncident() {
     // Implement incident reporting functionality
   }
 
-  void _viewEmergencyContacts() {
-    // Implement emergency contacts view
+  void _viewEmergencyContacts(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? emergencyNumber = prefs.getString('emergency_contact_number');
+      
+      if (emergencyNumber == null || emergencyNumber.isEmpty) {
+        // Show dialog to set emergency contact
+        if (context.mounted) {
+          _showSetEmergencyContactDialog(context);
+        }
+      } else {
+        // Call the emergency contact
+        _makeCall(emergencyNumber);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    }
+  }
+  
+  void _showSetEmergencyContactDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.warningColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.contacts_rounded,
+                  color: AppColors.warningColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Text(
+                'Emergency Contact',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'You haven\'t set an emergency contact yet. Would you like to go to your profile to add one?',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _navigateToProfile(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                foregroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+              ),
+              child: const Text(
+                'Yes, Go to Profile',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  void _navigateToProfile(BuildContext context) {
+    // Navigate to profile/edit profile page
+    Navigator.pushNamed(context, '/profile');
   }
 }
 
