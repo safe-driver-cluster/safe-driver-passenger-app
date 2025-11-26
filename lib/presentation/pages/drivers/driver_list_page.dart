@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -43,7 +43,7 @@ class _DriverListPageState extends State<DriverListPage> {
             children: [
               // Header with search
               _buildHeader(),
-              
+
               // Driver list
               Expanded(
                 child: _buildDriverList(),
@@ -96,7 +96,7 @@ class _DriverListPageState extends State<DriverListPage> {
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Search bar
           Container(
             decoration: BoxDecoration(
@@ -113,7 +113,7 @@ class _DriverListPageState extends State<DriverListPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search by name, license, route...',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: AppColors.textHint,
                   fontSize: 16,
                 ),
@@ -173,7 +173,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.error_outline_rounded,
                       size: 64,
                       color: AppColors.errorColor,
@@ -200,25 +200,28 @@ class _DriverListPageState extends State<DriverListPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
                 ),
               );
             }
 
             final drivers = snapshot.data?.docs ?? [];
-            
+
             // Filter drivers based on search query
             final filteredDrivers = drivers.where((driver) {
               final data = driver.data() as Map<String, dynamic>;
               final name = (data['name'] ?? '').toString().toLowerCase();
-              final licenseNumber = (data['licenseNumber'] ?? '').toString().toLowerCase();
+              final licenseNumber =
+                  (data['licenseNumber'] ?? '').toString().toLowerCase();
               final route = (data['route'] ?? '').toString().toLowerCase();
-              final busNumber = (data['busNumber'] ?? '').toString().toLowerCase();
-              
+              final busNumber =
+                  (data['busNumber'] ?? '').toString().toLowerCase();
+
               return name.contains(_searchQuery) ||
-                     licenseNumber.contains(_searchQuery) ||
-                     route.contains(_searchQuery) ||
-                     busNumber.contains(_searchQuery);
+                  licenseNumber.contains(_searchQuery) ||
+                  route.contains(_searchQuery) ||
+                  busNumber.contains(_searchQuery);
             }).toList();
 
             if (filteredDrivers.isEmpty) {
@@ -226,21 +229,23 @@ class _DriverListPageState extends State<DriverListPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.person_rounded,
                       size: 64,
                       color: AppColors.textHint,
                     ),
                     const SizedBox(height: AppDesign.spaceMD),
                     Text(
-                      _searchQuery.isEmpty ? 'No drivers found' : 'No matching drivers',
+                      _searchQuery.isEmpty
+                          ? 'No drivers found'
+                          : 'No matching drivers',
                       style: AppTextStyles.headline6.copyWith(
                         color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: AppDesign.spaceSM),
                     Text(
-                      _searchQuery.isEmpty 
+                      _searchQuery.isEmpty
                           ? 'Driver data is being updated'
                           : 'Try a different search term',
                       style: AppTextStyles.bodyMedium.copyWith(
@@ -256,7 +261,8 @@ class _DriverListPageState extends State<DriverListPage> {
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               itemCount: filteredDrivers.length,
               itemBuilder: (context, index) {
-                final driverData = filteredDrivers[index].data() as Map<String, dynamic>;
+                final driverData =
+                    filteredDrivers[index].data() as Map<String, dynamic>;
                 return _buildDriverCard(driverData);
               },
             );
@@ -307,7 +313,8 @@ class _DriverListPageState extends State<DriverListPage> {
                         height: 50,
                         decoration: BoxDecoration(
                           gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
                         ),
                         child: Center(
                           child: Text(
@@ -383,9 +390,9 @@ class _DriverListPageState extends State<DriverListPage> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppDesign.spaceMD),
-            
+
             // Route and bus information
             Row(
               children: [
@@ -395,7 +402,7 @@ class _DriverListPageState extends State<DriverListPage> {
                     color: AppColors.accentColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppDesign.radiusSM),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.route_rounded,
                     size: 16,
                     color: AppColors.accentColor,
@@ -431,9 +438,9 @@ class _DriverListPageState extends State<DriverListPage> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppDesign.spaceMD),
-            
+
             // Driver details
             Row(
               children: [
@@ -455,9 +462,9 @@ class _DriverListPageState extends State<DriverListPage> {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: AppDesign.spaceSM),
-            
+
             // Contact information
             Row(
               children: [
@@ -478,7 +485,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 ),
               ],
             ),
-            
+
             if (joinDate.isNotEmpty) ...[
               const SizedBox(height: AppDesign.spaceSM),
               _buildInfoRow(
