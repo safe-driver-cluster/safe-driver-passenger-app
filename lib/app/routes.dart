@@ -13,13 +13,11 @@ import '../presentation/pages/bus/bus_details_page.dart';
 import '../presentation/pages/bus/bus_history_page.dart';
 import '../presentation/pages/bus/bus_search_page.dart';
 import '../presentation/pages/bus/live_tracking_page.dart';
-import '../presentation/pages/buses/bus_list_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
-import '../presentation/pages/drivers/driver_list_page.dart';
 import '../presentation/pages/feedback/feedback_form_screen.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
@@ -173,6 +171,18 @@ class AppRoutes {
       case notifications:
         return MaterialPageRoute(
           builder: (_) => const NotificationsPage(),
+          settings: settings,
+        );
+
+      case buses:
+        return MaterialPageRoute(
+          builder: (_) => const BusListPage(),
+          settings: settings,
+        );
+
+      case drivers:
+        return MaterialPageRoute(
+          builder: (_) => const DriverListPage(),
           settings: settings,
         );
 
