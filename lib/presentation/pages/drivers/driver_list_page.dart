@@ -152,111 +152,109 @@ class _DriverListPageState extends State<DriverListPage> {
   Widget _buildDriverList() {
     return Padding(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('drivers').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline_rounded,
-                      size: 64,
-                      color: AppColors.errorColor,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('drivers').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 64,
+                    color: AppColors.errorColor,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  Text(
+                    'Error loading drivers',
+                    style: AppTextStyles.headline6.copyWith(
+                      color: AppColors.textPrimary,
                     ),
-                    const SizedBox(height: AppDesign.spaceMD),
-                    Text(
-                      'Error loading drivers',
-                      style: AppTextStyles.headline6.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  Text(
+                    'Please try again later',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-                    const SizedBox(height: AppDesign.spaceSM),
-                    Text(
-                      'Please try again later',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
-                ),
-              );
-            }
-
-            final drivers = snapshot.data?.docs ?? [];
-
-            // Filter drivers based on search query
-            final filteredDrivers = drivers.where((driver) {
-              final data = driver.data() as Map<String, dynamic>;
-              final name = (data['name'] ?? '').toString().toLowerCase();
-              final licenseNumber =
-                  (data['licenseNumber'] ?? '').toString().toLowerCase();
-              final route = (data['route'] ?? '').toString().toLowerCase();
-              final busNumber =
-                  (data['busNumber'] ?? '').toString().toLowerCase();
-
-              return name.contains(_searchQuery) ||
-                  licenseNumber.contains(_searchQuery) ||
-                  route.contains(_searchQuery) ||
-                  busNumber.contains(_searchQuery);
-            }).toList();
-
-            if (filteredDrivers.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.person_rounded,
-                      size: 64,
-                      color: AppColors.textHint,
-                    ),
-                    const SizedBox(height: AppDesign.spaceMD),
-                    Text(
-                      _searchQuery.isEmpty
-                          ? 'No drivers found'
-                          : 'No matching drivers',
-                      style: AppTextStyles.headline6.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesign.spaceSM),
-                    Text(
-                      _searchQuery.isEmpty
-                          ? 'Driver data is being updated'
-                          : 'Try a different search term',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.all(AppDesign.spaceLG),
-              itemCount: filteredDrivers.length,
-              itemBuilder: (context, index) {
-                final driverData =
-                    filteredDrivers[index].data() as Map<String, dynamic>;
-                return _buildDriverCard(driverData);
-              },
+                  ),
+                ],
+              ),
             );
-          },
-        ),
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+              ),
+            );
+          }
+
+          final drivers = snapshot.data?.docs ?? [];
+
+          // Filter drivers based on search query
+          final filteredDrivers = drivers.where((driver) {
+            final data = driver.data() as Map<String, dynamic>;
+            final name = (data['name'] ?? '').toString().toLowerCase();
+            final licenseNumber =
+                (data['licenseNumber'] ?? '').toString().toLowerCase();
+            final route = (data['route'] ?? '').toString().toLowerCase();
+            final busNumber =
+                (data['busNumber'] ?? '').toString().toLowerCase();
+
+            return name.contains(_searchQuery) ||
+                licenseNumber.contains(_searchQuery) ||
+                route.contains(_searchQuery) ||
+                busNumber.contains(_searchQuery);
+          }).toList();
+
+          if (filteredDrivers.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.person_rounded,
+                    size: 64,
+                    color: AppColors.textHint,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  Text(
+                    _searchQuery.isEmpty
+                        ? 'No drivers found'
+                        : 'No matching drivers',
+                    style: AppTextStyles.headline6.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  Text(
+                    _searchQuery.isEmpty
+                        ? 'Driver data is being updated'
+                        : 'Try a different search term',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: filteredDrivers.length,
+            itemBuilder: (context, index) {
+              final driverData =
+                  filteredDrivers[index].data() as Map<String, dynamic>;
+              return _buildDriverCard(driverData);
+            },
+          );
+        },
       ),
-    )
+    );
   }
 
   Widget _buildDriverCard(Map<String, dynamic> driverData) {
