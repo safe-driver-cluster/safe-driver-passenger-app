@@ -278,7 +278,7 @@ class _BusListPageState extends State<BusListPage> {
           ),
         ),
       ),
-    );
+    )
   }
 
   Widget _buildBusCard(Map<String, dynamic> busData) {
