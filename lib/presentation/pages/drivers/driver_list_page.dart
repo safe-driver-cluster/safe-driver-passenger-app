@@ -256,7 +256,7 @@ class _DriverListPageState extends State<DriverListPage> {
           },
         ),
       ),
-    );
+    )
   }
 
   Widget _buildDriverCard(Map<String, dynamic> driverData) {
