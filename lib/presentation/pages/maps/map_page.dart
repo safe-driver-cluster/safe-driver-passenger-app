@@ -476,7 +476,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                           'Total journey: ~25 mins',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -713,9 +713,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                               _searchController.clear();
                               _searchedDestination = null;
                               _markers.removeWhere((marker) =>
-                                  marker.markerId.value == 'search_destination');
-                              _polylines.removeWhere((polyline) =>
-                                  polyline.polylineId.value.contains('bus_route'));
+                                  marker.markerId.value ==
+                                  'search_destination');
+                              _polylines.removeWhere((polyline) => polyline
+                                  .polylineId.value
+                                  .contains('bus_route'));
                               setState(() {});
                             },
                             icon: const Icon(
@@ -733,9 +735,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               onSubmitted: (_) => _searchPlaces(),
             ),
           ),
-          
+
           const SizedBox(height: AppDesign.spaceLG),
-          
+
           // Action buttons
           _buildActionCards(),
         ],
@@ -771,8 +773,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                   target: _currentPosition != null
                       ? LatLng(_currentPosition!.latitude,
                           _currentPosition!.longitude)
-                      : const LatLng(
-                          6.9271, 79.8612), // Colombo default
+                      : const LatLng(6.9271, 79.8612), // Colombo default
                   zoom: 14.0,
                 ),
                 markers: _markers,
@@ -786,8 +787,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 buildingsEnabled: true,
                 mapToolbarEnabled: false,
               ),
-            if (!_isLoading && _errorMessage == null)
-              _buildMapControls(),
+            if (!_isLoading && _errorMessage == null) _buildMapControls(),
           ],
         ),
       ),
@@ -1008,7 +1008,8 @@ class _SmallActionButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isLoading ? AppColors.textSecondary : AppColors.textPrimary,
+                color:
+                    isLoading ? AppColors.textSecondary : AppColors.textPrimary,
               ),
             ),
           ],
