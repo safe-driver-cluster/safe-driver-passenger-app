@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,9 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
-import 'bus_details_page.dart';
-import 'live_tracking_page.dart';
-import 'route_map_page.dart';
+
 
 class BusSearchPage extends ConsumerStatefulWidget {
   const BusSearchPage({super.key});
@@ -62,56 +61,61 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     super.dispose();
   }
 
-  void _loadPopularRoutes() {
-    setState(() {
-      _searchResults = [
-        {
-          'id': 'bus_001',
-          'busNumber': 'B001',
-          'routeName': 'City Express',
-          'route': 'City Center → Airport',
-          'nextArrival': '5 min',
-          'fare': 'Rs. 210',
-          'capacity': 85,
-          'occupancy': 68,
-          'driverName': 'John Smith',
-          'driverId': 'driver_001',
-          'rating': 4.8,
-          'isLive': true,
-          'estimatedTime': '25 min',
-        },
-        {
-          'id': 'bus_002',
-          'busNumber': 'B023',
-          'routeName': 'University Line',
-          'route': 'University → Downtown → Mall',
-          'nextArrival': '12 min',
-          'fare': 'Rs. 170',
-          'capacity': 65,
-          'occupancy': 42,
-          'driverName': 'Sarah Johnson',
-          'driverId': 'driver_002',
-          'rating': 4.6,
-          'isLive': true,
-          'estimatedTime': '35 min',
-        },
-        {
-          'id': 'bus_003',
-          'busNumber': 'B045',
-          'routeName': 'Residential Route',
-          'route': 'Mall → Residential Area',
-          'nextArrival': '18 min',
-          'fare': 'Rs. 150',
-          'capacity': 45,
-          'occupancy': 28,
-          'driverName': 'Mike Wilson',
-          'driverId': 'driver_003',
-          'rating': 4.9,
-          'isLive': false,
-          'estimatedTime': '20 min',
-        },
-      ];
-    });
+  void _loadPopularRoutes() async {
+    try {
+      setState(() {
+        _isSearching = true;
+      });
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .limit(10)
+          .get();
+
+      final List<Map<String, dynamic>> buses = [];
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final location = data['location'] as Map<String, dynamic>?;
+
+        buses.add({
+          'id': doc.id,
+          'busNumber': data['busNumberPlate'] ?? 'N/A',
+          'routeName': data['route'] ?? 'Unknown Route',
+          'route': data['route'] ?? 'Unknown Route',
+          'nextArrival':
+              '${(5 + (buses.length * 3))} min', // Simulated arrival time
+          'fare': 'Rs. ${(150 + (buses.length * 20))}', // Simulated fare
+          'capacity': data['capacity'] ?? 50,
+          'occupancy': data['occupancy'] ?? 30,
+          'driverName': data['driverName'] ?? 'Unknown Driver',
+          'driverId': data['driverId'] ?? '',
+          'rating': ((data['safetyScore'] ?? 75) / 100.0 * 5.0).toDouble(),
+          'isLive': data['status'] == 'active',
+          'estimatedTime': '${(20 + (buses.length * 5))} min', // Simulated time
+          'model': data['model'] ?? 'N/A',
+          'batteryLevel': data['batteryLevel'] ?? 0,
+          'fuel': data['fuel'] ?? 0,
+          'safetyScore': data['safetyScore'] ?? 0,
+          'address': location?['address'] ?? 'Location unavailable',
+        });
+      }
+
+      if (mounted) {
+        setState(() {
+          _searchResults = buses;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+          _searchResults = [];
+        });
+      }
+    }
   }
 
   void _performSearch() {
@@ -129,65 +133,212 @@ class _BusSearchPageState extends ConsumerState<BusSearchPage>
     }
   }
 
-  void _searchByBusNumber() {
+  void _searchByBusNumber() async {
     setState(() {
       _isSearching = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      final String searchQuery = _busNumberController.text.toLowerCase().trim();
+
+      if (searchQuery.isEmpty) {
+        _loadPopularRoutes();
+        return;
+      }
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      final List<Map<String, dynamic>> buses = [];
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final busNumber =
+            (data['busNumberPlate'] ?? '').toString().toLowerCase();
+
+        if (busNumber.contains(searchQuery)) {
+          final location = data['location'] as Map<String, dynamic>?;
+
+          buses.add({
+            'id': doc.id,
+            'busNumber': data['busNumberPlate'] ?? 'N/A',
+            'routeName': data['route'] ?? 'Unknown Route',
+            'route': data['route'] ?? 'Unknown Route',
+            'nextArrival': '${(5 + (buses.length * 3))} min',
+            'fare': 'Rs. ${(150 + (buses.length * 20))}',
+            'capacity': data['capacity'] ?? 50,
+            'occupancy': data['occupancy'] ?? 30,
+            'driverName': data['driverName'] ?? 'Unknown Driver',
+            'driverId': data['driverId'] ?? '',
+            'rating': ((data['safetyScore'] ?? 75) / 100.0 * 5.0).toDouble(),
+            'isLive': data['status'] == 'active',
+            'estimatedTime': '${(20 + (buses.length * 5))} min',
+            'model': data['model'] ?? 'N/A',
+            'batteryLevel': data['batteryLevel'] ?? 0,
+            'fuel': data['fuel'] ?? 0,
+            'safetyScore': data['safetyScore'] ?? 0,
+            'address': location?['address'] ?? 'Location unavailable',
+          });
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _searchResults = buses;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
       if (mounted) {
         setState(() {
           _isSearching = false;
-          _searchResults = _searchResults.where((bus) {
-            return bus['busNumber']
-                .toLowerCase()
-                .contains(_busNumberController.text.toLowerCase());
-          }).toList();
         });
       }
-    });
+    }
   }
 
-  void _searchByRoute() {
+  void _searchByRoute() async {
     setState(() {
       _isSearching = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      final String fromQuery = _fromController.text.toLowerCase().trim();
+      final String toQuery = _toController.text.toLowerCase().trim();
+
+      if (fromQuery.isEmpty && toQuery.isEmpty) {
+        _loadPopularRoutes();
+        return;
+      }
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      final List<Map<String, dynamic>> buses = [];
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final route = (data['route'] ?? '').toString().toLowerCase();
+        final location = data['location'] as Map<String, dynamic>?;
+        final address = (location?['address'] ?? '').toString().toLowerCase();
+
+        bool matchesFrom = fromQuery.isEmpty ||
+            route.contains(fromQuery) ||
+            address.contains(fromQuery);
+        bool matchesTo = toQuery.isEmpty ||
+            route.contains(toQuery) ||
+            address.contains(toQuery);
+
+        if (matchesFrom && matchesTo) {
+          buses.add({
+            'id': doc.id,
+            'busNumber': data['busNumberPlate'] ?? 'N/A',
+            'routeName': data['route'] ?? 'Unknown Route',
+            'route': data['route'] ?? 'Unknown Route',
+            'nextArrival': '${(5 + (buses.length * 3))} min',
+            'fare': 'Rs. ${(150 + (buses.length * 20))}',
+            'capacity': data['capacity'] ?? 50,
+            'occupancy': data['occupancy'] ?? 30,
+            'driverName': data['driverName'] ?? 'Unknown Driver',
+            'driverId': data['driverId'] ?? '',
+            'rating': ((data['safetyScore'] ?? 75) / 100.0 * 5.0).toDouble(),
+            'isLive': data['status'] == 'active',
+            'estimatedTime': '${(20 + (buses.length * 5))} min',
+            'model': data['model'] ?? 'N/A',
+            'batteryLevel': data['batteryLevel'] ?? 0,
+            'fuel': data['fuel'] ?? 0,
+            'safetyScore': data['safetyScore'] ?? 0,
+            'address': location?['address'] ?? 'Location unavailable',
+          });
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _searchResults = buses;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
       if (mounted) {
         setState(() {
           _isSearching = false;
-          _searchResults = _searchResults.where((bus) {
-            return bus['route']
-                    .toLowerCase()
-                    .contains(_fromController.text.toLowerCase()) ||
-                bus['route']
-                    .toLowerCase()
-                    .contains(_toController.text.toLowerCase());
-          }).toList();
         });
       }
-    });
+    }
   }
 
-  void _searchByLocation() {
+  void _searchByLocation() async {
     setState(() {
       _isSearching = true;
     });
 
-    Future.delayed(const Duration(milliseconds: 800), () {
+    try {
+      final String searchQuery = _busNumberController.text.toLowerCase().trim();
+
+      if (searchQuery.isEmpty) {
+        _loadPopularRoutes();
+        return;
+      }
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      final List<Map<String, dynamic>> buses = [];
+
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data();
+        final route = (data['route'] ?? '').toString().toLowerCase();
+        final location = data['location'] as Map<String, dynamic>?;
+        final address = (location?['address'] ?? '').toString().toLowerCase();
+        final busNumber =
+            (data['busNumberPlate'] ?? '').toString().toLowerCase();
+
+        if (route.contains(searchQuery) ||
+            address.contains(searchQuery) ||
+            busNumber.contains(searchQuery)) {
+          buses.add({
+            'id': doc.id,
+            'busNumber': data['busNumberPlate'] ?? 'N/A',
+            'routeName': data['route'] ?? 'Unknown Route',
+            'route': data['route'] ?? 'Unknown Route',
+            'nextArrival': '${(5 + (buses.length * 3))} min',
+            'fare': 'Rs. ${(150 + (buses.length * 20))}',
+            'capacity': data['capacity'] ?? 50,
+            'occupancy': data['occupancy'] ?? 30,
+            'driverName': data['driverName'] ?? 'Unknown Driver',
+            'driverId': data['driverId'] ?? '',
+            'rating': ((data['safetyScore'] ?? 75) / 100.0 * 5.0).toDouble(),
+            'isLive': data['status'] == 'active',
+            'estimatedTime': '${(20 + (buses.length * 5))} min',
+            'model': data['model'] ?? 'N/A',
+            'batteryLevel': data['batteryLevel'] ?? 0,
+            'fuel': data['fuel'] ?? 0,
+            'safetyScore': data['safetyScore'] ?? 0,
+            'address': location?['address'] ?? 'Location unavailable',
+          });
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _searchResults = buses;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
       if (mounted) {
         setState(() {
           _isSearching = false;
-          // For live tracking search, filter by bus number for now
-          _searchResults = _searchResults.where((bus) {
-            return bus['routeName']
-                .toLowerCase()
-                .contains(_busNumberController.text.toLowerCase());
-          }).toList();
         });
       }
-    });
+    }
   }
 
   @override
