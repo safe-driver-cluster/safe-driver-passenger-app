@@ -26,7 +26,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   bool _isSearching = false;
   String? _errorMessage;
   bool _showingBusStops = false;
-  final bool _showingBusRoute = false;
+  bool _showingBusRoute = false;
   String? _searchedDestination;
 
   // Map types
@@ -623,41 +623,65 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.all(AppDesign.spaceLG),
+      margin: const EdgeInsets.fromLTRB(AppDesign.spaceLG, AppDesign.spaceMD, AppDesign.spaceLG, AppDesign.spaceSM),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: TextField(
         controller: _searchController,
+        style: const TextStyle(
+          fontSize: 16,
+          color: AppColors.textPrimary,
+        ),
         decoration: InputDecoration(
-          hintText: 'Search places, bus stops, routes...',
-          hintStyle: TextStyle(color: Colors.grey[500]),
-          prefixIcon: const Icon(Icons.search, color: AppColors.primaryColor),
+          hintText: 'Search destination...',
+          hintStyle: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 16,
+          ),
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: AppColors.primaryColor,
+            size: 24,
+          ),
           suffixIcon: _isSearching
               ? const Padding(
                   padding: EdgeInsets.all(12.0),
                   child: SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 )
-              : IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.grey),
-                  onPressed: () => _searchController.clear(),
-                ),
+              : _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.grey),
+                      onPressed: () {
+                        _searchController.clear();
+                        _searchedDestination = null;
+                        _markers.removeWhere((marker) => 
+                          marker.markerId.value == 'search_destination');
+                        _polylines.removeWhere((polyline) => 
+                          polyline.polylineId.value.contains('bus_route'));
+                        setState(() {});
+                      },
+                    )
+                  : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: AppDesign.spaceLG,
-            vertical: AppDesign.spaceMD,
+            vertical: AppDesign.spaceLG,
           ),
         ),
         onSubmitted: (_) => _searchPlaces(),
@@ -671,21 +695,21 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       child: Row(
         children: [
           Expanded(
-            child: _ActionCard(
-              icon: Icons.directions_bus_rounded,
-              title: 'Bus Routes',
-              subtitle: 'Find nearby routes',
+            child: _SmallActionButton(
+              icon: Icons.bus_alert_rounded,
+              title: 'Bus Stop',
               color: AppColors.secondaryColor,
+              isLoading: _showingBusStops,
               onTap: _showBusRoutes,
             ),
           ),
           const SizedBox(width: AppDesign.spaceMD),
           Expanded(
-            child: _ActionCard(
+            child: _SmallActionButton(
               icon: Icons.navigation_rounded,
               title: 'Navigate',
-              subtitle: 'Get directions',
               color: AppColors.accentColor,
+              isLoading: _showingBusRoute,
               onTap: _navigateToDestination,
             ),
           ),
@@ -796,146 +820,199 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.primaryColor,
-        title: const Text(
-          'Maps & Navigation',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          _buildSearchBar(),
-          _buildActionCards(),
-          const SizedBox(height: AppDesign.spaceLG),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+      backgroundColor: Colors.grey.shade50,
+      body: CustomScrollView(
+        slivers: [
+          // Modern gradient header like other screens
+          SliverAppBar(
+            expandedHeight: 120,
+            floating: false,
+            pinned: true,
+            backgroundColor: AppColors.primaryColor,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text(
+                'Maps & Navigation',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                child: Stack(
-                  children: [
-                    if (_isLoading)
-                      _buildLoadingState()
-                    else if (_errorMessage != null)
-                      _buildErrorState()
-                    else
-                      GoogleMap(
-                        onMapCreated: _onMapCreated,
-                        initialCameraPosition: CameraPosition(
-                          target: _currentPosition != null
-                              ? LatLng(_currentPosition!.latitude,
-                                  _currentPosition!.longitude)
-                              : const LatLng(
-                                  6.9271, 79.8612), // Colombo default
-                          zoom: 14.0,
-                        ),
-                        markers: _markers,
-                        polylines: _polylines,
-                        mapType: _currentMapType,
-                        myLocationEnabled: true,
-                        myLocationButtonEnabled: false,
-                        zoomControlsEnabled: false,
-                        compassEnabled: true,
-                        trafficEnabled: _trafficEnabled,
-                        buildingsEnabled: true,
-                        mapToolbarEnabled: false,
-                      ),
-                    if (!_isLoading && _errorMessage == null)
-                      _buildMapControls(),
-                  ],
+              background: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primaryColor,
+                      AppColors.secondaryColor,
+                    ],
+                  ),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.map_rounded,
+                    size: 60,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
+            leading: IconButton(
+              onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/dashboard',
+                (route) => false,
+              ),
+              icon: const Icon(
+                Icons.arrow_back_rounded,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
           ),
-          const SizedBox(height: AppDesign.spaceLG),
+          // Content
+          SliverFillRemaining(
+            child: Column(
+              children: [
+                // Search bar and action buttons
+                Container(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildSearchBar(),
+                      _buildActionCards(),
+                      const SizedBox(height: AppDesign.spaceLG),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceLG),
+                // Map container
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                      child: Stack(
+                        children: [
+                          if (_isLoading)
+                            _buildLoadingState()
+                          else if (_errorMessage != null)
+                            _buildErrorState()
+                          else
+                            GoogleMap(
+                              onMapCreated: _onMapCreated,
+                              initialCameraPosition: CameraPosition(
+                                target: _currentPosition != null
+                                    ? LatLng(_currentPosition!.latitude,
+                                        _currentPosition!.longitude)
+                                    : const LatLng(
+                                        6.9271, 79.8612), // Colombo default
+                                zoom: 14.0,
+                              ),
+                              markers: _markers,
+                              polylines: _polylines,
+                              mapType: _currentMapType,
+                              myLocationEnabled: true,
+                              myLocationButtonEnabled: false,
+                              zoomControlsEnabled: false,
+                              compassEnabled: true,
+                              trafficEnabled: _trafficEnabled,
+                              buildingsEnabled: true,
+                              mapToolbarEnabled: false,
+                            ),
+                          if (!_isLoading && _errorMessage == null)
+                            _buildMapControls(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceLG),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _ActionCard extends StatelessWidget {
+class _SmallActionButton extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String subtitle;
   final Color color;
+  final bool isLoading;
   final VoidCallback onTap;
 
-  const _ActionCard({
+  const _SmallActionButton({
     required this.icon,
     required this.title,
-    required this.subtitle,
     required this.color,
+    this.isLoading = false,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: isLoading ? null : onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-              ),
-              child: Icon(
+            if (isLoading)
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: color,
+                ),
+              )
+            else
+              Icon(
                 icon,
                 color: color,
-                size: AppDesign.iconLG,
+                size: 22,
               ),
-            ),
-            const SizedBox(height: AppDesign.spaceSM),
+            const SizedBox(width: 8),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isLoading ? Colors.grey : AppColors.textPrimary,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
