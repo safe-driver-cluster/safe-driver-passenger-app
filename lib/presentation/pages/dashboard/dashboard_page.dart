@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../controllers/dashboard_controller.dart';
-import '../../widgets/buses/bus_search_widget.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
@@ -16,7 +15,7 @@ import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
   final int? initialTab;
-
+  
   const DashboardPage({super.key, this.initialTab});
 
   @override
@@ -33,7 +32,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
     if (widget.initialTab != null) {
       _selectedIndex = widget.initialTab!;
     }
-
+    
     // Initialize dashboard data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(dashboardControllerProvider.notifier).loadDashboardData();
@@ -52,7 +51,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       DashboardHome(
         onNavigateToTab: _onNavigateToTab,
       ),
-      const BusSearchWidget(), // Search tab shows bus search without bottom nav
+      const BusListPage(), // Search tab shows bus list
       const MapPage(),
       const UserProfilePage(),
     ];
