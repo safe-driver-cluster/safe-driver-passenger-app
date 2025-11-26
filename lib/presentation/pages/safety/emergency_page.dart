@@ -163,53 +163,37 @@ class EmergencyPage extends StatelessWidget {
   }
 
   Widget _buildEmergencyContactsSection() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppDesign.spaceSM),
-                  decoration: BoxDecoration(
-                    color: AppColors.dangerColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: const Icon(
-                    Icons.phone_enabled_rounded,
-                    color: AppColors.dangerColor,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                const Text(
-                  'Emergency Contacts',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceSM),
+              decoration: BoxDecoration(
+                color: AppColors.dangerColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              ),
+              child: const Icon(
+                Icons.phone_enabled_rounded,
+                color: AppColors.dangerColor,
+                size: 20,
+              ),
             ),
-            const SizedBox(height: AppDesign.spaceLG),
-            ..._buildEmergencyContacts(),
+            const SizedBox(width: AppDesign.spaceMD),
+            const Text(
+              'Emergency Contacts',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
-      ),
+        const SizedBox(height: AppDesign.spaceLG),
+        ..._buildEmergencyContacts(),
+      ],
     );
   }
 
