@@ -130,9 +130,9 @@ class _BusListPageState extends State<BusListPage> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: AppDesign.spaceMD),
-        
+
         // Search Form
         Container(
           decoration: BoxDecoration(
@@ -172,9 +172,9 @@ class _BusListPageState extends State<BusListPage> {
                   icon: Icons.live_tv_rounded,
                 ),
               ],
-              
+
               const SizedBox(height: AppDesign.spaceLG),
-              
+
               // Search Button
               SizedBox(
                 width: double.infinity,
@@ -183,7 +183,8 @@ class _BusListPageState extends State<BusListPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                     ),
@@ -330,7 +331,9 @@ class _BusListPageState extends State<BusListPage> {
   void _updateSearchQuery() {
     setState(() {
       if (_selectedSearchType == 0) {
-        _searchQuery = '${_fromController.text.toLowerCase()} ${_toController.text.toLowerCase()}'.trim();
+        _searchQuery =
+            '${_fromController.text.toLowerCase()} ${_toController.text.toLowerCase()}'
+                .trim();
       } else {
         _searchQuery = _busNumberController.text.toLowerCase();
       }
@@ -391,38 +394,43 @@ class _BusListPageState extends State<BusListPage> {
 
           final buses = snapshot.data?.docs ?? [];
 
-            // Filter buses based on search query and type
-            final filteredBuses = buses.where((bus) {
-              final data = bus.data() as Map<String, dynamic>;
-              final route = (data['route'] ?? '').toString().toLowerCase();
-              final busNumber = (data['busNumberPlate'] ?? '').toString().toLowerCase();
-              final driverName = (data['driverName'] ?? '').toString().toLowerCase();
-              final location = data['location'] as Map<String, dynamic>?;
-              final address = (location?['address'] ?? '').toString().toLowerCase();
+          // Filter buses based on search query and type
+          final filteredBuses = buses.where((bus) {
+            final data = bus.data() as Map<String, dynamic>;
+            final route = (data['route'] ?? '').toString().toLowerCase();
+            final busNumber =
+                (data['busNumberPlate'] ?? '').toString().toLowerCase();
+            final driverName =
+                (data['driverName'] ?? '').toString().toLowerCase();
+            final location = data['location'] as Map<String, dynamic>?;
+            final address =
+                (location?['address'] ?? '').toString().toLowerCase();
 
-              if (_searchQuery.isEmpty) return true;
+            if (_searchQuery.isEmpty) return true;
 
-              if (_selectedSearchType == 0) {
-                // Route search
-                final fromQuery = _fromController.text.toLowerCase();
-                final toQuery = _toController.text.toLowerCase();
-                
-                if (fromQuery.isNotEmpty && toQuery.isNotEmpty) {
-                  return route.contains(fromQuery) && route.contains(toQuery);
-                } else if (fromQuery.isNotEmpty) {
-                  return route.contains(fromQuery) || address.contains(fromQuery);
-                } else if (toQuery.isNotEmpty) {
-                  return route.contains(toQuery) || address.contains(toQuery);
-                }
-                return route.contains(_searchQuery) || address.contains(_searchQuery);
-              } else if (_selectedSearchType == 1) {
-                // Bus number search
-                return busNumber.contains(_searchQuery);
-              } else {
-                // Live tracking search (bus number based)
-                return busNumber.contains(_searchQuery);
+            if (_selectedSearchType == 0) {
+              // Route search
+              final fromQuery = _fromController.text.toLowerCase();
+              final toQuery = _toController.text.toLowerCase();
+
+              if (fromQuery.isNotEmpty && toQuery.isNotEmpty) {
+                return route.contains(fromQuery) && route.contains(toQuery);
+              } else if (fromQuery.isNotEmpty) {
+                return route.contains(fromQuery) || address.contains(fromQuery);
+              } else if (toQuery.isNotEmpty) {
+                return route.contains(toQuery) || address.contains(toQuery);
               }
-            }).toList();          if (filteredBuses.isEmpty) {
+              return route.contains(_searchQuery) ||
+                  address.contains(_searchQuery);
+            } else if (_selectedSearchType == 1) {
+              // Bus number search
+              return busNumber.contains(_searchQuery);
+            } else {
+              // Live tracking search (bus number based)
+              return busNumber.contains(_searchQuery);
+            }
+          }).toList();
+          if (filteredBuses.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
