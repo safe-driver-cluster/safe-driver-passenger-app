@@ -16,7 +16,7 @@ class EmergencyPage extends StatelessWidget {
         children: [
           // Professional Emergency Header
           _buildEmergencyHeader(context),
-          
+
           // Emergency Content
           Expanded(
             child: SingleChildScrollView(
@@ -25,14 +25,14 @@ class EmergencyPage extends StatelessWidget {
                 children: [
                   // Emergency Contacts
                   _buildEmergencyContactsSection(),
-                  
+
                   const SizedBox(height: AppDesign.space2XL),
-                  
+
                   // Quick Actions
                   _buildQuickActionsSection(),
-                  
+
                   const SizedBox(height: AppDesign.space2XL),
-                  
+
                   // Safety Tips
                   _buildSafetyTipsSection(),
                 ],
@@ -85,9 +85,9 @@ class EmergencyPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: AppDesign.spaceLG),
-              
+
               Expanded(
                 child: Text(
                   'Emergency',
@@ -97,7 +97,7 @@ class EmergencyPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Emergency indicator
               Container(
                 padding: const EdgeInsets.all(AppDesign.spaceMD),
@@ -113,9 +113,9 @@ class EmergencyPage extends StatelessWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: AppDesign.space2XL),
-          
+
           // Emergency message
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -181,9 +181,7 @@ class EmergencyPage extends StatelessWidget {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           ..._buildEmergencyContacts(),
         ],
       ),
@@ -194,28 +192,28 @@ class EmergencyPage extends StatelessWidget {
     final contacts = [
       EmergencyContact(
         'Police Emergency',
-        '999',
+        '119',
         Icons.local_police_rounded,
         AppColors.dangerColor,
         'Call for immediate police assistance',
       ),
       EmergencyContact(
         'Ambulance',
-        '995',
+        '1990',
         Icons.local_hospital_rounded,
         AppColors.criticalColor,
         'Medical emergency services',
       ),
       EmergencyContact(
         'Fire Department',
-        '998',
+        '110',
         Icons.fire_truck_rounded,
         AppColors.warningColor,
         'Fire and rescue services',
       ),
       EmergencyContact(
-        'Bus Emergency Hotline',
-        '1800-BUS-HELP',
+        'SLTB General Hotline. ',
+        '1958',
         Icons.directions_bus_rounded,
         AppColors.primaryColor,
         'Bus-related emergencies',
@@ -225,11 +223,11 @@ class EmergencyPage extends StatelessWidget {
     return contacts.asMap().entries.map((entry) {
       final index = entry.key;
       final contact = entry.value;
-      
+
       return Column(
         children: [
           _buildEmergencyContactTile(contact),
-          if (index < contacts.length - 1) 
+          if (index < contacts.length - 1)
             const SizedBox(height: AppDesign.spaceMD),
         ],
       );
@@ -340,9 +338,7 @@ class EmergencyPage extends StatelessWidget {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           Row(
             children: [
               Expanded(
@@ -364,9 +360,7 @@ class EmergencyPage extends StatelessWidget {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceMD),
-          
           Row(
             children: [
               Expanded(
@@ -393,7 +387,8 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionButton(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionButton(
+      String label, IconData icon, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -456,9 +451,7 @@ class EmergencyPage extends StatelessWidget {
               ),
             ],
           ),
-          
           const SizedBox(height: AppDesign.spaceLG),
-          
           ..._buildSafetyTips(),
         ],
       ),
@@ -475,32 +468,34 @@ class EmergencyPage extends StatelessWidget {
       'Share your location with trusted contacts',
     ];
 
-    return tips.map((tip) => Padding(
-      padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: AppColors.successColor,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: AppDesign.spaceMD),
-          Expanded(
-            child: Text(
-              tip,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+    return tips
+        .map((tip) => Padding(
+              padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppColors.successColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  Expanded(
+                    child: Text(
+                      tip,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
-      ),
-    )).toList();
+            ))
+        .toList();
   }
 
   Future<void> _makeCall(String phoneNumber) async {
