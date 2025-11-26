@@ -461,11 +461,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Bus Route to Destination',
                           style: TextStyle(
                             fontSize: 18,
@@ -496,9 +496,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey[50],
+                      color: AppColors.greyExtraLight,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey[200]!),
+                      border: Border.all(color: AppColors.greyLight),
                     ),
                     child: Row(
                       children: [
@@ -523,8 +523,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                               ),
                               Text(
                                 stop['busNumber'],
-                                style: TextStyle(
-                                  color: Colors.grey[600],
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
                                   fontSize: 12,
                                 ),
                               ),
@@ -857,27 +857,27 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.location_off,
               size: 64,
-              color: Colors.grey[400],
+              color: AppColors.textSecondary,
             ),
             const SizedBox(height: AppDesign.spaceLG),
-            Text(
+            const Text(
               'Unable to load map',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[700],
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceMD),
             Text(
               _errorMessage ?? 'Unknown error occurred',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[600],
+                color: AppColors.textSecondary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceLG),
@@ -887,7 +887,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
-                foregroundColor: Colors.white,
+                foregroundColor: AppColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
@@ -910,7 +910,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
           Text(
             'Loading map...',
             style: TextStyle(
-              color: Colors.grey,
+              color: AppColors.textSecondary,
               fontSize: 16,
             ),
           ),
@@ -1042,11 +1042,11 @@ class _MapControlButton extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryColor : Colors.white,
+            color: isActive ? AppColors.primaryColor : AppColors.white,
             borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: AppColors.black.withOpacity(0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -1054,7 +1054,7 @@ class _MapControlButton extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: isActive ? Colors.white : AppColors.primaryColor,
+            color: isActive ? AppColors.white : AppColors.primaryColor,
             size: 24,
           ),
         ),
