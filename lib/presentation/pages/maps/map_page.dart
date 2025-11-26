@@ -429,7 +429,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.4,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
@@ -440,7 +440,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppColors.greyLight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -625,101 +625,198 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     }
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildHeader() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(AppDesign.spaceLG, AppDesign.spaceMD,
-          AppDesign.spaceLG, AppDesign.spaceSM),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title and back button
+          Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/dashboard',
+                    (route) => false,
+                  ),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: AppColors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Text(
+                'Maps & Navigation',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.white,
+                  letterSpacing: -0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+
+          // Search Bar
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                hintText: 'Search for destination...',
+                hintStyle: const TextStyle(
+                  color: AppColors.textHint,
+                  fontSize: 16,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primaryColor,
+                  size: 24,
+                ),
+                suffixIcon: _isSearching
+                    ? const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      )
+                    : _searchController.text.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+                              _searchedDestination = null;
+                              _markers.removeWhere((marker) =>
+                                  marker.markerId.value == 'search_destination');
+                              _polylines.removeWhere((polyline) =>
+                                  polyline.polylineId.value.contains('bus_route'));
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.clear_rounded,
+                              color: AppColors.textHint,
+                            ),
+                          )
+                        : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceLG,
+                  vertical: AppDesign.spaceMD,
+                ),
+              ),
+              onSubmitted: (_) => _searchPlaces(),
+            ),
+          ),
+          
+          const SizedBox(height: AppDesign.spaceLG),
+          
+          // Action buttons
+          _buildActionCards(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapContainer() {
+    return Container(
+      margin: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: TextField(
-        controller: _searchController,
-        style: const TextStyle(
-          fontSize: 16,
-          color: AppColors.textPrimary,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        child: Stack(
+          children: [
+            if (_isLoading)
+              _buildLoadingState()
+            else if (_errorMessage != null)
+              _buildErrorState()
+            else
+              GoogleMap(
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: _currentPosition != null
+                      ? LatLng(_currentPosition!.latitude,
+                          _currentPosition!.longitude)
+                      : const LatLng(
+                          6.9271, 79.8612), // Colombo default
+                  zoom: 14.0,
+                ),
+                markers: _markers,
+                polylines: _polylines,
+                mapType: _currentMapType,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                compassEnabled: true,
+                trafficEnabled: _trafficEnabled,
+                buildingsEnabled: true,
+                mapToolbarEnabled: false,
+              ),
+            if (!_isLoading && _errorMessage == null)
+              _buildMapControls(),
+          ],
         ),
-        decoration: InputDecoration(
-          hintText: 'Search destination...',
-          hintStyle: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 16,
-          ),
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            color: AppColors.primaryColor,
-            size: 24,
-          ),
-          suffixIcon: _isSearching
-              ? const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                )
-              : _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.grey),
-                      onPressed: () {
-                        _searchController.clear();
-                        _searchedDestination = null;
-                        _markers.removeWhere((marker) =>
-                            marker.markerId.value == 'search_destination');
-                        _polylines.removeWhere((polyline) =>
-                            polyline.polylineId.value.contains('bus_route'));
-                        setState(() {});
-                      },
-                    )
-                  : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppDesign.spaceLG,
-            vertical: AppDesign.spaceLG,
-          ),
-        ),
-        onSubmitted: (_) => _searchPlaces(),
       ),
     );
   }
 
   Widget _buildActionCards() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
-      child: Row(
-        children: [
-          Expanded(
-            child: _SmallActionButton(
-              icon: Icons.bus_alert_rounded,
-              title: 'Bus Stop',
-              color: AppColors.secondaryColor,
-              isLoading: _showingBusStops,
-              onTap: _showBusRoutes,
-            ),
+    return Row(
+      children: [
+        Expanded(
+          child: _SmallActionButton(
+            icon: Icons.bus_alert_rounded,
+            title: 'Bus Stop',
+            color: AppColors.secondaryColor,
+            isLoading: _showingBusStops,
+            onTap: _showBusRoutes,
           ),
-          const SizedBox(width: AppDesign.spaceMD),
-          Expanded(
-            child: _SmallActionButton(
-              icon: Icons.navigation_rounded,
-              title: 'Navigate',
-              color: AppColors.accentColor,
-              isLoading: _showingBusRoute,
-              onTap: _navigateToDestination,
-            ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: _SmallActionButton(
+            icon: Icons.navigation_rounded,
+            title: 'Navigate',
+            color: AppColors.accentColor,
+            isLoading: _showingBusRoute,
+            onTap: _navigateToDestination,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -825,136 +922,30 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      body: CustomScrollView(
-        slivers: [
-          // Modern gradient header like other screens
-          SliverAppBar(
-            expandedHeight: 120,
-            floating: false,
-            pinned: true,
-            backgroundColor: AppColors.primaryColor,
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'Maps & Navigation',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primaryColor,
-                      AppColors.secondaryColor,
-                    ],
-                  ),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.map_rounded,
-                    size: 60,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            leading: IconButton(
-              onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/dashboard',
-                (route) => false,
-              ),
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
+      backgroundColor: AppColors.scaffoldBackground,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryColor,
+              AppColors.primaryDark,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 1.0],
           ),
-          // Content
-          SliverFillRemaining(
-            child: Column(
-              children: [
-                // Search bar and action buttons
-                Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(24),
-                      bottomRight: Radius.circular(24),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildSearchBar(),
-                      _buildActionCards(),
-                      const SizedBox(height: AppDesign.spaceLG),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-                // Map container
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceLG),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                      child: Stack(
-                        children: [
-                          if (_isLoading)
-                            _buildLoadingState()
-                          else if (_errorMessage != null)
-                            _buildErrorState()
-                          else
-                            GoogleMap(
-                              onMapCreated: _onMapCreated,
-                              initialCameraPosition: CameraPosition(
-                                target: _currentPosition != null
-                                    ? LatLng(_currentPosition!.latitude,
-                                        _currentPosition!.longitude)
-                                    : const LatLng(
-                                        6.9271, 79.8612), // Colombo default
-                                zoom: 14.0,
-                              ),
-                              markers: _markers,
-                              polylines: _polylines,
-                              mapType: _currentMapType,
-                              myLocationEnabled: true,
-                              myLocationButtonEnabled: false,
-                              zoomControlsEnabled: false,
-                              compassEnabled: true,
-                              trafficEnabled: _trafficEnabled,
-                              buildingsEnabled: true,
-                              mapToolbarEnabled: false,
-                            ),
-                          if (!_isLoading && _errorMessage == null)
-                            _buildMapControls(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-              ],
-            ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: _buildMapContainer(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -983,13 +974,13 @@ class _SmallActionButton extends StatelessWidget {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: AppColors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -1017,7 +1008,7 @@ class _SmallActionButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isLoading ? Colors.grey : AppColors.textPrimary,
+                color: isLoading ? AppColors.textSecondary : AppColors.textPrimary,
               ),
             ),
           ],
