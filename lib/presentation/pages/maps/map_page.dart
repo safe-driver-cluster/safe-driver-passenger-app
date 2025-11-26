@@ -1,8 +1,9 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
+import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -25,7 +26,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   bool _isSearching = false;
   String? _errorMessage;
   bool _showingBusStops = false;
-  bool _showingBusRoute = false;
+  final bool _showingBusRoute = false;
   String? _searchedDestination;
 
   // Map types
@@ -160,8 +161,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     setState(() => _showingBusStops = true);
 
     // Clear existing bus stop markers
-    _markers.removeWhere((marker) => marker.markerId.value.contains('bus_stop'));
-    
+    _markers
+        .removeWhere((marker) => marker.markerId.value.contains('bus_stop'));
+
     // Sample bus stops around current location (within ~2km radius)
     final busStops = _getBusStopsAroundLocation(_currentPosition!);
 
@@ -174,13 +176,14 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             title: stop['name'] as String,
             snippet: 'Bus Stop • ${stop['routes']}',
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
         ),
       );
     }
 
     setState(() => _showingBusStops = false);
-    
+
     // Show success message
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -194,9 +197,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   List<Map<String, dynamic>> _getBusStopsAroundLocation(Position position) {
     // Generate bus stops within 2km of current location
-    final baseLatOffset = 0.01; // ~1km
-    final baseLngOffset = 0.01; // ~1km
-    
+    const baseLatOffset = 0.01; // ~1km
+    const baseLngOffset = 0.01; // ~1km
+
     return [
       {
         'name': 'Main Bus Terminal',
@@ -253,19 +256,20 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     try {
       // Store the searched destination for navigation
       _searchedDestination = query;
-      
+
       // Simulate place search - in real app, use Google Places API
       await Future.delayed(const Duration(seconds: 1));
 
       // Add a sample marker for searched location
       final searchLat = _currentPosition?.latitude ?? 6.9271;
       final searchLng = _currentPosition?.longitude ?? 79.8612;
-      
+
       // Offset slightly to simulate different location
       final destinationLat = searchLat + 0.02;
       final destinationLng = searchLng + 0.015;
-      
-      _markers.removeWhere((marker) => marker.markerId.value == 'search_destination');
+
+      _markers.removeWhere(
+          (marker) => marker.markerId.value == 'search_destination');
       _markers.add(
         Marker(
           markerId: const MarkerId('search_destination'),
@@ -274,10 +278,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             title: query,
             snippet: 'Searched destination',
           ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
         ),
       );
-      
+
       // Animate to show both current location and destination
       if (_mapController != null) {
         _mapController!.animateCamera(
@@ -298,7 +303,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       }
 
       setState(() {});
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -329,23 +334,269 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   void _showBusRoutes() {
-    // TODO: Implement bus routes display
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Bus routes feature coming soon!'),
-        backgroundColor: AppColors.warningColor,
+    _showBusStops();
+  }
+
+  void _navigateToDestination() async {
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+      if (_currentPosition == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to get current location'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+        return;
+      }
+    }
+
+    if (_searchedDestination == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please search for a destination first'),
+          backgroundColor: AppColors.warningColor,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _showingBusRoute = true);
+
+    // Clear existing route
+    _polylines.removeWhere(
+        (polyline) => polyline.polylineId.value.contains('bus_route'));
+
+    // Get destination coordinates (from search marker)
+    final destinationMarker = _markers.firstWhere(
+      (marker) => marker.markerId.value == 'search_destination',
+      orElse: () => throw StateError('Destination not found'),
+    );
+
+    final currentLatLng =
+        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
+    final destinationLatLng = destinationMarker.position;
+
+    // Create bus route with intermediate stops
+    final busRoutePoints = _generateBusRoute(currentLatLng, destinationLatLng);
+
+    // Add bus route polyline
+    _polylines.add(
+      Polyline(
+        polylineId: const PolylineId('bus_route_main'),
+        points: busRoutePoints,
+        color: AppColors.primaryColor,
+        width: 5,
+        patterns: [PatternItem.dot, PatternItem.gap(10)],
+      ),
+    );
+
+    // Add bus stops along the route
+    final routeStops = _getBusStopsAlongRoute(busRoutePoints);
+    for (int i = 0; i < routeStops.length; i++) {
+      final stop = routeStops[i];
+      _markers.add(
+        Marker(
+          markerId: MarkerId('route_stop_$i'),
+          position: LatLng(stop['lat'], stop['lng']),
+          infoWindow: InfoWindow(
+            title: stop['name'],
+            snippet: 'Bus Stop • ${stop['busNumber']}',
+          ),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        ),
+      );
+    }
+
+    setState(() => _showingBusRoute = false);
+
+    // Show route info
+    if (mounted) {
+      _showRouteInfoBottomSheet(routeStops);
+    }
+  }
+
+  void _showRouteInfoBottomSheet(List<Map<String, dynamic>> stops) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.4,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.directions_bus,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Bus Route to Destination',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Total journey: ~25 mins',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Bus stops list
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: stops.length,
+                itemBuilder: (context, index) {
+                  final stop = stops[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey[200]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                stop['name'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                stop['busNumber'],
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          stop['arrivalTime'],
+                          style: const TextStyle(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _navigateToDestination() {
-    // TODO: Implement navigation functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navigation feature coming soon!'),
-        backgroundColor: AppColors.successColor,
-      ),
-    );
+  List<LatLng> _generateBusRoute(LatLng start, LatLng end) {
+    // Generate a realistic bus route with turns and intermediate points
+    final points = <LatLng>[];
+    points.add(start);
+
+    // Add intermediate waypoints to simulate bus route
+    final latDiff = end.latitude - start.latitude;
+    final lngDiff = end.longitude - start.longitude;
+
+    // Add waypoints with some realistic bus route deviations
+    for (double i = 0.2; i < 1.0; i += 0.2) {
+      final waypoint = LatLng(
+        start.latitude +
+            (latDiff * i) +
+            (i * 0.002 * (i < 0.5 ? 1 : -1)), // slight curve
+        start.longitude +
+            (lngDiff * i) +
+            (i * 0.001 * (i > 0.6 ? 1 : -1)), // another curve
+      );
+      points.add(waypoint);
+    }
+
+    points.add(end);
+    return points;
+  }
+
+  List<Map<String, dynamic>> _getBusStopsAlongRoute(List<LatLng> routePoints) {
+    // Generate bus stops along the route
+    return [
+      {
+        'name': 'Starting Point Stop',
+        'lat': routePoints[1].latitude,
+        'lng': routePoints[1].longitude,
+        'busNumber': 'Bus 138',
+        'arrivalTime': '5 mins',
+      },
+      {
+        'name': 'Midway Terminal',
+        'lat': routePoints[routePoints.length ~/ 2].latitude,
+        'lng': routePoints[routePoints.length ~/ 2].longitude,
+        'busNumber': 'Bus 205',
+        'arrivalTime': '12 mins',
+      },
+      {
+        'name': 'Junction Stop',
+        'lat': routePoints[routePoints.length - 2].latitude,
+        'lng': routePoints[routePoints.length - 2].longitude,
+        'busNumber': 'Bus 101',
+        'arrivalTime': '18 mins',
+      },
+    ];
   }
 
   void _toggleMapType() {
