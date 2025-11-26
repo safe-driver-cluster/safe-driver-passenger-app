@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safedriver_passenger_app/presentation/pages/onboarding/onboarding_page.dart';
 
 import '../presentation/pages/auth/account_verification_page.dart';
 import '../presentation/pages/auth/forgot_password_otp_page.dart';
@@ -9,15 +8,14 @@ import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
 import '../presentation/pages/auth/reset_password_page.dart';
 import '../presentation/pages/auth/splash_page.dart';
-import '../presentation/pages/bus/bus_details_page.dart';
-import '../presentation/pages/bus/bus_history_page.dart';
 import '../presentation/pages/bus/bus_search_page.dart';
-import '../presentation/pages/bus/live_tracking_page.dart';
+import '../presentation/pages/buses/bus_list_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
 import '../presentation/pages/driver/driver_info_page.dart';
 import '../presentation/pages/driver/driver_performance_page.dart';
 import '../presentation/pages/driver/driver_profile_page.dart';
+import '../presentation/pages/drivers/driver_list_page.dart';
 import '../presentation/pages/feedback/feedback_form_screen.dart';
 import '../presentation/pages/feedback/feedback_history_page.dart';
 import '../presentation/pages/feedback/feedback_page.dart';
@@ -25,6 +23,7 @@ import '../presentation/pages/feedback/feedback_system_page.dart';
 import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/not_found_page.dart';
+import '../presentation/pages/onboarding/onboarding_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
 import '../presentation/pages/profile/passenger_profile_screen.dart';
 import '../presentation/pages/profile/settings_page.dart';
@@ -52,12 +51,14 @@ class AppRoutes {
   static const String notifications = '/notifications';
 
   // Bus routes
+  static const String buses = '/buses';
   static const String busSearch = '/bus-search';
   static const String busDetails = '/bus-details';
   static const String liveTracking = '/live-tracking';
   static const String busHistory = '/bus-history';
 
   // Driver routes
+  static const String drivers = '/drivers';
   static const String driverProfile = '/driver-profile';
   static const String driverHistory = '/driver-history';
   static const String driverPerformance = '/driver-performance';
@@ -172,35 +173,47 @@ class AppRoutes {
           settings: settings,
         );
 
+      case buses:
+        return MaterialPageRoute(
+          builder: (_) => const BusListPage(),
+          settings: settings,
+        );
+
+      case drivers:
+        return MaterialPageRoute(
+          builder: (_) => const DriverListPage(),
+          settings: settings,
+        );
+
       case busSearch:
         return MaterialPageRoute(
           builder: (_) => const BusSearchPage(),
           settings: settings,
         );
 
-      case busDetails:
-        final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => BusDetailsPage(
-            busId: args?['busId'] ?? '',
-          ),
-          settings: settings,
-        );
+      // case busDetails:
+      //   final args = settings.arguments as Map<String, dynamic>?;
+      //   return MaterialPageRoute(
+      //     builder: (_) => BusDetailsPage(
+      //       busId: args?['busId'] ?? '',
+      //     ),
+      //     settings: settings,
+      //   );
 
-      case liveTracking:
-        final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => LiveTrackingPage(
-            busId: args?['busId'] ?? '',
-          ),
-          settings: settings,
-        );
+      // case liveTracking:
+      //   final args = settings.arguments as Map<String, dynamic>?;
+      //   return MaterialPageRoute(
+      //     builder: (_) => LiveTrackingPage(
+      //       busId: args?['busId'] ?? '',
+      //     ),
+      //     settings: settings,
+      //   );
 
-      case busHistory:
-        return MaterialPageRoute(
-          builder: (_) => const BusHistoryPage(),
-          settings: settings,
-        );
+      // case busHistory:
+      //   return MaterialPageRoute(
+      //     builder: (_) => const BusHistoryPage(),
+      //     settings: settings,
+      //   );
 
       case driverProfile:
         final args = settings.arguments as Map<String, dynamic>?;

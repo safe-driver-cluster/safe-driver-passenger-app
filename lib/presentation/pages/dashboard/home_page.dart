@@ -101,24 +101,21 @@ class HomePage extends StatelessWidget {
                           children: [
                             Expanded(
                               child: _buildQuickActionCard(
-                                icon: Icons.search,
-                                title: 'Find Bus',
-                                subtitle: 'Search routes',
-                                onTap: () {
-                                  if (onNavigateToTab != null) {
-                                    onNavigateToTab!(1);
-                                  }
-                                },
+                                icon: Icons.directions_bus_rounded,
+                                title: 'View Bus',
+                                subtitle: 'Available buses',
+                                onTap: () =>
+                                    Navigator.pushNamed(context, '/buses'),
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: _buildQuickActionCard(
-                                icon: Icons.qr_code_scanner,
-                                title: 'Scan QR',
-                                subtitle: 'Quick boarding',
+                                icon: Icons.person_rounded,
+                                title: 'View Driver Details',
+                                subtitle: 'Driver information',
                                 onTap: () =>
-                                    Navigator.pushNamed(context, '/qr-scanner'),
+                                    Navigator.pushNamed(context, '/drivers'),
                               ),
                             ),
                           ],
