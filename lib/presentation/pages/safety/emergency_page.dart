@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../widgets/common/professional_widgets.dart';
 
 class EmergencyPage extends StatelessWidget {
   const EmergencyPage({super.key});
@@ -12,29 +14,123 @@ class EmergencyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
-      body: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.dangerColor,
+              AppColors.criticalColor,
+              AppColors.scaffoldBackground,
+            ],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: _buildEmergencyContent(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Professional Emergency Header
-          _buildEmergencyHeader(context),
-          
-          // Emergency Content
-          Expanded(
-            child: SingleChildScrollView(
+          // Title and back button
+          Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: AppColors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Text(
+                'Emergency',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.white,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.warning_rounded,
+                  color: AppColors.white,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+
+          // Emergency message
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
-              child: Column(
+              child: Row(
                 children: [
-                  // Emergency Contacts
-                  _buildEmergencyContactsSection(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Quick Actions
-                  _buildQuickActionsSection(),
-                  
-                  const SizedBox(height: AppDesign.space2XL),
-                  
-                  // Safety Tips
-                  _buildSafetyTipsSection(),
+                  Container(
+                    padding: const EdgeInsets.all(AppDesign.spaceSM),
+                    decoration: BoxDecoration(
+                      color: AppColors.dangerColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    child: const Icon(
+                      Icons.info_rounded,
+                      color: AppColors.dangerColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  const Expanded(
+                    child: Text(
+                      'Tap any contact below for immediate assistance',
+                      style: TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -44,149 +140,63 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmergencyHeader(BuildContext context) {
+  Widget _buildEmergencyContent(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        60,
-        AppDesign.spaceLG,
-        AppDesign.space2XL,
-      ),
+      margin: const EdgeInsets.only(top: AppDesign.spaceLG),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.dangerColor,
-            AppColors.criticalColor,
+        color: AppColors.scaffoldBackground,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          children: [
+            _buildEmergencyContactsSection(),
+            const SizedBox(height: AppDesign.space2XL),
+            _buildQuickActionsSection(context),
+            const SizedBox(height: AppDesign.space2XL),
+            _buildSafetyTipsSection(),
           ],
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppDesign.space2XL),
-          bottomRight: Radius.circular(AppDesign.space2XL),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Header with back button
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-              ),
-              
-              const SizedBox(width: AppDesign.spaceLG),
-              
-              Expanded(
-                child: Text(
-                  'Emergency',
-                  style: AppTextStyles.headline3.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              
-              // Emergency indicator
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceMD),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.warning_rounded,
-                  color: Colors.white,
-                  size: AppDesign.iconLG,
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: AppDesign.space2XL),
-          
-          // Emergency message
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.info_rounded,
-                  color: Colors.white,
-                  size: AppDesign.iconMD,
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: Text(
-                    'Tap any contact below for immediate assistance',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.9),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildEmergencyContactsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.dangerColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.phone_enabled_rounded,
-                  color: AppColors.dangerColor,
-                  size: AppDesign.iconMD,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceSM),
+              decoration: BoxDecoration(
+                color: AppColors.dangerColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                'Emergency Contacts',
-                style: AppTextStyles.headline6.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: const Icon(
+                Icons.phone_enabled_rounded,
+                color: AppColors.dangerColor,
+                size: 20,
               ),
-            ],
-          ),
-          
-          const SizedBox(height: AppDesign.spaceLG),
-          
-          ..._buildEmergencyContacts(),
-        ],
-      ),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            const Text(
+              'Emergency Contacts',
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppDesign.spaceLG),
+        ..._buildEmergencyContacts(),
+      ],
     );
   }
 
@@ -194,28 +204,28 @@ class EmergencyPage extends StatelessWidget {
     final contacts = [
       EmergencyContact(
         'Police Emergency',
-        '999',
+        '119',
         Icons.local_police_rounded,
         AppColors.dangerColor,
         'Call for immediate police assistance',
       ),
       EmergencyContact(
         'Ambulance',
-        '995',
+        '1990',
         Icons.local_hospital_rounded,
         AppColors.criticalColor,
         'Medical emergency services',
       ),
       EmergencyContact(
         'Fire Department',
-        '998',
+        '110',
         Icons.fire_truck_rounded,
         AppColors.warningColor,
         'Fire and rescue services',
       ),
       EmergencyContact(
-        'Bus Emergency Hotline',
-        '1800-BUS-HELP',
+        'SLTB General Hotline. ',
+        '1958',
         Icons.directions_bus_rounded,
         AppColors.primaryColor,
         'Bus-related emergencies',
@@ -225,11 +235,11 @@ class EmergencyPage extends StatelessWidget {
     return contacts.asMap().entries.map((entry) {
       final index = entry.key;
       final contact = entry.value;
-      
+
       return Column(
         children: [
           _buildEmergencyContactTile(contact),
-          if (index < contacts.length - 1) 
+          if (index < contacts.length - 1)
             const SizedBox(height: AppDesign.spaceMD),
         ],
       );
@@ -256,13 +266,14 @@ class EmergencyPage extends StatelessWidget {
           child: Icon(
             contact.icon,
             color: contact.color,
-            size: AppDesign.iconMD,
+            size: 20,
           ),
         ),
         title: Text(
           contact.title,
-          style: AppTextStyles.bodyLarge.copyWith(
+          style: const TextStyle(
             color: AppColors.textPrimary,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -272,16 +283,18 @@ class EmergencyPage extends StatelessWidget {
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               contact.number,
-              style: AppTextStyles.headline6.copyWith(
+              style: TextStyle(
                 color: contact.color,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
             ),
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               contact.description,
-              style: AppTextStyles.bodySmall.copyWith(
+              style: const TextStyle(
                 color: AppColors.textSecondary,
+                fontSize: 14,
               ),
             ),
           ],
@@ -302,8 +315,8 @@ class EmergencyPage extends StatelessWidget {
             onPressed: () => _makeCall(contact.number),
             icon: const Icon(
               Icons.phone_rounded,
-              color: Colors.white,
-              size: AppDesign.iconSM,
+              color: AppColors.white,
+              size: 18,
             ),
           ),
         ),
@@ -311,93 +324,105 @@ class EmergencyPage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+  Widget _buildQuickActionsSection(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.accentColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.flash_on_rounded,
-                  color: AppColors.accentColor,
-                  size: AppDesign.iconMD,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppDesign.spaceSM),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    child: const Icon(
+                      Icons.flash_on_rounded,
+                      color: AppColors.accentColor,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  const Text(
+                    'Quick Actions',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                'Quick Actions',
-                style: AppTextStyles.headline6.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+              const SizedBox(height: AppDesign.spaceLG),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildQuickActionButton(
+                      'SOS Alert',
+                      Icons.sos_rounded,
+                      AppColors.dangerColor,
+                      () => _sendSOSAlert(),
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  Expanded(
+                    child: _buildQuickActionButton(
+                      'Share Location',
+                      Icons.my_location_rounded,
+                      AppColors.primaryColor,
+                      () => _shareLocation(context),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppDesign.spaceMD),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildQuickActionButton(
+                      'Report Incident',
+                      Icons.report_rounded,
+                      AppColors.warningColor,
+                      () => _reportIncident(),
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  Expanded(
+                    child: _buildQuickActionButton(
+                      'Emergency Contacts',
+                      Icons.contacts_rounded,
+                      AppColors.successColor,
+                      () => _viewEmergencyContacts(context),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          
-          const SizedBox(height: AppDesign.spaceLG),
-          
-          Row(
-            children: [
-              Expanded(
-                child: _buildQuickActionButton(
-                  'SOS Alert',
-                  Icons.sos_rounded,
-                  AppColors.dangerColor,
-                  () => _sendSOSAlert(),
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Share Location',
-                  Icons.my_location_rounded,
-                  AppColors.primaryColor,
-                  () => _shareLocation(),
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: AppDesign.spaceMD),
-          
-          Row(
-            children: [
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Report Incident',
-                  Icons.report_rounded,
-                  AppColors.warningColor,
-                  () => _reportIncident(),
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildQuickActionButton(
-                  'Emergency Contacts',
-                  Icons.contacts_rounded,
-                  AppColors.successColor,
-                  () => _viewEmergencyContacts(),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
-  Widget _buildQuickActionButton(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildQuickActionButton(
+      String label, IconData icon, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        height: 100,
+        padding: const EdgeInsets.all(AppDesign.spaceMD),
         decoration: BoxDecoration(
           color: color.withOpacity(0.08),
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -406,20 +431,26 @@ class EmergencyPage extends StatelessWidget {
           ),
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
               color: color,
-              size: AppDesign.iconLG,
+              size: 28,
             ),
             const SizedBox(height: AppDesign.spaceXS),
-            Text(
-              label,
-              style: AppTextStyles.labelMedium.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -428,39 +459,52 @@ class EmergencyPage extends StatelessWidget {
   }
 
   Widget _buildSafetyTipsSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.successColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.tips_and_updates_rounded,
-                  color: AppColors.successColor,
-                  size: AppDesign.iconMD,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                'Emergency Safety Tips',
-                style: AppTextStyles.headline6.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          
-          const SizedBox(height: AppDesign.spaceLG),
-          
-          ..._buildSafetyTips(),
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceSM),
+                  decoration: BoxDecoration(
+                    color: AppColors.successColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.tips_and_updates_rounded,
+                    color: AppColors.successColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                const Text(
+                  'Emergency Safety Tips',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceLG),
+            ..._buildSafetyTips(),
+          ],
+        ),
       ),
     );
   }
@@ -475,32 +519,35 @@ class EmergencyPage extends StatelessWidget {
       'Share your location with trusted contacts',
     ];
 
-    return tips.map((tip) => Padding(
-      padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: AppColors.successColor,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: AppDesign.spaceMD),
-          Expanded(
-            child: Text(
-              tip,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+    return tips
+        .map((tip) => Padding(
+              padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 2),
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppColors.successColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: AppDesign.spaceMD),
+                  Expanded(
+                    child: Text(
+                      tip,
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
-      ),
-    )).toList();
+            ))
+        .toList();
   }
 
   Future<void> _makeCall(String phoneNumber) async {
@@ -510,20 +557,216 @@ class EmergencyPage extends StatelessWidget {
     }
   }
 
-  void _sendSOSAlert() {
-    // Implement SOS alert functionality
+  void _sendSOSAlert() async {
+    try {
+      // Get current location
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      String locationUrl =
+          'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+
+      // Create SOS message
+      String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
+          'I need immediate help!\n'
+          'My location: $locationUrl\n'
+          'Time: ${DateTime.now().toString()}';
+
+      // Share SOS message
+      await Share.share(
+        sosMessage,
+        subject: '🆘 Emergency SOS Alert',
+      );
+    } catch (e) {
+      // If location access fails, send SOS without location
+      String sosMessage = '🆘 EMERGENCY SOS ALERT!\n'
+          'I need immediate help!\n'
+          'Time: ${DateTime.now().toString()}';
+
+      await Share.share(
+        sosMessage,
+        subject: '🆘 Emergency SOS Alert',
+      );
+    }
   }
 
-  void _shareLocation() {
-    // Implement location sharing functionality
+  void _shareLocation(BuildContext context) async {
+    try {
+      // Request location permission if not granted
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content:
+                    Text('Location permission is required to share location'),
+                backgroundColor: AppColors.dangerColor,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Location permission is permanently denied. Please enable it from settings.'),
+              backgroundColor: AppColors.dangerColor,
+            ),
+          );
+        }
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Create Google Maps link
+      String locationUrl =
+          'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+
+      // Create share message
+      String shareMessage = '📍 My Current Location\n'
+          'Latitude: ${position.latitude}\n'
+          'Longitude: ${position.longitude}\n'
+          'View on map: $locationUrl';
+
+      // Share location
+      await Share.share(
+        shareMessage,
+        subject: '📍 My Current Location',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to get location: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    }
   }
 
   void _reportIncident() {
     // Implement incident reporting functionality
   }
 
-  void _viewEmergencyContacts() {
-    // Implement emergency contacts view
+  void _viewEmergencyContacts(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? emergencyNumber = prefs.getString('emergency_contact_number');
+
+      if (emergencyNumber == null || emergencyNumber.isEmpty) {
+        // Show dialog to set emergency contact
+        if (context.mounted) {
+          _showSetEmergencyContactDialog(context);
+        }
+      } else {
+        // Call the emergency contact
+        _makeCall(emergencyNumber);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showSetEmergencyContactDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.warningColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.contacts_rounded,
+                  color: AppColors.warningColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              const Text(
+                'Emergency Contact',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'You haven\'t set an emergency contact yet. Would you like to go to your profile to add one?',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 16,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _navigateToProfile(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                foregroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+              ),
+              child: const Text(
+                'Yes, Go to Profile',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToProfile(BuildContext context) {
+    // Navigate to profile/edit profile page
+    Navigator.pushNamed(context, '/profile');
   }
 }
 
