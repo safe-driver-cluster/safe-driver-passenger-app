@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/presentation/pages/buses/bus_list_page.dart';
 
 import '../../../core/constants/color_constants.dart';
-import '../bus/live_tracking_page.dart';
 import '../driver/driver_info_page.dart';
 import '../hazard/hazard_zone_intelligence_page.dart';
 import '../qr/qr_scanner_page.dart';
@@ -121,8 +121,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                   () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LiveTrackingPage(
-                        busId: 'demo-bus-001', // Demo bus ID
+                      builder: (context) => const BusListPage(
+                        //busId: 'demo-bus-001', // Demo bus ID
                       ),
                     ),
                   ),
