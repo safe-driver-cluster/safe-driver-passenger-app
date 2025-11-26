@@ -67,7 +67,11 @@ class _BusListPageState extends State<BusListPage> {
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
                 child: IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/dashboard',
+                    (route) => false,
+                  ),
                   icon: const Icon(
                     Icons.arrow_back_rounded,
                     color: Colors.white,
