@@ -13,18 +13,11 @@ class BusListPage extends StatefulWidget {
 
 class _BusListPageState extends State<BusListPage> {
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _fromController = TextEditingController();
-  final TextEditingController _toController = TextEditingController();
-  final TextEditingController _busNumberController = TextEditingController();
   String _searchQuery = '';
-  int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Live Tracking
 
   @override
   void dispose() {
     _searchController.dispose();
-    _fromController.dispose();
-    _toController.dispose();
-    _busNumberController.dispose();
     super.dispose();
   }
 
@@ -42,16 +35,13 @@ class _BusListPageState extends State<BusListPage> {
               AppColors.primaryDark,
               AppColors.scaffoldBackground,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header with search
               _buildHeader(),
-
-              // Bus list
               Expanded(
                 child: _buildBusList(),
               ),
@@ -64,12 +54,7 @@ class _BusListPageState extends State<BusListPage> {
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        AppDesign.spaceSM,
-        AppDesign.spaceLG,
-        AppDesign.spaceMD,
-      ),
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -104,9 +89,194 @@ class _BusListPageState extends State<BusListPage> {
           ),
           const SizedBox(height: AppDesign.spaceLG),
 
-          // Advanced Search Section
-          _buildAdvancedSearchSection(),
+          // Simple Search Bar
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search by bus number, route, driver...',
+                hintStyle: const TextStyle(
+                  color: AppColors.textHint,
+                  fontSize: 16,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primaryColor,
+                  size: 24,
+                ),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.clear_rounded,
+                          color: AppColors.textHint,
+                        ),
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceLG,
+                  vertical: AppDesign.spaceMD,
+                ),
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBusList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('vehicles')
+          .where('status', isEqualTo: 'active')
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline_rounded,
+                  size: 64,
+                  color: AppColors.errorColor,
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+                Text(
+                  'Error loading buses',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceSM),
+                Text(
+                  'Please try again later',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+            ),
+          );
+        }
+
+        final buses = snapshot.data?.docs ?? [];
+
+        // Filter buses based on search query
+        final filteredBuses = buses.where((bus) {
+          final data = bus.data() as Map<String, dynamic>;
+          final route = (data['route'] ?? '').toString().toLowerCase();
+          final busNumber = (data['busNumberPlate'] ?? '').toString().toLowerCase();
+          final driverName = (data['driverName'] ?? '').toString().toLowerCase();
+          final location = data['location'] as Map<String, dynamic>?;
+          final address = (location?['address'] ?? '').toString().toLowerCase();
+
+          if (_searchQuery.isEmpty) return true;
+
+          return route.contains(_searchQuery) ||
+              busNumber.contains(_searchQuery) ||
+              driverName.contains(_searchQuery) ||
+              address.contains(_searchQuery);
+        }).toList();
+
+        if (filteredBuses.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.directions_bus_rounded,
+                  size: 64,
+                  color: AppColors.textHint,
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+                Text(
+                  _searchQuery.isEmpty ? 'No buses available' : 'No buses found',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceSM),
+                Text(
+                  _searchQuery.isEmpty
+                      ? 'Check back later for available buses'
+                      : 'Try adjusting your search terms',
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          itemCount: filteredBuses.length,
+          itemBuilder: (context, index) {
+            final busData = filteredBuses[index].data() as Map<String, dynamic>;
+            return _buildBusCard(busData);
+          },
+        );
+      },
+    );
+      foregroundColor: Colors.white,
+      flexibleSpace: FlexibleSpaceBar(
+        title: const Text(
+          'Available Buses',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+          ),
+        ),
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primaryColor,
+                AppColors.primaryDark,
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
