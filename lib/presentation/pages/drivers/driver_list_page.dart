@@ -52,6 +52,7 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
         ),
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -555,5 +556,134 @@ class _DriverListPageState extends State<DriverListPage> {
     if (score >= 90) return AppColors.successColor;
     if (score >= 70) return AppColors.warningColor;
     return AppColors.errorColor;
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppDesign.space2XL),
+          topRight: Radius.circular(AppDesign.space2XL),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, -8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppDesign.space2XL),
+          topRight: Radius.circular(AppDesign.space2XL),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: 1, // Drivers tab is considered as search/browse
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                Navigator.of(context).pushReplacementNamed('/dashboard');
+                break;
+              case 1:
+                Navigator.of(context).pushReplacementNamed('/buses');
+                break;
+              case 2:
+                Navigator.of(context).pushReplacementNamed('/dashboard');
+                break;
+              case 3:
+                Navigator.of(context).pushReplacementNamed('/dashboard');
+                break;
+            }
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: AppColors.primaryColor,
+          unselectedItemColor: AppColors.textSecondary,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            letterSpacing: 0.2,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 11,
+          ),
+          showUnselectedLabels: true,
+          elevation: 0,
+          items: [
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceMD,
+                  vertical: AppDesign.spaceXS,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.dashboard_outlined,
+                  size: AppDesign.iconMD,
+                ),
+              ),
+              label: 'Dashboard',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceMD,
+                  vertical: AppDesign.spaceXS,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.search,
+                  size: AppDesign.iconMD,
+                ),
+              ),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceMD,
+                  vertical: AppDesign.spaceXS,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.map_outlined,
+                  size: AppDesign.iconMD,
+                ),
+              ),
+              label: 'Maps',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceMD,
+                  vertical: AppDesign.spaceXS,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                ),
+                child: const Icon(
+                  Icons.person_outlined,
+                  size: AppDesign.iconMD,
+                ),
+              ),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
