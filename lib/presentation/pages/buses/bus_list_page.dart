@@ -13,11 +13,18 @@ class BusListPage extends StatefulWidget {
 
 class _BusListPageState extends State<BusListPage> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _fromController = TextEditingController();
+  final TextEditingController _toController = TextEditingController();
+  final TextEditingController _busNumberController = TextEditingController();
   String _searchQuery = '';
+  int _selectedSearchType = 0; // 0: Route, 1: Bus Number, 2: Live Tracking
 
   @override
   void dispose() {
     _searchController.dispose();
+    _fromController.dispose();
+    _toController.dispose();
+    _busNumberController.dispose();
     super.dispose();
   }
 
@@ -97,56 +104,242 @@ class _BusListPageState extends State<BusListPage> {
           ),
           const SizedBox(height: AppDesign.spaceLG),
 
-          // Search bar
-          Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.cardGradient,
-              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              boxShadow: AppDesign.shadowMD,
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search by route, bus number...',
-                hintStyle: const TextStyle(
-                  color: AppColors.textHint,
-                  fontSize: 16,
-                ),
-                prefixIcon: const Icon(
-                  Icons.search_rounded,
-                  color: AppColors.primaryColor,
-                  size: 24,
-                ),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.clear_rounded,
-                          color: AppColors.textHint,
-                        ),
-                      )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppDesign.spaceLG,
-                  vertical: AppDesign.spaceMD,
-                ),
-              ),
-            ),
-          ),
+          // Advanced Search Section
+          _buildAdvancedSearchSection(),
         ],
       ),
     );
+  }
+
+  Widget _buildAdvancedSearchSection() {
+    return Column(
+      children: [
+        // Search Type Selector
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+            boxShadow: AppDesign.shadowMD,
+          ),
+          padding: const EdgeInsets.all(AppDesign.spaceSM),
+          child: Row(
+            children: [
+              _buildSearchTypeTab('Route', Icons.route_rounded, 0),
+              _buildSearchTypeTab('Bus #', Icons.directions_bus_rounded, 1),
+              _buildSearchTypeTab('Live', Icons.live_tv_rounded, 2),
+            ],
+          ),
+        ),
+        
+        const SizedBox(height: AppDesign.spaceMD),
+        
+        // Search Form
+        Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+            boxShadow: AppDesign.shadowMD,
+          ),
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          child: Column(
+            children: [
+              if (_selectedSearchType == 0) ...[
+                _buildSearchField(
+                  controller: _fromController,
+                  labelText: 'From',
+                  hintText: 'Enter departure location',
+                  icon: Icons.my_location_rounded,
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+                _buildSearchField(
+                  controller: _toController,
+                  labelText: 'To',
+                  hintText: 'Enter destination',
+                  icon: Icons.location_on_rounded,
+                ),
+              ] else if (_selectedSearchType == 1) ...[
+                _buildSearchField(
+                  controller: _busNumberController,
+                  labelText: 'Bus Number',
+                  hintText: 'Enter bus number (e.g., NB-9999)',
+                  icon: Icons.directions_bus_rounded,
+                ),
+              ] else ...[
+                _buildSearchField(
+                  controller: _busNumberController,
+                  labelText: 'Live Tracking',
+                  hintText: 'Enter bus number for live tracking',
+                  icon: Icons.live_tv_rounded,
+                ),
+              ],
+              
+              const SizedBox(height: AppDesign.spaceLG),
+              
+              // Search Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _performSearch,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceMD),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                    elevation: 2,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_rounded, size: 20),
+                      SizedBox(width: AppDesign.spaceSM),
+                      Text(
+                        'Search Buses',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchTypeTab(String title, IconData icon, int index) {
+    final isSelected = _selectedSearchType == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedSearchType = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: AppDesign.spaceMD,
+            horizontal: AppDesign.spaceSM,
+          ),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.primaryGradient : null,
+            color: isSelected ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected ? Colors.white : AppColors.textSecondary,
+              ),
+              const SizedBox(width: AppDesign.spaceXS),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField({
+    required TextEditingController controller,
+    required String labelText,
+    required String hintText,
+    required IconData icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: AppDesign.spaceXS),
+        TextField(
+          controller: controller,
+          onChanged: (value) => _updateSearchQuery(),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: const TextStyle(
+              color: AppColors.textHint,
+              fontSize: 14,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: AppColors.primaryColor,
+              size: 20,
+            ),
+            suffixIcon: controller.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () {
+                      controller.clear();
+                      _updateSearchQuery();
+                    },
+                    icon: const Icon(
+                      Icons.clear_rounded,
+                      color: AppColors.textHint,
+                      size: 18,
+                    ),
+                  )
+                : null,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              borderSide: BorderSide(
+                color: AppColors.primaryColor.withOpacity(0.3),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              borderSide: BorderSide(
+                color: AppColors.primaryColor.withOpacity(0.2),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              borderSide: const BorderSide(
+                color: AppColors.primaryColor,
+                width: 2,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppDesign.spaceMD,
+              vertical: AppDesign.spaceSM,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _updateSearchQuery() {
+    setState(() {
+      if (_selectedSearchType == 0) {
+        _searchQuery = '${_fromController.text.toLowerCase()} ${_toController.text.toLowerCase()}'.trim();
+      } else {
+        _searchQuery = _busNumberController.text.toLowerCase();
+      }
+    });
+  }
+
+  void _performSearch() {
+    _updateSearchQuery();
+    // The filtering will happen automatically in the StreamBuilder
   }
 
   Widget _buildBusList() {
@@ -198,21 +391,38 @@ class _BusListPageState extends State<BusListPage> {
 
           final buses = snapshot.data?.docs ?? [];
 
-          // Filter buses based on search query
-          final filteredBuses = buses.where((bus) {
-            final data = bus.data() as Map<String, dynamic>;
-            final route = (data['route'] ?? '').toString().toLowerCase();
-            final busNumber =
-                (data['busNumberPlate'] ?? '').toString().toLowerCase();
-            final driverName =
-                (data['driverName'] ?? '').toString().toLowerCase();
+            // Filter buses based on search query and type
+            final filteredBuses = buses.where((bus) {
+              final data = bus.data() as Map<String, dynamic>;
+              final route = (data['route'] ?? '').toString().toLowerCase();
+              final busNumber = (data['busNumberPlate'] ?? '').toString().toLowerCase();
+              final driverName = (data['driverName'] ?? '').toString().toLowerCase();
+              final location = data['location'] as Map<String, dynamic>?;
+              final address = (location?['address'] ?? '').toString().toLowerCase();
 
-            return route.contains(_searchQuery) ||
-                busNumber.contains(_searchQuery) ||
-                driverName.contains(_searchQuery);
-          }).toList();
+              if (_searchQuery.isEmpty) return true;
 
-          if (filteredBuses.isEmpty) {
+              if (_selectedSearchType == 0) {
+                // Route search
+                final fromQuery = _fromController.text.toLowerCase();
+                final toQuery = _toController.text.toLowerCase();
+                
+                if (fromQuery.isNotEmpty && toQuery.isNotEmpty) {
+                  return route.contains(fromQuery) && route.contains(toQuery);
+                } else if (fromQuery.isNotEmpty) {
+                  return route.contains(fromQuery) || address.contains(fromQuery);
+                } else if (toQuery.isNotEmpty) {
+                  return route.contains(toQuery) || address.contains(toQuery);
+                }
+                return route.contains(_searchQuery) || address.contains(_searchQuery);
+              } else if (_selectedSearchType == 1) {
+                // Bus number search
+                return busNumber.contains(_searchQuery);
+              } else {
+                // Live tracking search (bus number based)
+                return busNumber.contains(_searchQuery);
+              }
+            }).toList();          if (filteredBuses.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
