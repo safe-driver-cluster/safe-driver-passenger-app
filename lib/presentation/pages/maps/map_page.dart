@@ -623,7 +623,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(AppDesign.spaceLG, AppDesign.spaceMD, AppDesign.spaceLG, AppDesign.spaceSM),
+      margin: const EdgeInsets.fromLTRB(AppDesign.spaceLG, AppDesign.spaceMD,
+          AppDesign.spaceLG, AppDesign.spaceSM),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -670,10 +671,10 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                       onPressed: () {
                         _searchController.clear();
                         _searchedDestination = null;
-                        _markers.removeWhere((marker) => 
-                          marker.markerId.value == 'search_destination');
-                        _polylines.removeWhere((polyline) => 
-                          polyline.polylineId.value.contains('bus_route'));
+                        _markers.removeWhere((marker) =>
+                            marker.markerId.value == 'search_destination');
+                        _polylines.removeWhere((polyline) =>
+                            polyline.polylineId.value.contains('bus_route'));
                         setState(() {});
                       },
                     )
@@ -896,7 +897,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 // Map container
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: AppDesign.spaceLG),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                       boxShadow: [
