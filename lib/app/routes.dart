@@ -8,7 +8,6 @@ import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
 import '../presentation/pages/auth/reset_password_page.dart';
 import '../presentation/pages/auth/splash_page.dart';
-import '../presentation/pages/bus/bus_search_page.dart';
 import '../presentation/pages/buses/bus_list_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
@@ -187,7 +186,7 @@ class AppRoutes {
 
       case busSearch:
         return MaterialPageRoute(
-          builder: (_) => const BusSearchPage(),
+          builder: (_) => const BusListPage(),
           settings: settings,
         );
 
