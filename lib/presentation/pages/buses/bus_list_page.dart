@@ -155,16 +155,16 @@ class _BusListPageState extends State<BusListPage> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.error_outline_rounded,
                   size: 64,
                   color: AppColors.errorColor,
                 ),
-                const SizedBox(height: AppDesign.spaceMD),
+                SizedBox(height: AppDesign.spaceMD),
                 Text(
                   'Error loading buses',
                   style: TextStyle(
@@ -173,7 +173,7 @@ class _BusListPageState extends State<BusListPage> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceSM),
+                SizedBox(height: AppDesign.spaceSM),
                 Text(
                   'Please try again later',
                   style: TextStyle(
@@ -225,7 +225,7 @@ class _BusListPageState extends State<BusListPage> {
                 const SizedBox(height: AppDesign.spaceMD),
                 Text(
                   _searchQuery.isEmpty ? 'No buses available' : 'No buses found',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -236,7 +236,7 @@ class _BusListPageState extends State<BusListPage> {
                   _searchQuery.isEmpty
                       ? 'Check back later for available buses'
                       : 'Try adjusting your search terms',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -278,7 +278,7 @@ class _BusListPageState extends State<BusListPage> {
           ),
         ),
       ),
-    );
+    )
   }
 
   Widget _buildAdvancedSearchSection() {
