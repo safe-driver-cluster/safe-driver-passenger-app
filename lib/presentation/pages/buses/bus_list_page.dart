@@ -152,109 +152,109 @@ class _BusListPageState extends State<BusListPage> {
   Widget _buildBusList() {
     return Padding(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('vehicles')
-              .where('status', isEqualTo: 'active')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline_rounded,
-                      size: 64,
-                      color: AppColors.errorColor,
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('vehicles')
+            .where('status', isEqualTo: 'active')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 64,
+                    color: AppColors.errorColor,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  Text(
+                    'Error loading buses',
+                    style: AppTextStyles.headline6.copyWith(
+                      color: AppColors.textPrimary,
                     ),
-                    const SizedBox(height: AppDesign.spaceMD),
-                    Text(
-                      'Error loading buses',
-                      style: AppTextStyles.headline6.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  Text(
+                    'Please try again later',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-                    const SizedBox(height: AppDesign.spaceSM),
-                    Text(
-                      'Please try again later',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
-                ),
-              );
-            }
-
-            final buses = snapshot.data?.docs ?? [];
-
-            // Filter buses based on search query
-            final filteredBuses = buses.where((bus) {
-              final data = bus.data() as Map<String, dynamic>;
-              final route = (data['route'] ?? '').toString().toLowerCase();
-              final busNumber =
-                  (data['busNumberPlate'] ?? '').toString().toLowerCase();
-              final driverName =
-                  (data['driverName'] ?? '').toString().toLowerCase();
-
-              return route.contains(_searchQuery) ||
-                  busNumber.contains(_searchQuery) ||
-                  driverName.contains(_searchQuery);
-            }).toList();
-
-            if (filteredBuses.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.directions_bus_rounded,
-                      size: 64,
-                      color: AppColors.textHint,
-                    ),
-                    const SizedBox(height: AppDesign.spaceMD),
-                    Text(
-                      _searchQuery.isEmpty
-                          ? 'No buses available'
-                          : 'No buses found',
-                      style: AppTextStyles.headline6.copyWith(
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesign.spaceSM),
-                    Text(
-                      _searchQuery.isEmpty
-                          ? 'Check back later for available buses'
-                          : 'Try a different search term',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return ListView.builder(
-              itemCount: filteredBuses.length,
-              itemBuilder: (context, index) {
-                final busData =
-                    filteredBuses[index].data() as Map<String, dynamic>;
-                return _buildBusCard(busData);
-              },
+                  ),
+                ],
+              ),
             );
-          },
-        ),
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+              ),
+            );
+          }
+
+          final buses = snapshot.data?.docs ?? [];
+
+          // Filter buses based on search query
+          final filteredBuses = buses.where((bus) {
+            final data = bus.data() as Map<String, dynamic>;
+            final route = (data['route'] ?? '').toString().toLowerCase();
+            final busNumber =
+                (data['busNumberPlate'] ?? '').toString().toLowerCase();
+            final driverName =
+                (data['driverName'] ?? '').toString().toLowerCase();
+
+            return route.contains(_searchQuery) ||
+                busNumber.contains(_searchQuery) ||
+                driverName.contains(_searchQuery);
+          }).toList();
+
+          if (filteredBuses.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.directions_bus_rounded,
+                    size: 64,
+                    color: AppColors.textHint,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  Text(
+                    _searchQuery.isEmpty
+                        ? 'No buses available'
+                        : 'No buses found',
+                    style: AppTextStyles.headline6.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  Text(
+                    _searchQuery.isEmpty
+                        ? 'Check back later for available buses'
+                        : 'Try a different search term',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: filteredBuses.length,
+            itemBuilder: (context, index) {
+              final busData =
+                  filteredBuses[index].data() as Map<String, dynamic>;
+              return _buildBusCard(busData);
+            },
+          );
+        },
+      ),
     );
   }
 
