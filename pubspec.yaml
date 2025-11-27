@@ -95,7 +95,7 @@ dependencies:
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
   device_info_plus: ^9.1.1
-  package_info_plus: ^4.2.0
+  package_info_plus: ^8.0.2
 
   # Encryption & Security
   crypto: ^3.0.3
