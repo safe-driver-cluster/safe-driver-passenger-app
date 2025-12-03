@@ -35,7 +35,7 @@ class LanguageController extends StateNotifier<AppLanguage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLanguageCode = prefs.getString(_languageKey);
-      
+
       debugPrint('🌐 Loading saved language...');
       debugPrint('🌐 Saved language code: $savedLanguageCode');
       debugPrint('🌐 Current state before: ${state.code}');
@@ -78,7 +78,8 @@ class LanguageController extends StateNotifier<AppLanguage> {
   /// Change the current language and save to preferences
   Future<void> changeLanguage(AppLanguage language) async {
     try {
-      debugPrint('🌐 Changing language to: ${language.code} (${language.englishName})');
+      debugPrint(
+          '🌐 Changing language to: ${language.code} (${language.englishName})');
       state = language;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
