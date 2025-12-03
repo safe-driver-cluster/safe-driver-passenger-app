@@ -91,28 +91,17 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top -
-                      MediaQuery.of(context).padding.bottom -
-                      48,
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+                _buildHeader(),
+                const SizedBox(height: 50),
+                Expanded(
+                  child: _buildLanguageOptions(),
                 ),
-                child: IntrinsicHeight(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 40),
-                      _buildHeader(),
-                      const SizedBox(height: 40),
-                      _buildLanguageOptions(),
-                      const Spacer(),
-                      _buildContinueButton(),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                ),
-              ),
+                _buildContinueButton(),
+                const SizedBox(height: 40),
+              ],
             ),
           ),
         ),
@@ -123,163 +112,49 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   Widget _buildHeader() {
     return Column(
       children: [
-        // App Logo Container with enhanced design
+        // Simple Language Icon
         Container(
-          width: 140,
-          height: 140,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.2),
-                Colors.white.withOpacity(0.1),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(70),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.4),
-              width: 3,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Container(
-            margin: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Colors.white, Color(0xFFF8F9FA)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(45),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryColor.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.language_rounded,
-              size: 55,
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ),
-        const SizedBox(height: 32),
-        // Welcome Text
-        ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [Colors.white, Color(0xFFF0F0F0)],
-          ).createShader(bounds),
-          child: const Text(
-            'Welcome to SafeDriver',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-              letterSpacing: 0.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Choose Your Language',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(25),
+            shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
-              width: 1,
+              width: 2,
             ),
           ),
-          child: const Text(
-            'Select your preferred language to get started',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
+          child: const Icon(
+            Icons.language_rounded,
+            size: 40,
+            color: Colors.white,
           ),
+        ),
+        const SizedBox(height: 24),
+        // Simple Title
+        const Text(
+          'Choose Language',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.5,
+          ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
   Widget _buildLanguageOptions() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.1),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 28),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.4),
-                width: 1,
-              ),
-            ),
-            child: const Text(
-              'Available Languages',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
-          ...AppLanguage.values
-              .map((language) => _buildLanguageOption(language)),
-          const SizedBox(height: 28),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 16),
+        ...AppLanguage.values
+            .map((language) => _buildLanguageOption(language)),
+        const SizedBox(height: 16),
+      ],
     );
   }
 
@@ -287,12 +162,12 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
     final isSelected = selectedLanguage == language;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           onTap: () {
             setState(() {
               selectedLanguage = language;
@@ -300,70 +175,37 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              gradient: isSelected
-                  ? LinearGradient(
-                      colors: [
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0.2),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
-              color: isSelected ? null : Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(20),
+              color: isSelected 
+                  ? Colors.white.withOpacity(0.2) 
+                  : Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected
-                    ? Colors.white.withOpacity(0.8)
-                    : Colors.white.withOpacity(0.3),
-                width: isSelected ? 3 : 1.5,
+                    ? Colors.white.withOpacity(0.6)
+                    : Colors.white.withOpacity(0.2),
+                width: isSelected ? 2 : 1,
               ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.2),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ]
-                  : null,
             ),
             child: Row(
               children: [
-                // Language Flag/Icon
+                // Language Flag
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isSelected
-                          ? [Colors.white, Colors.white.withOpacity(0.9)]
-                          : [
-                              Colors.white.withOpacity(0.3),
-                              Colors.white.withOpacity(0.2)
-                            ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
                     child: Text(
                       _getLanguageEmoji(language),
-                      style: const TextStyle(fontSize: 28),
+                      style: const TextStyle(fontSize: 24),
                     ),
                   ),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: 16),
                 // Language Names
                 Expanded(
                   child: Column(
@@ -371,68 +213,40 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                     children: [
                       Text(
                         language.nativeName,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
-                          shadows: isSelected
-                              ? [
-                                  Shadow(
-                                    color: Colors.black.withOpacity(0.3),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 2,
-                                  ),
-                                ]
-                              : null,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         language.englishName,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: isSelected
-                              ? Colors.white.withOpacity(0.9)
-                              : Colors.white.withOpacity(0.7),
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
                 ),
                 // Selection Indicator
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 28,
-                  height: 28,
+                Container(
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: isSelected
-                        ? const LinearGradient(
-                            colors: [Colors.white, Color(0xFFF8F9FA)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : null,
-                    color: isSelected ? null : Colors.transparent,
+                    color: isSelected ? Colors.white : Colors.transparent,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withOpacity(0.6),
                       width: 2,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: Colors.white.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
                   ),
                   child: isSelected
                       ? const Icon(
-                          Icons.check_rounded,
-                          size: 18,
+                          Icons.check,
+                          size: 16,
                           color: AppColors.primaryColor,
                         )
                       : null,
@@ -448,54 +262,29 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   Widget _buildContinueButton() {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: selectedLanguage != null
-            ? [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ]
-            : null,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: selectedLanguage != null ? _selectLanguage : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: selectedLanguage != null
               ? Colors.white
-              : Colors.white.withOpacity(0.4),
+              : Colors.white.withOpacity(0.3),
           foregroundColor: AppColors.primaryColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(14),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 22),
+          padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Continue',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: selectedLanguage != null
-                    ? AppColors.primaryColor
-                    : AppColors.primaryColor.withOpacity(0.6),
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Icon(
-              Icons.arrow_forward_rounded,
-              size: 24,
-              color: selectedLanguage != null
-                  ? AppColors.primaryColor
-                  : AppColors.primaryColor.withOpacity(0.6),
-            ),
-          ],
+        child: Text(
+          'Continue',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: selectedLanguage != null
+                ? AppColors.primaryColor
+                : AppColors.primaryColor.withOpacity(0.6),
+          ),
         ),
       ),
     );
