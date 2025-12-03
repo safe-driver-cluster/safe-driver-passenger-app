@@ -623,4 +623,368 @@ class AppLocalizationsSi extends AppLocalizations {
 
   @override
   String get systemDefault => 'පද්ධති පෙරනිමිය';
+
+  @override
+  String get acknowledge => 'පිළිගන්න';
+
+  @override
+  String get viewDetails => 'විස්තර බලන්න';
+
+  @override
+  String get viewProfile => 'පැතිකඩ බලන්න';
+
+  @override
+  String get contact => 'සම්බන්ධ කරන්න';
+
+  @override
+  String get viewAll => 'සියල්ල බලන්න';
+
+  @override
+  String get scanQR => 'QR ස්කෑන් කරන්න';
+
+  @override
+  String get tryAgain => 'නැවත උත්සාහ කරන්න';
+
+  @override
+  String get goBack => 'ආපසු යන්න';
+
+  @override
+  String get openSettings => 'සැකසුම් විවෘත කරන්න';
+
+  @override
+  String get details => 'විස්තර';
+
+  @override
+  String get track => 'ලුහුබඳින්න';
+
+  @override
+  String get safetyTipsTitle => 'ආරක්ෂක ඉඟි';
+
+  @override
+  String get safetyHub => 'ආරක්ෂක මධ්‍යස්ථානය';
+
+  @override
+  String get reportSafetyIssue => 'ආරක්ෂක ගැටලුව වාර්තා කරන්න';
+
+  @override
+  String get report => 'වාර්තාව';
+
+  @override
+  String get gotIt => 'තේරුණා';
+
+  @override
+  String get safetyAlertsTitle => 'ආරක්ෂක අනතුරු ඇඟවීම්';
+
+  @override
+  String get reportIncidentTitle => 'සිද්ධිය වාර්තා කරන්න';
+
+  @override
+  String get hazardZonesTitle => 'අන්තරාය කලාප';
+
+  @override
+  String get emergencyContactsTitle => 'හදිසි සම්බන්ධතා';
+
+  @override
+  String get enterCodeManually => 'කේතය අතින් ඇතුළු කරන්න';
+
+  @override
+  String qrCodeDetected(String code) {
+    return 'QR කේතය සොයා ගන්නා ලදී: $code';
+  }
+
+  @override
+  String get signOut => 'ඉවත් වන්න';
+
+  @override
+  String get areYouSureSignOut => 'ඔබට ඉවත් වීමට අවශ්‍යද?';
+
+  @override
+  String get tripHistory => 'ගමන් ඉතිහාසය';
+
+  @override
+  String get review => 'සමාලෝචනය';
+
+  @override
+  String tripDetails(String id) {
+    return 'ගමන $id';
+  }
+
+  @override
+  String get giveFeedback => 'ප්‍රතිසාදය ලබා දෙන්න';
+
+  @override
+  String get comingSoonFeature => 'මෙම විශේෂාංගය අනාගත යාවත්කාලීනයකදී ලබා ගත හැකිය.';
+
+  @override
+  String get clearCache => 'කෑෂය මකන්න';
+
+  @override
+  String get cacheClearedSuccessfully => 'කෑෂය සාර්ථකව මකා දමන ලදී!';
+
+  @override
+  String get clear => 'මකන්න';
+
+  @override
+  String get profileTitle => 'පැතිකඩ';
+
+  @override
+  String get profileUpdatedSuccessfully => 'පැතිකඩ සාර්ථකව යාවත්කාලීන විය';
+
+  @override
+  String failedToUpdateProfile(String error) {
+    return 'පැතිකඩ යාවත්කාලීන කිරීම අසාර්ථකයි: $error';
+  }
+
+  @override
+  String get myProfile => 'මගේ පැතිකඩ';
+
+  @override
+  String get noProfileFound => 'පැතිකඩක් හමු නොවීය';
+
+  @override
+  String get viewFAQ => 'නිති අසන ප්‍රශ්න බලන්න';
+
+  @override
+  String get changePicture => 'රූපය වෙනස් කරන්න';
+
+  @override
+  String get profileUpdated => 'පැතිකඩ සාර්ථකව යාවත්කාලීන විය!';
+
+  @override
+  String get aboutTitle => 'ගැන';
+
+  @override
+  String get pageNotFound => 'පිටුව හමු නොවීය';
+
+  @override
+  String get searchFunctionalityComingSoon => 'සොයන්න ක්‍රියාකාරිත්වය ඉක්මනින් පැමිණේ!';
+
+  @override
+  String get busRoutesComingSoon => 'බස් මාර්ග ඉක්මනින් පැමිණේ!';
+
+  @override
+  String get navigationComingSoon => 'සංචාලනය ඉක්මනින් පැමිණේ!';
+
+  @override
+  String selected(String description) {
+    return 'තෝරාගත්: $description';
+  }
+
+  @override
+  String placeLookupFailed(String error) {
+    return 'ස්ථානය සොයාගැනීම අසාර්ථකයි: $error';
+  }
+
+  @override
+  String foundBusStopsNearby(int count) {
+    return 'ආසන්නයේ බස් නැවතුම් $count ක් හමුවිය';
+  }
+
+  @override
+  String foundQueryTapNavigate(String query) {
+    return '\"$query\" හමුවිය. බස් මාර්ගය බැලීමට Navigate ටැප් කරන්න!';
+  }
+
+  @override
+  String searchFailed(String error) {
+    return 'සෙවුම අසාර්ථකයි: $error';
+  }
+
+  @override
+  String get unableToGetCurrentLocation => 'වර්තමාන ස්ථානය ලබාගත නොහැක';
+
+  @override
+  String get pleaseSearchForDestination => 'කරුණාකර මුලින්ම ගමනාන්තයක් සොයන්න';
+
+  @override
+  String errorSelectingLanguage(String error) {
+    return 'භාෂාව තෝරාගැනීමේ දෝෂය: $error';
+  }
+
+  @override
+  String get hazardZoneIntelligence => 'අන්තරාය කලාප බුද්ධිය';
+
+  @override
+  String get loadingHazardZoneData => 'අන්තරාය කලාප දත්ත පූරණය වෙමින්...';
+
+  @override
+  String get driverIdRequiredForAlerts => 'අනතුරු ඇඟවීම් බැලීමට රියදුරු හැඳුනුම අවශ්‍යයි';
+
+  @override
+  String get noActiveHazardAlerts => 'සක්‍රිය අන්තරාය අනතුරු ඇඟවීම් නැත';
+
+  @override
+  String get reviewsTitle => 'සමාලෝචන';
+
+  @override
+  String get back => 'ආපසු';
+
+  @override
+  String get addMedia => 'මාධ්‍ය එක් කරන්න';
+
+  @override
+  String get takePhoto => 'ඡායාරූපයක් ගන්න';
+
+  @override
+  String get chooseFromGallery => 'ගැලරියෙන් තෝරන්න';
+
+  @override
+  String fileTooLarge(String fileName) {
+    return '$fileName ඉතා විශාලයි. උපරිම ප්‍රමාණය 10MB ය.';
+  }
+
+  @override
+  String get locationPermissionRequired => 'ස්ථානය බෙදාගැනීමට ස්ථාන අනුමතිය අවශ්‍යයි';
+
+  @override
+  String failedToGetLocation(String error) {
+    return 'ස්ථානය ලබාගැනීම අසාර්ථකයි: $error';
+  }
+
+  @override
+  String get incidentReportingImplemented => 'සිද්ධි වාර්තාකරණය ක්‍රියාත්මක කරනු ලැබේ';
+
+  @override
+  String get priority => 'ප්‍රමුඛතාවය';
+
+  @override
+  String get low => 'අඩු';
+
+  @override
+  String get medium => 'මධ්‍යම';
+
+  @override
+  String get high => 'ඉහළ';
+
+  @override
+  String get urgent => 'හදිසි';
+
+  @override
+  String get submitAnonymously => 'නිර්නාමිකව ඉදිරිපත් කරන්න';
+
+  @override
+  String get personalInfoNotShared => 'ඔබේ පෞද්ගලික තොරතුරු බෙදාගනු නොලැබේ';
+
+  @override
+  String get chooseYourLanguage => 'ඔබේ භාෂාව තෝරන්න';
+
+  @override
+  String get selectYourPreferredLanguage => 'ඉදිරියට යාමට ඔබේ කැමති භාෂාව තෝරන්න';
+
+  @override
+  String get availableLanguages => 'ලබාගත හැකි භාෂා';
+
+  @override
+  String get continueButton => 'ඉදිරියට';
+
+  @override
+  String get profilePageComingSoon => 'පැතිකඩ පිටුව - ඉක්මනින් එනවා';
+
+  @override
+  String get editProfile => 'පැතිකඩ සංස්කරණය';
+
+  @override
+  String get loadingProfile => 'පැතිකඩ පූරණය වෙමින්...';
+
+  @override
+  String get profilePicture => 'පැතිකඩ රූපය';
+
+  @override
+  String get basicInformation => 'මූලික තොරතුරු';
+
+  @override
+  String get emailAddress => 'විද්‍යුත් තැපැල් ලිපිනය';
+
+  @override
+  String get noEmail => 'විද්‍යුත් තැපෑල නැත';
+
+  @override
+  String get firstName => 'මුල් නම';
+
+  @override
+  String get lastName => 'අවසාන නම';
+
+  @override
+  String get dateOfBirth => 'උපන් දිනය';
+
+  @override
+  String get gender => 'ලිංගය';
+
+  @override
+  String get addressInformation => 'ලිපින තොරතුරු';
+
+  @override
+  String get streetAddress => 'වීදි ලිපිනය';
+
+  @override
+  String get city => 'නගරය';
+
+  @override
+  String get state => 'ප්‍රාන්තය';
+
+  @override
+  String get zipCode => 'ZIP කේතය';
+
+  @override
+  String get country => 'රට';
+
+  @override
+  String get emergencyContact => 'හදිසි සම්බන්ධතාවය';
+
+  @override
+  String get contactName => 'සම්බන්ධතා නම';
+
+  @override
+  String get relationship => 'සම්බන්ධතාවය';
+
+  @override
+  String get preferences => 'මනාපයන්';
+
+  @override
+  String get cameraError => 'කැමරා දෝෂය';
+
+  @override
+  String get positionQrCode => 'QR කේතය මෙහි තබන්න';
+
+  @override
+  String get qrScanner => 'QR ස්කෑනර්';
+
+  @override
+  String get scanQrInstruction => 'බස් හෝ නැවතුමේ QR කේතය ස්කෑන් කරන්න';
+
+  @override
+  String get alignQrInstruction => 'ස්ථිරව තබාගෙන QR කේතය රාමුව තුළ සමගාමී කරන්න';
+
+  @override
+  String get enterBusStopCode => 'බස් හෝ නැවතුම් කේතය ඇතුළු කරන්න';
+
+  @override
+  String get submit => 'යොමු කරන්න';
+
+  @override
+  String get mapsNavigation => 'සිතියම් සහ සංචාලනය';
+
+  @override
+  String get searchDestination => 'ගමනාන්තය සොයන්න...';
+
+  @override
+  String get busStop => 'බස් නැවතුම';
+
+  @override
+  String get navigate => 'සංචාලනය';
+
+  @override
+  String get yourLocation => 'ඔබේ ස්ථානය';
+
+  @override
+  String get currentPosition => 'වත්මන් ස්ථානය';
+
+  @override
+  String get unableToLoadMap => 'සිතියම පූරණය කළ නොහැක';
+
+  @override
+  String get loadingMap => 'සිතියම පූරණය වෙමින්...';
+
+  @override
+  String get busRouteToDestination => 'ගමනාන්තයට බස් මාර්ගය';
 }
