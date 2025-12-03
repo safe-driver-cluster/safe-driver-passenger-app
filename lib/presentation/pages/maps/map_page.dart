@@ -1,10 +1,12 @@
 import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
 import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../../services/google_places_service.dart' as places_service;
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -22,6 +24,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
   final TextEditingController _searchController = TextEditingController();
+  final places_service.GooglePlacesService _placesService =
+      places_service.GooglePlacesService();
+  List<places_service.Prediction> _suggestions = [];
+  bool _showSuggestions = false;
+  Timer? _debounce;
   bool _isLoading = true;
   bool _isSearching = false;
   String? _errorMessage;
@@ -43,9 +50,88 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _debounce?.cancel();
     _searchController.dispose();
     _mapController?.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged(String input) {
+    _debounce?.cancel();
+    if (input.trim().length < 2) {
+      setState(() {
+        _suggestions = [];
+        _showSuggestions = false;
+      });
+      return;
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      try {
+        final results = await _placesService.autocomplete(input);
+        if (mounted) {
+          setState(() {
+            _suggestions = results.cast<places_service.Prediction>();
+            _showSuggestions = _suggestions.isNotEmpty;
+          });
+        }
+      } catch (e) {
+        // ignore errors silently for now
+      }
+    });
+  }
+
+  Future<void> _selectSuggestion(places_service.Prediction p) async {
+    setState(() {
+      _isSearching = true;
+      _showSuggestions = false;
+      _searchController.text = p.description;
+    });
+
+    try {
+      final latLng = await _placesService.getPlaceLatLng(p.placeId);
+
+      _markers.removeWhere((m) => m.markerId.value == 'search_destination');
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('search_destination'),
+          position: latLng,
+          infoWindow: InfoWindow(title: p.description),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueViolet),
+        ),
+      );
+
+      // animate camera to selection
+      _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(latLng, 16.0),
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Selected: ${p.description}'),
+            backgroundColor: AppColors.primaryColor,
+            action: SnackBarAction(
+              label: 'Navigate',
+              textColor: Colors.white,
+              onPressed: _navigateToDestination,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Place lookup failed: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSearching = false);
+    }
   }
 
   Future<void> _initializeMap() async {
@@ -682,6 +768,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             child: TextField(
               controller: _searchController,
               onChanged: (value) {
+                _onSearchChanged(value);
                 setState(() {});
               },
               decoration: InputDecoration(
@@ -718,6 +805,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                               _polylines.removeWhere((polyline) => polyline
                                   .polylineId.value
                                   .contains('bus_route'));
+                              _suggestions = [];
+                              _showSuggestions = false;
                               setState(() {});
                             },
                             icon: const Icon(
@@ -735,6 +824,38 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               onSubmitted: (_) => _searchPlaces(),
             ),
           ),
+
+          // Suggestions list (autocomplete)
+          if (_showSuggestions && _suggestions.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withOpacity(0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.25,
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: _suggestions.length.clamp(0, 6),
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final p = _suggestions[index];
+                  return ListTile(
+                    title: Text(p.description),
+                    onTap: () => _selectSuggestion(p),
+                  );
+                },
+              ),
+            ),
 
           const SizedBox(height: AppDesign.spaceLG),
 
