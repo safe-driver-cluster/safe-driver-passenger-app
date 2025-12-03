@@ -2004,6 +2004,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bus Route to Destination'**
   String get busRouteToDestination;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
