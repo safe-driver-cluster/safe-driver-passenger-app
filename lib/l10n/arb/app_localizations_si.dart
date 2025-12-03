@@ -202,13 +202,13 @@ class AppLocalizationsSi extends AppLocalizations {
   String get safety => 'ආරක්ෂාව';
 
   @override
-  String get safetyAlerts => 'ආරක්ෂක අනතුරු ඇඟවීම්';
+  String get safetyAlerts => 'ආරක්ෂක අන්තරු ඇදවීම්';
 
   @override
   String get emergencyAlert => 'හදිසි අනතුරු ඇඟවීම';
 
   @override
-  String get hazardZones => 'අන්තරාය කලාප';
+  String get hazardZones => 'අන්තරුදායක කලාප';
 
   @override
   String get emergencyContacts => 'හදිසි සම්බන්ධතා';
@@ -220,7 +220,7 @@ class AppLocalizationsSi extends AppLocalizations {
   String get reportIncident => 'සිදුවීම වාර්තා කරන්න';
 
   @override
-  String get safetyTips => 'ආරක්ෂක ඉඟි';
+  String get safetyTips => 'ආරක්ෂක උපදෙස්';
 
   @override
   String get weatherWarning => 'කාලගුණ අනතුරු ඇඟවීම';
@@ -544,7 +544,7 @@ class AppLocalizationsSi extends AppLocalizations {
   String get medical => 'වෛද්‍ය';
 
   @override
-  String get fire => 'ගිනි නිවන දෙපාර්තමේන්තුව';
+  String get fire => 'ගිනි නිවන';
 
   @override
   String get callNow => 'දැන් අමතන්න';
@@ -710,7 +710,7 @@ class AppLocalizationsSi extends AppLocalizations {
   }
 
   @override
-  String get giveFeedback => 'ප්‍රතිසාදය ලබා දෙන්න';
+  String get giveFeedback => 'ප්‍රතිපෝෂණ ලබා දෙන්න';
 
   @override
   String get comingSoonFeature => 'මෙම විශේෂාංගය අනාගත යාවත්කාලීනයකදී ලබා ගත හැකිය.';
@@ -1035,6 +1035,24 @@ class AppLocalizationsSi extends AppLocalizations {
 
   @override
   String get support => 'සහාය';
+
+  @override
+  String get reportSafetyDialogContent => 'ඔබට ආරක්ෂක සිදුවීමක් හෝ සැළකිල්ලක් වාර්තා කිරීමට අවශ්‍යද?';
+
+  @override
+  String get safetyTip1 => '• සෑම විටම ආසන පටිය පළඳන්න';
+
+  @override
+  String get safetyTip2 => '• ඔබේ අවට පරිසරය දැන සිටින්න';
+
+  @override
+  String get safetyTip3 => '• හදිසි සම්බන්ධතා ලබා ගත හැකිව තබන්න';
+
+  @override
+  String get safetyTip4 => '• සැක සහිත ක්‍රියාකලාප වහාම වාර්තා කරන්න';
+
+  @override
+  String get safetyTip5 => '• බස් ආරක්ෂක ප්‍රොටෝකොල සහ රියැදුරු උපදෙස් පිළිපදින්න';
 
   @override
   String errorOccurredGeneric(String error) {
