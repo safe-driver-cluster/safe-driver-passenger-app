@@ -602,8 +602,8 @@ class EmergencyPage extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:
-                    Text(AppLocalizations.of(context).locationPermissionRequired),
+                content: Text(
+                    AppLocalizations.of(context).locationPermissionRequired),
                 backgroundColor: AppColors.dangerColor,
               ),
             );
