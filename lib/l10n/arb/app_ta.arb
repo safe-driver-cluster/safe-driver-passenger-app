@@ -364,5 +364,29 @@
   "viewKnownHazardousAreas": "தெரிந்த ஆபத்துகரமான பரப்புகளை பார்க்கவும்",
   "learnSafetyBestPractices": "பாதுகாப்பு சிறந்த நடவடிக்கைகளை கற்றுக் கொள்ளவும்",
   "support": "ஆதரவு",
+  "safetyAlerts": "பாதுகாப்பு எச்சரிக்கைகள்",
+  "hazardZones": "ஆபத்து மண்டலங்கள்",
+  "safetyTips": "பாதுகாப்பு குறிப்புகள்",
+  "emergencyContacts": "அவசரகால தொடர்புகள்",
+  "police": "காவல்துறை",
+  "medical": "மருத்துவம்",
+  "fire": "தீயணைப்பு",
+  "reportSafetyDialogContent": "நீங்கள் ஒரு பாதுகாப்பு சம்பவம் அல்லது அக்கறையை புகாரளிக்க விரும்புகிறீர்களா?",
+  "safetyTip1": "• எப்போதும் உங்கள் சீட்பெல்ட்டை அணியுங்கள்",
+  "safetyTip2": "• உங்கள் சுற்றுப்புறங்களைப் பற்றி எச்சரிக்கையாக இருங்கள்",
+  "safetyTip3": "• அவசரகால தொடர்புகளை எளிதில் கிடைக்கும்படி வைத்துக்கொள்ளுங்கள்",
+  "safetyTip4": "• சந்தேகத்திற்குரிய செயல்பாடுகளை உடனடியாக புகாரளிக்கவும்",
+  "safetyTip5": "• பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் டிரைவர் அறிவுரைகளை பின்பற்றுங்கள்",
+  "giveFeedback": "கருத்து தெரிவிக்கவும்",
+  "qrCodeDetected": "QR குறியீடு கண்டறியப்பட்டது: {code}",
+  "@qrCodeDetected": {
+    "description": "Message when QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
   "errorOccurredGeneric": "பிழை: {error}"
 }
