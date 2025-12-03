@@ -623,4 +623,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemDefault => 'System Default';
+
+  @override
+  String get chooseYourLanguage => 'Choose Your Language';
+
+  @override
+  String get selectLanguageDescription => 'Select your preferred language to continue';
+
+  @override
+  String get availableLanguages => 'Available Languages';
+
+  @override
+  String get continueText => 'Continue';
 }
