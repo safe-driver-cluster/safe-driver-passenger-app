@@ -54,7 +54,7 @@ class SafetyHubPage extends StatelessWidget {
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Safety First',
+                          AppLocalizations.of(context).safetyFirst,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -66,7 +66,7 @@ class SafetyHubPage extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.',
+                    AppLocalizations.of(context).safetyDescription,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -80,8 +80,8 @@ class SafetyHubPage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Emergency Section
-            const Text(
-              'Emergency Actions',
+            Text(
+              AppLocalizations.of(context).emergencyActions,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -97,8 +97,8 @@ class SafetyHubPage extends StatelessWidget {
                   child: _buildEmergencyCard(
                     context,
                     icon: Icons.warning,
-                    title: 'Emergency',
-                    subtitle: 'Call for help',
+                    title: AppLocalizations.of(context).emergency,
+                    subtitle: AppLocalizations.of(context).callForHelp,
                     color: Colors.red,
                     onTap: () {
                       Navigator.pushNamed(context, '/emergency');
@@ -110,8 +110,8 @@ class SafetyHubPage extends StatelessWidget {
                   child: _buildEmergencyCard(
                     context,
                     icon: Icons.report_problem,
-                    title: 'Report Issue',
-                    subtitle: 'Report incident',
+                    title: AppLocalizations.of(context).reportIssue,
+                    subtitle: AppLocalizations.of(context).reportIncident,
                     color: Colors.orange,
                     onTap: () {
                       _showReportDialog(context);
@@ -124,8 +124,8 @@ class SafetyHubPage extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Safety Features
-            const Text(
-              'Safety Features',
+            Text(
+              AppLocalizations.of(context).safetyFeatures,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -138,8 +138,8 @@ class SafetyHubPage extends StatelessWidget {
             _buildFeatureCard(
               context,
               icon: Icons.notifications_active,
-              title: 'Safety Alerts',
-              subtitle: 'Real-time safety notifications',
+              title: AppLocalizations.of(context).safetyAlerts,
+              subtitle: AppLocalizations.of(context).realTimeSafetyNotifications,
               onTap: () {
                 Navigator.pushNamed(context, '/safety-alerts');
               },
@@ -150,8 +150,8 @@ class SafetyHubPage extends StatelessWidget {
             _buildFeatureCard(
               context,
               icon: Icons.dangerous,
-              title: 'Hazard Zones',
-              subtitle: 'View known hazardous areas',
+              title: AppLocalizations.of(context).hazardZones,
+              subtitle: AppLocalizations.of(context).viewKnownHazardousAreas,
               onTap: () {
                 Navigator.pushNamed(context, '/hazard-zones');
               },
@@ -162,8 +162,8 @@ class SafetyHubPage extends StatelessWidget {
             _buildFeatureCard(
               context,
               icon: Icons.info_outline,
-              title: 'Safety Tips',
-              subtitle: 'Learn safety best practices',
+              title: AppLocalizations.of(context).safetyTips,
+              subtitle: AppLocalizations.of(context).learnSafetyBestPractices,
               onTap: () {
                 _showSafetyTipsDialog(context);
               },
@@ -189,8 +189,8 @@ class SafetyHubPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Emergency Contacts',
+                  Text(
+                    AppLocalizations.of(context).emergencyContacts,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -198,14 +198,14 @@ class SafetyHubPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildContactRow(Icons.local_police, 'Police', '911'),
+                  _buildContactRow(Icons.local_police, AppLocalizations.of(context).police, '911'),
                   const SizedBox(height: 8),
-                  _buildContactRow(Icons.local_hospital, 'Medical', '911'),
+                  _buildContactRow(Icons.local_hospital, AppLocalizations.of(context).medical, '911'),
                   const SizedBox(height: 8),
-                  _buildContactRow(Icons.local_fire_department, 'Fire', '911'),
+                  _buildContactRow(Icons.local_fire_department, AppLocalizations.of(context).fire, '911'),
                   const SizedBox(height: 8),
                   _buildContactRow(
-                      Icons.support_agent, 'Support', '1-800-SAFE'),
+                      Icons.support_agent, AppLocalizations.of(context).support, '1-800-SAFE'),
                 ],
               ),
             ),
@@ -372,8 +372,8 @@ class SafetyHubPage extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context).reportSafetyIssue),
-        content: const Text(
-          'Would you like to report a safety incident or concern?',
+        content: Text(
+          AppLocalizations.of(context).reportSafetyDialogContent,
         ),
         actions: [
           TextButton(
