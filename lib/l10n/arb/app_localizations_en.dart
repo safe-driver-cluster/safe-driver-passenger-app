@@ -544,7 +544,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get medical => 'Medical';
 
   @override
-  String get fire => 'Fire Department';
+  String get fire => 'Fire';
 
   @override
   String get callNow => 'Call Now';
@@ -1035,6 +1035,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get support => 'Support';
+
+  @override
+  String get reportSafetyDialogContent => 'Would you like to report a safety incident or concern?';
+
+  @override
+  String get safetyTip1 => '• Always wear your seatbelt';
+
+  @override
+  String get safetyTip2 => '• Stay alert and aware of your surroundings';
+
+  @override
+  String get safetyTip3 => '• Keep emergency contacts readily available';
+
+  @override
+  String get safetyTip4 => '• Report any suspicious activity immediately';
+
+  @override
+  String get safetyTip5 => '• Follow bus safety protocols and driver instructions';
 
   @override
   String errorOccurredGeneric(String error) {
