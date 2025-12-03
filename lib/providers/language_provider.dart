@@ -45,12 +45,36 @@ class LanguageController extends StateNotifier<AppLanguage> {
     }
   }
 
+  /// Check if language has been selected before
+  Future<bool> hasLanguageBeenSelected() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('language_selected') ?? false;
+    } catch (e) {
+      debugPrint('Error checking language selection: $e');
+      return false;
+    }
+  }
+
+  /// Reset language selection (for testing)
+  Future<void> resetLanguageSelection() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('language_selected');
+      await prefs.remove(_languageKey);
+      state = AppLanguage.english;
+    } catch (e) {
+      debugPrint('Error resetting language selection: $e');
+    }
+  }
+
   /// Change the current language and save to preferences
   Future<void> changeLanguage(AppLanguage language) async {
     try {
       state = language;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
+      await prefs.setBool('language_selected', true);
     } catch (e) {
       debugPrint('Error saving language: $e');
     }
