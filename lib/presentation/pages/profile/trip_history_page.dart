@@ -453,7 +453,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
               backgroundColor: AppColors.primaryColor,
             ),
             child: Text(AppLocalizations.of(context).giveFeedback,
-                style: TextStyle(color: Colors.white)),
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
