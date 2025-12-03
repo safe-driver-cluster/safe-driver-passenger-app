@@ -82,7 +82,7 @@ class SafetyHubPage extends StatelessWidget {
             // Emergency Section
             Text(
               AppLocalizations.of(context).emergencyActions,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -126,7 +126,7 @@ class SafetyHubPage extends StatelessWidget {
             // Safety Features
             Text(
               AppLocalizations.of(context).safetyFeatures,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -139,7 +139,8 @@ class SafetyHubPage extends StatelessWidget {
               context,
               icon: Icons.notifications_active,
               title: AppLocalizations.of(context).safetyAlerts,
-              subtitle: AppLocalizations.of(context).realTimeSafetyNotifications,
+              subtitle:
+                  AppLocalizations.of(context).realTimeSafetyNotifications,
               onTap: () {
                 Navigator.pushNamed(context, '/safety-alerts');
               },
@@ -191,21 +192,24 @@ class SafetyHubPage extends StatelessWidget {
                 children: [
                   Text(
                     AppLocalizations.of(context).emergencyContacts,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildContactRow(Icons.local_police, AppLocalizations.of(context).police, '911'),
+                  _buildContactRow(Icons.local_police,
+                      AppLocalizations.of(context).police, '911'),
                   const SizedBox(height: 8),
-                  _buildContactRow(Icons.local_hospital, AppLocalizations.of(context).medical, '911'),
+                  _buildContactRow(Icons.local_hospital,
+                      AppLocalizations.of(context).medical, '911'),
                   const SizedBox(height: 8),
-                  _buildContactRow(Icons.local_fire_department, AppLocalizations.of(context).fire, '911'),
+                  _buildContactRow(Icons.local_fire_department,
+                      AppLocalizations.of(context).fire, '911'),
                   const SizedBox(height: 8),
-                  _buildContactRow(
-                      Icons.support_agent, AppLocalizations.of(context).support, '1-800-SAFE'),
+                  _buildContactRow(Icons.support_agent,
+                      AppLocalizations.of(context).support, '1-800-SAFE'),
                 ],
               ),
             ),
