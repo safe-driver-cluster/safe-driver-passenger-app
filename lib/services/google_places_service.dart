@@ -1,6 +1,8 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+
 import '../core/config/google_api.dart';
 
 class Prediction {
@@ -20,8 +22,7 @@ class Prediction {
 class GooglePlacesService {
   final String _apiKey = GoogleMapsConfig.apiKey;
 
-  Future<List<Prediction>> autocomplete(String input,
-      {String? country}) async {
+  Future<List<Prediction>> autocomplete(String input, {String? country}) async {
     if (_apiKey.isEmpty) {
       throw StateError(
           'Google API key is missing. Set GOOGLE_MAPS_API_KEY in .env file');
