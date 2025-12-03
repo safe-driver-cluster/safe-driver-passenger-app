@@ -554,12 +554,12 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                       children: [
                         Text(
                           AppLocalizations.of(context).busRouteToDestination,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text(
+                        const Text(
                           'Total journey: ~25 mins',
                           style: TextStyle(
                             fontSize: 14,
@@ -742,7 +742,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               const SizedBox(width: AppDesign.spaceMD),
               Text(
                 AppLocalizations.of(context).mapsNavigation,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: AppColors.white,
@@ -987,7 +987,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             const SizedBox(height: AppDesign.spaceLG),
             Text(
               AppLocalizations.of(context).unableToLoadMap,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -1027,11 +1027,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: AppColors.primaryColor),
-          SizedBox(height: AppDesign.spaceLG),
+          const CircularProgressIndicator(color: AppColors.primaryColor),
+          const SizedBox(height: AppDesign.spaceLG),
           Text(
             AppLocalizations.of(context).loadingMap,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 16,
             ),
