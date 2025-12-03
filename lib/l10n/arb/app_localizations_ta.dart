@@ -623,4 +623,368 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get systemDefault => 'கணினி இயல்புநிலை';
+
+  @override
+  String get acknowledge => 'ஒப்புக்கொள்';
+
+  @override
+  String get viewDetails => 'விவரங்களைப் பார்க்கவும்';
+
+  @override
+  String get viewProfile => 'சுயவிவரத்தைப் பார்க்கவும்';
+
+  @override
+  String get contact => 'தொடர்பு கொள்ளவும்';
+
+  @override
+  String get viewAll => 'அனைத்தையும் பார்க்கவும்';
+
+  @override
+  String get scanQR => 'QR ஸ்கேன்';
+
+  @override
+  String get tryAgain => 'மீண்டும் முயற்சிக்கவும்';
+
+  @override
+  String get goBack => 'திரும்பிச் செல்லவும்';
+
+  @override
+  String get openSettings => 'அமைப்புகளைத் திறக்கவும்';
+
+  @override
+  String get details => 'விவரங்கள்';
+
+  @override
+  String get track => 'கண்காணிக்கவும்';
+
+  @override
+  String get safetyTipsTitle => 'பாதுகாப்பு குறிப்புகள்';
+
+  @override
+  String get safetyHub => 'பாதுகாப்பு மையம்';
+
+  @override
+  String get reportSafetyIssue => 'பாதுகாப்பு பிரச்சினையைப் புகாரளிக்கவும்';
+
+  @override
+  String get report => 'புகாரளிக்கவும்';
+
+  @override
+  String get gotIt => 'புரிந்தது';
+
+  @override
+  String get safetyAlertsTitle => 'பாதுகாப்பு எச்சரிக்கைகள்';
+
+  @override
+  String get reportIncidentTitle => 'சம்பவத்தைப் புகாரளிக்கவும்';
+
+  @override
+  String get hazardZonesTitle => 'ஆபத்தான பகுதிகள்';
+
+  @override
+  String get emergencyContactsTitle => 'அவசர தொடர்புகள்';
+
+  @override
+  String get enterCodeManually => 'குறியீட்டை கைமுறையாக உள்ளிடவும்';
+
+  @override
+  String qrCodeDetected(String code) {
+    return 'QR குறியீடு கண்டறியப்பட்டது: $code';
+  }
+
+  @override
+  String get signOut => 'வெளியேறு';
+
+  @override
+  String get areYouSureSignOut => 'நீங்கள் நிச்சயமாக வெளியேற விரும்புகிறீர்களா?';
+
+  @override
+  String get tripHistory => 'பயண வரலாறு';
+
+  @override
+  String get review => 'மதிப்பாய்வு';
+
+  @override
+  String tripDetails(String id) {
+    return 'பயணம் $id';
+  }
+
+  @override
+  String get giveFeedback => 'கருத்து வழங்கவும்';
+
+  @override
+  String get comingSoonFeature => 'இந்த அம்சம் எதிர்கால புதுப்பிப்பில் கிடைக்கும்.';
+
+  @override
+  String get clearCache => 'கேச் அழிக்கவும்';
+
+  @override
+  String get cacheClearedSuccessfully => 'கேச் வெற்றிகரமாக அழிக்கப்பட்டது!';
+
+  @override
+  String get clear => 'அழிக்கவும்';
+
+  @override
+  String get profileTitle => 'சுயவிவரம்';
+
+  @override
+  String get profileUpdatedSuccessfully => 'சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது';
+
+  @override
+  String failedToUpdateProfile(String error) {
+    return 'சுயவிவரம் புதுப்பிக்க முடியவில்லை: $error';
+  }
+
+  @override
+  String get myProfile => 'என் சுயவிவரம்';
+
+  @override
+  String get noProfileFound => 'சுயவிவரம் கிடைக்கவில்லை';
+
+  @override
+  String get viewFAQ => 'அடிக்கடி கேட்கப்படும் கேள்விகளைப் பார்க்கவும்';
+
+  @override
+  String get changePicture => 'படத்தை மாற்றவும்';
+
+  @override
+  String get profileUpdated => 'சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது!';
+
+  @override
+  String get aboutTitle => 'பற்றி';
+
+  @override
+  String get pageNotFound => 'பக்கம் கிடைக்கவில்லை';
+
+  @override
+  String get searchFunctionalityComingSoon => 'தேடல் செயல்பாடு விரைவில் வரும்!';
+
+  @override
+  String get busRoutesComingSoon => 'பேருந்து பாதைகள் விரைவில் வரும்!';
+
+  @override
+  String get navigationComingSoon => 'வழிசெலுத்தல் விரைவில் வரும்!';
+
+  @override
+  String selected(String description) {
+    return 'தேர்ந்தெடுக்கப்பட்டது: $description';
+  }
+
+  @override
+  String placeLookupFailed(String error) {
+    return 'இடம் தேடல் தோல்வி: $error';
+  }
+
+  @override
+  String foundBusStopsNearby(int count) {
+    return 'அருகிலுள்ள $count பேருந்து நிறுத்தங்கள் கிடைத்தன';
+  }
+
+  @override
+  String foundQueryTapNavigate(String query) {
+    return '\"$query\" கண்டறியப்பட்டது. பேருந்து பாதையைப் பார்க்க Navigate ஐத் தொடவும்!';
+  }
+
+  @override
+  String searchFailed(String error) {
+    return 'தேடல் தோல்வி: $error';
+  }
+
+  @override
+  String get unableToGetCurrentLocation => 'தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை';
+
+  @override
+  String get pleaseSearchForDestination => 'முதலில் இலக்கைத் தேடவும்';
+
+  @override
+  String errorSelectingLanguage(String error) {
+    return 'மொழி தேர்வில் பிழை: $error';
+  }
+
+  @override
+  String get hazardZoneIntelligence => 'ஆபத்தான பகுதி புலனாய்வு';
+
+  @override
+  String get loadingHazardZoneData => 'ஆபத்தான பகுதி தரவை ஏற்றுகிறது...';
+
+  @override
+  String get driverIdRequiredForAlerts => 'எச்சரிக்கைகளைப் பார்க்க ஓட்டுநர் அடையாளம் தேவை';
+
+  @override
+  String get noActiveHazardAlerts => 'செயல்பாட்டில் ஆபத்து எச்சரிக்கைகள் இல்லை';
+
+  @override
+  String get reviewsTitle => 'மதிப்புரைகள்';
+
+  @override
+  String get back => 'பின்செல்';
+
+  @override
+  String get addMedia => 'ஊடகம் சேர்க்கவும்';
+
+  @override
+  String get takePhoto => 'புகைப்படம் எடுக்கவும்';
+
+  @override
+  String get chooseFromGallery => 'கேலரியிலிருந்து தேர்வுசெய்யவும்';
+
+  @override
+  String fileTooLarge(String fileName) {
+    return '$fileName மிக பெரியது. அதிகபட்ச அளவு 10MB.';
+  }
+
+  @override
+  String get locationPermissionRequired => 'இருப்பிடம் பகிர்வதற்கு இருப்பிட அனுமதி தேவை';
+
+  @override
+  String failedToGetLocation(String error) {
+    return 'இருப்பிடம் பெற முடியவில்லை: $error';
+  }
+
+  @override
+  String get incidentReportingImplemented => 'சம்பவ புகாரளிப்பு செயல்படுத்தப்படும்';
+
+  @override
+  String get priority => 'முன்னுரிமை';
+
+  @override
+  String get low => 'குறைந்த';
+
+  @override
+  String get medium => 'நடுத்தர';
+
+  @override
+  String get high => 'உயர்ந்த';
+
+  @override
+  String get urgent => 'அவசர';
+
+  @override
+  String get submitAnonymously => 'பெயர் வெளியிடாமல் சமர்ப்பிக்கவும்';
+
+  @override
+  String get personalInfoNotShared => 'உங்கள் தனிப்பட்ட தகவல் பகிரப்படாது';
+
+  @override
+  String get chooseYourLanguage => 'உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get selectYourPreferredLanguage => 'தொடர உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
+
+  @override
+  String get availableLanguages => 'கிடைக்கும் மொழிகள்';
+
+  @override
+  String get continueButton => 'தொடரவும்';
+
+  @override
+  String get profilePageComingSoon => 'சுயவிவர பக்கம் - விரைவில் வரும்';
+
+  @override
+  String get editProfile => 'சுயவிவரத்தைத் திருத்தவும்';
+
+  @override
+  String get loadingProfile => 'சுயவிவரம் ஏற்றப்படுகிறது...';
+
+  @override
+  String get profilePicture => 'சுயவிவர படம்';
+
+  @override
+  String get basicInformation => 'அடிப்படை தகவல்';
+
+  @override
+  String get emailAddress => 'மின்னஞ்சல் முகவரி';
+
+  @override
+  String get noEmail => 'மின்னஞ்சல் இல்லை';
+
+  @override
+  String get firstName => 'முதல் பெயர்';
+
+  @override
+  String get lastName => 'கடைசி பெயர்';
+
+  @override
+  String get dateOfBirth => 'பிறந்த தேதி';
+
+  @override
+  String get gender => 'பாலினம்';
+
+  @override
+  String get addressInformation => 'முகவரி தகவல்';
+
+  @override
+  String get streetAddress => 'தெரு முகவரி';
+
+  @override
+  String get city => 'நகரம்';
+
+  @override
+  String get state => 'மாநிலம்';
+
+  @override
+  String get zipCode => 'அஞ்சல் குறியீடு';
+
+  @override
+  String get country => 'நாடு';
+
+  @override
+  String get emergencyContact => 'அவசர தொடர்பு';
+
+  @override
+  String get contactName => 'தொடர்பு பெயர்';
+
+  @override
+  String get relationship => 'உறவு';
+
+  @override
+  String get preferences => 'விருப்பத்தேர்வுகள்';
+
+  @override
+  String get cameraError => 'கேமரா பிழை';
+
+  @override
+  String get positionQrCode => 'QR குறியீட்டை இங்கே வைக்கவும்';
+
+  @override
+  String get qrScanner => 'QR ஸ்கேனர்';
+
+  @override
+  String get scanQrInstruction => 'பேருந்து அல்லது நிறுத்தத்தில் QR குறியீட்டை ஸ்கேன் செய்யவும்';
+
+  @override
+  String get alignQrInstruction => 'நிலையாக வைத்திருந்து QR குறியீட்டை சட்டகத்திற்குள் சீரமைக்கவும்';
+
+  @override
+  String get enterBusStopCode => 'பேருந்து அல்லது நிறுத்த குறியீட்டை உள்ளிடவும்';
+
+  @override
+  String get submit => 'சமர்ப்பிக்கவும்';
+
+  @override
+  String get mapsNavigation => 'வரைபடங்கள் மற்றும் வழிசெலுத்தல்';
+
+  @override
+  String get searchDestination => 'இலக்கைத் தேடவும்...';
+
+  @override
+  String get busStop => 'பேருந்து நிறுத்தம்';
+
+  @override
+  String get navigate => 'வழிசெலுத்தல்';
+
+  @override
+  String get yourLocation => 'உங்கள் இடம்';
+
+  @override
+  String get currentPosition => 'தற்போதைய நிலை';
+
+  @override
+  String get unableToLoadMap => 'வரைபடத்தை ஏற்ற முடியவில்லை';
+
+  @override
+  String get loadingMap => 'வரைபடம் ஏற்றப்படுகிறது...';
+
+  @override
+  String get busRouteToDestination => 'இலக்கிற்கு பேருந்து பாதை';
 }
