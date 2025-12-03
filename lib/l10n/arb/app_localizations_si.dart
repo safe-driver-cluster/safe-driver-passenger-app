@@ -490,22 +490,19 @@ class AppLocalizationsSi extends AppLocalizations {
   String get onboarding1Title => 'සජීවී බස් ලුහුබැඳීම';
 
   @override
-  String get onboarding1Description =>
-      'ඔබේ බස් ස්ථානය නිරීක්ෂණය කර නිවැරදි පැමිණීමේ වේලාවන් ලබා ගන්න';
+  String get onboarding1Description => 'ඔබේ බස් ස්ථානය නිරීක්ෂණය කර නිවැරදි පැමිණීමේ වේලාවන් ලබා ගන්න';
 
   @override
   String get onboarding2Title => 'රියදුරු ආරක්ෂක නිරීක්ෂණය';
 
   @override
-  String get onboarding2Description =>
-      'රියදුරුගේ නින්දට යාම සහ අවධානය වෙනතකට යෑම සඳහා සජීවී අනතුරු ඇඟවීම්';
+  String get onboarding2Description => 'රියදුරුගේ නින්දට යාම සහ අවධානය වෙනතකට යෑම සඳහා සජීවී අනතුරු ඇඟවීම්';
 
   @override
   String get onboarding3Title => 'හදිසි ප්‍රතිචාරය';
 
   @override
-  String get onboarding3Description =>
-      'හදිසි සේවා සහ ආරක්ෂක විශේෂාංග වෙත ඉක්මන් ප්‍රවේශය';
+  String get onboarding3Description => 'හදිසි සේවා සහ ආරක්ෂක විශේෂාංග වෙත ඉක්මන් ප්‍රවේශය';
 
   @override
   String get getStarted => 'ආරම්භ කරන්න';
@@ -568,19 +565,16 @@ class AppLocalizationsSi extends AppLocalizations {
   String get alwaysWearSeatbelt => 'සැමවිටම ආසන පටිය පළඳින්න';
 
   @override
-  String get stayAlert =>
-      'සැමවිටම අවධානයෙන් සහ ඔබේ පරිසරය ගැන දැනුවත්ව සිටින්න';
+  String get stayAlert => 'සැමවිටම අවධානයෙන් සහ ඔබේ පරිසරය ගැන දැනුවත්ව සිටින්න';
 
   @override
   String get keepEmergencyContacts => 'හදිසි සම්බන්ධතා සූදානම්ව තබා ගන්න';
 
   @override
-  String get reportSuspiciousActivity =>
-      'සැක සහිත ක්‍රියාකාරකම් වහාම වාර්තා කරන්න';
+  String get reportSuspiciousActivity => 'සැක සහිත ක්‍රියාකාරකම් වහාම වාර්තා කරන්න';
 
   @override
-  String get followBusSafety =>
-      'බස් ආරක්ෂක ප්‍රොටෝකෝල සහ රියදුරුගේ උපදෙස් අනුගමනය කරන්න';
+  String get followBusSafety => 'බස් ආරක්ෂක ප්‍රොටෝකෝල සහ රියදුරුගේ උපදෙස් අනුගමනය කරන්න';
 
   @override
   String get close => 'වසන්න';
@@ -598,8 +592,7 @@ class AppLocalizationsSi extends AppLocalizations {
   String get share => 'බෙදා ගන්න';
 
   @override
-  String get shareFunctionality =>
-      'බෙදාගැනීමේ ක්‍රියාකාරිත්වය ක්‍රියාත්මක කරනු ලැබේ';
+  String get shareFunctionality => 'බෙදාගැනීමේ ක්‍රියාකාරිත්වය ක්‍රියාත්මක කරනු ලැබේ';
 
   @override
   String get english => 'English';
@@ -630,17 +623,4 @@ class AppLocalizationsSi extends AppLocalizations {
 
   @override
   String get systemDefault => 'පද්ධති පෙරනිමිය';
-
-  @override
-  String get chooseYourLanguage => 'ඔබේ භාෂාව තෝරන්න';
-
-  @override
-  String get selectLanguageDescription =>
-      'ඉදිරියට යාමට ඔබගේ කැමති භාෂාව තෝරන්න';
-
-  @override
-  String get availableLanguages => 'පවතින භාෂා';
-
-  @override
-  String get continueText => 'ඉදිරියට';
 }
