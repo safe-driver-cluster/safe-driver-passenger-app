@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 
 class EmergencyContactsPage extends StatelessWidget {
@@ -8,7 +9,7 @@ class EmergencyContactsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Emergency Contacts'),
+        title: Text(AppLocalizations.of(context).emergencyContactsTitle),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),

@@ -8,6 +8,7 @@ import '../presentation/pages/auth/otp_verification_page.dart';
 import '../presentation/pages/auth/register_page.dart';
 import '../presentation/pages/auth/reset_password_page.dart';
 import '../presentation/pages/auth/splash_page.dart';
+import '../presentation/pages/language/language_selection_page.dart';
 import '../presentation/pages/buses/bus_list_page.dart';
 import '../presentation/pages/dashboard/dashboard_page.dart';
 import '../presentation/pages/driver/driver_history_page.dart';
@@ -38,6 +39,7 @@ import '../presentation/pages/safety/safety_hub_page.dart';
 class AppRoutes {
   // Route names
   static const String splash = '/';
+  static const String languageSelection = '/language-selection';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
@@ -98,6 +100,12 @@ class AppRoutes {
       case splash:
         return MaterialPageRoute(
           builder: (_) => const SplashPage(),
+          settings: settings,
+        );
+
+      case languageSelection:
+        return MaterialPageRoute(
+          builder: (_) => const LanguageSelectionPage(),
           settings: settings,
         );
 

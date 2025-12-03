@@ -36,23 +36,57 @@ class LanguageController extends StateNotifier<AppLanguage> {
       final prefs = await SharedPreferences.getInstance();
       final savedLanguageCode = prefs.getString(_languageKey);
 
+      debugPrint('🌐 Loading saved language...');
+      debugPrint('🌐 Saved language code: $savedLanguageCode');
+      debugPrint('🌐 Current state before: ${state.code}');
+
       if (savedLanguageCode != null) {
         state = AppLanguage.fromCode(savedLanguageCode);
+        debugPrint('🌐 Language loaded: ${state.code} (${state.englishName})');
+      } else {
+        debugPrint('🌐 No saved language found, using default: ${state.code}');
       }
     } catch (e) {
       // If there's an error loading, keep default language
-      debugPrint('Error loading saved language: $e');
+      debugPrint('❌ Error loading saved language: $e');
+    }
+  }
+
+  /// Check if language has been selected before
+  Future<bool> hasLanguageBeenSelected() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('language_selected') ?? false;
+    } catch (e) {
+      debugPrint('Error checking language selection: $e');
+      return false;
+    }
+  }
+
+  /// Reset language selection (for testing)
+  Future<void> resetLanguageSelection() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('language_selected');
+      await prefs.remove(_languageKey);
+      state = AppLanguage.english;
+    } catch (e) {
+      debugPrint('Error resetting language selection: $e');
     }
   }
 
   /// Change the current language and save to preferences
   Future<void> changeLanguage(AppLanguage language) async {
     try {
+      debugPrint(
+          '🌐 Changing language to: ${language.code} (${language.englishName})');
       state = language;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
+      await prefs.setBool('language_selected', true);
+      debugPrint('🌐 Language saved to preferences: ${language.code}');
     } catch (e) {
-      debugPrint('Error saving language: $e');
+      debugPrint('❌ Error saving language: $e');
     }
   }
 

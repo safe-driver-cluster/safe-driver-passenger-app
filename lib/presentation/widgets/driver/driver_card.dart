@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/driver_model.dart';
@@ -153,7 +154,7 @@ class DriverCard extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: onTap,
                           icon: const Icon(Icons.person, size: 18),
-                          label: const Text('View Profile'),
+                          label: Text(AppLocalizations.of(context).viewProfile),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primaryColor,
                             side:
@@ -167,7 +168,7 @@ class DriverCard extends StatelessWidget {
                           child: ElevatedButton.icon(
                             onPressed: onCall,
                             icon: const Icon(Icons.phone, size: 18),
-                            label: const Text('Contact'),
+                            label: Text(AppLocalizations.of(context).contact),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.successColor,
                               foregroundColor: AppColors.white,

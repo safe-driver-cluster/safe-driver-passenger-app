@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/bus_model.dart';
@@ -122,7 +123,7 @@ class BusCard extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: onTap,
                           icon: const Icon(Icons.info_outline, size: 18),
-                          label: const Text('Details'),
+                          label: Text(AppLocalizations.of(context).details),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: AppColors.primaryColor,
                             side:
@@ -135,7 +136,7 @@ class BusCard extends StatelessWidget {
                         child: ElevatedButton.icon(
                           onPressed: bus.isTracking ? onTrack : null,
                           icon: const Icon(Icons.my_location, size: 18),
-                          label: const Text('Track'),
+                          label: Text(AppLocalizations.of(context).track),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryColor,
                             foregroundColor: AppColors.white,

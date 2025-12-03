@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/services/storage_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/onboarding_provider.dart';
 
@@ -103,7 +104,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
     print('🔍 Auth state: ${authState.toString()}');
     print('🔍 User: ${authState.user?.uid ?? 'null'}');
 
-    // Check onboarding status first
+    // Check if language has been selected first
+    final languageSelected = StorageService.instance.getBool('language_selected', defaultValue: false);
+    
+    if (languageSelected == false) {
+      print('🌐 Language not selected, navigating to language selection');
+      Navigator.pushReplacementNamed(context, '/language-selection');
+      return;
+    }
+
+    // Check onboarding status
     final onboardingNotifier = ref.read(onboardingProvider.notifier);
     await onboardingNotifier.checkOnboardingStatus();
     final onboardingState = ref.read(onboardingProvider);

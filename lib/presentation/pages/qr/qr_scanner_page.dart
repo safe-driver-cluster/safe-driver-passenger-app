@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -94,13 +95,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         children: [
           // Camera Preview
           if (_hasPermission) _buildCameraView(),
-          
+
           // Professional Overlay
           _buildProfessionalOverlay(),
-          
+
           // Top Header
           _buildTopHeader(),
-          
+
           // Bottom Controls
           _buildBottomControls(),
         ],
@@ -126,7 +127,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
                 const SizedBox(height: AppDesign.spaceLG),
                 Text(
-                  'Camera Error',
+                  AppLocalizations.of(context).cameraError,
                   style: AppTextStyles.headline6.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -164,7 +165,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         ),
       ),
       child: Center(
-        child: Container(
+        child: SizedBox(
           width: 280,
           height: 280,
           child: Stack(
@@ -180,13 +181,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                 ),
               ),
-              
+
               // Corner indicators
               _buildCornerIndicators(),
-              
+
               // Scanning line
               if (_isScanning) _buildScanningLine(),
-              
+
               // Center instruction
               _buildCenterInstruction(),
             ],
@@ -220,7 +221,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Top-right corner
             Positioned(
               top: 0,
@@ -239,7 +240,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Bottom-left corner
             Positioned(
               bottom: 0,
@@ -258,7 +259,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Bottom-right corner
             Positioned(
               bottom: 0,
@@ -342,7 +343,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             ),
             const SizedBox(width: AppDesign.spaceXS),
             Text(
-              'Position QR code here',
+              AppLocalizations.of(context).positionQrCode,
               style: AppTextStyles.labelMedium.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
@@ -395,15 +396,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
             const SizedBox(width: AppDesign.spaceLG),
-            
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'QR Scanner',
+                    AppLocalizations.of(context).qrScanner,
                     style: AppTextStyles.headline5.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -411,7 +410,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
                   Text(
-                    'Scan QR code on bus or stop',
+                    AppLocalizations.of(context).scanQrInstruction,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: Colors.white.withOpacity(0.8),
                     ),
@@ -419,7 +418,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ],
               ),
             ),
-            
             Container(
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
@@ -464,7 +462,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             // Manual entry option
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _showManualEntryDialog,
@@ -483,12 +481,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                 ),
                 icon: const Icon(Icons.keyboard_rounded),
-                label: const Text('Enter Code Manually'),
+                label: Text(AppLocalizations.of(context).enterCodeManually),
               ),
             ),
-            
+
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Instructions
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -509,7 +507,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   const SizedBox(width: AppDesign.spaceMD),
                   Expanded(
                     child: Text(
-                      'Hold steady and align QR code within the frame',
+                      AppLocalizations.of(context).alignQrInstruction,
                       style: AppTextStyles.bodySmall.copyWith(
                         color: Colors.white.withOpacity(0.8),
                       ),
@@ -534,7 +532,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       });
 
       HapticFeedback.heavyImpact();
-      
+
       final String code = barcodes.first.rawValue ?? '';
       // Handle QR code processing
       _processQrCode(code);
@@ -559,13 +557,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         ),
-        title: const Text('Enter Code Manually'),
+        title: Text(AppLocalizations.of(context).enterCodeManually),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: 'Enter bus or stop code',
+                hintText: AppLocalizations.of(context).enterBusStopCode,
                 prefixIcon: const Icon(Icons.qr_code_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -581,10 +579,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ProfessionalButton(
-            text: 'Submit',
+            text: AppLocalizations.of(context).submit,
             onPressed: () {
               Navigator.pop(context);
               // Handle manual code entry
@@ -600,11 +598,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     // Process QR code and navigate accordingly
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('QR Code detected: $code'),
+        content: Text(AppLocalizations.of(context).qrCodeDetected(code)),
         backgroundColor: AppColors.successColor,
       ),
     );
-    
+
     // Add navigation logic here based on the QR code content
     Navigator.pop(context);
   }

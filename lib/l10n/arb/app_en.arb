@@ -261,5 +261,302 @@
   },
 
   "language": "Language",
-  "systemDefault": "System Default"
+  "systemDefault": "System Default",
+
+  "acknowledge": "Acknowledge",
+  "viewDetails": "View Details",
+  "viewProfile": "View Profile",
+  "contact": "Contact",
+  "viewAll": "View All",
+  "scanQR": "Scan QR",
+  "tryAgain": "Try Again",
+  "goBack": "Go Back",
+  "openSettings": "Open Settings",
+  "details": "Details",
+  "track": "Track",
+  "safetyTipsTitle": "Safety Tips",
+  "safetyHub": "Safety Hub",
+  "reportSafetyIssue": "Report Safety Issue",
+  "report": "Report",
+  "gotIt": "Got it",
+  "safetyAlertsTitle": "Safety Alerts",
+  "reportIncidentTitle": "Report Incident",
+  "hazardZonesTitle": "Hazard Zones",
+  "emergencyContactsTitle": "Emergency Contacts",
+  "enterCodeManually": "Enter Code Manually",
+  "qrCodeDetected": "QR Code detected: {code}",
+  "@qrCodeDetected": {
+    "description": "Message when QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
+  "signOut": "Sign Out",
+  "areYouSureSignOut": "Are you sure you want to sign out?",
+  "tripHistory": "Trip History",
+  "review": "Review",
+  "tripDetails": "Trip {id}",
+  "@tripDetails": {
+    "description": "Trip details title with ID",
+    "placeholders": {
+      "id": {
+        "type": "String",
+        "example": "T123"
+      }
+    }
+  },
+  "giveFeedback": "Give Feedback",
+  "comingSoonFeature": "This feature will be available in a future update.",
+  "clearCache": "Clear Cache",
+  "cacheClearedSuccessfully": "Cache cleared successfully!",
+  "clear": "Clear",
+  "profileTitle": "Profile",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "failedToUpdateProfile": "Failed to update profile: {error}",
+  "@failedToUpdateProfile": {
+    "description": "Profile update failure message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "myProfile": "My Profile",
+  "noProfileFound": "No profile found",
+  "viewFAQ": "View FAQ",
+  "changePicture": "Change Picture",
+  "profileUpdated": "Profile updated successfully!",
+  "aboutTitle": "About",
+  "pageNotFound": "Page Not Found",
+  "searchFunctionalityComingSoon": "Search functionality coming soon!",
+  "busRoutesComingSoon": "Bus routes coming soon!",
+  "navigationComingSoon": "Navigation coming soon!",
+  "selected": "Selected: {description}",
+  "@selected": {
+    "description": "Selection message",
+    "placeholders": {
+      "description": {
+        "type": "String",
+        "example": "Location name"
+      }
+    }
+  },
+  "placeLookupFailed": "Place lookup failed: {error}",
+  "@placeLookupFailed": {
+    "description": "Place lookup error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "foundBusStopsNearby": "Found {count} bus stops nearby",
+  "@foundBusStopsNearby": {
+    "description": "Bus stops found message",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "foundQueryTapNavigate": "Found \"{query}\". Tap Navigate to see bus route!",
+  "@foundQueryTapNavigate": {
+    "description": "Search result navigation message",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "Main Street"
+      }
+    }
+  },
+  "searchFailed": "Search failed: {error}",
+  "@searchFailed": {
+    "description": "Search failure message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "unableToGetCurrentLocation": "Unable to get current location",
+  "pleaseSearchForDestination": "Please search for a destination first",
+  "errorSelectingLanguage": "Error selecting language: {error}",
+  "@errorSelectingLanguage": {
+    "description": "Language selection error",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "hazardZoneIntelligence": "Hazard Zone Intelligence",
+  "loadingHazardZoneData": "Loading hazard zone data...",
+  "driverIdRequiredForAlerts": "Driver ID required to view alerts",
+  "noActiveHazardAlerts": "No active hazard alerts",
+  "reviewsTitle": "Reviews",
+  "back": "Back",
+  "addMedia": "Add Media",
+  "takePhoto": "Take Photo",
+  "chooseFromGallery": "Choose from Gallery",
+  "fileTooLarge": "{fileName} is too large. Maximum size is 10MB.",
+  "@fileTooLarge": {
+    "description": "File size error message",
+    "placeholders": {
+      "fileName": {
+        "type": "String",
+        "example": "image.jpg"
+      }
+    }
+  },
+  "locationPermissionRequired": "Location permission is required to share location",
+  "failedToGetLocation": "Failed to get location: {error}",
+  "@failedToGetLocation": {
+    "description": "Location error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "incidentReportingImplemented": "Incident reporting will be implemented",
+  "priority": "Priority",
+  "low": "Low",
+  "medium": "Medium",
+  "high": "High",
+  "urgent": "Urgent",
+  "submitAnonymously": "Submit anonymously",
+  "personalInfoNotShared": "Your personal information will not be shared",
+  "chooseYourLanguage": "Choose Your Language",
+  "selectYourPreferredLanguage": "Select your preferred language to continue",
+  "availableLanguages": "Available Languages",
+  "continueButton": "Continue",
+  "profilePageComingSoon": "Profile Page - Coming Soon",
+  "editProfile": "Edit Profile",
+  "loadingProfile": "Loading profile...",
+  "profilePicture": "Profile Picture",
+  "changePicture": "Change Picture",
+  "basicInformation": "Basic Information",
+  "emailAddress": "Email Address",
+  "noEmail": "No email",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "dateOfBirth": "Date of Birth",
+  "gender": "Gender",
+  "addressInformation": "Address Information",
+  "streetAddress": "Street Address",
+  "city": "City",
+  "state": "State",
+  "zipCode": "ZIP Code",
+  "country": "Country",
+  "emergencyContact": "Emergency Contact",
+  "contactName": "Contact Name",
+  "relationship": "Relationship",
+  "preferences": "Preferences",
+  "cameraError": "Camera Error",
+  "positionQrCode": "Position QR code here",
+  "qrScanner": "QR Scanner",
+  "scanQrInstruction": "Scan QR code on bus or stop",
+  "enterCodeManually": "Enter Code Manually",
+  "alignQrInstruction": "Hold steady and align QR code within the frame",
+  "enterBusStopCode": "Enter bus or stop code",
+  "submit": "Submit",
+  "mapsNavigation": "Maps & Navigation",
+  "searchDestination": "Search for destination...",
+  "busStop": "Bus Stop",
+  "navigate": "Navigate",
+  "yourLocation": "Your Location",
+  "currentPosition": "Current position",
+  "unableToLoadMap": "Unable to load map",
+  "loadingMap": "Loading map...",
+  "retry": "Retry",
+  "busRouteToDestination": "Bus Route to Destination",
+  "details": "Details",
+  "signOut": "Sign Out",
+  "areYouSureSignOut": "Are you sure you want to sign out?",
+  "tripHistory": "Trip History",
+  "phoneNumber": "Phone Number",
+  "languageChanged": "Language changed to {language}",
+  "@languageChanged": {
+    "description": "Message when language is changed",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "failedToChangeLanguage": "Failed to change language: {error}",
+  "@failedToChangeLanguage": {
+    "description": "Error message when language change fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "tripId": "Trip ID: {tripId}",
+  "@tripId": {
+    "description": "Shows trip ID",
+    "placeholders": {
+      "tripId": {
+        "type": "String",
+        "example": "T123"
+      }
+    }
+  },
+  "safetyFirst": "Safety First",
+  "safetyDescription": "Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.",
+  "emergencyActions": "Emergency Actions",
+  "callForHelp": "Call for help",
+  "reportIssue": "Report Issue",
+  "reportIncident": "Report incident",
+  "safetyFeatures": "Safety Features",
+  "realTimeSafetyNotifications": "Real-time safety notifications",
+  "viewKnownHazardousAreas": "View known hazardous areas",
+  "learnSafetyBestPractices": "Learn safety best practices",
+  "support": "Support",
+  "safetyAlerts": "Safety Alerts",
+  "hazardZones": "Hazard Zones",
+  "safetyTips": "Safety Tips",
+  "emergencyContacts": "Emergency Contacts",
+  "police": "Police",
+  "medical": "Medical",
+  "fire": "Fire",
+  "reportSafetyDialogContent": "Would you like to report a safety incident or concern?",
+  "safetyTip1": "• Always wear your seatbelt",
+  "safetyTip2": "• Stay alert and aware of your surroundings",
+  "safetyTip3": "• Keep emergency contacts readily available",
+  "safetyTip4": "• Report any suspicious activity immediately",
+  "safetyTip5": "• Follow bus safety protocols and driver instructions",
+  "giveFeedback": "Give Feedback",
+  "qrCodeDetected": "QR Code detected: {code}",
+  "@qrCodeDetected": {
+    "description": "Message when QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
+  "errorOccurredGeneric": "Error: {error}",
+  "@errorOccurredGeneric": {
+    "description": "Generic error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Something went wrong"
+      }
+    }
+  }
 }
