@@ -525,6 +525,13 @@
   "viewKnownHazardousAreas": "View known hazardous areas",
   "learnSafetyBestPractices": "Learn safety best practices",
   "support": "Support",
+  "safetyAlerts": "Safety Alerts",
+  "hazardZones": "Hazard Zones",
+  "emergencyContacts": "Emergency Contacts",
+  "police": "Police",
+  "medical": "Medical",
+  "fire": "Fire",
+  "reportSafetyDialogContent": "Would you like to report a safety incident or concern?",
   "errorOccurredGeneric": "Error: {error}",
   "@errorOccurredGeneric": {
     "description": "Generic error message",
