@@ -1,15 +1,15 @@
-import 'dart:math' as math;
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
 import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../services/google_places_service.dart' as places_service;
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../services/google_places_service.dart' as places_service;
 
 class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
@@ -97,8 +97,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
           markerId: const MarkerId('search_destination'),
           position: latLng,
           infoWindow: InfoWindow(title: p.description),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueViolet),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
         ),
       );
 
