@@ -987,4 +987,7 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get busRouteToDestination => 'இலக்கிற்கு பேருந்து பாதை';
+
+  @override
+  String get phoneNumber => 'தொலைபேசி எண்';
 }
