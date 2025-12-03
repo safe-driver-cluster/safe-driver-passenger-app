@@ -623,4 +623,16 @@ class AppLocalizationsSi extends AppLocalizations {
 
   @override
   String get systemDefault => 'පද්ධති පෙරනිමිය';
+
+  @override
+  String get chooseYourLanguage => 'ඔබේ භාෂාව තෝරන්න';
+
+  @override
+  String get selectLanguageDescription => 'ඉදිරියට යාමට ඔබගේ කැමති භාෂාව තෝරන්න';
+
+  @override
+  String get availableLanguages => 'පවතින භාෂා';
+
+  @override
+  String get continueText => 'ඉදිරියට';
 }
