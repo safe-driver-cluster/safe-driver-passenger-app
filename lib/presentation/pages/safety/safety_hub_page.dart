@@ -46,16 +46,16 @@ class SafetyHubPage extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.security,
                         color: Colors.white,
                         size: 32,
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           AppLocalizations.of(context).safetyFirst,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -64,10 +64,10 @@ class SafetyHubPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
                     AppLocalizations.of(context).safetyDescription,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
                       height: 1.5,
@@ -105,7 +105,7 @@ class SafetyHubPage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _buildEmergencyCard(
                     context,
@@ -418,23 +418,23 @@ class SafetyHubPage extends StatelessWidget {
             children: [
               Text(
                 AppLocalizations.of(context).safetyTip1,
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: const TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
                 AppLocalizations.of(context).safetyTip2,
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: const TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
                 AppLocalizations.of(context).safetyTip3,
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: const TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
                 AppLocalizations.of(context).safetyTip4,
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: const TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
                 AppLocalizations.of(context).safetyTip5,
-                style: TextStyle(fontSize: 14, height: 1.5),
+                style: const TextStyle(fontSize: 14, height: 1.5),
               ),
             ],
           ),
