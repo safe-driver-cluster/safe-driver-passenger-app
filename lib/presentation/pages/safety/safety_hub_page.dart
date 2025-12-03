@@ -41,7 +41,7 @@ class SafetyHubPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -105,7 +105,7 @@ class SafetyHubPage extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: _buildEmergencyCard(
                     context,
@@ -411,29 +411,29 @@ class SafetyHubPage extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context).safetyTipsTitle),
-        content: const SingleChildScrollView(
+        content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '• Always wear your seatbelt',
+                AppLocalizations.of(context).safetyTip1,
                 style: TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
-                '• Stay alert and aware of your surroundings',
+                AppLocalizations.of(context).safetyTip2,
                 style: TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
-                '• Keep emergency contacts readily available',
+                AppLocalizations.of(context).safetyTip3,
                 style: TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
-                '• Report any suspicious activity immediately',
+                AppLocalizations.of(context).safetyTip4,
                 style: TextStyle(fontSize: 14, height: 1.5),
               ),
               Text(
-                '• Follow bus safety protocols and driver instructions',
+                AppLocalizations.of(context).safetyTip5,
                 style: TextStyle(fontSize: 14, height: 1.5),
               ),
             ],
