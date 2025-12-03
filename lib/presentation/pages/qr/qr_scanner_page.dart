@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -95,13 +95,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         children: [
           // Camera Preview
           if (_hasPermission) _buildCameraView(),
-          
+
           // Professional Overlay
           _buildProfessionalOverlay(),
-          
+
           // Top Header
           _buildTopHeader(),
-          
+
           // Bottom Controls
           _buildBottomControls(),
         ],
@@ -165,7 +165,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         ),
       ),
       child: Center(
-        child: Container(
+        child: SizedBox(
           width: 280,
           height: 280,
           child: Stack(
@@ -181,13 +181,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                 ),
               ),
-              
+
               // Corner indicators
               _buildCornerIndicators(),
-              
+
               // Scanning line
               if (_isScanning) _buildScanningLine(),
-              
+
               // Center instruction
               _buildCenterInstruction(),
             ],
@@ -221,7 +221,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Top-right corner
             Positioned(
               top: 0,
@@ -240,7 +240,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Bottom-left corner
             Positioned(
               bottom: 0,
@@ -259,7 +259,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
+
             // Bottom-right corner
             Positioned(
               bottom: 0,
@@ -396,9 +396,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
               ),
             ),
-            
             const SizedBox(width: AppDesign.spaceLG),
-            
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,7 +418,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ],
               ),
             ),
-            
             Container(
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
@@ -465,7 +462,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             // Manual entry option
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _showManualEntryDialog,
@@ -487,9 +484,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 label: Text(AppLocalizations.of(context).enterCodeManually),
               ),
             ),
-            
+
             const SizedBox(height: AppDesign.spaceLG),
-            
+
             // Instructions
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -535,7 +532,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       });
 
       HapticFeedback.heavyImpact();
-      
+
       final String code = barcodes.first.rawValue ?? '';
       // Handle QR code processing
       _processQrCode(code);
@@ -605,7 +602,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         backgroundColor: AppColors.successColor,
       ),
     );
-    
+
     // Add navigation logic here based on the QR code content
     Navigator.pop(context);
   }
