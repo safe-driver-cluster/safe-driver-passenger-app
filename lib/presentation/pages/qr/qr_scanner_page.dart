@@ -598,7 +598,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     // Process QR code and navigate accordingly
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('QR Code detected: $code'),
+        content: Text(AppLocalizations.of(context).qrCodeDetected(code)),
         backgroundColor: AppColors.successColor,
       ),
     );
