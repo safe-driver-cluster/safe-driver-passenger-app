@@ -469,8 +469,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get invalidEmail => 'தவறான மின்னஞ்சல் வடிவம்';
 
   @override
-  String get passwordTooShort =>
-      'கடவுச்சொல் குறைந்தது 8 எழுத்துகளாக இருக்க வேண்டும்';
+  String get passwordTooShort => 'கடவுச்சொல் குறைந்தது 8 எழுத்துகளாக இருக்க வேண்டும்';
 
   @override
   String get passwordsDoNotMatch => 'கடவுச்சொற்கள் பொருந்தவில்லை';
@@ -491,22 +490,19 @@ class AppLocalizationsTa extends AppLocalizations {
   String get onboarding1Title => 'நேரடி பேருந்து கண்காணிப்பு';
 
   @override
-  String get onboarding1Description =>
-      'உங்கள் பேருந்து இருப்பிடத்தை கண்காணித்து துல்லியமான வருகை நேரங்களைப் பெறுங்கள்';
+  String get onboarding1Description => 'உங்கள் பேருந்து இருப்பிடத்தை கண்காணித்து துல்லியமான வருகை நேரங்களைப் பெறுங்கள்';
 
   @override
   String get onboarding2Title => 'ஓட்டுநர் பாதுகாப்பு கண்காணிப்பு';
 
   @override
-  String get onboarding2Description =>
-      'ஓட்டுநர் தூக்கக்கலக்கம் மற்றும் கவனச்சிதறலுக்கான நேரடி எச்சரிக்கைகள்';
+  String get onboarding2Description => 'ஓட்டுநர் தூக்கக்கலக்கம் மற்றும் கவனச்சிதறலுக்கான நேரடி எச்சரிக்கைகள்';
 
   @override
   String get onboarding3Title => 'அவசர பதில்';
 
   @override
-  String get onboarding3Description =>
-      'அவசர சேவைகள் மற்றும் பாதுகாப்பு அம்சங்களுக்கான விரைவான அணுகல்';
+  String get onboarding3Description => 'அவசர சேவைகள் மற்றும் பாதுகாப்பு அம்சங்களுக்கான விரைவான அணுகல்';
 
   @override
   String get getStarted => 'தொடங்குங்கள்';
@@ -569,20 +565,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get alwaysWearSeatbelt => 'எப்போதும் சீட் பெல்ட் அணியுங்கள்';
 
   @override
-  String get stayAlert =>
-      'எச்சரிக்கையாக இருங்கள் மற்றும் உங்கள் சுற்றுப்புறங்களைப் பற்றி அறிந்து கொள்ளுங்கள்';
+  String get stayAlert => 'எச்சரிக்கையாக இருங்கள் மற்றும் உங்கள் சுற்றுப்புறங்களைப் பற்றி அறிந்து கொள்ளுங்கள்';
 
   @override
-  String get keepEmergencyContacts =>
-      'அவசர தொடர்புகளை எளிதில் கிடைக்கக்கூடியதாக வைத்திருங்கள்';
+  String get keepEmergencyContacts => 'அவசர தொடர்புகளை எளிதில் கிடைக்கக்கூடியதாக வைத்திருங்கள்';
 
   @override
-  String get reportSuspiciousActivity =>
-      'சந்தேகத்திற்கிடமான எந்தவொரு செயல்பாட்டையும் உடனடியாக புகாரளிக்கவும்';
+  String get reportSuspiciousActivity => 'சந்தேகத்திற்கிடமான எந்தவொரு செயல்பாட்டையும் உடனடியாக புகாரளிக்கவும்';
 
   @override
-  String get followBusSafety =>
-      'பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் ஓட்டுநர் அறிவுரைகளைப் பின்பற்றவும்';
+  String get followBusSafety => 'பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் ஓட்டுநர் அறிவுரைகளைப் பின்பற்றவும்';
 
   @override
   String get close => 'மூடு';
@@ -631,17 +623,4 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get systemDefault => 'கணினி இயல்புநிலை';
-
-  @override
-  String get chooseYourLanguage => 'உங்கள் மொழியைத் தேர்வுசெய்க';
-
-  @override
-  String get selectLanguageDescription =>
-      'தொடர உங்கள் விரும்பிய மொழியைத் தேர்வுசெய்யவும்';
-
-  @override
-  String get availableLanguages => 'கிடைக்கும் மொழிகள்';
-
-  @override
-  String get continueText => 'தொடரவும்';
 }
