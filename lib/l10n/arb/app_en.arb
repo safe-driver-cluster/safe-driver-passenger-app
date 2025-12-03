@@ -533,6 +533,22 @@
   "medical": "Medical",
   "fire": "Fire",
   "reportSafetyDialogContent": "Would you like to report a safety incident or concern?",
+  "safetyTip1": "• Always wear your seatbelt",
+  "safetyTip2": "• Stay alert and aware of your surroundings",
+  "safetyTip3": "• Keep emergency contacts readily available",
+  "safetyTip4": "• Report any suspicious activity immediately",
+  "safetyTip5": "• Follow bus safety protocols and driver instructions",
+  "giveFeedback": "Give Feedback",
+  "qrCodeDetected": "QR Code detected: {code}",
+  "@qrCodeDetected": {
+    "description": "Message when QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
   "errorOccurredGeneric": "Error: {error}",
   "@errorOccurredGeneric": {
     "description": "Generic error message",
