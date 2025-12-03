@@ -364,5 +364,29 @@
   "viewKnownHazardousAreas": "දන්නා අන්තරායකර ප්‍රදේශ බලන්න",
   "learnSafetyBestPractices": "ආරක්ෂක හොඳම පරිචයන් ඉගෙන ගන්න",
   "support": "සහාය",
+  "safetyAlerts": "ආරක්ෂක අන්තරු ඇදවීම්",
+  "hazardZones": "අන්තරුදායක කලාප",
+  "safetyTips": "ආරක්ෂක උපදෙස්",
+  "emergencyContacts": "හදිසි සම්බන්ධතා",
+  "police": "පොලිසිය",
+  "medical": "වෛද්‍ය",
+  "fire": "ගිනි නිවන",
+  "reportSafetyDialogContent": "ඔබට ආරක්ෂක සිදුවීමක් හෝ සැළකිල්ලක් වාර්තා කිරීමට අවශ්‍යද?",
+  "safetyTip1": "• සෑම විටම ආසන පටිය පළඳන්න",
+  "safetyTip2": "• ඔබේ අවට පරිසරය දැන සිටින්න",
+  "safetyTip3": "• හදිසි සම්බන්ධතා ලබා ගත හැකිව තබන්න",
+  "safetyTip4": "• සැක සහිත ක්‍රියාකලාප වහාම වාර්තා කරන්න",
+  "safetyTip5": "• බස් ආරක්ෂක ප්‍රොටෝකොල සහ රියැදුරු උපදෙස් පිළිපදින්න",
+  "giveFeedback": "ප්‍රතිපෝෂණ ලබා දෙන්න",
+  "qrCodeDetected": "QR කේතය සොයා ගන්නා ලදී: {code}",
+  "@qrCodeDetected": {
+    "description": "Message when QR code is detected",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "ABC123"
+      }
+    }
+  },
   "errorOccurredGeneric": "දෝෂය: {error}"
 }
