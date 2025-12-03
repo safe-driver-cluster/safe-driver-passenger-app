@@ -56,7 +56,12 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error selecting language: $e'),
-              backgroundColor: AppColors.errorColor,
+              backgroundColor: AppColors.dangerColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              margin: const EdgeInsets.all(16),
             ),
           );
         }
@@ -70,14 +75,16 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            stops: const [0.0, 0.4, 0.8, 1.0],
             colors: [
               AppColors.primaryColor,
+              AppColors.primaryColor.withOpacity(0.8),
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              AppColors.scaffoldBackground.withOpacity(0.9),
             ],
           ),
         ),
@@ -86,12 +93,14 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                const SizedBox(height: 48),
+                const SizedBox(height: 60),
                 _buildHeader(),
-                const SizedBox(height: 48),
-                Expanded(child: _buildLanguageOptions()),
+                const SizedBox(height: 50),
+                Expanded(
+                  child: _buildLanguageOptions(),
+                ),
                 _buildContinueButton(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -103,47 +112,33 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   Widget _buildHeader() {
     return Column(
       children: [
+        // Simple Language Icon
         Container(
-          width: 120,
-          height: 120,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(60),
+            color: Colors.white.withOpacity(0.15),
+            shape: BoxShape.circle,
             border: Border.all(
               color: Colors.white.withOpacity(0.3),
               width: 2,
             ),
           ),
-          child: Container(
-            margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(40),
-            ),
-            child: const Icon(
-              Icons.language_rounded,
-              size: 50,
-              color: AppColors.primaryColor,
-            ),
+          child: const Icon(
+            Icons.language_rounded,
+            size: 40,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 24),
+        // Simple Title
         const Text(
-          'Choose Your Language',
+          'Choose Language',
           style: TextStyle(
             fontSize: 24,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w700,
             color: Colors.white,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          'Select your preferred language to continue',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.white70,
-            fontWeight: FontWeight.w500,
+            letterSpacing: 0.5,
           ),
           textAlign: TextAlign.center,
         ),
@@ -152,33 +147,13 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   }
 
   Widget _buildLanguageOptions() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 24),
-          const Text(
-            'Available Languages',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 24),
-          ...AppLanguage.values
-              .map((language) => _buildLanguageOption(language)),
-          const SizedBox(height: 24),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 16),
+        ...AppLanguage.values.map((language) => _buildLanguageOption(language)),
+        const SizedBox(height: 16),
+      ],
     );
   }
 
@@ -187,86 +162,96 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      child: InkWell(
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          setState(() {
-            selectedLanguage = language;
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color:
-                isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            setState(() {
+              selectedLanguage = language;
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            decoration: BoxDecoration(
               color: isSelected
-                  ? Colors.white.withOpacity(0.6)
-                  : Colors.white.withOpacity(0.2),
-              width: isSelected ? 2 : 1,
+                  ? Colors.white.withOpacity(0.2)
+                  : Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? Colors.white.withOpacity(0.6)
+                    : Colors.white.withOpacity(0.2),
+                width: isSelected ? 2 : 1,
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    _getLanguageEmoji(language),
-                    style: const TextStyle(fontSize: 24),
+            child: Row(
+              children: [
+                // Language Flag
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _getLanguageEmoji(language),
+                      style: const TextStyle(fontSize: 24),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      language.nativeName,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                const SizedBox(width: 16),
+                // Language Names
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        language.nativeName,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    Text(
-                      language.englishName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w500,
+                      const SizedBox(height: 2),
+                      Text(
+                        language.englishName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? Colors.white : Colors.transparent,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.6),
-                    width: 2,
+                    ],
                   ),
                 ),
-                child: isSelected
-                    ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: AppColors.primaryColor,
-                      )
-                    : null,
-              ),
-            ],
+                // Selection Indicator
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? Colors.white : Colors.transparent,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.6),
+                      width: 2,
+                    ),
+                  ),
+                  child: isSelected
+                      ? const Icon(
+                          Icons.check,
+                          size: 16,
+                          color: AppColors.primaryColor,
+                        )
+                      : null,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -274,25 +259,30 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   }
 
   Widget _buildContinueButton() {
-    return SizedBox(
+    return Container(
       width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: selectedLanguage != null ? _selectLanguage : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: selectedLanguage != null
+              ? Colors.white
+              : Colors.white.withOpacity(0.3),
           foregroundColor: AppColors.primaryColor,
-          disabledBackgroundColor: Colors.white.withOpacity(0.3),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: const Text(
+        child: Text(
           'Continue',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
+            color: selectedLanguage != null
+                ? AppColors.primaryColor
+                : AppColors.primaryColor.withOpacity(0.6),
           ),
         ),
       ),
@@ -302,11 +292,11 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   String _getLanguageEmoji(AppLanguage language) {
     switch (language) {
       case AppLanguage.english:
-        return '';
+        return '🇺🇸';
       case AppLanguage.sinhala:
-        return '';
+        return '🇱🇰';
       case AppLanguage.tamil:
-        return '';
+        return '🇱🇰';
     }
   }
 }
