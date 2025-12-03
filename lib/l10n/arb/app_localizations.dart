@@ -1174,7 +1174,7 @@ abstract class AppLocalizations {
   /// No description provided for @fire.
   ///
   /// In en, this message translates to:
-  /// **'Fire Department'**
+  /// **'Fire'**
   String get fire;
 
   /// No description provided for @callNow.
@@ -2088,6 +2088,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Support'**
   String get support;
+
+  /// No description provided for @reportSafetyDialogContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to report a safety incident or concern?'**
+  String get reportSafetyDialogContent;
+
+  /// No description provided for @safetyTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'• Always wear your seatbelt'**
+  String get safetyTip1;
+
+  /// No description provided for @safetyTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'• Stay alert and aware of your surroundings'**
+  String get safetyTip2;
+
+  /// No description provided for @safetyTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'• Keep emergency contacts readily available'**
+  String get safetyTip3;
+
+  /// No description provided for @safetyTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'• Report any suspicious activity immediately'**
+  String get safetyTip4;
+
+  /// No description provided for @safetyTip5.
+  ///
+  /// In en, this message translates to:
+  /// **'• Follow bus safety protocols and driver instructions'**
+  String get safetyTip5;
 
   /// Generic error message
   ///
