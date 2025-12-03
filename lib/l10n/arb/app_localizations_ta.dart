@@ -208,10 +208,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get emergencyAlert => 'அவசர எச்சரிக்கை';
 
   @override
-  String get hazardZones => 'ஆபத்தான பகுதிகள்';
+  String get hazardZones => 'ஆபத்து மண்டலங்கள்';
 
   @override
-  String get emergencyContacts => 'அவசர தொடர்புகள்';
+  String get emergencyContacts => 'அவசரகால தொடர்புகள்';
 
   @override
   String get callEmergency => 'அவசர அழைப்பு';
@@ -538,13 +538,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get emergency => 'அவசரநிலை';
 
   @override
-  String get police => 'போலீஸ்';
+  String get police => 'காவல்துறை';
 
   @override
-  String get medical => 'மருத்துவ';
+  String get medical => 'மருத்துவம்';
 
   @override
-  String get fire => 'தீயணைப்புத் துறை';
+  String get fire => 'தீயணைப்பு';
 
   @override
   String get callNow => 'இப்போது அழைக்கவும்';
@@ -710,7 +710,7 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get giveFeedback => 'கருத்து வழங்கவும்';
+  String get giveFeedback => 'கருத்து தெரிவிக்கவும்';
 
   @override
   String get comingSoonFeature => 'இந்த அம்சம் எதிர்கால புதுப்பிப்பில் கிடைக்கும்.';
@@ -1035,6 +1035,24 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get support => 'ஆதரவு';
+
+  @override
+  String get reportSafetyDialogContent => 'நீங்கள் ஒரு பாதுகாப்பு சம்பவம் அல்லது அக்கறையை புகாரளிக்க விரும்புகிறீர்களா?';
+
+  @override
+  String get safetyTip1 => '• எப்போதும் உங்கள் சீட்பெல்ட்டை அணியுங்கள்';
+
+  @override
+  String get safetyTip2 => '• உங்கள் சுற்றுப்புறங்களைப் பற்றி எச்சரிக்கையாக இருங்கள்';
+
+  @override
+  String get safetyTip3 => '• அவசரகால தொடர்புகளை எளிதில் கிடைக்கும்படி வைத்துக்கொள்ளுங்கள்';
+
+  @override
+  String get safetyTip4 => '• சந்தேகத்திற்குரிய செயல்பாடுகளை உடனடியாக புகாரளிக்கவும்';
+
+  @override
+  String get safetyTip5 => '• பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் டிரைவர் அறிவுரைகளை பின்பற்றுங்கள்';
 
   @override
   String errorOccurredGeneric(String error) {
