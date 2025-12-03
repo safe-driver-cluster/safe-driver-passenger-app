@@ -35,8 +35,9 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
       );
 
       try {
-        debugPrint('🌐 Selected language: ${selectedLanguage!.code} (${selectedLanguage!.englishName})');
-        
+        debugPrint(
+            '🌐 Selected language: ${selectedLanguage!.code} (${selectedLanguage!.englishName})');
+
         final languageController =
             ref.read(languageControllerProvider.notifier);
         await languageController.changeLanguage(selectedLanguage!);
