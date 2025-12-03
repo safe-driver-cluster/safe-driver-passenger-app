@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,6 +82,10 @@ class LanguageController extends StateNotifier<AppLanguage> {
 
   /// Get the current locale
   Locale get currentLocale => Locale(state.code);
+
+  /// Get all supported locales
+  static List<Locale> get supportedLocales =>
+      AppLanguage.values.map((lang) => Locale(lang.code)).toList();
 }
 
 /// Provider for language controller
