@@ -148,7 +148,8 @@ class SafeDriverApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(currentLocaleProvider);
-    debugPrint('🌐 MaterialApp building with locale: ${currentLocale.languageCode}');
+    debugPrint(
+        '🌐 MaterialApp building with locale: ${currentLocale.languageCode}');
 
     return MaterialApp(
       key: ValueKey(currentLocale.languageCode),
