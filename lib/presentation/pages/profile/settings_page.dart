@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/language_provider.dart';
 
@@ -372,7 +373,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Widget _buildLanguageSetting() {
     final currentLanguage = ref.watch(languageControllerProvider);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
@@ -441,17 +442,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 onChanged: (AppLanguage? newLanguage) async {
                   if (newLanguage != null && newLanguage != currentLanguage) {
                     try {
-                      final languageController = ref.read(languageControllerProvider.notifier);
+                      final languageController =
+                          ref.read(languageControllerProvider.notifier);
                       await languageController.changeLanguage(newLanguage);
-                      
+
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Language changed to ${newLanguage.englishName}'),
+                            content: Text(
+                                'Language changed to ${newLanguage.englishName}'),
                             backgroundColor: AppColors.successColor,
                           ),
                         );
-                        
+
                         // Navigate back and force rebuild by replacing the entire navigation stack
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           '/dashboard',
