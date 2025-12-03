@@ -520,7 +520,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportIncident.
   ///
   /// In en, this message translates to:
-  /// **'Report Incident'**
+  /// **'Report incident'**
   String get reportIncident;
 
   /// No description provided for @safetyTips.
@@ -1174,7 +1174,7 @@ abstract class AppLocalizations {
   /// No description provided for @fire.
   ///
   /// In en, this message translates to:
-  /// **'Fire Department'**
+  /// **'Fire'**
   String get fire;
 
   /// No description provided for @callNow.
@@ -1320,6 +1320,816 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System Default'**
   String get systemDefault;
+
+  /// No description provided for @acknowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge'**
+  String get acknowledge;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @viewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get viewProfile;
+
+  /// No description provided for @contact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @scanQR.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR'**
+  String get scanQR;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @track.
+  ///
+  /// In en, this message translates to:
+  /// **'Track'**
+  String get track;
+
+  /// No description provided for @safetyTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Tips'**
+  String get safetyTipsTitle;
+
+  /// No description provided for @safetyHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Hub'**
+  String get safetyHub;
+
+  /// No description provided for @reportSafetyIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Safety Issue'**
+  String get reportSafetyIssue;
+
+  /// No description provided for @report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get report;
+
+  /// No description provided for @gotIt.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
+
+  /// No description provided for @safetyAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Alerts'**
+  String get safetyAlertsTitle;
+
+  /// No description provided for @reportIncidentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Incident'**
+  String get reportIncidentTitle;
+
+  /// No description provided for @hazardZonesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazard Zones'**
+  String get hazardZonesTitle;
+
+  /// No description provided for @emergencyContactsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contacts'**
+  String get emergencyContactsTitle;
+
+  /// No description provided for @enterCodeManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Code Manually'**
+  String get enterCodeManually;
+
+  /// Message when QR code is detected
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code detected: {code}'**
+  String qrCodeDetected(String code);
+
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOut;
+
+  /// No description provided for @areYouSureSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to sign out?'**
+  String get areYouSureSignOut;
+
+  /// No description provided for @tripHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip History'**
+  String get tripHistory;
+
+  /// No description provided for @review.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// Trip details title with ID
+  ///
+  /// In en, this message translates to:
+  /// **'Trip {id}'**
+  String tripDetails(String id);
+
+  /// No description provided for @giveFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Give Feedback'**
+  String get giveFeedback;
+
+  /// No description provided for @comingSoonFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature will be available in a future update.'**
+  String get comingSoonFeature;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCache;
+
+  /// No description provided for @cacheClearedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully!'**
+  String get cacheClearedSuccessfully;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// Profile update failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update profile: {error}'**
+  String failedToUpdateProfile(String error);
+
+  /// No description provided for @myProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My Profile'**
+  String get myProfile;
+
+  /// No description provided for @noProfileFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No profile found'**
+  String get noProfileFound;
+
+  /// No description provided for @viewFAQ.
+  ///
+  /// In en, this message translates to:
+  /// **'View FAQ'**
+  String get viewFAQ;
+
+  /// No description provided for @changePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Picture'**
+  String get changePicture;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully!'**
+  String get profileUpdated;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutTitle;
+
+  /// No description provided for @pageNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Page Not Found'**
+  String get pageNotFound;
+
+  /// No description provided for @searchFunctionalityComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Search functionality coming soon!'**
+  String get searchFunctionalityComingSoon;
+
+  /// No description provided for @busRoutesComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus routes coming soon!'**
+  String get busRoutesComingSoon;
+
+  /// No description provided for @navigationComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation coming soon!'**
+  String get navigationComingSoon;
+
+  /// Selection message
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {description}'**
+  String selected(String description);
+
+  /// Place lookup error message
+  ///
+  /// In en, this message translates to:
+  /// **'Place lookup failed: {error}'**
+  String placeLookupFailed(String error);
+
+  /// Bus stops found message
+  ///
+  /// In en, this message translates to:
+  /// **'Found {count} bus stops nearby'**
+  String foundBusStopsNearby(int count);
+
+  /// Search result navigation message
+  ///
+  /// In en, this message translates to:
+  /// **'Found \"{query}\". Tap Navigate to see bus route!'**
+  String foundQueryTapNavigate(String query);
+
+  /// Search failure message
+  ///
+  /// In en, this message translates to:
+  /// **'Search failed: {error}'**
+  String searchFailed(String error);
+
+  /// No description provided for @unableToGetCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to get current location'**
+  String get unableToGetCurrentLocation;
+
+  /// No description provided for @pleaseSearchForDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Please search for a destination first'**
+  String get pleaseSearchForDestination;
+
+  /// Language selection error
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting language: {error}'**
+  String errorSelectingLanguage(String error);
+
+  /// No description provided for @hazardZoneIntelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'Hazard Zone Intelligence'**
+  String get hazardZoneIntelligence;
+
+  /// No description provided for @loadingHazardZoneData.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading hazard zone data...'**
+  String get loadingHazardZoneData;
+
+  /// No description provided for @driverIdRequiredForAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver ID required to view alerts'**
+  String get driverIdRequiredForAlerts;
+
+  /// No description provided for @noActiveHazardAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No active hazard alerts'**
+  String get noActiveHazardAlerts;
+
+  /// No description provided for @reviewsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsTitle;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @addMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Media'**
+  String get addMedia;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// File size error message
+  ///
+  /// In en, this message translates to:
+  /// **'{fileName} is too large. Maximum size is 10MB.'**
+  String fileTooLarge(String fileName);
+
+  /// No description provided for @locationPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission is required to share location'**
+  String get locationPermissionRequired;
+
+  /// Location error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to get location: {error}'**
+  String failedToGetLocation(String error);
+
+  /// No description provided for @incidentReportingImplemented.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident reporting will be implemented'**
+  String get incidentReportingImplemented;
+
+  /// No description provided for @priority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get priority;
+
+  /// No description provided for @low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get low;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @high.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get high;
+
+  /// No description provided for @urgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get urgent;
+
+  /// No description provided for @submitAnonymously.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit anonymously'**
+  String get submitAnonymously;
+
+  /// No description provided for @personalInfoNotShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal information will not be shared'**
+  String get personalInfoNotShared;
+
+  /// No description provided for @chooseYourLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Language'**
+  String get chooseYourLanguage;
+
+  /// No description provided for @selectYourPreferredLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your preferred language to continue'**
+  String get selectYourPreferredLanguage;
+
+  /// No description provided for @availableLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Languages'**
+  String get availableLanguages;
+
+  /// No description provided for @continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueButton;
+
+  /// No description provided for @profilePageComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Page - Coming Soon'**
+  String get profilePageComingSoon;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @loadingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading profile...'**
+  String get loadingProfile;
+
+  /// No description provided for @profilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Picture'**
+  String get profilePicture;
+
+  /// No description provided for @basicInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basicInformation;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @noEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'No email'**
+  String get noEmail;
+
+  /// No description provided for @firstName.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get firstName;
+
+  /// No description provided for @lastName.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get lastName;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of Birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// No description provided for @addressInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Address Information'**
+  String get addressInformation;
+
+  /// No description provided for @streetAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Street Address'**
+  String get streetAddress;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @zipCode.
+  ///
+  /// In en, this message translates to:
+  /// **'ZIP Code'**
+  String get zipCode;
+
+  /// No description provided for @country.
+  ///
+  /// In en, this message translates to:
+  /// **'Country'**
+  String get country;
+
+  /// No description provided for @emergencyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Contact'**
+  String get emergencyContact;
+
+  /// No description provided for @contactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Name'**
+  String get contactName;
+
+  /// No description provided for @relationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship'**
+  String get relationship;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @cameraError.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Error'**
+  String get cameraError;
+
+  /// No description provided for @positionQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Position QR code here'**
+  String get positionQrCode;
+
+  /// No description provided for @qrScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Scanner'**
+  String get qrScanner;
+
+  /// No description provided for @scanQrInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR code on bus or stop'**
+  String get scanQrInstruction;
+
+  /// No description provided for @alignQrInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold steady and align QR code within the frame'**
+  String get alignQrInstruction;
+
+  /// No description provided for @enterBusStopCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter bus or stop code'**
+  String get enterBusStopCode;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @mapsNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Maps & Navigation'**
+  String get mapsNavigation;
+
+  /// No description provided for @searchDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for destination...'**
+  String get searchDestination;
+
+  /// No description provided for @busStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Stop'**
+  String get busStop;
+
+  /// No description provided for @navigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate'**
+  String get navigate;
+
+  /// No description provided for @yourLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Location'**
+  String get yourLocation;
+
+  /// No description provided for @currentPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Current position'**
+  String get currentPosition;
+
+  /// No description provided for @unableToLoadMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load map'**
+  String get unableToLoadMap;
+
+  /// No description provided for @loadingMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading map...'**
+  String get loadingMap;
+
+  /// No description provided for @busRouteToDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Route to Destination'**
+  String get busRouteToDestination;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// Message when language is changed
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed to {language}'**
+  String languageChanged(String language);
+
+  /// Error message when language change fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to change language: {error}'**
+  String failedToChangeLanguage(String error);
+
+  /// Shows trip ID
+  ///
+  /// In en, this message translates to:
+  /// **'Trip ID: {tripId}'**
+  String tripId(String tripId);
+
+  /// No description provided for @safetyFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety First'**
+  String get safetyFirst;
+
+  /// No description provided for @safetyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.'**
+  String get safetyDescription;
+
+  /// No description provided for @emergencyActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Actions'**
+  String get emergencyActions;
+
+  /// No description provided for @callForHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Call for help'**
+  String get callForHelp;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Issue'**
+  String get reportIssue;
+
+  /// No description provided for @safetyFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Features'**
+  String get safetyFeatures;
+
+  /// No description provided for @realTimeSafetyNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time safety notifications'**
+  String get realTimeSafetyNotifications;
+
+  /// No description provided for @viewKnownHazardousAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'View known hazardous areas'**
+  String get viewKnownHazardousAreas;
+
+  /// No description provided for @learnSafetyBestPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn safety best practices'**
+  String get learnSafetyBestPractices;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// No description provided for @reportSafetyDialogContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to report a safety incident or concern?'**
+  String get reportSafetyDialogContent;
+
+  /// No description provided for @safetyTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'• Always wear your seatbelt'**
+  String get safetyTip1;
+
+  /// No description provided for @safetyTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'• Stay alert and aware of your surroundings'**
+  String get safetyTip2;
+
+  /// No description provided for @safetyTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'• Keep emergency contacts readily available'**
+  String get safetyTip3;
+
+  /// No description provided for @safetyTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'• Report any suspicious activity immediately'**
+  String get safetyTip4;
+
+  /// No description provided for @safetyTip5.
+  ///
+  /// In en, this message translates to:
+  /// **'• Follow bus safety protocols and driver instructions'**
+  String get safetyTip5;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorOccurredGeneric(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

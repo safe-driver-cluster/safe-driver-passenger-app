@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../controllers/dashboard_controller.dart';
@@ -177,7 +178,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
                   Navigator.pushNamed(context, '/live-tracking');
                 },
                 icon: const Icon(Icons.my_location, size: 18),
-                label: const Text('Track Live'),
+                label: Text(AppLocalizations.of(context).trackLive),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   foregroundColor: Colors.white,
@@ -194,13 +195,14 @@ class ActiveJourneyWidget extends ConsumerWidget {
                 onPressed: () {
                   // TODO: Implement share functionality
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Share functionality will be implemented'),
+                    SnackBar(
+                      content:
+                          Text(AppLocalizations.of(context).shareFunctionality),
                     ),
                   );
                 },
                 icon: const Icon(Icons.share, size: 18),
-                label: const Text('Share'),
+                label: Text(AppLocalizations.of(context).share),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -271,7 +273,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
                   Navigator.pushNamed(context, '/qr-scanner');
                 },
                 icon: const Icon(Icons.qr_code_scanner, size: 20),
-                label: const Text('Scan QR'),
+                label: Text(AppLocalizations.of(context).scanQR),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   foregroundColor: Colors.white,
@@ -293,7 +295,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
                   }
                 },
                 icon: const Icon(Icons.search, size: 20),
-                label: const Text('Search'),
+                label: Text(AppLocalizations.of(context).search),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 16),

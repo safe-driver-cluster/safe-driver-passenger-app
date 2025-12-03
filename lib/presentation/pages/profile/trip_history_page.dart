@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 
@@ -62,7 +63,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        title: const Text('Trip History'),
+        title: Text(AppLocalizations.of(context).tripHistory),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -292,7 +293,8 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                                         Icons.info_outline,
                                         size: 16,
                                       ),
-                                      label: const Text('Details'),
+                                      label: Text(
+                                          AppLocalizations.of(context).details),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: AppColors.primaryColor,
                                         side: const BorderSide(
@@ -325,7 +327,8 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                                         Icons.rate_review,
                                         size: 16,
                                       ),
-                                      label: const Text('Review'),
+                                      label: Text(
+                                          AppLocalizations.of(context).review),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primaryColor,
                                         foregroundColor: Colors.white,
@@ -432,7 +435,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context).close),
           ),
           ElevatedButton(
             onPressed: () {
@@ -449,8 +452,8 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            child: const Text('Give Feedback',
-                style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context).giveFeedback,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

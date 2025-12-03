@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -201,7 +202,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Title
           Expanded(
             child: Text(
-              'Edit Profile',
+              AppLocalizations.of(context).editProfile,
               style: AppTextStyles.headline5.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
@@ -241,9 +242,9 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Text(
-                      'Save',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                  : Text(
+                      AppLocalizations.of(context).save,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
             ),
           ),
@@ -253,16 +254,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget _buildLoadingState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
+          const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
           ),
-          SizedBox(height: AppDesign.spaceMD),
+          const SizedBox(height: AppDesign.spaceMD),
           Text(
-            'Loading profile...',
+            AppLocalizations.of(context).loadingProfile,
             style: AppTextStyles.bodyMedium,
           ),
         ],
@@ -318,7 +319,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Profile Picture',
+                AppLocalizations.of(context).profilePicture,
                 style: AppTextStyles.headline6.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -375,7 +376,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             child: TextButton.icon(
               onPressed: _selectImage,
               icon: const Icon(Icons.camera_alt_rounded),
-              label: const Text('Change Picture'),
+              label: Text(AppLocalizations.of(context).changePicture),
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primaryColor,
               ),
@@ -415,7 +416,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Basic Information',
+                AppLocalizations.of(context).basicInformation,
                 style: AppTextStyles.headline6.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -426,8 +427,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
           // Email (non-editable)
           _buildReadOnlyField(
-            'Email Address',
-            _currentProfile?.email ?? 'No email',
+            AppLocalizations.of(context).emailAddress,
+            _currentProfile?.email ?? AppLocalizations.of(context).noEmail,
             Icons.email_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
@@ -438,7 +439,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Expanded(
                 child: _buildFormField(
                   controller: _firstNameController,
-                  label: 'First Name',
+                  label: AppLocalizations.of(context).firstName,
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -452,7 +453,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Expanded(
                 child: _buildFormField(
                   controller: _lastNameController,
-                  label: 'Last Name',
+                  label: AppLocalizations.of(context).lastName,
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
@@ -469,7 +470,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Phone number
           _buildFormField(
             controller: _phoneController,
-            label: 'Phone Number',
+            label: AppLocalizations.of(context).phoneNumber,
             icon: Icons.phone_outlined,
             keyboardType: TextInputType.phone,
             validator: (value) {
@@ -484,7 +485,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Date of birth
           _buildFormField(
             controller: _dateOfBirthController,
-            label: 'Date of Birth',
+            label: AppLocalizations.of(context).dateOfBirth,
             icon: Icons.calendar_today_outlined,
             readOnly: true,
             onTap: () => _selectDate(context),
@@ -493,7 +494,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
           // Gender
           _buildDropdownField(
-            label: 'Gender',
+            label: AppLocalizations.of(context).gender,
             value: _selectedGender,
             items: const ['Male', 'Female', 'Other', 'Prefer not to say'],
             onChanged: (value) => setState(() => _selectedGender = value!),
@@ -519,7 +520,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Address Information',
+                AppLocalizations.of(context).addressInformation,
                 style: AppTextStyles.headline6.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -531,7 +532,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Street address
           _buildFormField(
             controller: _streetController,
-            label: 'Street Address',
+            label: AppLocalizations.of(context).streetAddress,
             icon: Icons.home_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
@@ -543,7 +544,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 flex: 2,
                 child: _buildFormField(
                   controller: _cityController,
-                  label: 'City',
+                  label: AppLocalizations.of(context).city,
                   icon: Icons.location_city_outlined,
                 ),
               ),
@@ -551,7 +552,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Expanded(
                 child: _buildFormField(
                   controller: _stateController,
-                  label: 'State',
+                  label: AppLocalizations.of(context).state,
                   icon: Icons.map_outlined,
                 ),
               ),
@@ -565,7 +566,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Expanded(
                 child: _buildFormField(
                   controller: _zipCodeController,
-                  label: 'ZIP Code',
+                  label: AppLocalizations.of(context).zipCode,
                   icon: Icons.markunread_mailbox_outlined,
                   keyboardType: TextInputType.number,
                 ),
@@ -575,7 +576,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 flex: 2,
                 child: _buildFormField(
                   controller: _countryController,
-                  label: 'Country',
+                  label: AppLocalizations.of(context).country,
                   icon: Icons.public_outlined,
                 ),
               ),
@@ -601,7 +602,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Emergency Contact',
+                AppLocalizations.of(context).emergencyContact,
                 style: AppTextStyles.headline6.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -613,7 +614,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Emergency contact name
           _buildFormField(
             controller: _emergencyNameController,
-            label: 'Contact Name',
+            label: AppLocalizations.of(context).contactName,
             icon: Icons.person_pin_outlined,
           ),
           const SizedBox(height: AppDesign.spaceMD),
@@ -634,7 +635,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               Expanded(
                 child: _buildFormField(
                   controller: _emergencyRelationController,
-                  label: 'Relationship',
+                  label: AppLocalizations.of(context).relationship,
                   icon: Icons.family_restroom_outlined,
                 ),
               ),
@@ -660,7 +661,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Preferences',
+                AppLocalizations.of(context).preferences,
                 style: AppTextStyles.headline6.copyWith(
                   fontWeight: FontWeight.w700,
                 ),

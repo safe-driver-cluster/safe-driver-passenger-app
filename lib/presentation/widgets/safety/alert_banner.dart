@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../data/models/safety_alert_model.dart';
 
@@ -354,7 +355,7 @@ class _AlertBannerState extends State<AlertBanner>
           OutlinedButton.icon(
             onPressed: _acknowledgeAlert,
             icon: const Icon(Icons.check, size: 16),
-            label: const Text('Acknowledge'),
+            label: Text(AppLocalizations.of(context).acknowledge),
             style: OutlinedButton.styleFrom(
               foregroundColor: colors.actionColor,
               side: BorderSide(color: colors.actionColor),
@@ -366,7 +367,7 @@ class _AlertBannerState extends State<AlertBanner>
         ElevatedButton.icon(
           onPressed: widget.onTap,
           icon: const Icon(Icons.visibility, size: 16),
-          label: const Text('View Details'),
+          label: Text(AppLocalizations.of(context).viewDetails),
           style: ElevatedButton.styleFrom(
             backgroundColor: colors.actionColor,
             foregroundColor: Colors.white,

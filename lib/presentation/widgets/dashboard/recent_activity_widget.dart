@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+
 import '../../../core/constants/color_constants.dart';
 import '../../controllers/dashboard_controller.dart';
 
@@ -47,7 +49,7 @@ class RecentActivityWidget extends ConsumerWidget {
                     Icons.arrow_forward_ios,
                     size: 14,
                   ),
-                  label: const Text('View All'),
+                  label: Text(AppLocalizations.of(context).viewAll),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.primaryColor,
                     textStyle: const TextStyle(
@@ -96,7 +98,7 @@ class RecentActivityWidget extends ConsumerWidget {
                 width: 2,
               ),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.history_outlined,
               size: 30,
               color: AppColors.primaryColor,
@@ -112,7 +114,7 @@ class RecentActivityWidget extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Start your first journey with SafeDriver\nto see your activity here',
             style: TextStyle(
               fontSize: 14,
