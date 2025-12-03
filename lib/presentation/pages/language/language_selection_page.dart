@@ -151,8 +151,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 16),
-        ...AppLanguage.values
-            .map((language) => _buildLanguageOption(language)),
+        ...AppLanguage.values.map((language) => _buildLanguageOption(language)),
         const SizedBox(height: 16),
       ],
     );
@@ -177,8 +176,8 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: isSelected 
-                  ? Colors.white.withOpacity(0.2) 
+              color: isSelected
+                  ? Colors.white.withOpacity(0.2)
                   : Colors.white.withOpacity(0.08),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
