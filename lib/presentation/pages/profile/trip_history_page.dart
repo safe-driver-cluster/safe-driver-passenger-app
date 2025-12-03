@@ -293,7 +293,8 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                                         Icons.info_outline,
                                         size: 16,
                                       ),
-                                      label: Text(AppLocalizations.of(context).details),
+                                      label: Text(
+                                          AppLocalizations.of(context).details),
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: AppColors.primaryColor,
                                         side: const BorderSide(
@@ -326,7 +327,8 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                                         Icons.rate_review,
                                         size: 16,
                                       ),
-                                      label: Text(AppLocalizations.of(context).review),
+                                      label: Text(
+                                          AppLocalizations.of(context).review),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primaryColor,
                                         foregroundColor: Colors.white,
