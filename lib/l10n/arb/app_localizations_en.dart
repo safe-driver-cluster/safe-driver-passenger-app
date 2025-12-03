@@ -987,4 +987,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get busRouteToDestination => 'Bus Route to Destination';
+
+  @override
+  String get phoneNumber => 'Phone Number';
 }
