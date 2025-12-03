@@ -5,6 +5,64 @@ allprojects {
     }
 }
 
+// Define compile/min/target SDK versions for plugin/library projects that
+// don't declare them themselves. This helps third-party Android library
+// modules (for example, plugins in pub-cache) that expect these to be
+// available on the root project.
+ext {
+    compileSdkVersion = 35
+    minSdkVersion = 21
+    targetSdkVersion = 35
+}
+
+// Provide a lightweight `flutter` map for plugin projects that expect the
+// `flutter` extension to exist (some published plugin build.gradle files read
+// values like `flutter.minSdkVersion`). This mirrors the small subset of
+// properties plugins typically read so they can build even when evaluated as
+// library projects.
+ext.flutter = [
+    ndkVersion: "",
+    minSdkVersion: minSdkVersion,
+    targetSdkVersion: targetSdkVersion,
+    versionCode: 1,
+    versionName: "1.0.0"
+]
+
+// Ensure subprojects that have an Android extension pick up the compileSdk
+// and basic defaultConfig values. This avoids errors like
+// "compileSdkVersion is not specified" when building plugin library modules.
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            try {
+                // AGP 7+ uses 'compileSdk' property; older versions use compileSdkVersion.
+                if (project.android.hasProperty('compileSdk')) {
+                    project.android.compileSdk = compileSdkVersion
+                } else {
+                    project.android.compileSdkVersion = compileSdkVersion
+                }
+
+                if (project.android.hasProperty('defaultConfig')) {
+                    if (project.android.defaultConfig.hasProperty('minSdk')) {
+                        project.android.defaultConfig.minSdk = minSdkVersion
+                    } else if (project.android.defaultConfig.hasProperty('minSdkVersion')) {
+                        project.android.defaultConfig.minSdkVersion = minSdkVersion
+                    }
+
+                    if (project.android.defaultConfig.hasProperty('targetSdk')) {
+                        project.android.defaultConfig.targetSdk = targetSdkVersion
+                    } else if (project.android.defaultConfig.hasProperty('targetSdkVersion')) {
+                        project.android.defaultConfig.targetSdkVersion = targetSdkVersion
+                    }
+                }
+            } catch (ignored) {
+                // Best-effort only — if a plugin's build script strongly conflicts
+                // with these assignments, let its own errors surface.
+            }
+        }
+    }
+}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

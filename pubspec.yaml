@@ -95,7 +95,8 @@ dependencies:
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
   device_info_plus: ^9.1.1
-  package_info_plus: ^4.2.0
+  package_info_plus: ^8.0.2
+  flutter_dotenv: ^5.1.0
 
   # Encryption & Security
   crypto: ^3.0.3
@@ -133,6 +134,7 @@ flutter:
     - assets/audio/
     - assets/videos/
     - assets/data/
+    - .env
 
 # Configuration for flutter_launcher_icons
 flutter_launcher_icons:
