@@ -452,7 +452,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            child: const Text('Give Feedback',
+            child: Text(AppLocalizations.of(context).giveFeedback,
                 style: TextStyle(color: Colors.white)),
           ),
         ],
