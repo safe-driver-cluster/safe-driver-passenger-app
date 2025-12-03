@@ -17,7 +17,7 @@ class ProfilePage extends StatelessWidget {
       body: Center(
         child: Text(
           AppLocalizations.of(context).profilePageComingSoon,
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
       ),
     );
