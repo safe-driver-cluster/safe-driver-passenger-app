@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
 import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -212,9 +213,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       Marker(
         markerId: const MarkerId('current_location'),
         position: LatLng(position.latitude, position.longitude),
-        infoWindow: const InfoWindow(
-          title: 'Your Location',
-          snippet: 'Current position',
+        infoWindow: InfoWindow(
+          title: AppLocalizations.of(context).yourLocation,
+          snippet: AppLocalizations.of(context).currentPosition,
         ),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
       ),
@@ -547,12 +548,12 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Bus Route to Destination',
+                          AppLocalizations.of(context).busRouteToDestination,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -739,8 +740,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Maps & Navigation',
+              Text(
+                AppLocalizations.of(context).mapsNavigation,
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
@@ -772,7 +773,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 setState(() {});
               },
               decoration: InputDecoration(
-                hintText: 'Search for destination...',
+                hintText: AppLocalizations.of(context).searchDestination,
                 hintStyle: const TextStyle(
                   color: AppColors.textHint,
                   fontSize: 16,
@@ -921,7 +922,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         Expanded(
           child: _SmallActionButton(
             icon: Icons.bus_alert_rounded,
-            title: 'Bus Stop',
+            title: AppLocalizations.of(context).busStop,
             color: AppColors.secondaryColor,
             isLoading: _showingBusStops,
             onTap: _showBusRoutes,
@@ -931,7 +932,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         Expanded(
           child: _SmallActionButton(
             icon: Icons.navigation_rounded,
-            title: 'Navigate',
+            title: AppLocalizations.of(context).navigate,
             color: AppColors.accentColor,
             isLoading: _showingBusRoute,
             onTap: _navigateToDestination,
@@ -984,8 +985,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               color: AppColors.textSecondary,
             ),
             const SizedBox(height: AppDesign.spaceLG),
-            const Text(
-              'Unable to load map',
+            Text(
+              AppLocalizations.of(context).unableToLoadMap,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1013,7 +1014,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
               ),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context).retry),
             ),
           ],
         ),
@@ -1022,14 +1023,14 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildLoadingState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(color: AppColors.primaryColor),
           SizedBox(height: AppDesign.spaceLG),
           Text(
-            'Loading map...',
+            AppLocalizations.of(context).loadingMap,
             style: TextStyle(
               color: AppColors.textSecondary,
               fontSize: 16,
