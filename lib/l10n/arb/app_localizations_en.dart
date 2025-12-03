@@ -623,4 +623,368 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemDefault => 'System Default';
+
+  @override
+  String get acknowledge => 'Acknowledge';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get scanQR => 'Scan QR';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get track => 'Track';
+
+  @override
+  String get safetyTipsTitle => 'Safety Tips';
+
+  @override
+  String get safetyHub => 'Safety Hub';
+
+  @override
+  String get reportSafetyIssue => 'Report Safety Issue';
+
+  @override
+  String get report => 'Report';
+
+  @override
+  String get gotIt => 'Got it';
+
+  @override
+  String get safetyAlertsTitle => 'Safety Alerts';
+
+  @override
+  String get reportIncidentTitle => 'Report Incident';
+
+  @override
+  String get hazardZonesTitle => 'Hazard Zones';
+
+  @override
+  String get emergencyContactsTitle => 'Emergency Contacts';
+
+  @override
+  String get enterCodeManually => 'Enter Code Manually';
+
+  @override
+  String qrCodeDetected(String code) {
+    return 'QR Code detected: $code';
+  }
+
+  @override
+  String get signOut => 'Sign Out';
+
+  @override
+  String get areYouSureSignOut => 'Are you sure you want to sign out?';
+
+  @override
+  String get tripHistory => 'Trip History';
+
+  @override
+  String get review => 'Review';
+
+  @override
+  String tripDetails(String id) {
+    return 'Trip $id';
+  }
+
+  @override
+  String get giveFeedback => 'Give Feedback';
+
+  @override
+  String get comingSoonFeature => 'This feature will be available in a future update.';
+
+  @override
+  String get clearCache => 'Clear Cache';
+
+  @override
+  String get cacheClearedSuccessfully => 'Cache cleared successfully!';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String failedToUpdateProfile(String error) {
+    return 'Failed to update profile: $error';
+  }
+
+  @override
+  String get myProfile => 'My Profile';
+
+  @override
+  String get noProfileFound => 'No profile found';
+
+  @override
+  String get viewFAQ => 'View FAQ';
+
+  @override
+  String get changePicture => 'Change Picture';
+
+  @override
+  String get profileUpdated => 'Profile updated successfully!';
+
+  @override
+  String get aboutTitle => 'About';
+
+  @override
+  String get pageNotFound => 'Page Not Found';
+
+  @override
+  String get searchFunctionalityComingSoon => 'Search functionality coming soon!';
+
+  @override
+  String get busRoutesComingSoon => 'Bus routes coming soon!';
+
+  @override
+  String get navigationComingSoon => 'Navigation coming soon!';
+
+  @override
+  String selected(String description) {
+    return 'Selected: $description';
+  }
+
+  @override
+  String placeLookupFailed(String error) {
+    return 'Place lookup failed: $error';
+  }
+
+  @override
+  String foundBusStopsNearby(int count) {
+    return 'Found $count bus stops nearby';
+  }
+
+  @override
+  String foundQueryTapNavigate(String query) {
+    return 'Found \"$query\". Tap Navigate to see bus route!';
+  }
+
+  @override
+  String searchFailed(String error) {
+    return 'Search failed: $error';
+  }
+
+  @override
+  String get unableToGetCurrentLocation => 'Unable to get current location';
+
+  @override
+  String get pleaseSearchForDestination => 'Please search for a destination first';
+
+  @override
+  String errorSelectingLanguage(String error) {
+    return 'Error selecting language: $error';
+  }
+
+  @override
+  String get hazardZoneIntelligence => 'Hazard Zone Intelligence';
+
+  @override
+  String get loadingHazardZoneData => 'Loading hazard zone data...';
+
+  @override
+  String get driverIdRequiredForAlerts => 'Driver ID required to view alerts';
+
+  @override
+  String get noActiveHazardAlerts => 'No active hazard alerts';
+
+  @override
+  String get reviewsTitle => 'Reviews';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get addMedia => 'Add Media';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String fileTooLarge(String fileName) {
+    return '$fileName is too large. Maximum size is 10MB.';
+  }
+
+  @override
+  String get locationPermissionRequired => 'Location permission is required to share location';
+
+  @override
+  String failedToGetLocation(String error) {
+    return 'Failed to get location: $error';
+  }
+
+  @override
+  String get incidentReportingImplemented => 'Incident reporting will be implemented';
+
+  @override
+  String get priority => 'Priority';
+
+  @override
+  String get low => 'Low';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get high => 'High';
+
+  @override
+  String get urgent => 'Urgent';
+
+  @override
+  String get submitAnonymously => 'Submit anonymously';
+
+  @override
+  String get personalInfoNotShared => 'Your personal information will not be shared';
+
+  @override
+  String get chooseYourLanguage => 'Choose Your Language';
+
+  @override
+  String get selectYourPreferredLanguage => 'Select your preferred language to continue';
+
+  @override
+  String get availableLanguages => 'Available Languages';
+
+  @override
+  String get continueButton => 'Continue';
+
+  @override
+  String get profilePageComingSoon => 'Profile Page - Coming Soon';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get loadingProfile => 'Loading profile...';
+
+  @override
+  String get profilePicture => 'Profile Picture';
+
+  @override
+  String get basicInformation => 'Basic Information';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get noEmail => 'No email';
+
+  @override
+  String get firstName => 'First Name';
+
+  @override
+  String get lastName => 'Last Name';
+
+  @override
+  String get dateOfBirth => 'Date of Birth';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get addressInformation => 'Address Information';
+
+  @override
+  String get streetAddress => 'Street Address';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get state => 'State';
+
+  @override
+  String get zipCode => 'ZIP Code';
+
+  @override
+  String get country => 'Country';
+
+  @override
+  String get emergencyContact => 'Emergency Contact';
+
+  @override
+  String get contactName => 'Contact Name';
+
+  @override
+  String get relationship => 'Relationship';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get cameraError => 'Camera Error';
+
+  @override
+  String get positionQrCode => 'Position QR code here';
+
+  @override
+  String get qrScanner => 'QR Scanner';
+
+  @override
+  String get scanQrInstruction => 'Scan QR code on bus or stop';
+
+  @override
+  String get alignQrInstruction => 'Hold steady and align QR code within the frame';
+
+  @override
+  String get enterBusStopCode => 'Enter bus or stop code';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get mapsNavigation => 'Maps & Navigation';
+
+  @override
+  String get searchDestination => 'Search for destination...';
+
+  @override
+  String get busStop => 'Bus Stop';
+
+  @override
+  String get navigate => 'Navigate';
+
+  @override
+  String get yourLocation => 'Your Location';
+
+  @override
+  String get currentPosition => 'Current position';
+
+  @override
+  String get unableToLoadMap => 'Unable to load map';
+
+  @override
+  String get loadingMap => 'Loading map...';
+
+  @override
+  String get busRouteToDestination => 'Bus Route to Destination';
 }
