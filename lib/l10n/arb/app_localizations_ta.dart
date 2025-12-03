@@ -623,4 +623,16 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get systemDefault => 'கணினி இயல்புநிலை';
+
+  @override
+  String get chooseYourLanguage => 'உங்கள் மொழியைத் தேர்வுசெய்க';
+
+  @override
+  String get selectLanguageDescription => 'தொடர உங்கள் விரும்பிய மொழியைத் தேர்வுசெய்யவும்';
+
+  @override
+  String get availableLanguages => 'கிடைக்கும் மொழிகள்';
+
+  @override
+  String get continueText => 'தொடரவும்';
 }
