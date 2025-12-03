@@ -490,22 +490,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding1Title => 'Track Buses in Real-time';
 
   @override
-  String get onboarding1Description =>
-      'Monitor your bus location and get accurate arrival times';
+  String get onboarding1Description => 'Monitor your bus location and get accurate arrival times';
 
   @override
   String get onboarding2Title => 'Driver Safety Monitoring';
 
   @override
-  String get onboarding2Description =>
-      'Real-time alerts for driver drowsiness and distraction';
+  String get onboarding2Description => 'Real-time alerts for driver drowsiness and distraction';
 
   @override
   String get onboarding3Title => 'Emergency Response';
 
   @override
-  String get onboarding3Description =>
-      'Quick access to emergency services and safety features';
+  String get onboarding3Description => 'Quick access to emergency services and safety features';
 
   @override
   String get getStarted => 'Get Started';
@@ -571,16 +568,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stayAlert => 'Stay alert and aware of your surroundings';
 
   @override
-  String get keepEmergencyContacts =>
-      'Keep emergency contacts readily available';
+  String get keepEmergencyContacts => 'Keep emergency contacts readily available';
 
   @override
-  String get reportSuspiciousActivity =>
-      'Report any suspicious activity immediately';
+  String get reportSuspiciousActivity => 'Report any suspicious activity immediately';
 
   @override
-  String get followBusSafety =>
-      'Follow bus safety protocols and driver instructions';
+  String get followBusSafety => 'Follow bus safety protocols and driver instructions';
 
   @override
   String get close => 'Close';
@@ -629,17 +623,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get systemDefault => 'System Default';
-
-  @override
-  String get chooseYourLanguage => 'Choose Your Language';
-
-  @override
-  String get selectLanguageDescription =>
-      'Select your preferred language to continue';
-
-  @override
-  String get availableLanguages => 'Available Languages';
-
-  @override
-  String get continueText => 'Continue';
 }
