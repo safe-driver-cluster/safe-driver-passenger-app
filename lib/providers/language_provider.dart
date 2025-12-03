@@ -74,6 +74,7 @@ class LanguageController extends StateNotifier<AppLanguage> {
       state = language;
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_languageKey, language.code);
+      await prefs.setBool('language_selected', true);
     } catch (e) {
       debugPrint('Error saving language: $e');
     }
@@ -81,10 +82,6 @@ class LanguageController extends StateNotifier<AppLanguage> {
 
   /// Get the current locale
   Locale get currentLocale => Locale(state.code);
-
-  /// Get all supported locales
-  List<Locale> get supportedLocales =>
-      AppLanguage.values.map((lang) => Locale(lang.code)).toList();
 }
 
 /// Provider for language controller
