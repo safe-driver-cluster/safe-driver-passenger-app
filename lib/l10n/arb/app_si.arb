@@ -349,5 +349,20 @@
   "signOut": "ඉවත් වන්න",
   "areYouSureSignOut": "ඔබට ඉවත් වීමට අවශ්‍යද?",
   "tripHistory": "ගමන් ඉතිහාසය",
-  "phoneNumber": "දුරකථන අංකය"
+  "phoneNumber": "දුරකථන අංකය",
+  "languageChanged": "භාෂාව {language} ට වෙනස් කරන ලදී",
+  "failedToChangeLanguage": "භාෂාව වෙනස් කිරීමට අසමර්ථ විය: {error}",
+  "tripId": "ගමන් හැඳුනුම්කරණය: {tripId}",
+  "safetyFirst": "ආරක්ෂාව පළමුව",
+  "safetyDescription": "ඔබේ ආරක්ෂාව අපේ ප්‍රමුඛතාවයයි. හදිසි විශේෂාංග වෙත ප්‍රවේශ වන්න, සිදුවීම් වාර්තා කරන්න, සහ ආරක්ෂක පියවරයන් ගැන දැනුවත් වන්න.",
+  "emergencyActions": "හදිසි ක්‍රියාමාර්ග",
+  "callForHelp": "උදව් සඳහා ඇමතන්න",
+  "reportIssue": "ගැටලුව වාර්තා කරන්න",
+  "reportIncident": "සිදුවීම වාර්තා කරන්න",
+  "safetyFeatures": "ආරක්ෂක විශේෂාංග",
+  "realTimeSafetyNotifications": "තත්‍ය කාලීන ආරක්ෂක දැනුම්දීම්",
+  "viewKnownHazardousAreas": "දන්නා අන්තරායකර ප්‍රදේශ බලන්න",
+  "learnSafetyBestPractices": "ආරක්ෂක හොඳම පරිචයන් ඉගෙන ගන්න",
+  "support": "සහාය",
+  "errorOccurredGeneric": "දෝෂය: {error}"
 }

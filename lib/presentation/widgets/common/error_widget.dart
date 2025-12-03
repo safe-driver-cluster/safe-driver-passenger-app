@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 
 /// Custom error widget for displaying error states
@@ -83,7 +84,7 @@ class CustomErrorWidget extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
+                label: Text(AppLocalizations.of(context).tryAgain),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   foregroundColor: AppColors.white,
@@ -162,7 +163,7 @@ class NotFoundErrorWidget extends StatelessWidget {
           ? ElevatedButton.icon(
               onPressed: onGoBack,
               icon: const Icon(Icons.arrow_back),
-              label: const Text('Go Back'),
+              label: Text(AppLocalizations.of(context).goBack),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.white,
@@ -195,7 +196,7 @@ class PermissionErrorWidget extends StatelessWidget {
           ? ElevatedButton.icon(
               onPressed: onOpenSettings,
               icon: const Icon(Icons.settings),
-              label: const Text('Open Settings'),
+              label: Text(AppLocalizations.of(context).openSettings),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.white,

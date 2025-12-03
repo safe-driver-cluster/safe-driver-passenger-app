@@ -217,7 +217,7 @@ class AppLocalizationsTa extends AppLocalizations {
   String get callEmergency => 'அவசர அழைப்பு';
 
   @override
-  String get reportIncident => 'சம்பவத்தை புகாரளிக்கவும்';
+  String get reportIncident => 'நிகழ்வுகளை அறிக்கவும்';
 
   @override
   String get safetyTips => 'பாதுகாப்பு குறிப்புகள்';
@@ -989,5 +989,55 @@ class AppLocalizationsTa extends AppLocalizations {
   String get busRouteToDestination => 'இலக்கிற்கு பேருந்து பாதை';
 
   @override
-  String get phoneNumber => 'தொலைபேசி எண்';
+  String get phoneNumber => 'தொலைபேசி எண்';
+
+  @override
+  String languageChanged(String language) {
+    return 'மொழி $language ஆக மாற்றப்பட்டது';
+  }
+
+  @override
+  String failedToChangeLanguage(String error) {
+    return 'மொழி மாற்ற முடியவில்லை: $error';
+  }
+
+  @override
+  String tripId(String tripId) {
+    return 'பயண அடையாளம்: $tripId';
+  }
+
+  @override
+  String get safetyFirst => 'பாதுகாப்பு முதலில்';
+
+  @override
+  String get safetyDescription => 'உங்கள் பாதுகாப்பு, எங்கள் முன்னுரிமை. அதிகால ஆபத்து சேவைகளில் அணுக, சிக்கல்களை அறிக்க, கவனத்தில் இருங்கள்.';
+
+  @override
+  String get emergencyActions => 'ஆபத்துகால செயல்கள்';
+
+  @override
+  String get callForHelp => 'உதவிக்காக அழைக்கவும்';
+
+  @override
+  String get reportIssue => 'பிரச்சினையை அறிக்கவும்';
+
+  @override
+  String get safetyFeatures => 'பாதுகாப்பு விசேடங்கள்';
+
+  @override
+  String get realTimeSafetyNotifications => 'நேர நேரம் பாதுகாப்பு அறிவிப்புகள்';
+
+  @override
+  String get viewKnownHazardousAreas => 'தெரிந்த ஆபத்துகரமான பரப்புகளை பார்க்கவும்';
+
+  @override
+  String get learnSafetyBestPractices => 'பாதுகாப்பு சிறந்த நடவடிக்கைகளை கற்றுக் கொள்ளவும்';
+
+  @override
+  String get support => 'ஆதரவு';
+
+  @override
+  String errorOccurredGeneric(String error) {
+    return 'பிழை: $error';
+  }
 }

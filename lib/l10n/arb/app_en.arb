@@ -483,5 +483,56 @@
   "signOut": "Sign Out",
   "areYouSureSignOut": "Are you sure you want to sign out?",
   "tripHistory": "Trip History",
-  "phoneNumber": "Phone Number"
+  "phoneNumber": "Phone Number",
+  "languageChanged": "Language changed to {language}",
+  "@languageChanged": {
+    "description": "Message when language is changed",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  },
+  "failedToChangeLanguage": "Failed to change language: {error}",
+  "@failedToChangeLanguage": {
+    "description": "Error message when language change fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "tripId": "Trip ID: {tripId}",
+  "@tripId": {
+    "description": "Shows trip ID",
+    "placeholders": {
+      "tripId": {
+        "type": "String",
+        "example": "T123"
+      }
+    }
+  },
+  "safetyFirst": "Safety First",
+  "safetyDescription": "Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.",
+  "emergencyActions": "Emergency Actions",
+  "callForHelp": "Call for help",
+  "reportIssue": "Report Issue",
+  "reportIncident": "Report incident",
+  "safetyFeatures": "Safety Features",
+  "realTimeSafetyNotifications": "Real-time safety notifications",
+  "viewKnownHazardousAreas": "View known hazardous areas",
+  "learnSafetyBestPractices": "Learn safety best practices",
+  "support": "Support",
+  "errorOccurredGeneric": "Error: {error}",
+  "@errorOccurredGeneric": {
+    "description": "Generic error message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Something went wrong"
+      }
+    }
+  }
 }

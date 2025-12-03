@@ -349,5 +349,20 @@
   "signOut": "வெளியேறு",
   "areYouSureSignOut": "நீங்கள் நிச்சயமாக வெளியேற விரும்புகிறீர்களா?",
   "tripHistory": "பயண வரலாறு",
-  "phoneNumber": "தொலைபேசி எண்"
+  "phoneNumber": "தொலைபேசி எண்",
+  "languageChanged": "மொழி {language} ஆக மாற்றப்பட்டது",
+  "failedToChangeLanguage": "மொழி மாற்ற முடியவில்லை: {error}",
+  "tripId": "பயண அடையாளம்: {tripId}",
+  "safetyFirst": "பாதுகாப்பு முதலில்",
+  "safetyDescription": "உங்கள் பாதுகாப்பு, எங்கள் முன்னுரிமை. அதிகால ஆபத்து சேவைகளில் அணுக, சிக்கல்களை அறிக்க, கவனத்தில் இருங்கள்.",
+  "emergencyActions": "ஆபத்துகால செயல்கள்",
+  "callForHelp": "உதவிக்காக அழைக்கவும்",
+  "reportIssue": "பிரச்சினையை அறிக்கவும்",
+  "reportIncident": "நிகழ்வுகளை அறிக்கவும்",
+  "safetyFeatures": "பாதுகாப்பு விசேடங்கள்",
+  "realTimeSafetyNotifications": "நேர நேரம் பாதுகாப்பு அறிவிப்புகள்",
+  "viewKnownHazardousAreas": "தெரிந்த ஆபத்துகரமான பரப்புகளை பார்க்கவும்",
+  "learnSafetyBestPractices": "பாதுகாப்பு சிறந்த நடவடிக்கைகளை கற்றுக் கொள்ளவும்",
+  "support": "ஆதரவு",
+  "errorOccurredGeneric": "பிழை: {error}"
 }

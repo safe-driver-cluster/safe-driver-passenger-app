@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 
@@ -10,7 +11,7 @@ class SafetyHubPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        title: const Text('Safety Hub'),
+        title: Text(AppLocalizations.of(context).safetyHub),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -370,29 +371,31 @@ class SafetyHubPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Report Safety Issue'),
+        title: Text(AppLocalizations.of(context).reportSafetyIssue),
         content: const Text(
           'Would you like to report a safety incident or concern?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               // Navigate to incident report page when implemented
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Incident reporting will be implemented'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)
+                      .incidentReportingImplemented),
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            child: const Text('Report', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context).report,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -403,7 +406,7 @@ class SafetyHubPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Safety Tips'),
+        title: Text(AppLocalizations.of(context).safetyTipsTitle),
         content: const SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,7 +441,8 @@ class SafetyHubPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            child: const Text('Got it', style: TextStyle(color: Colors.white)),
+            child: Text(AppLocalizations.of(context).gotIt,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

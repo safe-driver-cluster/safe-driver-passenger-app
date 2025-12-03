@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -126,7 +127,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 ),
                 const SizedBox(height: AppDesign.spaceLG),
                 Text(
-                  'Camera Error',
+                  AppLocalizations.of(context).cameraError,
                   style: AppTextStyles.headline6.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -342,7 +343,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             ),
             const SizedBox(width: AppDesign.spaceXS),
             Text(
-              'Position QR code here',
+              AppLocalizations.of(context).positionQrCode,
               style: AppTextStyles.labelMedium.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
@@ -403,7 +404,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'QR Scanner',
+                    AppLocalizations.of(context).qrScanner,
                     style: AppTextStyles.headline5.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
@@ -411,7 +412,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
                   Text(
-                    'Scan QR code on bus or stop',
+                    AppLocalizations.of(context).scanQrInstruction,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: Colors.white.withOpacity(0.8),
                     ),
@@ -483,7 +484,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   ),
                 ),
                 icon: const Icon(Icons.keyboard_rounded),
-                label: const Text('Enter Code Manually'),
+                label: Text(AppLocalizations.of(context).enterCodeManually),
               ),
             ),
             
@@ -509,7 +510,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   const SizedBox(width: AppDesign.spaceMD),
                   Expanded(
                     child: Text(
-                      'Hold steady and align QR code within the frame',
+                      AppLocalizations.of(context).alignQrInstruction,
                       style: AppTextStyles.bodySmall.copyWith(
                         color: Colors.white.withOpacity(0.8),
                       ),
@@ -559,13 +560,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         ),
-        title: const Text('Enter Code Manually'),
+        title: Text(AppLocalizations.of(context).enterCodeManually),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: 'Enter bus or stop code',
+                hintText: AppLocalizations.of(context).enterBusStopCode,
                 prefixIcon: const Icon(Icons.qr_code_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -581,10 +582,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ProfessionalButton(
-            text: 'Submit',
+            text: AppLocalizations.of(context).submit,
             onPressed: () {
               Navigator.pop(context);
               // Handle manual code entry

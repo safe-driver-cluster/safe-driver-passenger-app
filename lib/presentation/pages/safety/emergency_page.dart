@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -600,9 +601,9 @@ class EmergencyPage extends StatelessWidget {
         if (permission == LocationPermission.denied) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content:
-                    Text('Location permission is required to share location'),
+                    Text(AppLocalizations.of(context).locationPermissionRequired),
                 backgroundColor: AppColors.dangerColor,
               ),
             );

@@ -520,7 +520,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportIncident.
   ///
   /// In en, this message translates to:
-  /// **'Report Incident'**
+  /// **'Report incident'**
   String get reportIncident;
 
   /// No description provided for @safetyTips.
@@ -2010,6 +2010,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone Number'**
   String get phoneNumber;
+
+  /// Message when language is changed
+  ///
+  /// In en, this message translates to:
+  /// **'Language changed to {language}'**
+  String languageChanged(String language);
+
+  /// Error message when language change fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to change language: {error}'**
+  String failedToChangeLanguage(String error);
+
+  /// Shows trip ID
+  ///
+  /// In en, this message translates to:
+  /// **'Trip ID: {tripId}'**
+  String tripId(String tripId);
+
+  /// No description provided for @safetyFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety First'**
+  String get safetyFirst;
+
+  /// No description provided for @safetyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.'**
+  String get safetyDescription;
+
+  /// No description provided for @emergencyActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency Actions'**
+  String get emergencyActions;
+
+  /// No description provided for @callForHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Call for help'**
+  String get callForHelp;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Issue'**
+  String get reportIssue;
+
+  /// No description provided for @safetyFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Features'**
+  String get safetyFeatures;
+
+  /// No description provided for @realTimeSafetyNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time safety notifications'**
+  String get realTimeSafetyNotifications;
+
+  /// No description provided for @viewKnownHazardousAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'View known hazardous areas'**
+  String get viewKnownHazardousAreas;
+
+  /// No description provided for @learnSafetyBestPractices.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn safety best practices'**
+  String get learnSafetyBestPractices;
+
+  /// No description provided for @support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get support;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorOccurredGeneric(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

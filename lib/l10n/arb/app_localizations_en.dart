@@ -217,7 +217,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get callEmergency => 'Call Emergency';
 
   @override
-  String get reportIncident => 'Report Incident';
+  String get reportIncident => 'Report incident';
 
   @override
   String get safetyTips => 'Safety Tips';
@@ -990,4 +990,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneNumber => 'Phone Number';
+
+  @override
+  String languageChanged(String language) {
+    return 'Language changed to $language';
+  }
+
+  @override
+  String failedToChangeLanguage(String error) {
+    return 'Failed to change language: $error';
+  }
+
+  @override
+  String tripId(String tripId) {
+    return 'Trip ID: $tripId';
+  }
+
+  @override
+  String get safetyFirst => 'Safety First';
+
+  @override
+  String get safetyDescription => 'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.';
+
+  @override
+  String get emergencyActions => 'Emergency Actions';
+
+  @override
+  String get callForHelp => 'Call for help';
+
+  @override
+  String get reportIssue => 'Report Issue';
+
+  @override
+  String get safetyFeatures => 'Safety Features';
+
+  @override
+  String get realTimeSafetyNotifications => 'Real-time safety notifications';
+
+  @override
+  String get viewKnownHazardousAreas => 'View known hazardous areas';
+
+  @override
+  String get learnSafetyBestPractices => 'Learn safety best practices';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String errorOccurredGeneric(String error) {
+    return 'Error: $error';
+  }
 }

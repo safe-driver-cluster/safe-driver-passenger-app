@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../controllers/dashboard_controller.dart';
 
@@ -47,7 +48,7 @@ class RecentActivityWidget extends ConsumerWidget {
                     Icons.arrow_forward_ios,
                     size: 14,
                   ),
-                  label: const Text('View All'),
+                  label: Text(AppLocalizations.of(context).viewAll),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.primaryColor,
                     textStyle: const TextStyle(
