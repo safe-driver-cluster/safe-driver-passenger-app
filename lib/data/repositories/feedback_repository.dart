@@ -48,26 +48,26 @@ class FeedbackRepository {
   Future<List<FeedbackModel>> getFeedbackByUser(String userId) async {
     try {
       debugPrint('🔍 FeedbackRepository: Fetching feedback for user: $userId');
-      
+
       final query = await _firestore
           .collection(_collection)
           .where('userId', isEqualTo: userId)
           .orderBy('submittedAt', descending: true)
           .get();
 
-      debugPrint('📊 FeedbackRepository: Found ${query.docs.length} feedback entries for user');
-      
-      final feedbackList = query.docs
-          .map((doc) {
-            debugPrint('📋 FeedbackRepository: Processing feedback ${doc.id}');
-            return FeedbackModel.fromJson({
-                  'id': doc.id,
-                  ...doc.data(),
-                });
-          })
-          .toList();
-      
-      debugPrint('✅ FeedbackRepository: Loaded ${feedbackList.length} user feedback items');
+      debugPrint(
+          '📊 FeedbackRepository: Found ${query.docs.length} feedback entries for user');
+
+      final feedbackList = query.docs.map((doc) {
+        debugPrint('📋 FeedbackRepository: Processing feedback ${doc.id}');
+        return FeedbackModel.fromJson({
+          'id': doc.id,
+          ...doc.data(),
+        });
+      }).toList();
+
+      debugPrint(
+          '✅ FeedbackRepository: Loaded ${feedbackList.length} user feedback items');
       return feedbackList;
     } catch (e) {
       debugPrint('❌ FeedbackRepository: Error fetching user feedback: $e');
