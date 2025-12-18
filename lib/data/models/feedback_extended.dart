@@ -1,5 +1,6 @@
 /// Extension classes for enhanced feedback model functionality
 /// Supports advanced attachment tracking and multimedia handling
+library;
 
 import 'feedback_model.dart';
 
@@ -49,9 +50,8 @@ class FeedbackWithAttachments extends FeedbackModel {
       attachments.fold(0, (sum, attachment) => sum + attachment.fileSize);
   int get imageCount => attachments.where((a) => a.isImage).length;
   int get videoCount => attachments.where((a) => a.isVideo).length;
-  int get documentCount => attachments
-      .where((a) => !a.isImage && !a.isVideo && !a.isAudio)
-      .length;
+  int get documentCount =>
+      attachments.where((a) => !a.isImage && !a.isVideo && !a.isAudio).length;
 
   bool get hasAttachments => attachments.isNotEmpty;
   bool get hasImages => imageCount > 0;
@@ -189,8 +189,8 @@ class FeedbackAuditLog {
         orElse: () => FeedbackStatus.submitted,
       ),
       reason: json['reason'],
-      timestamp: DateTime.parse(
-          json['timestamp'] ?? DateTime.now().toIso8601String()),
+      timestamp:
+          DateTime.parse(json['timestamp'] ?? DateTime.now().toIso8601String()),
       actionPerformedBy: json['actionPerformedBy'],
       metadata: Map<String, dynamic>.from(json['metadata'] ?? {}),
     );
