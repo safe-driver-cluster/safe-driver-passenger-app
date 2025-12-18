@@ -78,9 +78,11 @@ class BusModel {
   factory BusModel.fromJson(Map<String, dynamic> json) {
     return BusModel(
       id: json['id'] ?? '',
-      busNumber: json['busNumber'] ?? '',
-      routeNumber: json['routeNumber'] ?? '',
-      registration: json['registration'] ?? '',
+      // Handle both 'busNumber' and 'busNumberPlate' from Firebase
+      busNumber: json['busNumber'] ?? json['busNumberPlate'] ?? '',
+      // Handle both 'routeNumber' and 'route' from Firebase
+      routeNumber: json['routeNumber'] ?? json['route'] ?? '',
+      registration: json['registration'] ?? json['busNumberPlate'] ?? '',
       busType: BusType.values.firstWhere(
         (e) => e.toString().split('.').last == json['busType'],
         orElse: () => BusType.standard,
@@ -90,7 +92,7 @@ class BusModel {
       driverName: json['driverName'],
       imageUrl: json['imageUrl'],
       status: BusStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == json['status'],
+        (e) => e.toString().split('.').last == (json['status'] ?? 'offline'),
         orElse: () => BusStatus.offline,
       ),
       currentLocation: json['currentLocation'] != null

@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/services/firebase_service.dart';
 import '../models/bus_model.dart';
 
 class BusRepository {
   final FirebaseService _firebaseService;
-  final String _collection = 'buses';
+  final String _collection = 'vehicles'; // Changed from 'buses' to 'vehicles'
 
   BusRepository({FirebaseService? firebaseService})
       : _firebaseService = firebaseService ?? FirebaseService.instance;
@@ -260,15 +261,27 @@ class BusRepository {
   /// Get all buses
   Future<List<BusModel>> getAllBuses() async {
     try {
-      final query = await _firebaseService.firestore
-          .collection(_collection)
-          .orderBy('busNumber')
-          .get();
+      debugPrint('🔍 BusRepository: Querying collection: $_collection');
 
-      return query.docs
-          .map((doc) => BusModel.fromJson({...doc.data(), 'id': doc.id}))
-          .toList();
+      // Query all buses without ordering (matches working pattern from BusListPage)
+      final query =
+          await _firebaseService.firestore.collection(_collection).get();
+
+      debugPrint('📊 BusRepository: Got ${query.docs.length} total buses');
+
+      final buses = query.docs.map((doc) {
+        debugPrint('🚗 BusRepository: Processing doc ${doc.id}: ${doc.data()}');
+        return BusModel.fromJson({...doc.data(), 'id': doc.id});
+      }).toList();
+
+      // Sort by busNumber in Dart (after fetching from Firestore)
+      buses.sort((a, b) => a.busNumber.compareTo(b.busNumber));
+
+      debugPrint(
+          '✅ BusRepository: Returned ${buses.length} buses after sorting');
+      return buses;
     } catch (e) {
+      debugPrint('❌ BusRepository: Fatal error in getAllBuses: $e');
       throw BusRepositoryException('Failed to get all buses: $e');
     }
   }

@@ -26,7 +26,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     _tabController = TabController(length: 2, vsync: this);
     // Load bus data from Firebase on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🚀 FeedbackSystemPage: Calling loadBusData...');
       ref.read(feedbackControllerProvider.notifier).loadBusData();
+      debugPrint('✅ FeedbackSystemPage: loadBusData called');
     });
   }
 
@@ -38,6 +40,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   @override
   Widget build(BuildContext context) {
+    // Watch the feedback controller state to ensure it's initialized
+    ref.watch(feedbackControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -396,6 +401,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildRecentBuses() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -421,10 +428,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ],
           ),
           child: ValueListenableBuilder(
-            valueListenable: ref
-                .read(feedbackControllerProvider.notifier)
-                .recentBusesNotifier,
+            valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
+              debugPrint(
+                  '🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
+
               if (buses.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.all(AppDesign.spaceMD),
@@ -822,6 +830,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildBusSelectionBottomSheet() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -859,9 +869,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
           Expanded(
             child: ValueListenableBuilder(
-              valueListenable: ref
-                  .read(feedbackControllerProvider.notifier)
-                  .availableBusesNotifier,
+              valueListenable: controller.availableBusesNotifier,
               builder: (context, buses, _) {
                 if (buses.isEmpty) {
                   return const Center(

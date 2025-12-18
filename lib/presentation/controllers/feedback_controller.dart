@@ -55,27 +55,58 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   Future<void> loadBusData() async {
     try {
       _busDataLoading.value = true;
+      debugPrint(
+          '🚀 FeedbackController: Starting to load bus data from Firebase...');
 
-      // Load all active buses
+      // Load all buses
       final buses = await _busRepository.getAllBuses();
+      debugPrint(
+          '✅ FeedbackController: Loaded ${buses.length} total buses from Firebase');
 
-      // Filter active buses
-      final activeBuses = buses
-          .where((bus) =>
-              bus.status == BusStatus.active || bus.status == BusStatus.enRoute)
-          .toList();
+      if (buses.isEmpty) {
+        debugPrint('⚠️ FeedbackController: No buses found in Firebase');
+        _recentBuses.value = [];
+        _availableBuses.value = [];
+        _busDataLoading.value = false;
+        return;
+      }
+
+      // Filter active buses - check for both active and enRoute statuses
+      final activeBuses = buses.where((bus) {
+        final isActive =
+            bus.status == BusStatus.active || bus.status == BusStatus.enRoute;
+        if (isActive) {
+          debugPrint(
+              '✓ Bus ${bus.busNumber} is active (status: ${bus.status})');
+        }
+        return isActive;
+      }).toList();
+
+      debugPrint(
+          '📋 FeedbackController: Found ${activeBuses.length} active buses');
+
+      // If no active buses found, use all buses as fallback
+      final busesToUse = activeBuses.isNotEmpty ? activeBuses : buses;
+      debugPrint(
+          '📌 FeedbackController: Using ${busesToUse.length} buses for display');
 
       // Sort by last updated for recent buses
-      final sortedBuses = activeBuses.toList();
-      sortedBuses.sort((a, b) => (b.lastUpdated ?? DateTime(2000))
-          .compareTo(a.lastUpdated ?? DateTime(2000)));
+      final sortedBuses = busesToUse.toList();
+      sortedBuses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
 
-      _recentBuses.value = sortedBuses.take(5).toList();
-      _availableBuses.value = activeBuses;
+      final recentList = sortedBuses.take(5).toList();
+      _recentBuses.value = recentList;
+      _availableBuses.value = busesToUse;
+
+      debugPrint(
+          '✅ FeedbackController: Set recent buses: ${recentList.length}, available buses: ${busesToUse.length}');
       _busDataLoading.value = false;
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('❌ FeedbackController: Error loading bus data: $e');
+      debugPrint('Stack trace: $stackTrace');
       _busDataLoading.value = false;
+      _recentBuses.value = [];
+      _availableBuses.value = [];
     }
   }
 
@@ -112,7 +143,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final feedbackList = await _feedbackRepository.getAllFeedback();
       _feedbacks.value = feedbackList;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load feedback: $e', stack);
@@ -125,7 +156,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final userFeedback = await _feedbackRepository.getFeedbackByUser(userId);
       _feedbacks.value = userFeedback;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load user feedback: $e', stack);
@@ -138,7 +169,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final busFeedback = await _feedbackRepository.getFeedbackByBus(busId);
       _feedbacks.value = busFeedback;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load bus feedback: $e', stack);
@@ -220,7 +251,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       // Add to local state
       _feedbacks.value = [..._feedbacks.value, feedback];
-      await _updateStatistics();
+      await updateStatistics();
 
       debugPrint('📊 FeedbackController: Updated local state and statistics');
       state = const AsyncValue.data(null);
@@ -246,7 +277,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         return feedback;
       }).toList();
 
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to update feedback status: $e', stack);
@@ -264,7 +295,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
           .where((feedback) => feedback.id != feedbackId)
           .toList();
 
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to delete feedback: $e', stack);
@@ -340,7 +371,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   }
 
   /// Update statistics
-  Future<void> _updateStatistics() async {
+  Future<void> updateStatistics() async {
     final stats = <String, dynamic>{
       'total': _feedbacks.value.length,
       'byStatus': <String, int>{},

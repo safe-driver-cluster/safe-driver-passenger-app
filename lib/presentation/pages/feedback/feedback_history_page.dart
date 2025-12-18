@@ -1,14 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../providers/auth_provider.dart';
+import '../../controllers/feedback_controller.dart';
 import '../../widgets/common/professional_widgets.dart';
 
-class FeedbackHistoryPage extends StatelessWidget {
+class FeedbackHistoryPage extends ConsumerStatefulWidget {
   const FeedbackHistoryPage({super.key});
 
   @override
+  ConsumerState<FeedbackHistoryPage> createState() =>
+      _FeedbackHistoryPageState();
+}
+
+class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Load user's feedback when page initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authStateProvider);
+      if (authState.user?.uid != null) {
+        ref
+            .read(feedbackControllerProvider.notifier)
+            .loadUserFeedback(authState.user!.uid);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final feedbackController = ref.read(feedbackControllerProvider.notifier);
+    final feedbacks = feedbackController.feedbacks;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -32,75 +59,301 @@ class FeedbackHistoryPage extends StatelessWidget {
 
               // Content Area
               Expanded(
-                child: SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: AppDesign.spaceLG),
-
-                      // Coming Soon Card
-                      ProfessionalCard(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.history_rounded,
-                              size: 64,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(height: AppDesign.spaceLG),
-                            const Text(
-                              'Feedback History',
-                              style: TextStyle(
-                                fontSize: AppDesign.text2XL,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: AppDesign.spaceSM),
-                            const Text(
-                              'View your past feedback submissions and their status',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppDesign.textMD,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: AppDesign.spaceXL),
-                            Container(
-                              padding: const EdgeInsets.all(AppDesign.spaceLG),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor.withOpacity(0.1),
-                                borderRadius:
-                                    BorderRadius.circular(AppDesign.radiusLG),
-                                border: Border.all(
-                                  color:
-                                      AppColors.primaryColor.withOpacity(0.2),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Text(
-                                'Coming Soon',
-                                style: TextStyle(
-                                  fontSize: AppDesign.textLG,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: feedbacks.isEmpty
+                    ? _buildEmptyState()
+                    : _buildFeedbackList(feedbacks),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildEmptyState() {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: AppDesign.spaceXL),
+          ProfessionalCard(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.history_rounded,
+                  size: 64,
+                  color: AppColors.textSecondary,
+                ),
+                SizedBox(height: AppDesign.spaceLG),
+                Text(
+                  'No Feedback Yet',
+                  style: TextStyle(
+                    fontSize: AppDesign.text2XL,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: AppDesign.spaceSM),
+                Text(
+                  'Share your feedback about buses and drivers to get started',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppDesign.textMD,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackList(feedbacks) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+      child: Column(
+        children: [
+          const SizedBox(height: AppDesign.spaceLG),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: feedbacks.length,
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppDesign.spaceMD),
+            itemBuilder: (context, index) {
+              final feedback = feedbacks[index];
+              return _buildFeedbackCard(feedback);
+            },
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedbackCard(feedback) {
+    final dateFormatter = DateFormat('MMM dd, yyyy • hh:mm a');
+    final submittedDate = dateFormatter.format(feedback.submittedAt);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadowLight,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with bus number and status
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: _getStatusGradient(feedback.status),
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppDesign.radiusLG),
+                topRight: Radius.circular(AppDesign.radiusLG),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (feedback.busNumber != null)
+                        Text(
+                          'Bus ${feedback.busNumber}',
+                          style: const TextStyle(
+                            fontSize: AppDesign.textLG,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      const SizedBox(height: AppDesign.spaceXS),
+                      Text(
+                        feedback.title,
+                        style: TextStyle(
+                          fontSize: AppDesign.textMD,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDesign.spaceMD,
+                    vertical: AppDesign.spaceSM,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: Text(
+                    _getStatusText(feedback.status),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: AppDesign.textSM,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Rating and Category
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        for (int i = 0; i < 5; i++)
+                          Icon(
+                            i < feedback.rating.overall
+                                ? Icons.star_rounded
+                                : Icons.star_border_rounded,
+                            color: AppColors.primaryColor,
+                            size: 18,
+                          ),
+                        const SizedBox(width: AppDesign.spaceSM),
+                        Text(
+                          '${feedback.rating.overall}/5',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDesign.spaceMD,
+                        vertical: AppDesign.spaceSM,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                      ),
+                      child: Text(
+                        _getCategoryText(feedback.category),
+                        style: const TextStyle(
+                          fontSize: AppDesign.textSM,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+
+                // Comment
+                if (feedback.comment.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Comment',
+                        style: TextStyle(
+                          fontSize: AppDesign.textSM,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceSM),
+                      Text(
+                        feedback.comment,
+                        style: const TextStyle(
+                          fontSize: AppDesign.textMD,
+                          color: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceMD),
+                    ],
+                  ),
+
+                // Date
+                Text(
+                  'Submitted: $submittedDate',
+                  style: const TextStyle(
+                    fontSize: AppDesign.textSM,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Color> _getStatusGradient(status) {
+    switch (status.toString()) {
+      case 'FeedbackStatus.submitted':
+        return [AppColors.primaryColor, AppColors.primaryDark];
+      case 'FeedbackStatus.reviewed':
+        return [const Color(0xFF4CAF50), const Color(0xFF2E7D32)];
+      case 'FeedbackStatus.resolved':
+        return [const Color(0xFF2196F3), const Color(0xFF1565C0)];
+      case 'FeedbackStatus.rejected':
+        return [const Color(0xFFF44336), const Color(0xFFC62828)];
+      default:
+        return [AppColors.primaryColor, AppColors.primaryDark];
+    }
+  }
+
+  String _getStatusText(status) {
+    switch (status.toString()) {
+      case 'FeedbackStatus.submitted':
+        return 'Submitted';
+      case 'FeedbackStatus.reviewed':
+        return 'Reviewed';
+      case 'FeedbackStatus.resolved':
+        return 'Resolved';
+      case 'FeedbackStatus.rejected':
+        return 'Rejected';
+      default:
+        return 'Pending';
+    }
+  }
+
+  String _getCategoryText(category) {
+    switch (category.toString()) {
+      case 'FeedbackCategory.general':
+        return 'General';
+      case 'FeedbackCategory.safety':
+        return 'Safety';
+      case 'FeedbackCategory.service':
+        return 'Service';
+      case 'FeedbackCategory.driver':
+        return 'Driver';
+      case 'FeedbackCategory.busCondition':
+        return 'Bus Condition';
+      default:
+        return 'Other';
+    }
   }
 
   Widget _buildModernHeader(BuildContext context) {
