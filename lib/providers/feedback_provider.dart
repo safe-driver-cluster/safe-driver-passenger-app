@@ -33,8 +33,8 @@ final userFeedbackHistoryProvider =
 });
 
 // Feedback Analytics Provider
-final feedbackAnalyticsProvider = FutureProvider
-    .family<Map<String, dynamic>, String?>((ref, userId) async {
+final feedbackAnalyticsProvider =
+    FutureProvider.family<Map<String, dynamic>, String?>((ref, userId) async {
   final repository = ref.watch(extendedFeedbackRepositoryProvider);
   return repository.getDetailedStatistics(userId: userId);
 });
@@ -47,7 +47,9 @@ final feedbackStatusTrackingProvider =
 });
 
 // Feedback Audit Logs Provider
-final feedbackAuditLogsProvider = FutureProvider.family<List<FeedbackAuditLog>, String>((ref, feedbackId) async {
+final feedbackAuditLogsProvider =
+    FutureProvider.family<List<FeedbackAuditLog>, String>(
+        (ref, feedbackId) async {
   final repository = ref.watch(extendedFeedbackRepositoryProvider);
   return repository.getFeedbackAuditLogs(feedbackId);
 });
@@ -60,8 +62,8 @@ final streamUserFeedbackHistoryProvider =
 });
 
 // Upload Progress Notifier
-final uploadProgressNotifierProvider =
-    StateNotifierProvider<_UploadProgressNotifier, Map<String, AttachmentProgress>>(
+final uploadProgressNotifierProvider = StateNotifierProvider<
+    _UploadProgressNotifier, Map<String, AttachmentProgress>>(
   (ref) => _UploadProgressNotifier(),
 );
 
@@ -126,8 +128,7 @@ final feedbackStatisticsCacheProvider =
   (ref) => _FeedbackStatisticsNotifier(),
 );
 
-class _FeedbackStatisticsNotifier
-    extends StateNotifier<Map<String, dynamic>> {
+class _FeedbackStatisticsNotifier extends StateNotifier<Map<String, dynamic>> {
   _FeedbackStatisticsNotifier() : super({});
 
   void updateStatistics(Map<String, dynamic> stats) {
@@ -172,8 +173,7 @@ class QRFeedbackSession {
   }) {
     return QRFeedbackSession(
       scannedBusNumber: scannedBusNumber ?? this.scannedBusNumber,
-      selectedFeedbackType:
-          selectedFeedbackType ?? this.selectedFeedbackType,
+      selectedFeedbackType: selectedFeedbackType ?? this.selectedFeedbackType,
       rating: rating ?? this.rating,
       comments: comments ?? this.comments,
       uploadedMediaUrls: uploadedMediaUrls ?? this.uploadedMediaUrls,
@@ -182,8 +182,7 @@ class QRFeedbackSession {
   }
 }
 
-class _QRFeedbackSessionNotifier
-    extends StateNotifier<QRFeedbackSession> {
+class _QRFeedbackSessionNotifier extends StateNotifier<QRFeedbackSession> {
   _QRFeedbackSessionNotifier() : super(QRFeedbackSession());
 
   void setBusNumber(String busNumber) {
