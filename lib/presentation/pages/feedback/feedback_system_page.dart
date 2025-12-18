@@ -40,7 +40,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   Widget build(BuildContext context) {
     // Watch the feedback controller state to trigger rebuilds
     final feedbackState = ref.watch(feedbackControllerProvider);
-    
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -399,6 +399,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildRecentBuses() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -424,9 +426,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ],
           ),
           child: ValueListenableBuilder(
-            valueListenable: ref
-                .read(feedbackControllerProvider.notifier)
-                .recentBusesNotifier,
+            valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
               if (buses.isEmpty) {
                 return const Padding(
