@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/color_constants.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../data/models/feedback_model.dart';
 
@@ -123,7 +124,7 @@ class _FeedbackAnalyticsDashboardState
                 'Total Feedback',
                 totalFeedback.toString(),
                 Icons.feedback,
-                AppColors.primary,
+                AppColors.primaryColor,
               ),
             ),
             const SizedBox(width: 12),
@@ -133,7 +134,7 @@ class _FeedbackAnalyticsDashboardState
                 'Avg Rating',
                 avgRating.toStringAsFixed(1),
                 Icons.star,
-                Colors.orange,
+                AppColors.warningColor,
               ),
             ),
           ],
@@ -147,7 +148,7 @@ class _FeedbackAnalyticsDashboardState
                 'Satisfaction',
                 '${satisfactionRate.toStringAsFixed(1)}%',
                 Icons.thumb_up,
-                Colors.green,
+                AppColors.successColor,
               ),
             ),
             const SizedBox(width: 12),
@@ -160,7 +161,7 @@ class _FeedbackAnalyticsDashboardState
                     .length
                     .toString(),
                 Icons.attachment,
-                Colors.blue,
+                AppColors.infoColor,
               ),
             ),
           ],
@@ -278,7 +279,7 @@ class _FeedbackAnalyticsDashboardState
                     child: Text(
                       '$count (${percentage.toStringAsFixed(1)}%)',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: AppColors.grey,
                           ),
                       textAlign: TextAlign.right,
                     ),
@@ -307,7 +308,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -397,7 +398,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -433,7 +434,7 @@ class _FeedbackAnalyticsDashboardState
                               ? 0
                               : entry.value / _filteredFeedback.length,
                           minHeight: 6,
-                          backgroundColor: AppColors.gray.withOpacity(0.3),
+                          backgroundColor: AppColors.grey.withOpacity(0.3),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _getCategoryColor(entry.key),
                           ),
@@ -470,7 +471,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -518,7 +519,7 @@ class _FeedbackAnalyticsDashboardState
   Widget _buildAttachmentStat(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: AppColors.primary, size: 28),
+        Icon(icon, color: AppColors.primaryColor, size: 28),
         const SizedBox(height: 8),
         Text(
           value,
@@ -564,7 +565,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -594,7 +595,7 @@ class _FeedbackAnalyticsDashboardState
                       height: height.clamp(10, 150),
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.7),
+                        color: AppColors.primaryColor.withOpacity(0.7),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -727,17 +728,17 @@ class _FeedbackAnalyticsDashboardState
   Color _getRatingColor(int rating) {
     switch (rating) {
       case 5:
-        return Colors.green;
+        return AppColors.successColor;
       case 4:
-        return Colors.lightGreen;
+        return AppColors.secondaryColor;
       case 3:
-        return Colors.orange;
+        return AppColors.warningColor;
       case 2:
-        return Colors.orangeAccent;
+        return AppColors.warningColorAlt;
       case 1:
-        return Colors.red;
+        return AppColors.dangerColor;
       default:
-        return AppColors.gray;
+        return AppColors.grey;
     }
   }
 
@@ -745,37 +746,37 @@ class _FeedbackAnalyticsDashboardState
   Color _getStatusColor(FeedbackStatus status) {
     switch (status) {
       case FeedbackStatus.submitted:
-        return AppColors.gray;
+        return AppColors.grey;
       case FeedbackStatus.received:
-        return Colors.blue;
+        return AppColors.infoColor;
       case FeedbackStatus.inReview:
-        return Colors.orange;
+        return AppColors.warningColor;
       case FeedbackStatus.responded:
-        return Colors.blue;
+        return AppColors.infoColor;
       case FeedbackStatus.resolved:
-        return Colors.green;
+        return AppColors.successColor;
       case FeedbackStatus.closed:
-        return AppColors.gray;
+        return AppColors.grey;
       case FeedbackStatus.escalated:
-        return Colors.red;
+        return AppColors.dangerColor;
     }
   }
 
   /// Get category color
   Color _getCategoryColor(FeedbackCategory category) {
     const colors = {
-      FeedbackCategory.safety: Colors.red,
-      FeedbackCategory.service: Colors.blue,
-      FeedbackCategory.comfort: Colors.purple,
-      FeedbackCategory.driver: Colors.orange,
-      FeedbackCategory.vehicle: Colors.teal,
-      FeedbackCategory.route: Colors.indigo,
-      FeedbackCategory.general: AppColors.gray,
-      FeedbackCategory.suggestion: Colors.green,
-      FeedbackCategory.complaint: Colors.red,
-      FeedbackCategory.compliment: Colors.amber,
+      FeedbackCategory.safety: AppColors.dangerColor,
+      FeedbackCategory.service: AppColors.infoColor,
+      FeedbackCategory.comfort: AppColors.accentColor,
+      FeedbackCategory.driver: AppColors.warningColor,
+      FeedbackCategory.vehicle: AppColors.tealAccent,
+      FeedbackCategory.route: AppColors.primaryVariant,
+      FeedbackCategory.general: AppColors.grey,
+      FeedbackCategory.suggestion: AppColors.successColor,
+      FeedbackCategory.complaint: AppColors.dangerColor,
+      FeedbackCategory.compliment: AppColors.warningColorAlt,
     };
 
-    return colors[category] ?? AppColors.gray;
+    return colors[category] ?? AppColors.grey;
   }
 }
