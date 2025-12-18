@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../../core/themes/app_theme.dart';
+import '../../../core/constants/color_constants.dart';
 
 /// Widget for uploading and managing media files
 class MediaUploadWidget extends StatefulWidget {
@@ -79,7 +79,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
             child: Text(
               '${_selectedFiles.length}/${widget.maxFiles} files selected',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.gray,
+                    color: AppColors.grey,
                   ),
             ),
           ),
@@ -99,8 +99,8 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
               icon: const Icon(Icons.image),
               label: const Text('Photo'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.gray,
+                backgroundColor: AppColors.primaryColor,
+                disabledBackgroundColor: AppColors.grey,
               ),
             ),
           ),
@@ -113,8 +113,8 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
               icon: const Icon(Icons.videocam),
               label: const Text('Video'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.gray,
+                backgroundColor: AppColors.primaryColor,
+                disabledBackgroundColor: AppColors.grey,
               ),
             ),
           ),
@@ -154,9 +154,9 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
         // Preview
         Container(
           decoration: BoxDecoration(
-            color: AppColors.lightGray,
+            color: AppColors.greyLight,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.gray, width: 1),
+            border: Border.all(color: AppColors.grey, width: 1),
           ),
           child: isImage
               ? Image.file(file, fit: BoxFit.cover)
@@ -173,13 +173,13 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
             onTap: () => _removeFile(index),
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.error,
+                color: AppColors.errorColor,
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(4),
               child: const Icon(
                 Icons.close,
-                color: Colors.white,
+                color: AppColors.white,
                 size: 16,
               ),
             ),
@@ -193,13 +193,13 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.black87,
+              color: AppColors.textPrimary,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               extension.toUpperCase(),
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -223,7 +223,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
         return Center(
           child: Icon(
             Icons.videocam,
-            color: AppColors.gray,
+            color: AppColors.grey,
             size: 32,
           ),
         );
@@ -239,7 +239,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
         children: [
           Icon(
             Icons.description,
-            color: AppColors.gray,
+            color: AppColors.grey,
             size: 32,
           ),
           const SizedBox(height: 8),
@@ -349,7 +349,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.error,
+        backgroundColor: AppColors.errorColor,
       ),
     );
   }
@@ -396,21 +396,21 @@ class UploadProgressWidget extends StatelessWidget {
                     Text(
                       '${(progress * 100).toStringAsFixed(1)}%',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: AppColors.grey,
                           ),
                     )
                   else if (isCompleted)
                     Text(
                       'Upload complete',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.success,
+                            color: AppColors.successColor,
                           ),
                     )
                   else
                     Text(
                       errorMessage ?? 'Upload failed',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.error,
+                            color: AppColors.errorColor,
                           ),
                     ),
                 ],
@@ -422,9 +422,9 @@ class UploadProgressWidget extends StatelessWidget {
                 icon: const Icon(Icons.close),
               )
             else if (isCompleted)
-              Icon(Icons.check_circle, color: AppColors.success, size: 24)
+              Icon(Icons.check_circle, color: AppColors.successColor, size: 24)
             else
-              Icon(Icons.error, color: AppColors.error, size: 24),
+              Icon(Icons.error, color: AppColors.errorColor, size: 24),
           ],
         ),
         const SizedBox(height: 8),
@@ -433,9 +433,9 @@ class UploadProgressWidget extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 4,
-            backgroundColor: AppColors.lightGray,
+            backgroundColor: AppColors.greyLight,
             valueColor: AlwaysStoppedAnimation<Color>(
-              hasFailed ? AppColors.error : AppColors.primary,
+              hasFailed ? AppColors.errorColor : AppColors.primaryColor,
             ),
           ),
         ),
@@ -470,9 +470,9 @@ class AttachmentPreviewWidget extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: AppColors.lightGray,
+            color: AppColors.greyLight,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.gray, width: 1),
+            border: Border.all(color: AppColors.grey, width: 1),
           ),
           child: isImage
               ? Image.network(
@@ -493,7 +493,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
               onTap: onDelete,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.error,
+                  color: AppColors.errorColor,
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(4),
@@ -513,7 +513,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
     return Center(
       child: Icon(
         Icons.play_circle_outline,
-        color: AppColors.gray,
+        color: AppColors.grey,
         size: 48,
       ),
     );
@@ -523,7 +523,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
     return Center(
       child: Icon(
         Icons.description,
-        color: AppColors.gray,
+        color: AppColors.grey,
         size: 48,
       ),
     );
@@ -533,7 +533,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
     return Center(
       child: Icon(
         Icons.error_outline,
-        color: AppColors.error,
+        color: AppColors.errorColor,
         size: 48,
       ),
     );
