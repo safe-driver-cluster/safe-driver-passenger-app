@@ -15,7 +15,7 @@ class FeedbackHistoryPage extends StatefulWidget {
 
 class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
-  final List<FeedbackModel> _filteredFeedback = [];
+  late List<FeedbackModel> _filteredFeedback;
   final List<FeedbackModel> _allFeedback = [];
 
   // Filter state
