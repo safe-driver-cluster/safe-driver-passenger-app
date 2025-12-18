@@ -22,7 +22,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   FeedbackStatus? _selectedStatus;
   FeedbackCategory? _selectedCategory;
   DateTimeRange? _selectedDateRange;
-  final bool _showWithAttachmentsOnly = false;
+  bool _showWithAttachmentsOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,10 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
       appBar: AppBar(
         title: const Text('Feedback History'),
         elevation: 0,
-        actions: const [
+        actions: [
           IconButton(
             onPressed: _showFilterDialog,
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             tooltip: 'Filters',
           ),
         ],
@@ -359,13 +359,13 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
 
   /// Build category badge
   Widget _buildCategoryBadge(FeedbackCategory category) {
-    const categoryColors = {
+    final categoryColors = {
       FeedbackCategory.safety: AppColors.dangerColor,
       FeedbackCategory.service: AppColors.infoColor,
       FeedbackCategory.comfort: AppColors.accentColor,
       FeedbackCategory.driver: AppColors.warningColor,
       FeedbackCategory.vehicle: AppColors.tealAccent,
-      FeedbackCategory.route: AppColors.primaryColorLight,
+      FeedbackCategory.route: AppColors.primaryLight,
       FeedbackCategory.general: AppColors.grey,
       FeedbackCategory.suggestion: AppColors.successColor,
       FeedbackCategory.complaint: AppColors.dangerColor,
