@@ -223,76 +223,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
-          const SizedBox(height: AppDesign.spaceXL),
           _buildHistoryCard(),
           const SizedBox(height: AppDesign.spaceXL),
           _buildSelectionMethods(),
           const SizedBox(height: AppDesign.spaceXL),
           _buildRecentBuses(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                ),
-                child: const Icon(
-                  Icons.feedback_outlined,
-                  color: AppColors.primaryColor,
-                  size: AppDesign.iconLG,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Share Your Experience',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: AppDesign.spaceXS),
-                    Text(
-                      'Help us improve our service by providing feedback about the bus or driver',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -306,14 +241,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.primaryColor.withOpacity(0.9),
-              AppColors.primaryDark.withOpacity(0.9),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: const [
             BoxShadow(
@@ -328,43 +256,43 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: AppColors.primaryColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
               ),
               child: const Icon(
                 Icons.history_rounded,
-                color: Colors.white,
+                color: AppColors.primaryColor,
                 size: AppDesign.iconLG,
               ),
             ),
             const SizedBox(width: AppDesign.spaceLG),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'View Feedback History',
                     style: TextStyle(
                       fontSize: AppDesign.textLG,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppDesign.spaceXS),
+                  SizedBox(height: AppDesign.spaceXS),
                   Text(
                     'Check your previous feedback and status',
                     style: TextStyle(
                       fontSize: AppDesign.textMD,
-                      color: Colors.white.withOpacity(0.85),
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            Icon(
+            const Icon(
               Icons.arrow_forward_rounded,
-              color: Colors.white.withOpacity(0.7),
+              color: AppColors.textSecondary,
               size: 24,
             ),
           ],
