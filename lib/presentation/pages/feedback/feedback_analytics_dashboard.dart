@@ -228,7 +228,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -654,7 +654,7 @@ class _FeedbackAnalyticsDashboardState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: AppColors.greyLight,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
