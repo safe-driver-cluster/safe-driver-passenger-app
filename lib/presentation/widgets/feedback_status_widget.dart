@@ -12,11 +12,11 @@ class FeedbackStatusWidget extends StatelessWidget {
   final VoidCallback? onStatusUpdate;
 
   const FeedbackStatusWidget({
-    Key? key,
+    super.key,
     required this.feedback,
     required this.auditLogs,
     this.onStatusUpdate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,8 @@ class FeedbackStatusWidget extends StatelessWidget {
         if (feedback.hasResponse) _buildResponseSection(context),
 
         // Update status button
-        if (onStatusUpdate != null && feedback.status != FeedbackStatus.resolved)
+        if (onStatusUpdate != null &&
+            feedback.status != FeedbackStatus.resolved)
           ElevatedButton.icon(
             onPressed: onStatusUpdate,
             icon: const Icon(Icons.edit),
@@ -96,11 +97,10 @@ class FeedbackStatusWidget extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       feedback.status.toString().split('.').last.toUpperCase(),
-                      style:
-                          Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: _getStatusColor(feedback.status),
-                              ),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: _getStatusColor(feedback.status),
+                          ),
                     ),
                   ],
                 ),
@@ -129,7 +129,7 @@ class FeedbackStatusWidget extends StatelessWidget {
           color: Colors.green.withOpacity(0.2),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: Text(
+        child: const Text(
           '✓ Resolved',
           style: TextStyle(
             color: Colors.green,
@@ -228,17 +228,15 @@ class FeedbackStatusWidget extends StatelessWidget {
                     children: [
                       Text(
                         'Moved to ${log.toStatus.toString().split('.').last}',
-                        style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                       Text(
                         DateFormat('MMM d, y').format(log.timestamp),
-                        style:
-                            Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.gray,
-                                ),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppColors.gray,
+                            ),
                       ),
                     ],
                   ),
@@ -286,7 +284,7 @@ class FeedbackStatusWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.green,
                 size: 20,
@@ -365,15 +363,14 @@ class ResolutionMetricsWidget extends StatelessWidget {
   final List<FeedbackModel> feedbacks;
 
   const ResolutionMetricsWidget({
-    Key? key,
+    super.key,
     required this.feedbacks,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    final resolved = feedbacks
-        .where((f) => f.status == FeedbackStatus.resolved)
-        .length;
+    final resolved =
+        feedbacks.where((f) => f.status == FeedbackStatus.resolved).length;
     final inReview =
         feedbacks.where((f) => f.status == FeedbackStatus.inReview).length;
     final responded =
