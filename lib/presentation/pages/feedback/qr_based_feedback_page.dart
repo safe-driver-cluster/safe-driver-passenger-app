@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../core/constants/color_constants.dart';
-import '../../../core/constants/design_constants.dart';
-import '../../../data/models/feedback_model.dart';
 
 /// Complete QR-based feedback system page
 class QRBasedFeedbackPage extends StatefulWidget {
@@ -97,7 +95,8 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error, color: AppColors.errorColor, size: 48),
+                  const Icon(Icons.error,
+                      color: AppColors.errorColor, size: 48),
                   const SizedBox(height: 16),
                   Text('Camera Error: ${error.errorCode}'),
                 ],
@@ -245,7 +244,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
         child: Container(
           width: cornerSize,
           height: cornerSize,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               top: BorderSide(
                 color: AppColors.primaryColor,
@@ -266,7 +265,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
         child: Container(
           width: cornerSize,
           height: cornerSize,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               top: BorderSide(
                 color: AppColors.primaryColor,
@@ -287,7 +286,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
         child: Container(
           width: cornerSize,
           height: cornerSize,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(
                 color: AppColors.primaryColor,
@@ -308,7 +307,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
         child: Container(
           width: cornerSize,
           height: cornerSize,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(
                 color: AppColors.primaryColor,
@@ -484,7 +483,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                       color: AppColors.grey.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.edit,
                       color: AppColors.primaryColor,
                       size: 20,
