@@ -421,12 +421,13 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ],
           ),
           child: ValueListenableBuilder(
-            valueListenable:
-                ref.read(feedbackControllerProvider.notifier).recentBusesNotifier,
+            valueListenable: ref
+                .read(feedbackControllerProvider.notifier)
+                .recentBusesNotifier,
             builder: (context, buses, _) {
               if (buses.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                return const Padding(
+                  padding: EdgeInsets.all(AppDesign.spaceMD),
                   child: Text(
                     'No recent buses available',
                     style: TextStyle(
@@ -869,8 +870,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 }
 
                 return ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppDesign.spaceLG),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
                   itemCount: buses.length,
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: AppDesign.spaceSM),
