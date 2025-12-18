@@ -100,6 +100,12 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
     } catch (e, stackTrace) {
       debugPrint('❌ FeedbackController: Error loading bus data: $e');
       debugPrint('Stack trace: $stackTrace');
+      _busDataLoading.value = false;
+      _recentBuses.value = [];
+      _availableBuses.value = [];
+    }
+  }
+
   /// Search bus by number from Firebase
   Future<BusModel?> searchBusByNumber(String busNumber) async {
     try {
