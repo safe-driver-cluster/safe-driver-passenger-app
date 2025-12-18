@@ -198,7 +198,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.gray,
+                  color: AppColors.grey,
                 ),
           ),
           const SizedBox(height: 8),
