@@ -4,6 +4,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../controllers/feedback_controller.dart';
 import 'feedback_submission_page.dart';
 
 class FeedbackSystemPage extends ConsumerStatefulWidget {
@@ -23,6 +24,10 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // Load bus data from Firebase on init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(feedbackControllerProvider.notifier).loadBusData();
+    });
   }
 
   @override
@@ -415,17 +420,36 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               ),
             ],
           ),
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _getRecentBuses().length,
-            separatorBuilder: (context, index) => const Divider(
-              color: AppColors.greyLight,
-              height: 1,
-            ),
-            itemBuilder: (context, index) {
-              final bus = _getRecentBuses()[index];
-              return _buildRecentBusItem(bus);
+          child: ValueListenableBuilder(
+            valueListenable:
+                ref.read(feedbackControllerProvider.notifier).recentBusesNotifier,
+            builder: (context, buses, _) {
+              if (buses.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  child: Text(
+                    'No recent buses available',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppDesign.textMD,
+                    ),
+                  ),
+                );
+              }
+
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: buses.length,
+                separatorBuilder: (context, index) => const Divider(
+                  color: AppColors.greyLight,
+                  height: 1,
+                ),
+                itemBuilder: (context, index) {
+                  final bus = buses[index];
+                  return _buildRecentBusItem(bus);
+                },
+              );
             },
           ),
         ),
@@ -433,7 +457,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
-  Widget _buildRecentBusItem(Map<String, String> bus) {
+  Widget _buildRecentBusItem(bus) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AppDesign.spaceLG,
@@ -451,7 +475,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         ),
       ),
       title: Text(
-        'Bus ${bus['number']}',
+        'Bus ${bus.busNumber}',
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -459,7 +483,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         ),
       ),
       subtitle: Text(
-        bus['route']!,
+        bus.routeNumber,
         style: const TextStyle(
           fontSize: 14,
           color: AppColors.textSecondary,
@@ -470,7 +494,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         color: AppColors.textHint,
         size: 16,
       ),
-      onTap: () => _selectBus(bus['number']!),
+      onTap: () => _selectBus(bus.busNumber),
     );
   }
 
@@ -797,8 +821,6 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildBusSelectionBottomSheet() {
-    final buses = _getAvailableBuses();
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -835,15 +857,28 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AppDesign.spaceLG),
-              itemCount: buses.length,
-              separatorBuilder: (context, index) =>
-                  const SizedBox(height: AppDesign.spaceSM),
-              itemBuilder: (context, index) {
-                final bus = buses[index];
-                return _buildBusSelectionItem(bus);
+            child: ValueListenableBuilder(
+              valueListenable: ref
+                  .read(feedbackControllerProvider.notifier)
+                  .availableBusesNotifier,
+              builder: (context, buses, _) {
+                if (buses.isEmpty) {
+                  return const Center(
+                    child: Text('No buses available'),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppDesign.spaceLG),
+                  itemCount: buses.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: AppDesign.spaceSM),
+                  itemBuilder: (context, index) {
+                    final bus = buses[index];
+                    return _buildBusSelectionItem(bus);
+                  },
+                );
               },
             ),
           ),
@@ -852,11 +887,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
-  Widget _buildBusSelectionItem(Map<String, String> bus) {
+  Widget _buildBusSelectionItem(bus) {
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
-        _selectBus(bus['number']!);
+        _selectBus(bus.busNumber);
       },
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -887,7 +922,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bus ${bus['number']}',
+                    'Bus ${bus.busNumber}',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -895,7 +930,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                     ),
                   ),
                   Text(
-                    bus['route']!,
+                    bus.routeNumber,
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -952,24 +987,13 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   List<Map<String, String>> _getRecentBuses() {
-    return [
-      {'number': '101', 'route': 'City Center - Airport'},
-      {'number': '205', 'route': 'Mall - University'},
-      {'number': '150', 'route': 'Downtown - Suburbs'},
-    ];
+    // No longer used - using Firebase data from controller
+    return [];
   }
 
   List<Map<String, String>> _getAvailableBuses() {
-    return [
-      {'number': '101', 'route': 'City Center - Airport'},
-      {'number': '102', 'route': 'City Center - Airport'},
-      {'number': '150', 'route': 'Downtown - Suburbs'},
-      {'number': '151', 'route': 'Downtown - Suburbs'},
-      {'number': '205', 'route': 'Mall - University'},
-      {'number': '206', 'route': 'Mall - University'},
-      {'number': '301', 'route': 'Beach - Mountains'},
-      {'number': '302', 'route': 'Beach - Mountains'},
-    ];
+    // No longer used - using Firebase data from controller
+    return [];
   }
 }
 
