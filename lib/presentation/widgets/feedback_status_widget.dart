@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/themes/app_theme.dart';
 import '../../../data/models/feedback_extended.dart';
 import '../../../data/models/feedback_model.dart';
 
@@ -53,7 +52,7 @@ class FeedbackStatusWidget extends StatelessWidget {
             icon: const Icon(Icons.edit),
             label: const Text('Update Status'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: Colors.blue,
               minimumSize: const Size(double.infinity, 48),
             ),
           ),
@@ -91,7 +90,7 @@ class FeedbackStatusWidget extends StatelessWidget {
                     Text(
                       'Current Status',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: Colors.grey,
                           ),
                     ),
                     const SizedBox(height: 4),
@@ -112,7 +111,7 @@ class FeedbackStatusWidget extends StatelessWidget {
           Text(
             'Last updated: ${DateFormat('MMM d, y • hh:mm a').format(feedback.respondedAt ?? feedback.timestamp)}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.gray,
+                  color: Colors.grey,
                 ),
           ),
         ],
@@ -176,7 +175,7 @@ class FeedbackStatusWidget extends StatelessWidget {
                 child: Container(
                   height: 20,
                   width: 2,
-                  color: AppColors.gray.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.3),
                 ),
               ),
           ],
@@ -200,7 +199,7 @@ class FeedbackStatusWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: isLatest
                   ? _getStatusColor(log.toStatus)
-                  : AppColors.gray.withOpacity(0.3),
+                  : Colors.grey.withOpacity(0.3),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -217,7 +216,7 @@ class FeedbackStatusWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.lightGray,
+                color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -235,7 +234,7 @@ class FeedbackStatusWidget extends StatelessWidget {
                       Text(
                         DateFormat('MMM d, y').format(log.timestamp),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.gray,
+                              color: Colors.grey,
                             ),
                       ),
                     ],
@@ -245,7 +244,7 @@ class FeedbackStatusWidget extends StatelessWidget {
                     Text(
                       'Reason: ${log.reason}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: Colors.grey,
                             fontStyle: FontStyle.italic,
                           ),
                     ),
@@ -255,7 +254,7 @@ class FeedbackStatusWidget extends StatelessWidget {
                     Text(
                       'By: ${log.actionPerformedBy}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: Colors.grey,
                           ),
                     ),
                   ],
@@ -308,7 +307,7 @@ class FeedbackStatusWidget extends StatelessWidget {
           Text(
             'Responded by: ${feedback.respondedBy ?? 'Admin'} on ${DateFormat('MMM d, y • hh:mm a').format(feedback.respondedAt ?? DateTime.now())}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.gray,
+                  color: Colors.grey,
                 ),
           ),
           const SizedBox(height: 16),
@@ -321,7 +320,7 @@ class FeedbackStatusWidget extends StatelessWidget {
   Color _getStatusColor(FeedbackStatus status) {
     switch (status) {
       case FeedbackStatus.submitted:
-        return AppColors.gray;
+        return Colors.grey;
       case FeedbackStatus.received:
         return Colors.blue;
       case FeedbackStatus.inReview:
@@ -331,7 +330,7 @@ class FeedbackStatusWidget extends StatelessWidget {
       case FeedbackStatus.resolved:
         return Colors.green;
       case FeedbackStatus.closed:
-        return AppColors.gray;
+        return Colors.grey;
       case FeedbackStatus.escalated:
         return Colors.red;
     }
@@ -382,7 +381,7 @@ class ResolutionMetricsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lightGray,
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
