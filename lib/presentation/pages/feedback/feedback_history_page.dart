@@ -71,23 +71,23 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
   }
 
   Widget _buildEmptyState() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+    return const SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: AppDesign.spaceXL),
+          SizedBox(height: AppDesign.spaceXL),
           ProfessionalCard(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.history_rounded,
                   size: 64,
                   color: AppColors.textSecondary,
                 ),
-                const SizedBox(height: AppDesign.spaceLG),
-                const Text(
+                SizedBox(height: AppDesign.spaceLG),
+                Text(
                   'No Feedback Yet',
                   style: TextStyle(
                     fontSize: AppDesign.text2XL,
@@ -95,8 +95,8 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceSM),
-                const Text(
+                SizedBox(height: AppDesign.spaceSM),
+                Text(
                   'Share your feedback about buses and drivers to get started',
                   textAlign: TextAlign.center,
                   style: TextStyle(
