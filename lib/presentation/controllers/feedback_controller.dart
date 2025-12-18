@@ -92,11 +92,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       // Sort by last updated for recent buses
       final sortedBuses = busesToUse.toList();
-      sortedBuses.sort((a, b) {
-        final aTime = a.lastUpdated ?? DateTime(2000);
-        final bTime = b.lastUpdated ?? DateTime(2000);
-        return bTime.compareTo(aTime);
-      });
+      sortedBuses.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
 
       final recentList = sortedBuses.take(5).toList();
       _recentBuses.value = recentList;
