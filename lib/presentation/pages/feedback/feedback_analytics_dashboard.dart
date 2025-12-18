@@ -531,7 +531,7 @@ class _FeedbackAnalyticsDashboardState
         Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 11,
             color: AppColors.grey,
           ),
