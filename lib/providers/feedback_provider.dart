@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models/feedback_extended.dart';
@@ -5,7 +6,6 @@ import '../data/models/feedback_model.dart';
 import '../data/repositories/extended_feedback_repository.dart';
 import '../presentation/controllers/enhanced_feedback_controller.dart';
 import '../services/media_service.dart';
-import 'app_providers.dart';
 
 // Media Service Provider
 final mediaServiceProvider = Provider((ref) => MediaService());
