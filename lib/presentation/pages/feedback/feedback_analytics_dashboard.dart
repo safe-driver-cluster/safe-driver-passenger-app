@@ -205,7 +205,7 @@ class _FeedbackAnalyticsDashboardState
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.gray,
+                  color: AppColors.grey,
                 ),
           ),
         ],
@@ -265,7 +265,7 @@ class _FeedbackAnalyticsDashboardState
                       child: LinearProgressIndicator(
                         value: maxCount > 0 ? count / maxCount : 0,
                         minHeight: 8,
-                        backgroundColor: AppColors.gray.withOpacity(0.3),
+                        backgroundColor: AppColors.grey.withOpacity(0.3),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           _getRatingColor(rating),
                         ),
@@ -531,9 +531,9 @@ class _FeedbackAnalyticsDashboardState
         Text(
           label,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
-            color: AppColors.gray,
+            color: AppColors.grey,
           ),
         ),
       ],
@@ -716,7 +716,7 @@ class _FeedbackAnalyticsDashboardState
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 11,
-            color: AppColors.gray,
+            color: AppColors.grey,
           ),
         ),
       ],
