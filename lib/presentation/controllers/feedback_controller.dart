@@ -55,7 +55,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   Future<void> loadBusData() async {
     try {
       _busDataLoading.value = true;
-      
+
       // Load all active buses
       final buses = await _busRepository.getAllBuses();
 
@@ -67,9 +67,8 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       // Sort by last updated for recent buses
       final sortedBuses = activeBuses.toList();
-      sortedBuses.sort((a, b) =>
-          (b.lastUpdated ?? DateTime(2000))
-              .compareTo(a.lastUpdated ?? DateTime(2000)));
+      sortedBuses.sort((a, b) => (b.lastUpdated ?? DateTime(2000))
+          .compareTo(a.lastUpdated ?? DateTime(2000)));
 
       _recentBuses.value = sortedBuses.take(5).toList();
       _availableBuses.value = activeBuses;
