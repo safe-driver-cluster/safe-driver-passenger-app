@@ -11,18 +11,19 @@ class FeedbackAnalyticsDashboard extends StatefulWidget {
   final String? categoryFilter;
 
   const FeedbackAnalyticsDashboard({
-    Key? key,
+    super.key,
     required this.feedbacks,
     this.dateRange,
     this.categoryFilter,
-  }) : super(key: key);
+  });
 
   @override
   State<FeedbackAnalyticsDashboard> createState() =>
       _FeedbackAnalyticsDashboardState();
 }
 
-class _FeedbackAnalyticsDashboardState extends State<FeedbackAnalyticsDashboard> {
+class _FeedbackAnalyticsDashboardState
+    extends State<FeedbackAnalyticsDashboard> {
   late List<FeedbackModel> _filteredFeedback;
 
   @override
@@ -410,50 +411,46 @@ class _FeedbackAnalyticsDashboardState extends State<FeedbackAnalyticsDashboard>
                 ?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
-          ...sortedCategories
-              .where((e) => e.value > 0)
-              .map((entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          child: Text(
-                            entry.key.toString().split('.').last,
-                            style: Theme.of(context).textTheme.bodySmall,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: _filteredFeedback.isEmpty
-                                  ? 0
-                                  : entry.value / _filteredFeedback.length,
-                              minHeight: 6,
-                              backgroundColor:
-                                  AppColors.gray.withOpacity(0.3),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                _getCategoryColor(entry.key),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          entry.value.toString(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ],
+          ...sortedCategories.where((e) => e.value > 0).map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: Text(
+                        entry.key.toString().split('.').last,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ))
-              .toList(),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: _filteredFeedback.isEmpty
+                              ? 0
+                              : entry.value / _filteredFeedback.length,
+                          minHeight: 6,
+                          backgroundColor: AppColors.gray.withOpacity(0.3),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _getCategoryColor(entry.key),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      entry.value.toString(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              )),
         ],
       ),
     );
@@ -626,8 +623,9 @@ class _FeedbackAnalyticsDashboardState extends State<FeedbackAnalyticsDashboard>
 
   /// Build resolution metrics
   Widget _buildResolutionMetrics(BuildContext context) {
-    final resolved =
-        _filteredFeedback.where((f) => f.status == FeedbackStatus.resolved).length;
+    final resolved = _filteredFeedback
+        .where((f) => f.status == FeedbackStatus.resolved)
+        .length;
     final pending = _filteredFeedback
         .where((f) =>
             f.status != FeedbackStatus.resolved &&
@@ -640,18 +638,15 @@ class _FeedbackAnalyticsDashboardState extends State<FeedbackAnalyticsDashboard>
 
     // Calculate average resolution time
     final resolvedFeedback = _filteredFeedback
-        .where((f) =>
-            f.status == FeedbackStatus.resolved && f.respondedAt != null)
+        .where(
+            (f) => f.status == FeedbackStatus.resolved && f.respondedAt != null)
         .toList();
 
     double avgResolutionHours = 0.0;
     if (resolvedFeedback.isNotEmpty) {
       final totalHours = resolvedFeedback.fold<double>(
         0,
-        (sum, f) => sum +
-            f.respondedAt!
-                .difference(f.timestamp)
-                .inHours,
+        (sum, f) => sum + f.respondedAt!.difference(f.timestamp).inHours,
       );
       avgResolutionHours = totalHours / resolvedFeedback.length;
     }
