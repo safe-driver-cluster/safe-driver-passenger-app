@@ -400,7 +400,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
 
   /// Extract bus number from QR data
   String _extractBusNumber(String qrData) {
-    // Try to extract bus number from various QR formats
+
     if (qrData.contains('bus/')) {
       final parts = qrData.split('bus/');
       return parts.last.split('/').first;
