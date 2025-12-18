@@ -1,6 +1,6 @@
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -69,17 +69,17 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.analytics_outlined,
             size: 64,
             color: AppColors.textSecondary,
           ),
-          const SizedBox(height: AppDesign.spaceLG),
-          const Text(
+          SizedBox(height: AppDesign.spaceLG),
+          Text(
             'No Feedback Data Yet',
             style: TextStyle(
               fontSize: AppDesign.text2XL,
@@ -87,7 +87,7 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: AppDesign.spaceSM),
+          SizedBox(height: AppDesign.spaceSM),
           Text(
             'Analytics will appear once you receive feedback',
             style: TextStyle(
@@ -102,7 +102,8 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
 
   Widget _buildSummaryCards(statistics) {
     final totalFeedback = statistics['total'] ?? 0;
-    final averageRating = statistics['averageRating']?.toStringAsFixed(1) ?? '0';
+    final averageRating =
+        statistics['averageRating']?.toStringAsFixed(1) ?? '0';
     final submitted = statistics['byStatus']?['submitted'] ?? 0;
     final reviewed = statistics['byStatus']?['reviewed'] ?? 0;
 
@@ -451,8 +452,7 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
     }
 
     // Get high-rated feedback
-    final highRated =
-        feedbacks.where((f) => f.rating.overall >= 4).toList();
+    final highRated = feedbacks.where((f) => f.rating.overall >= 4).toList();
     final lowRated = feedbacks.where((f) => f.rating.overall <= 2).toList();
 
     return Container(
