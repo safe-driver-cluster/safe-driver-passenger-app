@@ -19,7 +19,7 @@ class MediaUploadWidget extends StatefulWidget {
   final bool allowMultiple;
 
   const MediaUploadWidget({
-    Key? key,
+    super.key,
     required this.onFilesSelected,
     this.onFileRemoved,
     this.onProgressUpdate,
@@ -38,7 +38,7 @@ class MediaUploadWidget extends StatefulWidget {
     this.allowVideo = true,
     this.allowImage = true,
     this.allowMultiple = true,
-  }) : super(key: key);
+  });
 
   @override
   State<MediaUploadWidget> createState() => _MediaUploadWidgetState();
@@ -48,7 +48,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
   final ImagePicker _imagePicker = ImagePicker();
   final List<File> _selectedFiles = [];
   final List<VideoPlayerController> _videoControllers = [];
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void dispose() {
@@ -172,7 +172,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
           child: GestureDetector(
             onTap: () => _removeFile(index),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.errorColor,
                 shape: BoxShape.circle,
               ),
@@ -220,7 +220,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
             return Image.file(snapshot.data as File, fit: BoxFit.cover);
           }
         }
-        return Center(
+        return const Center(
           child: Icon(
             Icons.videocam,
             color: AppColors.grey,
@@ -237,7 +237,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.description,
             color: AppColors.grey,
             size: 32,
@@ -365,14 +365,14 @@ class UploadProgressWidget extends StatelessWidget {
   final String? errorMessage;
 
   const UploadProgressWidget({
-    Key? key,
+    super.key,
     required this.progress,
     required this.fileName,
     this.onCancel,
     this.isCompleted = false,
     this.hasFailed = false,
     this.errorMessage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -422,9 +422,10 @@ class UploadProgressWidget extends StatelessWidget {
                 icon: const Icon(Icons.close),
               )
             else if (isCompleted)
-              Icon(Icons.check_circle, color: AppColors.successColor, size: 24)
+              const Icon(Icons.check_circle,
+                  color: AppColors.successColor, size: 24)
             else
-              Icon(Icons.error, color: AppColors.errorColor, size: 24),
+              const Icon(Icons.error, color: AppColors.errorColor, size: 24),
           ],
         ),
         const SizedBox(height: 8),
@@ -453,13 +454,13 @@ class AttachmentPreviewWidget extends StatelessWidget {
   final bool isLoading;
 
   const AttachmentPreviewWidget({
-    Key? key,
+    super.key,
     required this.fileUrl,
     required this.fileName,
     required this.fileType,
     this.onDelete,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -492,7 +493,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
             child: GestureDetector(
               onTap: onDelete,
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.errorColor,
                   shape: BoxShape.circle,
                 ),
@@ -510,7 +511,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
   }
 
   Widget _buildVideoThumbnail() {
-    return Center(
+    return const Center(
       child: Icon(
         Icons.play_circle_outline,
         color: AppColors.grey,
@@ -520,7 +521,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
   }
 
   Widget _buildDocumentWidget() {
-    return Center(
+    return const Center(
       child: Icon(
         Icons.description,
         color: AppColors.grey,
@@ -530,7 +531,7 @@ class AttachmentPreviewWidget extends StatelessWidget {
   }
 
   Widget _buildErrorWidget() {
-    return Center(
+    return const Center(
       child: Icon(
         Icons.error_outline,
         color: AppColors.errorColor,
