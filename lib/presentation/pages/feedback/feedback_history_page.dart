@@ -23,10 +23,15 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
     // Load user's feedback when page initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = ref.read(authStateProvider);
+      debugPrint('📜 FeedbackHistoryPage: User UID: ${authState.user?.uid}');
+      
       if (authState.user?.uid != null) {
+        debugPrint('🔄 FeedbackHistoryPage: Loading feedback for user ${authState.user!.uid}');
         ref
             .read(feedbackControllerProvider.notifier)
             .loadUserFeedback(authState.user!.uid);
+      } else {
+        debugPrint('⚠️ FeedbackHistoryPage: No user UID available');
       }
     });
   }
