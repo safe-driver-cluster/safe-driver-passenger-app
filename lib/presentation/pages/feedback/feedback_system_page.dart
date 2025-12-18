@@ -40,8 +40,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   @override
   Widget build(BuildContext context) {
-    // Watch the feedback controller state to trigger rebuilds
-    final feedbackState = ref.watch(feedbackControllerProvider);
+    // Watch the feedback controller state to ensure it's initialized
+    ref.watch(feedbackControllerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
