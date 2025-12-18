@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
@@ -79,7 +80,7 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
               '${_selectedFiles.length}/${widget.maxFiles} files selected',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.gray,
-              ),
+                  ),
             ),
           ),
       ],
@@ -93,9 +94,8 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
         if (widget.allowImage)
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: _selectedFiles.length < widget.maxFiles
-                  ? _pickImage
-                  : null,
+              onPressed:
+                  _selectedFiles.length < widget.maxFiles ? _pickImage : null,
               icon: const Icon(Icons.image),
               label: const Text('Photo'),
               style: ElevatedButton.styleFrom(
@@ -104,14 +104,12 @@ class _MediaUploadWidgetState extends State<MediaUploadWidget> {
               ),
             ),
           ),
-        if (widget.allowImage && widget.allowVideo)
-          const SizedBox(width: 12),
+        if (widget.allowImage && widget.allowVideo) const SizedBox(width: 12),
         if (widget.allowVideo)
           Expanded(
             child: ElevatedButton.icon(
-              onPressed: _selectedFiles.length < widget.maxFiles
-                  ? _pickVideo
-                  : null,
+              onPressed:
+                  _selectedFiles.length < widget.maxFiles ? _pickVideo : null,
               icon: const Icon(Icons.videocam),
               label: const Text('Video'),
               style: ElevatedButton.styleFrom(
