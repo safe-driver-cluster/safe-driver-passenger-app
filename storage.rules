@@ -14,9 +14,23 @@ service firebase.storage {
     function isValidImageFile() {
       return request.resource.contentType.matches('image/.*');
     }
+
+    function isValidVideoFile() {
+      return request.resource.contentType.matches('video/.*');
+    }
+
+    function isValidMediaFile() {
+      return request.resource.contentType.matches('(image|video)/.*') ||
+             request.resource.contentType == 'application/pdf' ||
+             request.resource.contentType.matches('application/.*');
+    }
     
     function isValidFileSize() {
-      return request.resource.size < 5 * 1024 * 1024; // 5MB limit
+      return request.resource.size < 10 * 1024 * 1024; // 10MB limit for media
+    }
+
+    function isValidAttachmentSize() {
+      return request.resource.size < 20 * 1024 * 1024; // 20MB for multiple attachments
     }
     
     // User profile images
@@ -32,6 +46,31 @@ service firebase.storage {
       allow read: if isOwner(userId);
       allow write: if isOwner(userId) && 
                       isValidFileSize();
+    }
+
+    // Feedback attachments - enhanced for multiple file types
+    match /feedback/attachments/{userId}/{feedbackId}/{fileName} {
+      // Users can read their own feedback attachments
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Users can upload media to their own feedback
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) &&
+                      isValidMediaFile() &&
+                      isValidFileSize();
+      
+      // Users can delete their own attachments
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Batch feedback attachments upload
+    match /feedback/batch/{userId}/{batchId}/{fileName} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated() && 
+                      isOwner(userId) &&
+                      isValidMediaFile() &&
+                      isValidAttachmentSize();
+      allow delete: if isAuthenticated() && isOwner(userId);
     }
     
     // Bus images - public read, admin write only
