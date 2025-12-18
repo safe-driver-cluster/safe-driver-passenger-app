@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
@@ -40,14 +41,16 @@ class MediaService {
       uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
         final progress = snapshot.bytesTransferred / snapshot.totalBytes;
         onProgress?.call(progress);
-        debugPrint('📤 Upload progress: ${(progress * 100).toStringAsFixed(2)}%');
+        debugPrint(
+            '📤 Upload progress: ${(progress * 100).toStringAsFixed(2)}%');
       });
 
       await uploadTask;
 
       // Get download URL
       final downloadUrl = await fileRef.getDownloadURL();
-      debugPrint('✅ MediaService: File uploaded successfully. URL: $downloadUrl');
+      debugPrint(
+          '✅ MediaService: File uploaded successfully. URL: $downloadUrl');
 
       return downloadUrl;
     } catch (e) {
