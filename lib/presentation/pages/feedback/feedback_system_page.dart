@@ -26,7 +26,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     _tabController = TabController(length: 2, vsync: this);
     // Load bus data from Firebase on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🚀 FeedbackSystemPage: Calling loadBusData...');
       ref.read(feedbackControllerProvider.notifier).loadBusData();
+      debugPrint('✅ FeedbackSystemPage: loadBusData called');
     });
   }
 
@@ -428,15 +430,30 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           child: ValueListenableBuilder(
             valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
+              debugPrint('🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
+              
               if (buses.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(AppDesign.spaceMD),
-                  child: Text(
-                    'No recent buses available',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: AppDesign.textMD,
-                    ),
+                return Padding(
+                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'No recent buses available',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: AppDesign.textMD,
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceSM),
+                      ElevatedButton(
+                        onPressed: () {
+                          debugPrint('🔄 Retrying bus data load...');
+                          controller.loadBusData();
+                        },
+                        child: const Text('Retry Loading'),
+                      ),
+                    ],
                   ),
                 );
               }
