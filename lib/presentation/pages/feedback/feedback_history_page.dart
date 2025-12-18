@@ -6,7 +6,7 @@ import '../../../data/models/feedback_model.dart';
 
 /// Page displaying user's feedback history with filtering and search
 class FeedbackHistoryPage extends StatefulWidget {
-  const FeedbackHistoryPage({Key? key}) : super(key: key);
+  const FeedbackHistoryPage({super.key});
 
   @override
   State<FeedbackHistoryPage> createState() => _FeedbackHistoryPageState();
@@ -15,7 +15,7 @@ class FeedbackHistoryPage extends StatefulWidget {
 class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
   List<FeedbackModel> _filteredFeedback = [];
-  List<FeedbackModel> _allFeedback = [];
+  final List<FeedbackModel> _allFeedback = [];
 
   // Filter state
   FeedbackStatus? _selectedStatus;
@@ -831,7 +831,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
           ),
         ),
       ),
-    );
+    )
   }
 
   Widget _buildModernHeader(BuildContext context) {
