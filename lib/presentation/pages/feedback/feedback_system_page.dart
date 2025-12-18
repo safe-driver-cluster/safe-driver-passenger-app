@@ -430,8 +430,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           child: ValueListenableBuilder(
             valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
-              debugPrint('🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
-              
+              debugPrint(
+                  '🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
+
               if (buses.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(AppDesign.spaceMD),
