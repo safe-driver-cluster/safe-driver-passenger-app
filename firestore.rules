@@ -45,6 +45,44 @@ service cloud.firestore {
       allow read, write: if false; // Only Cloud Functions can access
     }
     
+    // Feedback collection - users can create, read own feedback, and admins manage
+    match /feedback/{feedbackId} {
+      allow create: if isAuthenticated() && 
+                       'userId' in request.resource.data &&
+                       request.resource.data.userId == request.auth.uid &&
+                       'timestamp' in request.resource.data &&
+                       'status' in request.resource.data;
+      
+      // Users can read their own feedback
+      allow read: if isAuthenticated() && 
+                     (request.resource.data.userId == request.auth.uid ||
+                      request.auth.token.admin == true);
+      
+      // Admins can read all feedback
+      allow read: if isAuthenticated() && request.auth.token.admin == true;
+      
+      // Users can update their own feedback status
+      allow update: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Admins can delete feedback
+      allow delete: if isAuthenticated() && request.auth.token.admin == true;
+      
+      // Audit logs subcollection
+      match /auditLogs/{auditId} {
+        allow read: if isAuthenticated() && 
+                       (resource.data.userId == request.auth.uid ||
+                        request.auth.token.admin == true);
+        allow write: if isAuthenticated() && request.auth.token.admin == true;
+      }
+    }
+    
+    // Feedback audit logs
+    match /feedback_audit_logs/{auditId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.token.admin == true;
+    }
+    
     // Buses collection - public read access for authenticated users
     match /buses/{busId} {
       allow read: if isAuthenticated();
