@@ -436,25 +436,12 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               if (buses.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(AppDesign.spaceMD),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'No recent buses available',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: AppDesign.textMD,
-                        ),
-                      ),
-                      const SizedBox(height: AppDesign.spaceSM),
-                      ElevatedButton(
-                        onPressed: () {
-                          debugPrint('🔄 Retrying bus data load...');
-                          controller.loadBusData();
-                        },
-                        child: const Text('Retry Loading'),
-                      ),
-                    ],
+                  child: const Text(
+                    'No recent buses available',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: AppDesign.textMD,
+                    ),
                   ),
                 );
               }
