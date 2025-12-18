@@ -298,6 +298,81 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
+  Widget _buildHistoryCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/feedback-history');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primaryColor.withOpacity(0.9),
+              AppColors.primaryDark.withOpacity(0.9),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowLight,
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              ),
+              child: const Icon(
+                Icons.history_rounded,
+                color: Colors.white,
+                size: AppDesign.iconLG,
+              ),
+            ),
+            const SizedBox(width: AppDesign.spaceLG),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'View Feedback History',
+                    style: TextStyle(
+                      fontSize: AppDesign.textLG,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    'Check your previous feedback and status',
+                    style: TextStyle(
+                      fontSize: AppDesign.textMD,
+                      color: Colors.white.withOpacity(0.85),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white.withOpacity(0.7),
+              size: 24,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSelectionMethods() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
