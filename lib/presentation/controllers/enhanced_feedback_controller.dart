@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,8 +24,7 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
         super(const AsyncValue.data(null));
 
   // State management
-  final ValueNotifier<List<FeedbackModel>> _feedbackHistory =
-      ValueNotifier([]);
+  final ValueNotifier<List<FeedbackModel>> _feedbackHistory = ValueNotifier([]);
   final ValueNotifier<Map<String, dynamic>> _analyticsData = ValueNotifier({});
   final ValueNotifier<List<FeedbackAuditLog>> _auditLogs = ValueNotifier([]);
   final ValueNotifier<Map<String, AttachmentProgress>> _uploadProgress =
@@ -62,7 +62,8 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
 
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
-        final attachmentId = '${feedbackId}_${DateTime.now().millisecondsSinceEpoch}_$i';
+        final attachmentId =
+            '${feedbackId}_${DateTime.now().millisecondsSinceEpoch}_$i';
 
         // Initialize progress tracking
         progressMap[attachmentId] = AttachmentProgress(
@@ -94,7 +95,7 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
 
               // Calculate total progress
               final totalProgress = progressMap.values
-                  .fold<double>(0, (sum, p) => sum + p.progress) /
+                      .fold<double>(0, (sum, p) => sum + p.progress) /
                   progressMap.length;
               onTotalProgress?.call(totalProgress);
             },
@@ -110,8 +111,7 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
           );
           _uploadProgress.value = progressMap;
 
-          debugPrint(
-              '✅ EnhancedFeedbackController: File $i uploaded: $url');
+          debugPrint('✅ EnhancedFeedbackController: File $i uploaded: $url');
         } catch (fileError) {
           debugPrint(
               '❌ EnhancedFeedbackController: File $i upload failed: $fileError');
@@ -149,8 +149,8 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
       // Create attachments
       final attachments = <FeedbackAttachment>[];
       for (int i = 0; i < mediaUrls.length; i++) {
-        final fileName =
-            fileNames?[i] ?? 'attachment_${DateTime.now().millisecondsSinceEpoch}_$i';
+        final fileName = fileNames?[i] ??
+            'attachment_${DateTime.now().millisecondsSinceEpoch}_$i';
         final attachment = FeedbackAttachment(
           id: 'att_${DateTime.now().millisecondsSinceEpoch}_$i',
           fileName: fileName,
@@ -179,7 +179,8 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
       return updatedFeedback.id;
     } catch (e, stack) {
       debugPrint('❌ EnhancedFeedbackController: Error creating feedback: $e');
-      state = AsyncValue.error('Failed to create feedback with attachments: $e', stack);
+      state = AsyncValue.error(
+          'Failed to create feedback with attachments: $e', stack);
       return null;
     }
   }
@@ -213,8 +214,7 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
       debugPrint(
           '✅ EnhancedFeedbackController: Loaded ${history.length} feedback items');
     } catch (e, stack) {
-      state =
-          AsyncValue.error('Failed to load feedback history: $e', stack);
+      state = AsyncValue.error('Failed to load feedback history: $e', stack);
     }
   }
 
@@ -292,12 +292,11 @@ class EnhancedFeedbackController extends StateNotifier<AsyncValue<void>> {
       debugPrint('📊 EnhancedFeedbackController: Loading analytics data');
       state = const AsyncValue.loading();
 
-      final stats =
-          await _extendedRepository.getDetailedStatistics(
-            fromDate: fromDate,
-            toDate: toDate,
-            userId: userId,
-          );
+      final stats = await _extendedRepository.getDetailedStatistics(
+        fromDate: fromDate,
+        toDate: toDate,
+        userId: userId,
+      );
 
       _analyticsData.value = stats;
       state = const AsyncValue.data(null);
