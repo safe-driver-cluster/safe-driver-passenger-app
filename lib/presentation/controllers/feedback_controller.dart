@@ -133,7 +133,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final feedbackList = await _feedbackRepository.getAllFeedback();
       _feedbacks.value = feedbackList;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load feedback: $e', stack);
@@ -146,7 +146,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final userFeedback = await _feedbackRepository.getFeedbackByUser(userId);
       _feedbacks.value = userFeedback;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load user feedback: $e', stack);
@@ -159,7 +159,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.loading();
       final busFeedback = await _feedbackRepository.getFeedbackByBus(busId);
       _feedbacks.value = busFeedback;
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to load bus feedback: $e', stack);
@@ -241,7 +241,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 
       // Add to local state
       _feedbacks.value = [..._feedbacks.value, feedback];
-      await _updateStatistics();
+      await updateStatistics();
 
       debugPrint('📊 FeedbackController: Updated local state and statistics');
       state = const AsyncValue.data(null);
@@ -267,7 +267,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         return feedback;
       }).toList();
 
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to update feedback status: $e', stack);
@@ -285,7 +285,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
           .where((feedback) => feedback.id != feedbackId)
           .toList();
 
-      await _updateStatistics();
+      await updateStatistics();
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error('Failed to delete feedback: $e', stack);
@@ -361,7 +361,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   }
 
   /// Update statistics
-  Future<void> _updateStatistics() async {
+  Future<void> updateStatistics() async {
     final stats = <String, dynamic>{
       'total': _feedbacks.value.length,
       'byStatus': <String, int>{},
