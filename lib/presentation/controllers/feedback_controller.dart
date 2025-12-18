@@ -55,11 +55,13 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   Future<void> loadBusData() async {
     try {
       _busDataLoading.value = true;
-      debugPrint('🚀 FeedbackController: Starting to load bus data from Firebase...');
+      debugPrint(
+          '🚀 FeedbackController: Starting to load bus data from Firebase...');
 
       // Load all buses
       final buses = await _busRepository.getAllBuses();
-      debugPrint('✅ FeedbackController: Loaded ${buses.length} total buses from Firebase');
+      debugPrint(
+          '✅ FeedbackController: Loaded ${buses.length} total buses from Firebase');
 
       if (buses.isEmpty) {
         debugPrint('⚠️ FeedbackController: No buses found in Firebase');
@@ -70,32 +72,38 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       }
 
       // Filter active buses - check for both active and enRoute statuses
-      final activeBuses = buses
-          .where((bus) {
-            final isActive = bus.status == BusStatus.active || bus.status == BusStatus.enRoute;
-            if (isActive) {
-              debugPrint('✓ Bus ${bus.busNumber} is active (status: ${bus.status})');
-            }
-            return isActive;
-          })
-          .toList();
-      
-      debugPrint('📋 FeedbackController: Found ${activeBuses.length} active buses');
+      final activeBuses = buses.where((bus) {
+        final isActive =
+            bus.status == BusStatus.active || bus.status == BusStatus.enRoute;
+        if (isActive) {
+          debugPrint(
+              '✓ Bus ${bus.busNumber} is active (status: ${bus.status})');
+        }
+        return isActive;
+      }).toList();
+
+      debugPrint(
+          '📋 FeedbackController: Found ${activeBuses.length} active buses');
 
       // If no active buses found, use all buses as fallback
       final busesToUse = activeBuses.isNotEmpty ? activeBuses : buses;
-      debugPrint('📌 FeedbackController: Using ${busesToUse.length} buses for display');
+      debugPrint(
+          '📌 FeedbackController: Using ${busesToUse.length} buses for display');
 
       // Sort by last updated for recent buses
       final sortedBuses = busesToUse.toList();
-      sortedBuses.sort((a, b) => (b.lastUpdated ?? DateTime(2000))
-          .compareTo(a.lastUpdated ?? DateTime(2000)));
+      sortedBuses.sort((a, b) {
+        final aTime = a.lastUpdated ?? DateTime(2000);
+        final bTime = b.lastUpdated ?? DateTime(2000);
+        return bTime.compareTo(aTime);
+      });
 
       final recentList = sortedBuses.take(5).toList();
       _recentBuses.value = recentList;
       _availableBuses.value = busesToUse;
-      
-      debugPrint('✅ FeedbackController: Set recent buses: ${recentList.length}, available buses: ${busesToUse.length}');
+
+      debugPrint(
+          '✅ FeedbackController: Set recent buses: ${recentList.length}, available buses: ${busesToUse.length}');
       _busDataLoading.value = false;
     } catch (e, stackTrace) {
       debugPrint('❌ FeedbackController: Error loading bus data: $e');
