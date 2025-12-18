@@ -9,7 +9,7 @@ class MediaService {
 
   // Storage paths
   static const String _feedbackAttachmentsPath = 'feedback/attachments';
-  static const String _maxFileSize = 10485760; // 10 MB
+  static const int _maxFileSize = 10485760; // 10 MB
 
   /// Upload a single media file (image or video) with progress tracking
   Future<String> uploadFeedbackMedia({
