@@ -34,7 +34,6 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
   @override
   Widget build(BuildContext context) {
     final feedbackController = ref.read(feedbackControllerProvider.notifier);
-    final feedbacks = feedbackController.feedbacks;
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -59,9 +58,16 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
 
               // Content Area
               Expanded(
-                child: feedbacks.isEmpty
-                    ? _buildEmptyState()
-                    : _buildFeedbackList(feedbacks),
+                child: ValueListenableBuilder(
+                  valueListenable: feedbackController.feedbacksNotifier,
+                  builder: (context, feedbacks, _) {
+                    debugPrint(
+                        '📋 FeedbackHistoryPage: Feedbacks updated: ${feedbacks.length} items');
+                    return feedbacks.isEmpty
+                        ? _buildEmptyState()
+                        : _buildFeedbackList(feedbacks);
+                  },
+                ),
               ),
             ],
           ),
