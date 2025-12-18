@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../core/themes/app_theme.dart';
 import '../../../data/models/feedback_model.dart';
 
 /// Page displaying user's feedback history with filtering and search
@@ -76,16 +75,14 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
               : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.lightGray),
-          ),
             borderSide: const BorderSide(color: AppColors.greyLight),
           ),
         ),
         onChanged: (value) {
           setState(() => _applyFilters());
         },
-      ),  
-       );
+      );
+    }
   }
 
   /// Build active filters display
