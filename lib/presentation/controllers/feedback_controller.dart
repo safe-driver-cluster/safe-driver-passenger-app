@@ -2,22 +2,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/email_service.dart';
+import '../../data/models/bus_model.dart';
 import '../../data/models/feedback_model.dart';
 import '../../data/models/location_model.dart';
+import '../../data/repositories/bus_repository.dart';
 import '../../data/repositories/feedback_repository.dart';
 import '../../providers/auth_provider.dart';
 
 /// Controller for feedback operations and state management
 class FeedbackController extends StateNotifier<AsyncValue<void>> {
   final FeedbackRepository _feedbackRepository;
+  final BusRepository _busRepository;
   final EmailService _emailService;
   final Ref _ref;
 
   FeedbackController({
     required FeedbackRepository feedbackRepository,
+    required BusRepository busRepository,
     required EmailService emailService,
     required Ref ref,
   })  : _feedbackRepository = feedbackRepository,
+        _busRepository = busRepository,
         _emailService = emailService,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -26,17 +31,80 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   final ValueNotifier<List<FeedbackModel>> _feedbacks = ValueNotifier([]);
   final ValueNotifier<FeedbackModel?> _selectedFeedback = ValueNotifier(null);
   final ValueNotifier<Map<String, dynamic>> _statistics = ValueNotifier({});
+  final ValueNotifier<List<BusModel>> _recentBuses = ValueNotifier([]);
+  final ValueNotifier<List<BusModel>> _availableBuses = ValueNotifier([]);
+  final ValueNotifier<bool> _busDataLoading = ValueNotifier(false);
 
   // Getters
   List<FeedbackModel> get feedbacks => _feedbacks.value;
   FeedbackModel? get selectedFeedback => _selectedFeedback.value;
   Map<String, dynamic> get statistics => _statistics.value;
+  List<BusModel> get recentBuses => _recentBuses.value;
+  List<BusModel> get availableBuses => _availableBuses.value;
+  bool get busDataLoading => _busDataLoading.value;
 
   // Listeners
   ValueNotifier<List<FeedbackModel>> get feedbacksNotifier => _feedbacks;
   ValueNotifier<FeedbackModel?> get selectedFeedbackNotifier =>
       _selectedFeedback;
   ValueNotifier<Map<String, dynamic>> get statisticsNotifier => _statistics;
+  ValueNotifier<List<BusModel>> get recentBusesNotifier => _recentBuses;
+  ValueNotifier<List<BusModel>> get availableBusesNotifier => _availableBuses;
+
+  /// Load bus data from Firebase
+  Future<void> loadBusData() async {
+    try {
+      _busDataLoading.value = true;
+
+      // Load all active buses
+      final buses = await _busRepository.getAllBuses();
+
+      // Filter active buses
+      final activeBuses = buses
+          .where((bus) =>
+              bus.status == BusStatus.active || bus.status == BusStatus.enRoute)
+          .toList();
+
+      // Sort by last updated for recent buses
+      final sortedBuses = activeBuses.toList();
+      sortedBuses.sort((a, b) => (b.lastUpdated ?? DateTime(2000))
+          .compareTo(a.lastUpdated ?? DateTime(2000)));
+
+      _recentBuses.value = sortedBuses.take(5).toList();
+      _availableBuses.value = activeBuses;
+      _busDataLoading.value = false;
+    } catch (e) {
+      debugPrint('❌ FeedbackController: Error loading bus data: $e');
+      _busDataLoading.value = false;
+    }
+  }
+
+  /// Search bus by number from Firebase
+  Future<BusModel?> searchBusByNumber(String busNumber) async {
+    try {
+      final buses = await _busRepository.searchBusesByNumber(busNumber);
+      if (buses.isNotEmpty) {
+        return buses.first;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('❌ FeedbackController: Error searching bus: $e');
+      return null;
+    }
+  }
+
+  /// Search buses by query
+  List<BusModel> searchBuses(String query) {
+    if (query.isEmpty) {
+      return _availableBuses.value;
+    }
+    final lowerQuery = query.toLowerCase();
+    return _availableBuses.value
+        .where((bus) =>
+            bus.busNumber.toLowerCase().contains(lowerQuery) ||
+            bus.routeNumber.toLowerCase().contains(lowerQuery))
+        .toList();
+  }
 
   /// Load all feedback
   Future<void> loadFeedbacks() async {
@@ -370,9 +438,11 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
 final feedbackControllerProvider =
     StateNotifierProvider<FeedbackController, AsyncValue<void>>((ref) {
   final feedbackRepository = ref.read(feedbackRepositoryProvider);
+  final busRepository = ref.read(busRepositoryProvider);
   final emailService = ref.read(emailServiceProvider);
   return FeedbackController(
     feedbackRepository: feedbackRepository,
+    busRepository: busRepository,
     emailService: emailService,
     ref: ref,
   );
@@ -381,6 +451,11 @@ final feedbackControllerProvider =
 /// Provider for FeedbackRepository
 final feedbackRepositoryProvider = Provider<FeedbackRepository>((ref) {
   return FeedbackRepository();
+});
+
+/// Provider for BusRepository
+final busRepositoryProvider = Provider<BusRepository>((ref) {
+  return BusRepository();
 });
 
 /// Provider for EmailService
