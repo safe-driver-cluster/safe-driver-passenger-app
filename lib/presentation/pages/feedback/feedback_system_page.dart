@@ -825,6 +825,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildBusSelectionBottomSheet() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -862,9 +864,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
           Expanded(
             child: ValueListenableBuilder(
-              valueListenable: ref
-                  .read(feedbackControllerProvider.notifier)
-                  .availableBusesNotifier,
+              valueListenable: controller.availableBusesNotifier,
               builder: (context, buses, _) {
                 if (buses.isEmpty) {
                   return const Center(
