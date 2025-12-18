@@ -15,14 +15,14 @@ class FeedbackHistoryPage extends StatefulWidget {
 
 class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   final TextEditingController _searchController = TextEditingController();
-  List<FeedbackModel> _filteredFeedback = [];
+  final List<FeedbackModel> _filteredFeedback = [];
   final List<FeedbackModel> _allFeedback = [];
 
   // Filter state
   FeedbackStatus? _selectedStatus;
   FeedbackCategory? _selectedCategory;
   DateTimeRange? _selectedDateRange;
-  bool _showWithAttachmentsOnly = false;
+  final bool _showWithAttachmentsOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,10 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
       appBar: AppBar(
         title: const Text('Feedback History'),
         elevation: 0,
-        actions: [
+        actions: const [
           IconButton(
             onPressed: _showFilterDialog,
-            icon: const Icon(Icons.filter_list),
+            icon: Icon(Icons.filter_list),
             tooltip: 'Filters',
           ),
         ],
