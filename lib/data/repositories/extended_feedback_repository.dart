@@ -48,8 +48,7 @@ class ExtendedFeedbackRepository {
       debugPrint(
           '✅ ExtendedFeedbackRepository: Multiple attachments added successfully');
     } catch (e) {
-      debugPrint(
-          '❌ ExtendedFeedbackRepository: Error adding attachments: $e');
+      debugPrint('❌ ExtendedFeedbackRepository: Error adding attachments: $e');
       throw Exception('Failed to add multiple attachments: $e');
     }
   }
@@ -63,18 +62,15 @@ class ExtendedFeedbackRepository {
       debugPrint(
           '🗑️ ExtendedFeedbackRepository: Removing attachment $attachmentId');
 
-      final doc = await _firestore
-          .collection(_collection)
-          .doc(feedbackId)
-          .get();
+      final doc =
+          await _firestore.collection(_collection).doc(feedbackId).get();
 
       if (doc.exists) {
         final attachments = List<Map<String, dynamic>>.from(
           (doc.data()?['attachments'] ?? []) as List<dynamic>,
         );
 
-        attachments
-            .removeWhere((a) => a['id'] == attachmentId);
+        attachments.removeWhere((a) => a['id'] == attachmentId);
 
         await _firestore.collection(_collection).doc(feedbackId).update({
           'attachments': attachments,
@@ -106,8 +102,7 @@ class ExtendedFeedbackRepository {
       final currentStatus = currentDoc.exists
           ? FeedbackStatus.values.firstWhere(
               (e) =>
-                  e.toString().split('.').last ==
-                  currentDoc.data()?['status'],
+                  e.toString().split('.').last == currentDoc.data()?['status'],
               orElse: () => FeedbackStatus.submitted,
             )
           : FeedbackStatus.submitted;
@@ -117,8 +112,7 @@ class ExtendedFeedbackRepository {
         'status': newStatus.toString().split('.').last,
         'updatedAt': FieldValue.serverTimestamp(),
         if (respondedBy != null) 'respondedBy': respondedBy,
-        if (respondedBy != null)
-          'respondedAt': FieldValue.serverTimestamp(),
+        if (respondedBy != null) 'respondedAt': FieldValue.serverTimestamp(),
       });
 
       // Create audit log
@@ -132,15 +126,12 @@ class ExtendedFeedbackRepository {
       );
 
       batch.set(
-        _firestore
-            .collection(_auditLogsCollection)
-            .doc(),
+        _firestore.collection(_auditLogsCollection).doc(),
         auditLog.toJson(),
       );
 
       await batch.commit();
-      debugPrint(
-          '✅ ExtendedFeedbackRepository: Status updated with audit log');
+      debugPrint('✅ ExtendedFeedbackRepository: Status updated with audit log');
     } catch (e) {
       debugPrint('❌ ExtendedFeedbackRepository: Error updating status: $e');
       throw Exception('Failed to update feedback status: $e');
@@ -157,9 +148,8 @@ class ExtendedFeedbackRepository {
     FeedbackCategory? categoryFilter,
   }) async {
     try {
-      var query = _firestore
-          .collection(_collection)
-          .where('userId', isEqualTo: userId) as Query<Map<String, dynamic>>;
+      var query =
+          _firestore.collection(_collection).where('userId', isEqualTo: userId);
 
       if (statusFilter != null) {
         query = query.where('status',
@@ -179,10 +169,8 @@ class ExtendedFeedbackRepository {
         query = query.where('timestamp', isLessThanOrEqualTo: endDate);
       }
 
-      final results = await query
-          .orderBy('timestamp', descending: true)
-          .limit(limit)
-          .get();
+      final results =
+          await query.orderBy('timestamp', descending: true).limit(limit).get();
 
       return results.docs
           .map((doc) => FeedbackModel.fromJson({
@@ -256,7 +244,8 @@ class ExtendedFeedbackRepository {
     String? userId,
   }) async {
     try {
-      var query = _firestore.collection(_collection) as Query<Map<String, dynamic>>;
+      var query =
+          _firestore.collection(_collection) as Query<Map<String, dynamic>>;
 
       if (fromDate != null) {
         query = query.where('timestamp', isGreaterThanOrEqualTo: fromDate);
@@ -280,7 +269,8 @@ class ExtendedFeedbackRepository {
 
       return {
         'total': feedbacks.length,
-        'withAttachments': feedbacks.where((f) => f.attachments.isNotEmpty).length,
+        'withAttachments':
+            feedbacks.where((f) => f.attachments.isNotEmpty).length,
         'averageRating': feedbacks.isEmpty
             ? 0.0
             : feedbacks.fold<double>(0, (sum, f) => sum + f.rating.overall) /
@@ -301,22 +291,15 @@ class ExtendedFeedbackRepository {
                 feedbacks.where((f) => f.type == type).length,
         },
         'attachmentStats': {
-          'totalAttachments': feedbacks.fold<int>(
-              0, (sum, f) => sum + f.attachments.length),
-          'totalImages': feedbacks.fold<int>(
-              0,
-              (sum, f) =>
-                  sum +
-                  f.attachments.where((a) => a.isImage).length),
-          'totalVideos': feedbacks.fold<int>(
-              0,
-              (sum, f) =>
-                  sum +
-                  f.attachments.where((a) => a.isVideo).length),
+          'totalAttachments':
+              feedbacks.fold<int>(0, (sum, f) => sum + f.attachments.length),
+          'totalImages': feedbacks.fold<int>(0,
+              (sum, f) => sum + f.attachments.where((a) => a.isImage).length),
+          'totalVideos': feedbacks.fold<int>(0,
+              (sum, f) => sum + f.attachments.where((a) => a.isVideo).length),
           'averageAttachmentsPerFeedback': feedbacks.isEmpty
               ? 0.0
-              : feedbacks.fold<int>(
-                      0, (sum, f) => sum + f.attachments.length) /
+              : feedbacks.fold<int>(0, (sum, f) => sum + f.attachments.length) /
                   feedbacks.length,
         },
         'resolutionStats': {
@@ -342,18 +325,15 @@ class ExtendedFeedbackRepository {
   /// Calculate average resolution time in hours
   double _calculateAverageResolutionTime(List<FeedbackModel> feedbacks) {
     final resolvedFeedbacks = feedbacks
-        .where((f) =>
-            f.respondedAt != null && f.status == FeedbackStatus.resolved)
+        .where(
+            (f) => f.respondedAt != null && f.status == FeedbackStatus.resolved)
         .toList();
 
     if (resolvedFeedbacks.isEmpty) return 0.0;
 
     final totalHours = resolvedFeedbacks.fold<double>(
       0,
-      (sum, f) => sum +
-          f.respondedAt!
-              .difference(f.timestamp)
-              .inHours,
+      (sum, f) => sum + f.respondedAt!.difference(f.timestamp).inHours,
     );
 
     return totalHours / resolvedFeedbacks.length;
