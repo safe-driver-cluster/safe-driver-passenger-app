@@ -434,9 +434,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   '🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
 
               if (buses.isEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.all(AppDesign.spaceMD),
-                  child: const Text(
+                return const Padding(
+                  padding: EdgeInsets.all(AppDesign.spaceMD),
+                  child: Text(
                     'No recent buses available',
                     style: TextStyle(
                       color: AppColors.textSecondary,
