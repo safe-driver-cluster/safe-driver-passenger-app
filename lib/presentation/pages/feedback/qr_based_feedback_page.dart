@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import '../../../core/themes/app_theme.dart';
+import '../../../core/constants/color_constants.dart';
+import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
 
 /// Complete QR-based feedback system page
@@ -96,7 +97,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error, color: AppColors.error, size: 48),
+                  const Icon(Icons.error, color: AppColors.errorColor, size: 48),
                   const SizedBox(height: 16),
                   Text('Camera Error: ${error.errorCode}'),
                 ],
@@ -114,7 +115,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           left: 0,
           right: 0,
           child: Container(
-            color: Colors.black54,
+            color: AppColors.textPrimary.withOpacity(0.5),
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +123,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                 Text(
                   'Scan Bus QR Code',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -130,7 +131,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                 Text(
                   'Point your camera at the bus QR code to continue',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white70,
+                        color: AppColors.white.withOpacity(0.7),
                       ),
                 ),
               ],
@@ -151,7 +152,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                 onPressed: () {
                   cameraController.toggleTorch();
                 },
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryColor,
                 child: ValueListenableBuilder<TorchState>(
                   valueListenable: cameraController.torchState,
                   builder: (context, state, child) {
@@ -160,10 +161,8 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                         return const Icon(Icons.flashlight_off);
                       case TorchState.on:
                         return const Icon(Icons.flashlight_on);
-                      case TorchState.unavailable:
+                      default:
                         return const Icon(Icons.flashlight_off);
-                      case TorchState.auto:
-                        return const Icon(Icons.flash_auto);
                     }
                   },
                 ),
@@ -175,7 +174,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                 onPressed: () {
                   cameraController.switchCamera();
                 },
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryColor,
                 child: const Icon(Icons.cameraswitch),
               ),
             ],
@@ -193,7 +192,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
         height: 300,
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppColors.primary,
+            color: AppColors.primaryColor,
             width: 3,
           ),
           borderRadius: BorderRadius.circular(16),
@@ -214,7 +213,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.9),
+                    color: AppColors.primaryColor.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -249,11 +248,11 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
               left: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
             ),
@@ -270,11 +269,11 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
               right: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
             ),
@@ -291,11 +290,11 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
               left: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
             ),
@@ -312,11 +311,11 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
               right: BorderSide(
-                color: AppColors.primary,
+                color: AppColors.primaryColor,
                 width: cornerThickness,
               ),
             ),
@@ -346,7 +345,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
             icon: const Icon(Icons.keyboard),
             label: const Text('Enter Bus Number Manually'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.primaryColor,
             ),
           ),
           if (_showManualInput) ...[
@@ -426,9 +425,9 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.primary),
+              border: Border.all(color: AppColors.primaryColor),
             ),
             child: Row(
               children: [
@@ -436,7 +435,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Center(
@@ -457,7 +456,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall
-                            ?.copyWith(color: AppColors.gray),
+                            ?.copyWith(color: AppColors.grey),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -482,12 +481,12 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.gray.withOpacity(0.2),
+                      color: AppColors.grey.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(
                       Icons.edit,
-                      color: AppColors.primary,
+                      color: AppColors.primaryColor,
                       size: 20,
                     ),
                   ),
@@ -548,7 +547,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           ElevatedButton(
             onPressed: _submitFeedback,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.success,
+              backgroundColor: AppColors.successColor,
               minimumSize: const Size(double.infinity, 48),
             ),
             child: const Text(
@@ -598,13 +597,13 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.lightGray,
+          color: AppColors.greyLight,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.gray.withOpacity(0.3)),
+          border: Border.all(color: AppColors.grey.withOpacity(0.3)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 32),
+            Icon(icon, color: AppColors.primaryColor, size: 32),
             const SizedBox(height: 8),
             Text(
               label,
@@ -630,7 +629,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
           child: Icon(
             Icons.star,
             size: 40,
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primaryColor.withOpacity(0.3),
           ),
         ),
       ),
@@ -642,7 +641,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Feedback submitted successfully!'),
-        backgroundColor: AppColors.success,
+        backgroundColor: AppColors.successColor,
       ),
     );
 
@@ -656,7 +655,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.error,
+        backgroundColor: AppColors.errorColor,
       ),
     );
   }
