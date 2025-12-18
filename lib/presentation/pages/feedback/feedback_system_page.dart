@@ -225,6 +225,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         children: [
           _buildHeader(),
           const SizedBox(height: AppDesign.spaceXL),
+          _buildHistoryCard(),
+          const SizedBox(height: AppDesign.spaceXL),
           _buildSelectionMethods(),
           const SizedBox(height: AppDesign.spaceXL),
           _buildRecentBuses(),
