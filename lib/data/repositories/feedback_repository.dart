@@ -49,10 +49,10 @@ class FeedbackRepository {
     try {
       debugPrint('🔍 FeedbackRepository: Fetching feedback for user: $userId');
 
+      // Query without orderBy to avoid requiring composite index
       final query = await _firestore
           .collection(_collection)
           .where('userId', isEqualTo: userId)
-          .orderBy('submittedAt', descending: true)
           .get();
 
       debugPrint(
@@ -66,8 +66,15 @@ class FeedbackRepository {
         });
       }).toList();
 
+      // Sort by submittedAt in Dart (descending - newest first)
+      feedbackList.sort((a, b) {
+        final aTime = a.submittedAt;
+        final bTime = b.submittedAt;
+        return bTime.compareTo(aTime);
+      });
+
       debugPrint(
-          '✅ FeedbackRepository: Loaded ${feedbackList.length} user feedback items');
+          '✅ FeedbackRepository: Loaded ${feedbackList.length} user feedback items (sorted by date)');
       return feedbackList;
     } catch (e) {
       debugPrint('❌ FeedbackRepository: Error fetching user feedback: $e');
