@@ -370,7 +370,7 @@ class _QRBasedFeedbackPageState extends State<QRBasedFeedbackPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.success,
+                    backgroundColor: AppColors.successColor,
                   ),
                   child: const Icon(Icons.check),
                 ),
