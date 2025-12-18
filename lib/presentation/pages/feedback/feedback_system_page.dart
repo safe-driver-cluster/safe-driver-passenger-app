@@ -266,11 +266,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               ),
             ),
             const SizedBox(width: AppDesign.spaceLG),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'View Feedback History',
                     style: TextStyle(
                       fontSize: AppDesign.textLG,
@@ -278,7 +278,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: AppDesign.spaceXS),
+                  SizedBox(height: AppDesign.spaceXS),
                   Text(
                     'Check your previous feedback and status',
                     style: TextStyle(
@@ -290,7 +290,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            Icon(
+            const Icon(
               Icons.arrow_forward_rounded,
               color: AppColors.textSecondary,
               size: 24,
