@@ -81,8 +81,8 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
         onChanged: (value) {
           setState(() => _applyFilters());
         },
-      );
-    }
+      ),
+    );
   }
 
   /// Build active filters display
@@ -229,7 +229,8 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
               if (feedback.attachments.isNotEmpty)
                 Row(
                   children: [
-                    const Icon(Icons.attachment, size: 14, color: AppColors.grey),
+                    const Icon(Icons.attachment,
+                        size: 14, color: AppColors.grey),
                     const SizedBox(width: 4),
                     Text(
                       '${feedback.attachments.length}',
@@ -559,17 +560,17 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
       }
 
       // Category filter
-      if (_selectedCategory != null &&
-          feedback.category != _selectedCategory) {
+      if (_selectedCategory != null && feedback.category != _selectedCategory) {
         return false;
       }
 
       // Date range filter
       if (_selectedDateRange != null) {
-        final isInRange = feedback.timestamp.isAfter(_selectedDateRange!.start) &&
-            feedback.timestamp.isBefore(
-              _selectedDateRange!.end.add(const Duration(days: 1)),
-            );
+        final isInRange =
+            feedback.timestamp.isAfter(_selectedDateRange!.start) &&
+                feedback.timestamp.isBefore(
+                  _selectedDateRange!.end.add(const Duration(days: 1)),
+                );
         if (!isInRange) return false;
       }
 
@@ -582,8 +583,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
     }).toList();
 
     // Sort by timestamp descending
-    _filteredFeedback
-        .sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    _filteredFeedback.sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     setState(() {});
   }
