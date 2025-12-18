@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/constants/color_constants.dart';
+import '../../../core/constants/design_constants.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../data/models/feedback_model.dart';
 
@@ -76,16 +78,14 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: AppColors.lightGray),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.lightGray),
+            borderSide: const BorderSide(color: AppColors.greyLight),
           ),
         ),
         onChanged: (value) {
           setState(() => _applyFilters());
         },
-      ),
-    );
+      ),  
+       );
   }
 
   /// Build active filters display
@@ -258,27 +258,27 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
 
     switch (rating) {
       case 5:
-        badgeColor = Colors.green;
+        badgeColor = AppColors.successColor;
         label = '⭐ 5';
         break;
       case 4:
-        badgeColor = Colors.lightGreen;
+        badgeColor = AppColors.secondaryColor;
         label = '⭐ 4';
         break;
       case 3:
-        badgeColor = Colors.orange;
+        badgeColor = AppColors.warningColor;
         label = '⭐ 3';
         break;
       case 2:
-        badgeColor = Colors.orangeAccent;
+        badgeColor = AppColors.warningColorAlt;
         label = '⭐ 2';
         break;
       case 1:
-        badgeColor = Colors.red;
+        badgeColor = AppColors.dangerColor;
         label = '⭐ 1';
         break;
       default:
-        badgeColor = AppColors.gray;
+        badgeColor = AppColors.grey;
         label = 'N/A';
     }
 
@@ -306,31 +306,31 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
 
     switch (status) {
       case FeedbackStatus.submitted:
-        badgeColor = AppColors.gray;
+        badgeColor = AppColors.grey;
         iconData = Icons.pending;
         break;
       case FeedbackStatus.received:
-        badgeColor = Colors.blue;
+        badgeColor = AppColors.infoColor;
         iconData = Icons.check_circle;
         break;
       case FeedbackStatus.inReview:
-        badgeColor = Colors.orange;
+        badgeColor = AppColors.warningColor;
         iconData = Icons.hourglass_top;
         break;
       case FeedbackStatus.responded:
-        badgeColor = Colors.blue;
+        badgeColor = AppColors.infoColor;
         iconData = Icons.reply;
         break;
       case FeedbackStatus.resolved:
-        badgeColor = Colors.green;
+        badgeColor = AppColors.successColor;
         iconData = Icons.done_all;
         break;
       case FeedbackStatus.closed:
-        badgeColor = AppColors.gray;
+        badgeColor = AppColors.grey;
         iconData = Icons.check_circle;
         break;
       case FeedbackStatus.escalated:
-        badgeColor = Colors.red;
+        badgeColor = AppColors.dangerColor;
         iconData = Icons.warning;
         break;
     }
@@ -362,16 +362,16 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   /// Build category badge
   Widget _buildCategoryBadge(FeedbackCategory category) {
     const categoryColors = {
-      FeedbackCategory.safety: Colors.red,
-      FeedbackCategory.service: Colors.blue,
-      FeedbackCategory.comfort: Colors.purple,
-      FeedbackCategory.driver: Colors.orange,
-      FeedbackCategory.vehicle: Colors.teal,
-      FeedbackCategory.route: Colors.indigo,
-      FeedbackCategory.general: AppColors.gray,
-      FeedbackCategory.suggestion: Colors.green,
-      FeedbackCategory.complaint: Colors.red,
-      FeedbackCategory.compliment: Colors.amber,
+      FeedbackCategory.safety: AppColors.dangerColor,
+      FeedbackCategory.service: AppColors.infoColor,
+      FeedbackCategory.comfort: AppColors.accentColor,
+      FeedbackCategory.driver: AppColors.warningColor,
+      FeedbackCategory.vehicle: AppColors.tealAccent,
+      FeedbackCategory.route: AppColors.primaryVariant,
+      FeedbackCategory.general: AppColors.grey,
+      FeedbackCategory.suggestion: AppColors.successColor,
+      FeedbackCategory.complaint: AppColors.dangerColor,
+      FeedbackCategory.compliment: AppColors.warningColorAlt,
     };
 
     final color = categoryColors[category] ?? AppColors.gray;
@@ -697,9 +697,9 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                         child: Container(
                           width: 80,
                           decoration: BoxDecoration(
-                            color: AppColors.lightGray,
+                            color: AppColors.greyLight,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.gray),
+                            border: Border.all(color: AppColors.grey),
                           ),
                           child: Center(
                             child: Icon(
@@ -731,7 +731,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.lightGray,
+                    color: AppColors.greyLight,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -779,59 +779,6 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-                            ),
-                            const SizedBox(height: AppDesign.spaceLG),
-                            const Text(
-                              'Feedback History',
-                              style: TextStyle(
-                                fontSize: AppDesign.text2XL,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: AppDesign.spaceSM),
-                            const Text(
-                              'View your past feedback submissions and their status',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: AppDesign.textMD,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: AppDesign.spaceXL),
-                            Container(
-                              padding: const EdgeInsets.all(AppDesign.spaceLG),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor.withOpacity(0.1),
-                                borderRadius:
-                                    BorderRadius.circular(AppDesign.radiusLG),
-                                border: Border.all(
-                                  color:
-                                      AppColors.primaryColor.withOpacity(0.2),
-                                  width: 1,
-                                ),
-                              ),
-                              child: const Text(
-                                'Coming Soon',
-                                style: TextStyle(
-                                  fontSize: AppDesign.textLG,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    )
   }
 
   Widget _buildModernHeader(BuildContext context) {
@@ -853,7 +800,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   gradient: AppColors.glassGradient,
                   borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppColors.white.withOpacity(0.2),
                     width: 1,
                   ),
                 ),
@@ -861,7 +808,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(
                     Icons.arrow_back_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: AppDesign.iconLG,
                   ),
                 ),
@@ -871,7 +818,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   gradient: AppColors.glassGradient,
                   borderRadius: BorderRadius.circular(AppDesign.radiusXL),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: AppColors.white.withOpacity(0.2),
                     width: 1,
                   ),
                 ),
@@ -881,7 +828,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   },
                   icon: const Icon(
                     Icons.filter_list_rounded,
-                    color: Colors.white,
+                    color: AppColors.white,
                     size: AppDesign.iconLG,
                   ),
                 ),
@@ -900,7 +847,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                       style: TextStyle(
                         fontSize: AppDesign.text2XL,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: AppColors.white,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -909,7 +856,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                       'Track all your feedback submissions',
                       style: TextStyle(
                         fontSize: AppDesign.textMD,
-                        color: Colors.white.withOpacity(0.8),
+                        color: AppColors.white.withOpacity(0.8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
