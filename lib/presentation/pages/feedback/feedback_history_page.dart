@@ -139,8 +139,8 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
     return Chip(
       label: Text(label),
       onDeleted: onDelete,
-      backgroundColor: AppColors.primary.withOpacity(0.1),
-      labelStyle: const TextStyle(color: AppColors.primary),
+      backgroundColor: AppColors.primaryColor.withOpacity(0.1),
+      labelStyle: const TextStyle(color: AppColors.primaryColor),
     );
   }
 
@@ -154,13 +154,13 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
             Icon(
               Icons.inbox,
               size: 64,
-              color: AppColors.gray.withOpacity(0.5),
+              color: AppColors.grey.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
             Text(
               'No feedback found',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.gray,
+                    color: AppColors.grey,
                   ),
             ),
           ],
@@ -223,18 +223,18 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
               Text(
                 feedback.timeAgo,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.gray,
+                      color: AppColors.grey,
                     ),
               ),
               if (feedback.attachments.isNotEmpty)
                 Row(
                   children: [
-                    Icon(Icons.attachment, size: 14, color: AppColors.gray),
+                    const Icon(Icons.attachment, size: 14, color: AppColors.grey),
                     const SizedBox(width: 4),
                     Text(
                       '${feedback.attachments.length}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray,
+                            color: AppColors.grey,
                           ),
                     ),
                   ],
@@ -364,14 +364,14 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
       FeedbackCategory.comfort: AppColors.accentColor,
       FeedbackCategory.driver: AppColors.warningColor,
       FeedbackCategory.vehicle: AppColors.tealAccent,
-      FeedbackCategory.route: AppColors.primaryVariant,
+      FeedbackCategory.route: AppColors.primaryColorLight,
       FeedbackCategory.general: AppColors.grey,
       FeedbackCategory.suggestion: AppColors.successColor,
       FeedbackCategory.complaint: AppColors.dangerColor,
       FeedbackCategory.compliment: AppColors.warningColorAlt,
     };
 
-    final color = categoryColors[category] ?? AppColors.gray;
+    final color = categoryColors[category] ?? AppColors.grey;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -524,7 +524,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.gray),
+          border: Border.all(color: AppColors.grey),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -616,7 +616,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   height: 4,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.gray,
+                    color: AppColors.grey,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -638,7 +638,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                   Text(
                     feedback.timeAgo,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.gray,
+                          color: AppColors.grey,
                         ),
                   ),
                   const SizedBox(width: 16),
@@ -705,7 +705,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                                   : attachment.isVideo
                                       ? Icons.videocam
                                       : Icons.description,
-                              color: AppColors.gray,
+                              color: AppColors.grey,
                             ),
                           ),
                         ),
@@ -742,7 +742,7 @@ class _FeedbackHistoryPageState extends State<FeedbackHistoryPage> {
                       Text(
                         'Responded on ${DateFormat('MMM d, y').format(feedback.respondedAt ?? DateTime.now())}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.gray,
+                              color: AppColors.grey,
                             ),
                       ),
                     ],
