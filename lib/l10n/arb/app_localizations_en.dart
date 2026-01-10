@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -490,19 +492,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding1Title => 'Track Buses in Real-time';
 
   @override
-  String get onboarding1Description => 'Monitor your bus location and get accurate arrival times';
+  String get onboarding1Description =>
+      'Monitor your bus location and get accurate arrival times';
 
   @override
   String get onboarding2Title => 'Driver Safety Monitoring';
 
   @override
-  String get onboarding2Description => 'Real-time alerts for driver drowsiness and distraction';
+  String get onboarding2Description =>
+      'Real-time alerts for driver drowsiness and distraction';
 
   @override
   String get onboarding3Title => 'Emergency Response';
 
   @override
-  String get onboarding3Description => 'Quick access to emergency services and safety features';
+  String get onboarding3Description =>
+      'Quick access to emergency services and safety features';
 
   @override
   String get getStarted => 'Get Started';
@@ -568,13 +573,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stayAlert => 'Stay alert and aware of your surroundings';
 
   @override
-  String get keepEmergencyContacts => 'Keep emergency contacts readily available';
+  String get keepEmergencyContacts =>
+      'Keep emergency contacts readily available';
 
   @override
-  String get reportSuspiciousActivity => 'Report any suspicious activity immediately';
+  String get reportSuspiciousActivity =>
+      'Report any suspicious activity immediately';
 
   @override
-  String get followBusSafety => 'Follow bus safety protocols and driver instructions';
+  String get followBusSafety =>
+      'Follow bus safety protocols and driver instructions';
 
   @override
   String get close => 'Close';
@@ -713,7 +721,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get giveFeedback => 'Give Feedback';
 
   @override
-  String get comingSoonFeature => 'This feature will be available in a future update.';
+  String get comingSoonFeature =>
+      'This feature will be available in a future update.';
 
   @override
   String get clearCache => 'Clear Cache';
@@ -757,7 +766,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pageNotFound => 'Page Not Found';
 
   @override
-  String get searchFunctionalityComingSoon => 'Search functionality coming soon!';
+  String get searchFunctionalityComingSoon =>
+      'Search functionality coming soon!';
 
   @override
   String get busRoutesComingSoon => 'Bus routes coming soon!';
@@ -794,7 +804,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToGetCurrentLocation => 'Unable to get current location';
 
   @override
-  String get pleaseSearchForDestination => 'Please search for a destination first';
+  String get pleaseSearchForDestination =>
+      'Please search for a destination first';
 
   @override
   String errorSelectingLanguage(String error) {
@@ -834,7 +845,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get locationPermissionRequired => 'Location permission is required to share location';
+  String get locationPermissionRequired =>
+      'Location permission is required to share location';
 
   @override
   String failedToGetLocation(String error) {
@@ -842,7 +854,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get incidentReportingImplemented => 'Incident reporting will be implemented';
+  String get incidentReportingImplemented =>
+      'Incident reporting will be implemented';
 
   @override
   String get priority => 'Priority';
@@ -863,13 +876,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submitAnonymously => 'Submit anonymously';
 
   @override
-  String get personalInfoNotShared => 'Your personal information will not be shared';
+  String get personalInfoNotShared =>
+      'Your personal information will not be shared';
 
   @override
   String get chooseYourLanguage => 'Choose Your Language';
 
   @override
-  String get selectYourPreferredLanguage => 'Select your preferred language to continue';
+  String get selectYourPreferredLanguage =>
+      'Select your preferred language to continue';
 
   @override
   String get availableLanguages => 'Available Languages';
@@ -953,7 +968,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanQrInstruction => 'Scan QR code on bus or stop';
 
   @override
-  String get alignQrInstruction => 'Hold steady and align QR code within the frame';
+  String get alignQrInstruction =>
+      'Hold steady and align QR code within the frame';
 
   @override
   String get enterBusStopCode => 'Enter bus or stop code';
@@ -1010,7 +1026,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyFirst => 'Safety First';
 
   @override
-  String get safetyDescription => 'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.';
+  String get safetyDescription =>
+      'Your safety is our top priority. Access emergency features, report incidents, and stay informed about safety measures.';
 
   @override
   String get emergencyActions => 'Emergency Actions';
@@ -1037,7 +1054,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get support => 'Support';
 
   @override
-  String get reportSafetyDialogContent => 'Would you like to report a safety incident or concern?';
+  String get reportSafetyDialogContent =>
+      'Would you like to report a safety incident or concern?';
 
   @override
   String get safetyTip1 => '• Always wear your seatbelt';
@@ -1052,7 +1070,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyTip4 => '• Report any suspicious activity immediately';
 
   @override
-  String get safetyTip5 => '• Follow bus safety protocols and driver instructions';
+  String get safetyTip5 =>
+      '• Follow bus safety protocols and driver instructions';
 
   @override
   String errorOccurredGeneric(String error) {

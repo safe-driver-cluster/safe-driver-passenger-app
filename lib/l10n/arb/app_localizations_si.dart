@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -490,19 +492,22 @@ class AppLocalizationsSi extends AppLocalizations {
   String get onboarding1Title => 'සජීවී බස් ලුහුබැඳීම';
 
   @override
-  String get onboarding1Description => 'ඔබේ බස් ස්ථානය නිරීක්ෂණය කර නිවැරදි පැමිණීමේ වේලාවන් ලබා ගන්න';
+  String get onboarding1Description =>
+      'ඔබේ බස් ස්ථානය නිරීක්ෂණය කර නිවැරදි පැමිණීමේ වේලාවන් ලබා ගන්න';
 
   @override
   String get onboarding2Title => 'රියදුරු ආරක්ෂක නිරීක්ෂණය';
 
   @override
-  String get onboarding2Description => 'රියදුරුගේ නින්දට යාම සහ අවධානය වෙනතකට යෑම සඳහා සජීවී අනතුරු ඇඟවීම්';
+  String get onboarding2Description =>
+      'රියදුරුගේ නින්දට යාම සහ අවධානය වෙනතකට යෑම සඳහා සජීවී අනතුරු ඇඟවීම්';
 
   @override
   String get onboarding3Title => 'හදිසි ප්‍රතිචාරය';
 
   @override
-  String get onboarding3Description => 'හදිසි සේවා සහ ආරක්ෂක විශේෂාංග වෙත ඉක්මන් ප්‍රවේශය';
+  String get onboarding3Description =>
+      'හදිසි සේවා සහ ආරක්ෂක විශේෂාංග වෙත ඉක්මන් ප්‍රවේශය';
 
   @override
   String get getStarted => 'ආරම්භ කරන්න';
@@ -565,16 +570,19 @@ class AppLocalizationsSi extends AppLocalizations {
   String get alwaysWearSeatbelt => 'සැමවිටම ආසන පටිය පළඳින්න';
 
   @override
-  String get stayAlert => 'සැමවිටම අවධානයෙන් සහ ඔබේ පරිසරය ගැන දැනුවත්ව සිටින්න';
+  String get stayAlert =>
+      'සැමවිටම අවධානයෙන් සහ ඔබේ පරිසරය ගැන දැනුවත්ව සිටින්න';
 
   @override
   String get keepEmergencyContacts => 'හදිසි සම්බන්ධතා සූදානම්ව තබා ගන්න';
 
   @override
-  String get reportSuspiciousActivity => 'සැක සහිත ක්‍රියාකාරකම් වහාම වාර්තා කරන්න';
+  String get reportSuspiciousActivity =>
+      'සැක සහිත ක්‍රියාකාරකම් වහාම වාර්තා කරන්න';
 
   @override
-  String get followBusSafety => 'බස් ආරක්ෂක ප්‍රොටෝකෝල සහ රියදුරුගේ උපදෙස් අනුගමනය කරන්න';
+  String get followBusSafety =>
+      'බස් ආරක්ෂක ප්‍රොටෝකෝල සහ රියදුරුගේ උපදෙස් අනුගමනය කරන්න';
 
   @override
   String get close => 'වසන්න';
@@ -592,7 +600,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get share => 'බෙදා ගන්න';
 
   @override
-  String get shareFunctionality => 'බෙදාගැනීමේ ක්‍රියාකාරිත්වය ක්‍රියාත්මක කරනු ලැබේ';
+  String get shareFunctionality =>
+      'බෙදාගැනීමේ ක්‍රියාකාරිත්වය ක්‍රියාත්මක කරනු ලැබේ';
 
   @override
   String get english => 'English';
@@ -713,7 +722,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get giveFeedback => 'ප්‍රතිපෝෂණ ලබා දෙන්න';
 
   @override
-  String get comingSoonFeature => 'මෙම විශේෂාංගය අනාගත යාවත්කාලීනයකදී ලබා ගත හැකිය.';
+  String get comingSoonFeature =>
+      'මෙම විශේෂාංගය අනාගත යාවත්කාලීනයකදී ලබා ගත හැකිය.';
 
   @override
   String get clearCache => 'කෑෂය මකන්න';
@@ -757,7 +767,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get pageNotFound => 'පිටුව හමු නොවීය';
 
   @override
-  String get searchFunctionalityComingSoon => 'සොයන්න ක්‍රියාකාරිත්වය ඉක්මනින් පැමිණේ!';
+  String get searchFunctionalityComingSoon =>
+      'සොයන්න ක්‍රියාකාරිත්වය ඉක්මනින් පැමිණේ!';
 
   @override
   String get busRoutesComingSoon => 'බස් මාර්ග ඉක්මනින් පැමිණේ!';
@@ -808,7 +819,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get loadingHazardZoneData => 'අන්තරාය කලාප දත්ත පූරණය වෙමින්...';
 
   @override
-  String get driverIdRequiredForAlerts => 'අනතුරු ඇඟවීම් බැලීමට රියදුරු හැඳුනුම අවශ්‍යයි';
+  String get driverIdRequiredForAlerts =>
+      'අනතුරු ඇඟවීම් බැලීමට රියදුරු හැඳුනුම අවශ්‍යයි';
 
   @override
   String get noActiveHazardAlerts => 'සක්‍රිය අන්තරාය අනතුරු ඇඟවීම් නැත';
@@ -834,7 +846,8 @@ class AppLocalizationsSi extends AppLocalizations {
   }
 
   @override
-  String get locationPermissionRequired => 'ස්ථානය බෙදාගැනීමට ස්ථාන අනුමතිය අවශ්‍යයි';
+  String get locationPermissionRequired =>
+      'ස්ථානය බෙදාගැනීමට ස්ථාන අනුමතිය අවශ්‍යයි';
 
   @override
   String failedToGetLocation(String error) {
@@ -842,7 +855,8 @@ class AppLocalizationsSi extends AppLocalizations {
   }
 
   @override
-  String get incidentReportingImplemented => 'සිද්ධි වාර්තාකරණය ක්‍රියාත්මක කරනු ලැබේ';
+  String get incidentReportingImplemented =>
+      'සිද්ධි වාර්තාකරණය ක්‍රියාත්මක කරනු ලැබේ';
 
   @override
   String get priority => 'ප්‍රමුඛතාවය';
@@ -869,7 +883,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get chooseYourLanguage => 'ඔබේ භාෂාව තෝරන්න';
 
   @override
-  String get selectYourPreferredLanguage => 'ඉදිරියට යාමට ඔබේ කැමති භාෂාව තෝරන්න';
+  String get selectYourPreferredLanguage =>
+      'ඉදිරියට යාමට ඔබේ කැමති භාෂාව තෝරන්න';
 
   @override
   String get availableLanguages => 'ලබාගත හැකි භාෂා';
@@ -953,7 +968,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get scanQrInstruction => 'බස් හෝ නැවතුමේ QR කේතය ස්කෑන් කරන්න';
 
   @override
-  String get alignQrInstruction => 'ස්ථිරව තබාගෙන QR කේතය රාමුව තුළ සමගාමී කරන්න';
+  String get alignQrInstruction =>
+      'ස්ථිරව තබාගෙන QR කේතය රාමුව තුළ සමගාමී කරන්න';
 
   @override
   String get enterBusStopCode => 'බස් හෝ නැවතුම් කේතය ඇතුළු කරන්න';
@@ -1010,7 +1026,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get safetyFirst => 'ආරක්ෂාව පළමුව';
 
   @override
-  String get safetyDescription => 'ඔබේ ආරක්ෂාව අපේ ප්‍රමුඛතාවයයි. හදිසි විශේෂාංග වෙත ප්‍රවේශ වන්න, සිදුවීම් වාර්තා කරන්න, සහ ආරක්ෂක පියවරයන් ගැන දැනුවත් වන්න.';
+  String get safetyDescription =>
+      'ඔබේ ආරක්ෂාව අපේ ප්‍රමුඛතාවයයි. හදිසි විශේෂාංග වෙත ප්‍රවේශ වන්න, සිදුවීම් වාර්තා කරන්න, සහ ආරක්ෂක පියවරයන් ගැන දැනුවත් වන්න.';
 
   @override
   String get emergencyActions => 'හදිසි ක්‍රියාමාර්ග';
@@ -1037,7 +1054,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get support => 'සහාය';
 
   @override
-  String get reportSafetyDialogContent => 'ඔබට ආරක්ෂක සිදුවීමක් හෝ සැළකිල්ලක් වාර්තා කිරීමට අවශ්‍යද?';
+  String get reportSafetyDialogContent =>
+      'ඔබට ආරක්ෂක සිදුවීමක් හෝ සැළකිල්ලක් වාර්තා කිරීමට අවශ්‍යද?';
 
   @override
   String get safetyTip1 => '• සෑම විටම ආසන පටිය පළඳන්න';
@@ -1052,7 +1070,8 @@ class AppLocalizationsSi extends AppLocalizations {
   String get safetyTip4 => '• සැක සහිත ක්‍රියාකලාප වහාම වාර්තා කරන්න';
 
   @override
-  String get safetyTip5 => '• බස් ආරක්ෂක ප්‍රොටෝකොල සහ රියැදුරු උපදෙස් පිළිපදින්න';
+  String get safetyTip5 =>
+      '• බස් ආරක්ෂක ප්‍රොටෝකොල සහ රියැදුරු උපදෙස් පිළිපදින්න';
 
   @override
   String errorOccurredGeneric(String error) {
