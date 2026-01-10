@@ -26,7 +26,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     _tabController = TabController(length: 2, vsync: this);
     // Load bus data from Firebase on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint('🚀 FeedbackSystemPage: Calling loadBusData...');
       ref.read(feedbackControllerProvider.notifier).loadBusData();
+      debugPrint('✅ FeedbackSystemPage: loadBusData called');
     });
   }
 
@@ -38,6 +40,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   @override
   Widget build(BuildContext context) {
+    // Watch the feedback controller state to ensure it's initialized
+    ref.watch(feedbackControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -218,7 +223,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
+          _buildHistoryCard(),
           const SizedBox(height: AppDesign.spaceXL),
           _buildSelectionMethods(),
           const SizedBox(height: AppDesign.spaceXL),
@@ -228,65 +233,70 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceColor,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowLight,
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                ),
-                child: const Icon(
-                  Icons.feedback_outlined,
-                  color: AppColors.primaryColor,
-                  size: AppDesign.iconLG,
-                ),
+  Widget _buildHistoryCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/feedback-history');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowLight,
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
               ),
-              const SizedBox(width: AppDesign.spaceMD),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Share Your Experience',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: AppDesign.spaceXS),
-                    Text(
-                      'Help us improve our service by providing feedback about the bus or driver',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
+              child: const Icon(
+                Icons.history_rounded,
+                color: AppColors.primaryColor,
+                size: AppDesign.iconLG,
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(width: AppDesign.spaceLG),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'View Feedback History',
+                    style: TextStyle(
+                      fontSize: AppDesign.textLG,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    'Check your previous feedback and status',
+                    style: TextStyle(
+                      fontSize: AppDesign.textMD,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            const Icon(
+              Icons.arrow_forward_rounded,
+              color: AppColors.textSecondary,
+              size: 24,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -396,6 +406,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildRecentBuses() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -421,10 +433,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ],
           ),
           child: ValueListenableBuilder(
-            valueListenable: ref
-                .read(feedbackControllerProvider.notifier)
-                .recentBusesNotifier,
+            valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
+              debugPrint(
+                  '🔄 FeedbackPage: Recent buses updated: ${buses.length} buses');
+
               if (buses.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.all(AppDesign.spaceMD),
@@ -822,6 +835,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildBusSelectionBottomSheet() {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
       decoration: const BoxDecoration(
@@ -859,9 +874,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
           ),
           Expanded(
             child: ValueListenableBuilder(
-              valueListenable: ref
-                  .read(feedbackControllerProvider.notifier)
-                  .availableBusesNotifier,
+              valueListenable: controller.availableBusesNotifier,
               builder: (context, buses, _) {
                 if (buses.isEmpty) {
                   return const Center(

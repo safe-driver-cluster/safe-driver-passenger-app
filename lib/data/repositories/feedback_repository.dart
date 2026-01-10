@@ -47,19 +47,37 @@ class FeedbackRepository {
   /// Get feedback by user ID
   Future<List<FeedbackModel>> getFeedbackByUser(String userId) async {
     try {
+      debugPrint('🔍 FeedbackRepository: Fetching feedback for user: $userId');
+
+      // Query without orderBy to avoid requiring composite index
       final query = await _firestore
           .collection(_collection)
           .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
           .get();
 
-      return query.docs
-          .map((doc) => FeedbackModel.fromJson({
-                'id': doc.id,
-                ...doc.data(),
-              }))
-          .toList();
+      debugPrint(
+          '📊 FeedbackRepository: Found ${query.docs.length} feedback entries for user');
+
+      final feedbackList = query.docs.map((doc) {
+        debugPrint('📋 FeedbackRepository: Processing feedback ${doc.id}');
+        return FeedbackModel.fromJson({
+          'id': doc.id,
+          ...doc.data(),
+        });
+      }).toList();
+
+      // Sort by submittedAt in Dart (descending - newest first)
+      feedbackList.sort((a, b) {
+        final aTime = a.submittedAt;
+        final bTime = b.submittedAt;
+        return bTime.compareTo(aTime);
+      });
+
+      debugPrint(
+          '✅ FeedbackRepository: Loaded ${feedbackList.length} user feedback items (sorted by date)');
+      return feedbackList;
     } catch (e) {
+      debugPrint('❌ FeedbackRepository: Error fetching user feedback: $e');
       throw Exception('Failed to get user feedback: $e');
     }
   }

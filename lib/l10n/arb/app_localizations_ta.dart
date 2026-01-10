@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -469,7 +471,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get invalidEmail => 'தவறான மின்னஞ்சல் வடிவம்';
 
   @override
-  String get passwordTooShort => 'கடவுச்சொல் குறைந்தது 8 எழுத்துகளாக இருக்க வேண்டும்';
+  String get passwordTooShort =>
+      'கடவுச்சொல் குறைந்தது 8 எழுத்துகளாக இருக்க வேண்டும்';
 
   @override
   String get passwordsDoNotMatch => 'கடவுச்சொற்கள் பொருந்தவில்லை';
@@ -490,19 +493,22 @@ class AppLocalizationsTa extends AppLocalizations {
   String get onboarding1Title => 'நேரடி பேருந்து கண்காணிப்பு';
 
   @override
-  String get onboarding1Description => 'உங்கள் பேருந்து இருப்பிடத்தை கண்காணித்து துல்லியமான வருகை நேரங்களைப் பெறுங்கள்';
+  String get onboarding1Description =>
+      'உங்கள் பேருந்து இருப்பிடத்தை கண்காணித்து துல்லியமான வருகை நேரங்களைப் பெறுங்கள்';
 
   @override
   String get onboarding2Title => 'ஓட்டுநர் பாதுகாப்பு கண்காணிப்பு';
 
   @override
-  String get onboarding2Description => 'ஓட்டுநர் தூக்கக்கலக்கம் மற்றும் கவனச்சிதறலுக்கான நேரடி எச்சரிக்கைகள்';
+  String get onboarding2Description =>
+      'ஓட்டுநர் தூக்கக்கலக்கம் மற்றும் கவனச்சிதறலுக்கான நேரடி எச்சரிக்கைகள்';
 
   @override
   String get onboarding3Title => 'அவசர பதில்';
 
   @override
-  String get onboarding3Description => 'அவசர சேவைகள் மற்றும் பாதுகாப்பு அம்சங்களுக்கான விரைவான அணுகல்';
+  String get onboarding3Description =>
+      'அவசர சேவைகள் மற்றும் பாதுகாப்பு அம்சங்களுக்கான விரைவான அணுகல்';
 
   @override
   String get getStarted => 'தொடங்குங்கள்';
@@ -565,16 +571,20 @@ class AppLocalizationsTa extends AppLocalizations {
   String get alwaysWearSeatbelt => 'எப்போதும் சீட் பெல்ட் அணியுங்கள்';
 
   @override
-  String get stayAlert => 'எச்சரிக்கையாக இருங்கள் மற்றும் உங்கள் சுற்றுப்புறங்களைப் பற்றி அறிந்து கொள்ளுங்கள்';
+  String get stayAlert =>
+      'எச்சரிக்கையாக இருங்கள் மற்றும் உங்கள் சுற்றுப்புறங்களைப் பற்றி அறிந்து கொள்ளுங்கள்';
 
   @override
-  String get keepEmergencyContacts => 'அவசர தொடர்புகளை எளிதில் கிடைக்கக்கூடியதாக வைத்திருங்கள்';
+  String get keepEmergencyContacts =>
+      'அவசர தொடர்புகளை எளிதில் கிடைக்கக்கூடியதாக வைத்திருங்கள்';
 
   @override
-  String get reportSuspiciousActivity => 'சந்தேகத்திற்கிடமான எந்தவொரு செயல்பாட்டையும் உடனடியாக புகாரளிக்கவும்';
+  String get reportSuspiciousActivity =>
+      'சந்தேகத்திற்கிடமான எந்தவொரு செயல்பாட்டையும் உடனடியாக புகாரளிக்கவும்';
 
   @override
-  String get followBusSafety => 'பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் ஓட்டுநர் அறிவுரைகளைப் பின்பற்றவும்';
+  String get followBusSafety =>
+      'பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் ஓட்டுநர் அறிவுரைகளைப் பின்பற்றவும்';
 
   @override
   String get close => 'மூடு';
@@ -696,7 +706,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get signOut => 'வெளியேறு';
 
   @override
-  String get areYouSureSignOut => 'நீங்கள் நிச்சயமாக வெளியேற விரும்புகிறீர்களா?';
+  String get areYouSureSignOut =>
+      'நீங்கள் நிச்சயமாக வெளியேற விரும்புகிறீர்களா?';
 
   @override
   String get tripHistory => 'பயண வரலாறு';
@@ -713,7 +724,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get giveFeedback => 'கருத்து தெரிவிக்கவும்';
 
   @override
-  String get comingSoonFeature => 'இந்த அம்சம் எதிர்கால புதுப்பிப்பில் கிடைக்கும்.';
+  String get comingSoonFeature =>
+      'இந்த அம்சம் எதிர்கால புதுப்பிப்பில் கிடைக்கும்.';
 
   @override
   String get clearCache => 'கேச் அழிக்கவும்';
@@ -728,7 +740,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get profileTitle => 'சுயவிவரம்';
 
   @override
-  String get profileUpdatedSuccessfully => 'சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது';
+  String get profileUpdatedSuccessfully =>
+      'சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது';
 
   @override
   String failedToUpdateProfile(String error) {
@@ -791,7 +804,8 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get unableToGetCurrentLocation => 'தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை';
+  String get unableToGetCurrentLocation =>
+      'தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை';
 
   @override
   String get pleaseSearchForDestination => 'முதலில் இலக்கைத் தேடவும்';
@@ -808,7 +822,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get loadingHazardZoneData => 'ஆபத்தான பகுதி தரவை ஏற்றுகிறது...';
 
   @override
-  String get driverIdRequiredForAlerts => 'எச்சரிக்கைகளைப் பார்க்க ஓட்டுநர் அடையாளம் தேவை';
+  String get driverIdRequiredForAlerts =>
+      'எச்சரிக்கைகளைப் பார்க்க ஓட்டுநர் அடையாளம் தேவை';
 
   @override
   String get noActiveHazardAlerts => 'செயல்பாட்டில் ஆபத்து எச்சரிக்கைகள் இல்லை';
@@ -834,7 +849,8 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get locationPermissionRequired => 'இருப்பிடம் பகிர்வதற்கு இருப்பிட அனுமதி தேவை';
+  String get locationPermissionRequired =>
+      'இருப்பிடம் பகிர்வதற்கு இருப்பிட அனுமதி தேவை';
 
   @override
   String failedToGetLocation(String error) {
@@ -842,7 +858,8 @@ class AppLocalizationsTa extends AppLocalizations {
   }
 
   @override
-  String get incidentReportingImplemented => 'சம்பவ புகாரளிப்பு செயல்படுத்தப்படும்';
+  String get incidentReportingImplemented =>
+      'சம்பவ புகாரளிப்பு செயல்படுத்தப்படும்';
 
   @override
   String get priority => 'முன்னுரிமை';
@@ -869,7 +886,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get chooseYourLanguage => 'உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get selectYourPreferredLanguage => 'தொடர உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
+  String get selectYourPreferredLanguage =>
+      'தொடர உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
 
   @override
   String get availableLanguages => 'கிடைக்கும் மொழிகள்';
@@ -950,13 +968,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get qrScanner => 'QR ஸ்கேனர்';
 
   @override
-  String get scanQrInstruction => 'பேருந்து அல்லது நிறுத்தத்தில் QR குறியீட்டை ஸ்கேன் செய்யவும்';
+  String get scanQrInstruction =>
+      'பேருந்து அல்லது நிறுத்தத்தில் QR குறியீட்டை ஸ்கேன் செய்யவும்';
 
   @override
-  String get alignQrInstruction => 'நிலையாக வைத்திருந்து QR குறியீட்டை சட்டகத்திற்குள் சீரமைக்கவும்';
+  String get alignQrInstruction =>
+      'நிலையாக வைத்திருந்து QR குறியீட்டை சட்டகத்திற்குள் சீரமைக்கவும்';
 
   @override
-  String get enterBusStopCode => 'பேருந்து அல்லது நிறுத்த குறியீட்டை உள்ளிடவும்';
+  String get enterBusStopCode =>
+      'பேருந்து அல்லது நிறுத்த குறியீட்டை உள்ளிடவும்';
 
   @override
   String get submit => 'சமர்ப்பிக்கவும்';
@@ -1010,7 +1031,8 @@ class AppLocalizationsTa extends AppLocalizations {
   String get safetyFirst => 'பாதுகாப்பு முதலில்';
 
   @override
-  String get safetyDescription => 'உங்கள் பாதுகாப்பு, எங்கள் முன்னுரிமை. அதிகால ஆபத்து சேவைகளில் அணுக, சிக்கல்களை அறிக்க, கவனத்தில் இருங்கள்.';
+  String get safetyDescription =>
+      'உங்கள் பாதுகாப்பு, எங்கள் முன்னுரிமை. அதிகால ஆபத்து சேவைகளில் அணுக, சிக்கல்களை அறிக்க, கவனத்தில் இருங்கள்.';
 
   @override
   String get emergencyActions => 'ஆபத்துகால செயல்கள்';
@@ -1028,31 +1050,38 @@ class AppLocalizationsTa extends AppLocalizations {
   String get realTimeSafetyNotifications => 'நேர நேரம் பாதுகாப்பு அறிவிப்புகள்';
 
   @override
-  String get viewKnownHazardousAreas => 'தெரிந்த ஆபத்துகரமான பரப்புகளை பார்க்கவும்';
+  String get viewKnownHazardousAreas =>
+      'தெரிந்த ஆபத்துகரமான பரப்புகளை பார்க்கவும்';
 
   @override
-  String get learnSafetyBestPractices => 'பாதுகாப்பு சிறந்த நடவடிக்கைகளை கற்றுக் கொள்ளவும்';
+  String get learnSafetyBestPractices =>
+      'பாதுகாப்பு சிறந்த நடவடிக்கைகளை கற்றுக் கொள்ளவும்';
 
   @override
   String get support => 'ஆதரவு';
 
   @override
-  String get reportSafetyDialogContent => 'நீங்கள் ஒரு பாதுகாப்பு சம்பவம் அல்லது அக்கறையை புகாரளிக்க விரும்புகிறீர்களா?';
+  String get reportSafetyDialogContent =>
+      'நீங்கள் ஒரு பாதுகாப்பு சம்பவம் அல்லது அக்கறையை புகாரளிக்க விரும்புகிறீர்களா?';
 
   @override
   String get safetyTip1 => '• எப்போதும் உங்கள் சீட்பெல்ட்டை அணியுங்கள்';
 
   @override
-  String get safetyTip2 => '• உங்கள் சுற்றுப்புறங்களைப் பற்றி எச்சரிக்கையாக இருங்கள்';
+  String get safetyTip2 =>
+      '• உங்கள் சுற்றுப்புறங்களைப் பற்றி எச்சரிக்கையாக இருங்கள்';
 
   @override
-  String get safetyTip3 => '• அவசரகால தொடர்புகளை எளிதில் கிடைக்கும்படி வைத்துக்கொள்ளுங்கள்';
+  String get safetyTip3 =>
+      '• அவசரகால தொடர்புகளை எளிதில் கிடைக்கும்படி வைத்துக்கொள்ளுங்கள்';
 
   @override
-  String get safetyTip4 => '• சந்தேகத்திற்குரிய செயல்பாடுகளை உடனடியாக புகாரளிக்கவும்';
+  String get safetyTip4 =>
+      '• சந்தேகத்திற்குரிய செயல்பாடுகளை உடனடியாக புகாரளிக்கவும்';
 
   @override
-  String get safetyTip5 => '• பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் டிரைவர் அறிவுரைகளை பின்பற்றுங்கள்';
+  String get safetyTip5 =>
+      '• பேருந்து பாதுகாப்பு நெறிமுறைகள் மற்றும் டிரைவர் அறிவுரைகளை பின்பற்றுங்கள்';
 
   @override
   String errorOccurredGeneric(String error) {
