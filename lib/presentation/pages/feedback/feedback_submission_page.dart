@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
-import '../../../data/models/location_model.dart';
+import '../../../data/models/location_model.dart' as location_models;
 import '../../../data/services/firebase_storage_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
@@ -1471,7 +1471,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             : selectedQuickActions.first,
         images: uploadedMediaUrls,
         location: currentLocation != null
-            ? LocationModel(
+            ? location_models.LocationModel(
                 latitude: currentLocation!.latitude,
                 longitude: currentLocation!.longitude,
                 accuracy: currentLocation!.accuracy,
