@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 
@@ -29,7 +30,8 @@ class FirebaseStorageService {
       final fileSize = file.lengthSync();
 
       debugPrint('   File name: $fileName');
-      debugPrint('   File size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB');
+      debugPrint(
+          '   File size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB');
 
       // Validate file size (10MB limit)
       const maxFileSize = 10 * 1024 * 1024; // 10MB
@@ -40,7 +42,8 @@ class FirebaseStorageService {
 
       // Create storage path
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final storagePath = '$feedbackMediaPath/$userId/$feedbackId/$timestamp-$fileName';
+      final storagePath =
+          '$feedbackMediaPath/$userId/$feedbackId/$timestamp-$fileName';
 
       debugPrint('   Storage path: $storagePath');
 
@@ -64,7 +67,8 @@ class FirebaseStorageService {
 
       // Monitor upload progress
       uploadTask.snapshotEvents.listen((event) {
-        final percent = (event.bytesTransferred / event.totalBytes * 100).toStringAsFixed(0);
+        final percent = (event.bytesTransferred / event.totalBytes * 100)
+            .toStringAsFixed(0);
         debugPrint('   Upload progress: $percent%');
       });
 
@@ -114,7 +118,8 @@ class FirebaseStorageService {
       }
 
       debugPrint('✅ FirebaseStorageService: Batch upload completed');
-      debugPrint('   Successfully uploaded: ${uploadedUrls.length}/${files.length}');
+      debugPrint(
+          '   Successfully uploaded: ${uploadedUrls.length}/${files.length}');
 
       return uploadedUrls;
     } catch (e) {
