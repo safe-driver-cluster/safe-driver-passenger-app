@@ -24,7 +24,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
   @override
   void initState() {
     super.initState();
-    
+
     // Setup rotation animation for refresh icon
     _rotationController = AnimationController(
       duration: const Duration(seconds: 2),
