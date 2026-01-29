@@ -197,6 +197,32 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       debugPrint('🎯 FeedbackController: Starting submission...');
       state = const AsyncValue.loading();
 
+      // Create attachments from image URLs
+      final attachments = <FeedbackAttachment>[];
+      if (images != null && images.isNotEmpty) {
+        debugPrint(
+            '📎 FeedbackController: Creating attachments for ${images.length} images');
+        for (int i = 0; i < images.length; i++) {
+          final attachment = FeedbackAttachment(
+            id: '${DateTime.now().millisecondsSinceEpoch}-$i',
+            fileName:
+                'feedback-media-${DateTime.now().millisecondsSinceEpoch}-$i',
+            fileUrl: images[i],
+            fileType: _getFileTypeFromUrl(images[i]),
+            fileSize: 0, // Size will be handled by storage service
+            uploadedAt: DateTime.now(),
+            metadata: {
+              'uploadedBy': userId,
+              'feedbackId': '',
+              'index': i,
+            },
+          );
+          attachments.add(attachment);
+        }
+        debugPrint(
+            '📎 FeedbackController: Created ${attachments.length} attachments');
+      }
+
       final feedback = FeedbackModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
@@ -212,7 +238,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         rating:
             FeedbackRating(overall: rating), // Convert int to FeedbackRating
         tags: [],
-        attachments: [],
+        attachments: attachments,
         location: location,
         timestamp: DateTime.now(),
         status: FeedbackStatus.submitted,
@@ -322,7 +348,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   /// Get feedback by rating
   List<FeedbackModel> getFeedbackByRating(int rating) {
     return _feedbacks.value
-        .where((feedback) => feedback.rating == rating)
+        .where((feedback) => feedback.rating.overall == rating)
         .toList();
   }
 
@@ -449,6 +475,25 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       'count': dailyCount.reversed.map((e) => e).toList(),
       'rating': dailyRating.reversed.map((e) => e.round()).toList(),
     };
+  }
+
+  /// Get file MIME type from URL
+  String _getFileTypeFromUrl(String url) {
+    final uri = Uri.parse(url);
+    final path = uri.path.toLowerCase();
+
+    if (path.contains('.jpg') || path.contains('.jpeg')) return 'image/jpeg';
+    if (path.contains('.png')) return 'image/png';
+    if (path.contains('.gif')) return 'image/gif';
+    if (path.contains('.webp')) return 'image/webp';
+    if (path.contains('.mp4')) return 'video/mp4';
+    if (path.contains('.mov')) return 'video/quicktime';
+    if (path.contains('.avi')) return 'video/x-msvideo';
+    if (path.contains('.mkv')) return 'video/x-matroska';
+    if (path.contains('.mp3')) return 'audio/mpeg';
+    if (path.contains('.wav')) return 'audio/wav';
+
+    return 'application/octet-stream';
   }
 
   /// Refresh feedback data
