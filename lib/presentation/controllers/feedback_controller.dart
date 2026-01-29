@@ -348,7 +348,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
   /// Get feedback by rating
   List<FeedbackModel> getFeedbackByRating(int rating) {
     return _feedbacks.value
-        .where((feedback) => feedback.rating == rating)
+        .where((feedback) => feedback.rating.overall == rating)
         .toList();
   }
 
