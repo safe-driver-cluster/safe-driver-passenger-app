@@ -747,7 +747,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         final newFiles = result.files
             .where((file) {
               // Validate file size (10MB limit)
-              if (file.size != null && file.size! > 10 * 1024 * 1024) {
+              if (file.size > 10 * 1024 * 1024) {
                 _showError('File ${file.name} exceeds 10MB limit');
                 return false;
               }
