@@ -16,10 +16,21 @@ class FeedbackHistoryPage extends ConsumerStatefulWidget {
       _FeedbackHistoryPageState();
 }
 
-class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
+class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
+    with TickerProviderStateMixin {
+  late AnimationController _rotationController;
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    
+    // Setup rotation animation for refresh icon
+    _rotationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
     // Load user's feedback when page initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = ref.read(authStateProvider);
@@ -28,13 +39,56 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
       if (authState.user?.uid != null) {
         debugPrint(
             '🔄 FeedbackHistoryPage: Loading feedback for user ${authState.user!.uid}');
+        _startLoading();
         ref
             .read(feedbackControllerProvider.notifier)
-            .loadUserFeedback(authState.user!.uid);
+            .loadUserFeedback(authState.user!.uid)
+            .then((_) {
+          _stopLoading();
+        });
       } else {
         debugPrint('⚠️ FeedbackHistoryPage: No user UID available');
+        _stopLoading();
       }
     });
+  }
+
+  void _startLoading() {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+      _rotationController.repeat();
+    }
+  }
+
+  void _stopLoading() {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+      _rotationController.stop();
+      _rotationController.reset();
+    }
+  }
+
+  void _refreshFeedback() {
+    final authState = ref.read(authStateProvider);
+    if (authState.user?.uid != null) {
+      _startLoading();
+      ref
+          .read(feedbackControllerProvider.notifier)
+          .loadUserFeedback(authState.user!.uid)
+          .then((_) {
+        _stopLoading();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -400,6 +454,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
                   ),
                 ),
               ),
+              // Right corner refresh process icon
               Container(
                 decoration: BoxDecoration(
                   gradient: AppColors.glassGradient,
@@ -409,14 +464,17 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () {
-                    // Add filter functionality
-                  },
-                  icon: const Icon(
-                    Icons.filter_list_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconLG,
+                child: RotationTransition(
+                  turns: _rotationController,
+                  child: IconButton(
+                    onPressed: _isLoading ? null : _refreshFeedback,
+                    icon: Icon(
+                      Icons.refresh_rounded,
+                      color: _isLoading
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.white,
+                      size: AppDesign.iconLG,
+                    ),
                   ),
                 ),
               ),
