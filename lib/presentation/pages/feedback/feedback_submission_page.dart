@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
+import '../../../data/services/firebase_storage_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
 import 'feedback_system_page.dart';
@@ -734,43 +736,44 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   // Media and contact methods
   Future<void> _pickMediaFile() async {
     try {
-      // Show dialog to choose between camera and gallery
-      final action = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          ),
-          title: const Text('Add Media'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading:
-                    const Icon(Icons.camera_alt, color: AppColors.primaryColor),
-                title: const Text('Take Photo'),
-                onTap: () => Navigator.pop(context, 'camera'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library,
-                    color: AppColors.primaryColor),
-                title: const Text('Choose from Gallery'),
-                onTap: () => Navigator.pop(context, 'gallery'),
-              ),
-            ],
-          ),
-        ),
+      // Pick files using file_picker
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
+        allowCompression: true,
       );
 
-      if (action != null) {
-        // For now, just show a placeholder message since image_picker is not available
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '$action selected - Media upload will be available in the next update'),
-            backgroundColor: AppColors.primaryColor,
-          ),
-        );
+      if (result != null) {
+        final newFiles = result.files
+            .where((file) {
+              // Validate file size (10MB limit)
+              if (file.size != null && file.size! > 10 * 1024 * 1024) {
+                _showError('File ${file.name} exceeds 10MB limit');
+                return false;
+              }
+              return true;
+            })
+            .map((file) => File(file.path!))
+            .toList();
+
+        if (newFiles.isNotEmpty) {
+          setState(() {
+            // Check total number of files (limit to 10)
+            final totalFiles = selectedMediaFiles.length + newFiles.length;
+            if (totalFiles > 10) {
+              _showError('Maximum 10 files allowed');
+              return;
+            }
+            selectedMediaFiles.addAll(newFiles);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${newFiles.length} file(s) selected for upload'),
+              backgroundColor: AppColors.successColor,
+            ),
+          );
+        }
       }
     } catch (e) {
       _showError('Failed to pick media files: $e');
@@ -1412,8 +1415,40 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       debugPrint('🚌 Bus: ${widget.busNumber}');
       debugPrint('⭐ Rating: $selectedRating');
       debugPrint('📝 Comment: ${_commentController.text.trim()}');
+      debugPrint('📁 Media files: ${selectedMediaFiles.length}');
 
-      // Submit to Firebase
+      // Upload media files to Firebase Storage
+      List<String> uploadedMediaUrls = [];
+      if (selectedMediaFiles.isNotEmpty) {
+        debugPrint('📤 Starting media upload...');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Uploading media files...'),
+            backgroundColor: AppColors.primaryColor,
+          ),
+        );
+
+        final storageService = FirebaseStorageService();
+        final feedbackId = DateTime.now().millisecondsSinceEpoch.toString();
+
+        try {
+          uploadedMediaUrls = await storageService.uploadFeedbackMediaMultiple(
+            files: selectedMediaFiles,
+            userId: user['id']!,
+            feedbackId: feedbackId,
+          );
+          debugPrint(
+              '✅ Media upload completed: ${uploadedMediaUrls.length} files');
+        } catch (e) {
+          debugPrint('❌ Media upload failed: $e');
+          if (mounted) {
+            _showError('Media upload failed: $e');
+          }
+          return;
+        }
+      }
+
+      // Submit to Firebase with media URLs
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: user['id']!,
         userName: user['name']!,
@@ -1433,12 +1468,23 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         title: selectedQuickActions.join(', ').isEmpty
             ? _getRatingText()
             : selectedQuickActions.first,
+        images: uploadedMediaUrls,
+        location: currentLocation != null
+            ? LocationModel(
+                latitude: currentLocation!.latitude,
+                longitude: currentLocation!.longitude,
+                accuracy: currentLocation!.accuracy,
+                timestamp: DateTime.now(),
+              )
+            : null,
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
           'quickActions': selectedQuickActions.toList(),
           'platform': 'mobile',
           'userEmail': user['email']!,
           'submittedAt': DateTime.now().toIso8601String(),
+          'mediaCount': uploadedMediaUrls.length,
+          'mediaUrls': uploadedMediaUrls,
         },
       );
 
