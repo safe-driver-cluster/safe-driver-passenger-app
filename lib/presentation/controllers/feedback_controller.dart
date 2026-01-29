@@ -197,6 +197,29 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
       debugPrint('🎯 FeedbackController: Starting submission...');
       state = const AsyncValue.loading();
 
+      // Create attachments from image URLs
+      final attachments = <FeedbackAttachment>[];
+      if (images != null && images.isNotEmpty) {
+        debugPrint('📎 FeedbackController: Creating attachments for ${images.length} images');
+        for (int i = 0; i < images.length; i++) {
+          final attachment = FeedbackAttachment(
+            id: '${DateTime.now().millisecondsSinceEpoch}-$i',
+            fileName: 'feedback-media-${DateTime.now().millisecondsSinceEpoch}-$i',
+            fileUrl: images[i],
+            fileType: _getFileTypeFromUrl(images[i]),
+            fileSize: 0, // Size will be handled by storage service
+            uploadedAt: DateTime.now(),
+            metadata: {
+              'uploadedBy': userId,
+              'feedbackId': '',
+              'index': i,
+            },
+          );
+          attachments.add(attachment);
+        }
+        debugPrint('📎 FeedbackController: Created ${attachments.length} attachments');
+      }
+
       final feedback = FeedbackModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
@@ -212,7 +235,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         rating:
             FeedbackRating(overall: rating), // Convert int to FeedbackRating
         tags: [],
-        attachments: [],
+        attachments: attachments,
         location: location,
         timestamp: DateTime.now(),
         status: FeedbackStatus.submitted,
