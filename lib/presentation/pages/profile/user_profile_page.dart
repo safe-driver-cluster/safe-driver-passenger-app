@@ -11,6 +11,7 @@ import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
+import 'feedback_history_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
 import 'passenger_profile_screen.dart';
@@ -456,6 +457,23 @@ class UserProfilePage extends ConsumerWidget {
             const SizedBox(height: AppDesign.spaceMD),
             Row(
               children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Feedback History',
+                    subtitle: 'Your feedback',
+                    icon: Icons.feedback_rounded,
+                    gradient: AppColors.successGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FeedbackHistoryPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
                     title: 'Support',
