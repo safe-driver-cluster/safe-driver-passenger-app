@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:safedriver_passenger_app/presentation/pages/feedback/feedback_history_page.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -456,6 +457,23 @@ class UserProfilePage extends ConsumerWidget {
             const SizedBox(height: AppDesign.spaceMD),
             Row(
               children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Feedback History',
+                    subtitle: 'Your feedback',
+                    icon: Icons.feedback_rounded,
+                    gradient: AppColors.successGradient,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FeedbackHistoryPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
                     title: 'Support',

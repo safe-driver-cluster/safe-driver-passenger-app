@@ -129,8 +129,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     const SizedBox(height: AppDesign.spaceMD),
                     _buildMediaUploadSection(),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildLocationSection(),
-                    const SizedBox(height: AppDesign.spaceMD),
                     _buildContactOptionsSection(),
                     const SizedBox(height: AppDesign.spaceMD),
                   ],
