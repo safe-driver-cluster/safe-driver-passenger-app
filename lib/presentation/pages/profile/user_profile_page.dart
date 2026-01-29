@@ -14,7 +14,6 @@ import 'edit_profile_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
 import 'passenger_profile_screen.dart';
-import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
@@ -459,23 +458,6 @@ class UserProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Payment',
-                    subtitle: 'Methods',
-                    icon: Icons.payment_rounded,
-                    gradient: AppColors.successGradient,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PaymentMethodsPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildProfessionalActionCard(
                     title: 'Support',
                     subtitle: 'Get help',
                     icon: Icons.help_rounded,
@@ -782,12 +764,6 @@ class UserProfilePage extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const TripHistoryPage()),
-        );
-      }),
-      MenuItemData('Payment Methods', Icons.payment_rounded, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PaymentMethodsPage()),
         );
       }),
     ];
