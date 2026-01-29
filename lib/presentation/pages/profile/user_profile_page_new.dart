@@ -7,7 +7,6 @@ import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
-import 'payment_methods_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
@@ -265,9 +264,9 @@ class UserProfilePage extends StatelessWidget {
               const SizedBox(width: AppDesign.spaceMD),
               Expanded(
                 child: _buildQuickActionButton(
-                  'Payment',
-                  Icons.payment_rounded,
-                  AppColors.successColor,
+                  'Settings',
+                  Icons.settings_rounded,
+                  AppColors.primaryColor,
                   () {},
                 ),
               ),
@@ -343,12 +342,6 @@ class UserProfilePage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const TripHistoryPage()),
-        );
-      }),
-      MenuItemData('Payment Methods', Icons.payment_rounded, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PaymentMethodsPage()),
         );
       }),
       MenuItemData('Notifications', Icons.notifications_outlined, () {
