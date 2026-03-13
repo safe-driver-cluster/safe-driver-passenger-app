@@ -28,20 +28,30 @@ This test verifies FCM push notifications work correctly.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | App in foreground | User in app, not in background |
-| 2 | Send test notification | Via Firebase Cloud Messaging console |
-| 3 | Notification received | App receives notification message |
-| 4 | Display notification | Notification displays in-app or as banner |
-| 5 | Notification content | Shows title, message, and icon correctly |
-| 6 | App in background | Close app or minimize |
-| 7 | Send notification | Firebase sends notification while app is background |
-| 8 | System notification | Android notification tray / iOS notification center |
-| 9 | Notification alert | Sound and/or vibration alert (if enabled) |
-| 10 | Tap notification | Tapping leads to relevant page in app |
-| 11 | Test with URL | Notification with deep link works |
-| 12 | Test with data | Notification with custom data payload processes correctly |
+• **Step 1:** App in foreground
+  Expected: User in app, not in background
+• **Step 2:** Send test notification
+  Expected: Via Firebase Cloud Messaging console
+• **Step 3:** Notification received
+  Expected: App receives notification message
+• **Step 4:** Display notification
+  Expected: Notification displays in-app or as banner
+• **Step 5:** Notification content
+  Expected: Shows title, message, and icon correctly
+• **Step 6:** App in background
+  Expected: Close app or minimize
+• **Step 7:** Send notification
+  Expected: Firebase sends notification while app is background
+• **Step 8:** System notification
+  Expected: Android notification tray / iOS notification center
+• **Step 9:** Notification alert
+  Expected: Sound and/or vibration alert (if enabled)
+• **Step 10:** Tap notification
+  Expected: Tapping leads to relevant page in app
+• **Step 11:** Test with URL
+  Expected: Notification with deep link works
+• **Step 12:** Test with data
+  Expected: Notification with custom data payload processes correctly
 
 ### **Expected Result**
 - Notifications received by app
@@ -87,20 +97,30 @@ This test verifies in-app notification display (toasts, banners, snackbars).
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Feedback submitted | "Thank you for your feedback" snackbar appears |
-| 2 | Profile updated | Success notification shows "Profile updated" |
-| 3 | Error occurred | Error notification displays (red color) |
-| 4 | Warning event | Yellow/orange warning notification appears |
-| 5 | Long duration toast | Message shows for 3-5 seconds before fading |
-| 6 | Short duration toast | Quick notification shows for 1-2 seconds |
-| 7 | Action button | Some notifications have "Undo" or "Retry" button |
-| 8 | Tap action button | Performs the action (undo, retry, etc.) |
-| 9 | Multiple notifications | Queue shows if multiple come quickly |
-| 10 | Notification stacking | Older notifications disappear, new ones show |
-| 11 | Dismissible | User can swipe to dismiss notification |
-| 12 | Position | Notifications appear consistently (top or bottom) |
+• **Step 1:** Feedback submitted
+  Expected: "Thank you for your feedback" snackbar appears
+• **Step 2:** Profile updated
+  Expected: Success notification shows "Profile updated"
+• **Step 3:** Error occurred
+  Expected: Error notification displays (red color)
+• **Step 4:** Warning event
+  Expected: Yellow/orange warning notification appears
+• **Step 5:** Long duration toast
+  Expected: Message shows for 3-5 seconds before fading
+• **Step 6:** Short duration toast
+  Expected: Quick notification shows for 1-2 seconds
+• **Step 7:** Action button
+  Expected: Some notifications have "Undo" or "Retry" button
+• **Step 8:** Tap action button
+  Expected: Performs the action (undo, retry, etc.)
+• **Step 9:** Multiple notifications
+  Expected: Queue shows if multiple come quickly
+• **Step 10:** Notification stacking
+  Expected: Older notifications disappear, new ones show
+• **Step 11:** Dismissible
+  Expected: User can swipe to dismiss notification
+• **Step 12:** Position
+  Expected: Notifications appear consistently (top or bottom)
 
 ### **Expected Result**
 - In-app notifications display appropriately
@@ -146,20 +166,30 @@ This test verifies sound and vibration alerts for notifications.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Sound enabled | Settings → Notifications → Sound: ON |
-| 2 | Send notification | Notification received with sound alert |
-| 3 | Sound plays | Device makes notification sound |
-| 4 | Vibration enabled | Settings → Notifications → Vibration: ON |
-| 5 | Vibration pulses | Device vibrates on notification (1-2 pulses) |
-| 6 | Sound disabled | Turn off sound in settings |
-| 7 | Notification received | No sound plays |
-| 8 | Vibration still active | Vibration still occurs if enabled separately |
-| 9 | Vibration disabled | Turn off vibration in settings |
-| 10 | Silent notification | No vibration or sound |
-| 11 | Custom sound | If available, select different notification sound |
-| 12 | Quiet hours | During quiet hours, mute notifications |
+• **Step 1:** Sound enabled
+  Expected: Settings → Notifications → Sound: ON
+• **Step 2:** Send notification
+  Expected: Notification received with sound alert
+• **Step 3:** Sound plays
+  Expected: Device makes notification sound
+• **Step 4:** Vibration enabled
+  Expected: Settings → Notifications → Vibration: ON
+• **Step 5:** Vibration pulses
+  Expected: Device vibrates on notification (1-2 pulses)
+• **Step 6:** Sound disabled
+  Expected: Turn off sound in settings
+• **Step 7:** Notification received
+  Expected: No sound plays
+• **Step 8:** Vibration still active
+  Expected: Vibration still occurs if enabled separately
+• **Step 9:** Vibration disabled
+  Expected: Turn off vibration in settings
+• **Step 10:** Silent notification
+  Expected: No vibration or sound
+• **Step 11:** Custom sound
+  Expected: If available, select different notification sound
+• **Step 12:** Quiet hours
+  Expected: During quiet hours, mute notifications
 
 ### **Expected Result**
 - Sound plays when enabled (respects settings)
@@ -203,20 +233,30 @@ This test verifies notification list management and clearing.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View notifications page | Notification list displays |
-| 2 | Multiple notifications | Shows all recent notifications |
-| 3 | Each shows | Timestamp, source, message preview |
-| 4 | Tap notification | Opens relevant feature/page |
-| 5 | Swipe to dismiss | Swiping removes notification from list |
-| 6 | "Clear All" button | Clears all notifications at once |
-| 7 | Confirmation | "Clear all notifications?" asks before clearing |
-| 8 | Empty state | "No notifications" message when cleared |
-| 9 | Mark as read | Visual change when notification read |
-| 10 | Unread badge | Badge shows count of unread notifications |
-| 11 | Sort by date | Notifications ordered (newest first) |
-| 12 | Archive old | Notifications older than 30 days archived |
+• **Step 1:** View notifications page
+  Expected: Notification list displays
+• **Step 2:** Multiple notifications
+  Expected: Shows all recent notifications
+• **Step 3:** Each shows
+  Expected: Timestamp, source, message preview
+• **Step 4:** Tap notification
+  Expected: Opens relevant feature/page
+• **Step 5:** Swipe to dismiss
+  Expected: Swiping removes notification from list
+• **Step 6:** "Clear All" button
+  Expected: Clears all notifications at once
+• **Step 7:** Confirmation
+  Expected: "Clear all notifications?" asks before clearing
+• **Step 8:** Empty state
+  Expected: "No notifications" message when cleared
+• **Step 9:** Mark as read
+  Expected: Visual change when notification read
+• **Step 10:** Unread badge
+  Expected: Badge shows count of unread notifications
+• **Step 11:** Sort by date
+  Expected: Notifications ordered (newest first)
+• **Step 12:** Archive old
+  Expected: Notifications older than 30 days archived
 
 ### **Expected Result**
 - Notification list displays all notifications
@@ -261,20 +301,30 @@ This test verifies the settings page layout and section navigation.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap Settings | Settings page loads |
-| 2 | Settings layout | Organized in clear sections |
-| 3 | Sections visible | Account, Notifications, Privacy, About sections |
-| 4 | Scroll sections | Can scroll vertically to see all settings |
-| 5 | Tap section heading | May collapse/expand section (if accordion) |
-| 6 | Subsection links | Can tap to navigate to detailed settings |
-| 7 | "Change Password" | Opens password change form |
-| 8 | "Privacy Settings" | Opens privacy configuration page |
-| 9 | "Notification Settings" | Opens notification preferences |
-| 10 | "App Info" | Shows app version and build number |
-| 11 | "About" | Shows app description and company info |
-| 12 | Back button | Returns to settings or previous page |
+• **Step 1:** Tap Settings
+  Expected: Settings page loads
+• **Step 2:** Settings layout
+  Expected: Organized in clear sections
+• **Step 3:** Sections visible
+  Expected: Account, Notifications, Privacy, About sections
+• **Step 4:** Scroll sections
+  Expected: Can scroll vertically to see all settings
+• **Step 5:** Tap section heading
+  Expected: May collapse/expand section (if accordion)
+• **Step 6:** Subsection links
+  Expected: Can tap to navigate to detailed settings
+• **Step 7:** "Change Password"
+  Expected: Opens password change form
+• **Step 8:** "Privacy Settings"
+  Expected: Opens privacy configuration page
+• **Step 9:** "Notification Settings"
+  Expected: Opens notification preferences
+• **Step 10:** "App Info"
+  Expected: Shows app version and build number
+• **Step 11:** "About"
+  Expected: Shows app description and company info
+• **Step 12:** Back button
+  Expected: Returns to settings or previous page
 
 ### **Expected Result**
 - Settings page displays organized sections
@@ -318,20 +368,30 @@ This test verifies dark mode, light mode, and font size settings.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View theme options | Light, Dark, System options visible |
-| 2 | Select "Light" | App switches to light theme |
-| 3 | Light theme colors | White backgrounds, dark text |
-| 4 | Select "Dark" | App switches to dark theme  |
-| 5 | Dark theme colors | Dark backgrounds, light text |
-| 6 | Select "System" | Theme follows device settings |
-| 7 | Change device theme | App theme changes automatically |
-| 8 | Font size setting | Slider or buttons to adjust text size |
-| 9 | Increase font size | All text becomes larger |
-| 10 | Decrease font size | All text becomes smaller |
-| 11 | Accessibility fonts | Support for system font sizes |
-| 12 | Persistence | Settings saved and persist on restart |
+• **Step 1:** View theme options
+  Expected: Light, Dark, System options visible
+• **Step 2:** Select "Light"
+  Expected: App switches to light theme
+• **Step 3:** Light theme colors
+  Expected: White backgrounds, dark text
+• **Step 4:** Select "Dark"
+  Expected: App switches to dark theme
+• **Step 5:** Dark theme colors
+  Expected: Dark backgrounds, light text
+• **Step 6:** Select "System"
+  Expected: Theme follows device settings
+• **Step 7:** Change device theme
+  Expected: App theme changes automatically
+• **Step 8:** Font size setting
+  Expected: Slider or buttons to adjust text size
+• **Step 9:** Increase font size
+  Expected: All text becomes larger
+• **Step 10:** Decrease font size
+  Expected: All text becomes smaller
+• **Step 11:** Accessibility fonts
+  Expected: Support for system font sizes
+• **Step 12:** Persistence
+  Expected: Settings saved and persist on restart
 
 ### **Expected Result**
 - Theme selection options available
@@ -377,20 +437,30 @@ This test verifies language switching functionality.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Language settings | Language option visible |
-| 2 | Current language shown | "English" currently selected |
-| 3 | View language options | English, Sinhala, Tamil shown |
-| 4 | Tap "Sinhala" | Language changes to Sinhala immediately |
-| 5 | All text updates | All UI text shows in Sinhala |
-| 6 | Settings page updates | Setting options text in Sinhala |
-| 7 | Switch to Tamil | Language changes to Tamil |
-| 8 | Tamil content | All content shows in Tamil |
-| 9 | Return to English | Switch back to English |
-| 10 | Confirmation message | Optional "Language changed" notification |
-| 11 | App restart | Language persists after restarting app |
-| 12 | Partial translations | If any text untranslated, shows in English fallback |
+• **Step 1:** Navigate to Language settings
+  Expected: Language option visible
+• **Step 2:** Current language shown
+  Expected: "English" currently selected
+• **Step 3:** View language options
+  Expected: English, Sinhala, Tamil shown
+• **Step 4:** Tap "Sinhala"
+  Expected: Language changes to Sinhala immediately
+• **Step 5:** All text updates
+  Expected: All UI text shows in Sinhala
+• **Step 6:** Settings page updates
+  Expected: Setting options text in Sinhala
+• **Step 7:** Switch to Tamil
+  Expected: Language changes to Tamil
+• **Step 8:** Tamil content
+  Expected: All content shows in Tamil
+• **Step 9:** Return to English
+  Expected: Switch back to English
+• **Step 10:** Confirmation message
+  Expected: Optional "Language changed" notification
+• **Step 11:** App restart
+  Expected: Language persists after restarting app
+• **Step 12:** Partial translations
+  Expected: If any text untranslated, shows in English fallback
 
 ### **Expected Result**
 - Language selection dropdown available
@@ -434,20 +504,30 @@ This test verifies user control over data collection and analytics.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View privacy options | Analytics, Crash reporting options |
-| 2 | Analytics toggle | Can enable/disable analytics collection |
-| 3 | Disable analytics | "Analytics disabled" confirmation |
-| 4 | Crash reporting toggle | Can enable/disable crash reporting |
-| 5 | Location sharing toggle | Control location data sharing |
-| 6 | Marketing emails toggle | Opt out of promotional emails |
-| 7 | Third-party sharing toggle | Control data sharing with partners |
-| 8 | View privacy policy | "Privacy Policy" link available |
-| 9 | View terms | "Terms of Service" link available |
-| 10 | Download my data | Option to export personal data |
-| 11 | Delete account | Option to delete account (with warning) |
-| 12 | Settings saved | Changes persist immediately |
+• **Step 1:** View privacy options
+  Expected: Analytics, Crash reporting options
+• **Step 2:** Analytics toggle
+  Expected: Can enable/disable analytics collection
+• **Step 3:** Disable analytics
+  Expected: "Analytics disabled" confirmation
+• **Step 4:** Crash reporting toggle
+  Expected: Can enable/disable crash reporting
+• **Step 5:** Location sharing toggle
+  Expected: Control location data sharing
+• **Step 6:** Marketing emails toggle
+  Expected: Opt out of promotional emails
+• **Step 7:** Third-party sharing toggle
+  Expected: Control data sharing with partners
+• **Step 8:** View privacy policy
+  Expected: "Privacy Policy" link available
+• **Step 9:** View terms
+  Expected: "Terms of Service" link available
+• **Step 10:** Download my data
+  Expected: Option to export personal data
+• **Step 11:** Delete account
+  Expected: Option to delete account (with warning)
+• **Step 12:** Settings saved
+  Expected: Changes persist immediately
 
 ### **Expected Result**
 - All privacy settings controllable
@@ -492,20 +572,30 @@ This test verifies app version, build info, and company information.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to About | About page displays |
-| 2 | App name | SafeDriver logo/name displayed |
-| 3 | Version number | Shows current app version (e.g., 1.0.0) |
-| 4 | Build number | Shows build number |
-| 5 | Check for updates | "Check for Updates" button available |
-| 6 | Updated app available | If update available, notification shown |
-| 7 | Take to app store | "Update" button opens app store |
-| 8 | Company information | Contact info for SafeDriver |
-| 9 | Website link | Link to company website |
-| 10 | Social media links | Links to Facebook, Instagram, Twitter (if any) |
-| 11 | Contact email | Support email address shown |
-| 12 | Phone number | Support phone number (if available) |
+• **Step 1:** Navigate to About
+  Expected: About page displays
+• **Step 2:** App name
+  Expected: SafeDriver logo/name displayed
+• **Step 3:** Version number
+  Expected: Shows current app version (e.g., 1.0.0)
+• **Step 4:** Build number
+  Expected: Shows build number
+• **Step 5:** Check for updates
+  Expected: "Check for Updates" button available
+• **Step 6:** Updated app available
+  Expected: If update available, notification shown
+• **Step 7:** Take to app store
+  Expected: "Update" button opens app store
+• **Step 8:** Company information
+  Expected: Contact info for SafeDriver
+• **Step 9:** Website link
+  Expected: Link to company website
+• **Step 10:** Social media links
+  Expected: Links to Facebook, Instagram, Twitter (if any)
+• **Step 11:** Contact email
+  Expected: Support email address shown
+• **Step 12:** Phone number
+  Expected: Support phone number (if available)
 
 ### **Expected Result**
 - App information displays correctly
@@ -550,20 +640,30 @@ This test verifies ability to clear app cache to free storage.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View storage settings | "Storage Usage" or "Cache" section |
-| 2 | Cache size shown | Shows size of cached data (e.g., "124 MB") |
-| 3 | Tap "Clear Cache" | Confirmation dialog appears |
-| 4 | Confirmation message | "Are you sure you want to delete cache?" |
-| 5 | Tap "Cancel" | Dialog closes, cache remains |
-| 6 | Tap "Clear Cache" | Cache clears, success message shows |
-| 7 | Storage updated | Storage usage decreases |
-| 8 | App functionality | App still works after cache clear |
-| 9 | Data reloads | Data reloads from server on next use |
-| 10 | Clear specific cache | Option to clear specific types: images, videos |
-| 11 | Offline maps cache | Can clear cached offline map data |
-| 12 | Confirmation message | "Cache cleared successfully!" notification |
+• **Step 1:** View storage settings
+  Expected: "Storage Usage" or "Cache" section
+• **Step 2:** Cache size shown
+  Expected: Shows size of cached data (e.g., "124 MB")
+• **Step 3:** Tap "Clear Cache"
+  Expected: Confirmation dialog appears
+• **Step 4:** Confirmation message
+  Expected: "Are you sure you want to delete cache?"
+• **Step 5:** Tap "Cancel"
+  Expected: Dialog closes, cache remains
+• **Step 6:** Tap "Clear Cache"
+  Expected: Cache clears, success message shows
+• **Step 7:** Storage updated
+  Expected: Storage usage decreases
+• **Step 8:** App functionality
+  Expected: App still works after cache clear
+• **Step 9:** Data reloads
+  Expected: Data reloads from server on next use
+• **Step 10:** Clear specific cache
+  Expected: Option to clear specific types: images, videos
+• **Step 11:** Offline maps cache
+  Expected: Can clear cached offline map data
+• **Step 12:** Confirmation message
+  Expected: "Cache cleared successfully!" notification
 
 ### **Expected Result**
 - Cache clearing option available
@@ -608,20 +708,30 @@ This test verifies users can enable/disable app permissions.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | App permissions section | List of all permissions shown |
-| 2 | Permissions listed | Camera, Microphone, Location, Contacts, etc. |
-| 3 | Individual permissions | Each with toggle or on/off status |
-| 4 | Disable permission | Toggle camera permission OFF |
-| 5 | Feature disabled | Camera feature shows "Permission required" on use |
-| 6 | Re-enable permission | Toggle camera permission ON |
-| 7 | Feature works | Camera feature functional again |
-| 8 | Permission status | Shows "Always", "While using app", "Never" options (if available) |
-| 9 | Grant/Deny history | May show which permissions changed recently |
-| 10 | Reset all | Option to reset all permissions to defaults |
-| 11 | System settings link | "Open settings" link takes to device settings |
-| 12 | In-app request | In-app request respects device permission state |
+• **Step 1:** App permissions section
+  Expected: List of all permissions shown
+• **Step 2:** Permissions listed
+  Expected: Camera, Microphone, Location, Contacts, etc.
+• **Step 3:** Individual permissions
+  Expected: Each with toggle or on/off status
+• **Step 4:** Disable permission
+  Expected: Toggle camera permission OFF
+• **Step 5:** Feature disabled
+  Expected: Camera feature shows "Permission required" on use
+• **Step 6:** Re-enable permission
+  Expected: Toggle camera permission ON
+• **Step 7:** Feature works
+  Expected: Camera feature functional again
+• **Step 8:** Permission status
+  Expected: Shows "Always", "While using app", "Never" options (if available)
+• **Step 9:** Grant/Deny history
+  Expected: May show which permissions changed recently
+• **Step 10:** Reset all
+  Expected: Option to reset all permissions to defaults
+• **Step 11:** System settings link
+  Expected: "Open settings" link takes to device settings
+• **Step 12:** In-app request
+  Expected: In-app request respects device permission state
 
 ### **Expected Result**
 - All app permissions visible
@@ -665,20 +775,30 @@ This test verifies help documentation and support access.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Open Help page | Help page displays |
-| 2 | Browse FAQ | "Frequently Asked Questions" section with categories |
-| 3 | Search FAQ | Can search for answers by keyword |
-| 4 | FAQ results | Relevant answers appear quickly |
-| 5 | Tap FAQ item | Article expands with full answer |
-| 6 | Contact support | "Contact Us" button available |
-| 7 | Support form | Form to submit support ticket |
-| 8 | Ticket tracking | Email confirmation with ticket number |
-| 9 | Live chat (if available) | Live chat option may appear |
-| 10 | Feedback option | Can submit feedback from help page |
-| 11 | Video tutorials | Links to help videos (if available) |
-| 12 | Email support | Support email address provided |
+• **Step 1:** Open Help page
+  Expected: Help page displays
+• **Step 2:** Browse FAQ
+  Expected: "Frequently Asked Questions" section with categories
+• **Step 3:** Search FAQ
+  Expected: Can search for answers by keyword
+• **Step 4:** FAQ results
+  Expected: Relevant answers appear quickly
+• **Step 5:** Tap FAQ item
+  Expected: Article expands with full answer
+• **Step 6:** Contact support
+  Expected: "Contact Us" button available
+• **Step 7:** Support form
+  Expected: Form to submit support ticket
+• **Step 8:** Ticket tracking
+  Expected: Email confirmation with ticket number
+• **Step 9:** Live chat (if available)
+  Expected: Live chat option may appear
+• **Step 10:** Feedback option
+  Expected: Can submit feedback from help page
+• **Step 11:** Video tutorials
+  Expected: Links to help videos (if available)
+• **Step 12:** Email support
+  Expected: Support email address provided
 
 ### **Expected Result**
 - Help page well-organized
@@ -722,20 +842,30 @@ This test verifies all settings changes are permanently saved.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Change language to Sinhala | Language changes in app |
-| 2 | Enable dark mode | App switches to dark theme |
-| 3 | Disable notifications | Notification toggle turns OFF |
-| 4 | Increase font size | Text becomes larger |
-| 5 | Close app | App closes completely |
-| 6 | Reopen app | App launches |
-| 7 | Check language | Still in Sinhala |
-| 8 | Check theme | Still in dark mode |
-| 9 | Check notifications | Still disabled |
-| 10 | Check font size | Text still larger |
-| 11 | Restart device | Restart entire device |
-| 12 | After restart | All settings still persist |
+• **Step 1:** Change language to Sinhala
+  Expected: Language changes in app
+• **Step 2:** Enable dark mode
+  Expected: App switches to dark theme
+• **Step 3:** Disable notifications
+  Expected: Notification toggle turns OFF
+• **Step 4:** Increase font size
+  Expected: Text becomes larger
+• **Step 5:** Close app
+  Expected: App closes completely
+• **Step 6:** Reopen app
+  Expected: App launches
+• **Step 7:** Check language
+  Expected: Still in Sinhala
+• **Step 8:** Check theme
+  Expected: Still in dark mode
+• **Step 9:** Check notifications
+  Expected: Still disabled
+• **Step 10:** Check font size
+  Expected: Text still larger
+• **Step 11:** Restart device
+  Expected: Restart entire device
+• **Step 12:** After restart
+  Expected: All settings still persist
 
 ### **Expected Result**
 - All settings changes saved to device

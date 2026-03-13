@@ -27,20 +27,30 @@ This test verifies the app requests location permission and handles user choices
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap "Find Routes" or location feature | Permission request dialog appears |
-| 2 | Dialog shows | "SafeDriver needs access to your location" message |
-| 3 | Permission options | Buttons: "Allow", "Deny", "Don't Ask Again" (varies by OS) |
-| 4 | Explanation text | Clear reason why location needed displayed |
-| 5 | Tap "Allow" | Permission granted for app |
-| 6 | Feature works | Maps/routes load with location services enabled |
-| 7 | Tap "Deny" | Permission denied |
-| 8 | Feature unavailable | Feature shows "Location permission required" message |
-| 9 | Re-request | Icon/button to request permission again in settings |
-| 10 | Settings access | Can enable in Settings → Permissions → Location |
-| 11 | Permission persistence | Once granted, not asked again (until app reinstall) |
-| 12 | Android/iOS differences | Dialog phrasing matches OS standards |
+• **Step 1:** Tap "Find Routes" or location feature
+  Expected: Permission request dialog appears
+• **Step 2:** Dialog shows
+  Expected: "SafeDriver needs access to your location" message
+• **Step 3:** Permission options
+  Expected: Buttons: "Allow", "Deny", "Don't Ask Again" (varies by OS)
+• **Step 4:** Explanation text
+  Expected: Clear reason why location needed displayed
+• **Step 5:** Tap "Allow"
+  Expected: Permission granted for app
+• **Step 6:** Feature works
+  Expected: Maps/routes load with location services enabled
+• **Step 7:** Tap "Deny"
+  Expected: Permission denied
+• **Step 8:** Feature unavailable
+  Expected: Feature shows "Location permission required" message
+• **Step 9:** Re-request
+  Expected: Icon/button to request permission again in settings
+• **Step 10:** Settings access
+  Expected: Can enable in Settings → Permissions → Location
+• **Step 11:** Permission persistence
+  Expected: Once granted, not asked again (until app reinstall)
+• **Step 12:** Android/iOS differences
+  Expected: Dialog phrasing matches OS standards
 
 ### **Expected Result**
 - Permission dialog displays correctly
@@ -86,20 +96,30 @@ This test verifies location services retrieve current GPS position.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | On maps/routes page | Map displays with default view |
-| 2 | Wait for location | GPS acquires location (within 10 seconds) |
-| 3 | Current location indicator | Blue dot appears on map at current location |
-| 4 | Map centers | Map auto-centers to current location |
-| 5 | Accuracy circle | Accuracy radius shown around location (if enabled) |
-| 6 | Location info displays | Shows: Latitude, Longitude, Accuracy |
-| 7 | Address lookup | Reverse geocoding shows nearest address |
-| 8 | Loading state | "Getting location..." shown while acquiring |
-| 9 | Timeout handling | After 30 seconds without signal, shows error |
-| 10 | Retry option | User can retry location fetch |
-| 11 | Location updates | Blue dot updates as user moves |
-| 12 | Permissions denied | If off, shows "Enable location" message |
+• **Step 1:** On maps/routes page
+  Expected: Map displays with default view
+• **Step 2:** Wait for location
+  Expected: GPS acquires location (within 10 seconds)
+• **Step 3:** Current location indicator
+  Expected: Blue dot appears on map at current location
+• **Step 4:** Map centers
+  Expected: Map auto-centers to current location
+• **Step 5:** Accuracy circle
+  Expected: Accuracy radius shown around location (if enabled)
+• **Step 6:** Location info displays
+  Expected: Shows: Latitude, Longitude, Accuracy
+• **Step 7:** Address lookup
+  Expected: Reverse geocoding shows nearest address
+• **Step 8:** Loading state
+  Expected: "Getting location..." shown while acquiring
+• **Step 9:** Timeout handling
+  Expected: After 30 seconds without signal, shows error
+• **Step 10:** Retry option
+  Expected: User can retry location fetch
+• **Step 11:** Location updates
+  Expected: Blue dot updates as user moves
+• **Step 12:** Permissions denied
+  Expected: If off, shows "Enable location" message
 
 ### **Expected Result**
 - Current location retrieved accurately
@@ -145,20 +165,30 @@ This test verifies the location search feature with autocomplete suggestions.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap search field | Search input field becomes active |
-| 2 | Type location name | Keyboard opens, text displays in search |
-| 3 | Wait briefly | Autocomplete suggestions appear (within 1 second) |
-| 4 | View suggestions | List of places matching search shown |
-| 5 | Select from list | Tap suggestion to select |
-| 6 | Map updates | Map centers to selected location |
-| 7 | Location details | Address, coordinates show for selected place |
-| 8 | Search history | Recently searched places available (if enabled) |
-| 9 | Clear search | 'X' button clears search field |
-| 10 | Search special characters | Searches with quotes, apostrophes work |
-| 11 | No results | "No results found" if nothing matches |
-| 12 | Network error | Handles offline gracefully |
+• **Step 1:** Tap search field
+  Expected: Search input field becomes active
+• **Step 2:** Type location name
+  Expected: Keyboard opens, text displays in search
+• **Step 3:** Wait briefly
+  Expected: Autocomplete suggestions appear (within 1 second)
+• **Step 4:** View suggestions
+  Expected: List of places matching search shown
+• **Step 5:** Select from list
+  Expected: Tap suggestion to select
+• **Step 6:** Map updates
+  Expected: Map centers to selected location
+• **Step 7:** Location details
+  Expected: Address, coordinates show for selected place
+• **Step 8:** Search history
+  Expected: Recently searched places available (if enabled)
+• **Step 9:** Clear search
+  Expected: 'X' button clears search field
+• **Step 10:** Search special characters
+  Expected: Searches with quotes, apostrophes work
+• **Step 11:** No results
+  Expected: "No results found" if nothing matches
+• **Step 12:** Network error
+  Expected: Handles offline gracefully
 
 ### **Expected Result**
 - Search field functional and responsive
@@ -207,20 +237,30 @@ This test verifies that bus routes display as polylines connecting stops.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View map | Map displays with route polylines |
-| 2 | Bus stops visible | Stop markers display on map |
-| 3 | Route line color | Each route has distinct color |
-| 4 | StartRoutes connected | Stops connected with polyline |
-| 5 | Tap stop marker | Stop info window shows with details |
-| 6 | Stop details | Shows: Stop name, address, buses serving this stop |
-| 7 | Zoom in/out | Route remains visible but adapts to zoom level |
-| 8 | Scroll map | Can pan around without losing route |
-| 9 | Multiple routes | Can toggle routes on/off if overlapping |
-| 10 | Route optimization | Shows shortest path for buses |
-| 11 | Traffic info | If available, shows traffic conditions |
-| 12 | Location sharing | User's location shown in relation to route |
+• **Step 1:** View map
+  Expected: Map displays with route polylines
+• **Step 2:** Bus stops visible
+  Expected: Stop markers display on map
+• **Step 3:** Route line color
+  Expected: Each route has distinct color
+• **Step 4:** StartRoutes connected
+  Expected: Stops connected with polyline
+• **Step 5:** Tap stop marker
+  Expected: Stop info window shows with details
+• **Step 6:** Stop details
+  Expected: Shows: Stop name, address, buses serving this stop
+• **Step 7:** Zoom in/out
+  Expected: Route remains visible but adapts to zoom level
+• **Step 8:** Scroll map
+  Expected: Can pan around without losing route
+• **Step 9:** Multiple routes
+  Expected: Can toggle routes on/off if overlapping
+• **Step 10:** Route optimization
+  Expected: Shows shortest path for buses
+• **Step 11:** Traffic info
+  Expected: If available, shows traffic conditions
+• **Step 12:** Location sharing
+  Expected: User's location shown in relation to route
 
 ### **Expected Result**
 - Routes display clearly on map
@@ -267,20 +307,30 @@ This test verifies live bus position tracking on the map.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View map | Bus location marker displays |
-| 2 | Bus marker icon | Bus icon shows on current position |
-| 3 | Watch for updates | Bus position updates in real-time (every 10-15 seconds) |
-| 4 | Movement shown | Marker moves along route |
-| 5 | Accuracy indicator | Accuracy of location shown |
-| 6 | Tap bus marker | Info window shows: Bus number, route, speed, ETA |
-| 7 | Speed displayed | Current speed shown (if available) |
-| 8 | Direction indicator | Arrow or indicator shows direction of travel |
-| 9 | Stop arrival | When bus reaches stop, special indicator shown |
-| 10 | Network loss | If offline, cached position shown with timestamp |
-| 11 | Reconnect | Updates resume when network returns |
-| 12 | Toggle tracking | Can enable/disable live tracking |
+• **Step 1:** View map
+  Expected: Bus location marker displays
+• **Step 2:** Bus marker icon
+  Expected: Bus icon shows on current position
+• **Step 3:** Watch for updates
+  Expected: Bus position updates in real-time (every 10-15 seconds)
+• **Step 4:** Movement shown
+  Expected: Marker moves along route
+• **Step 5:** Accuracy indicator
+  Expected: Accuracy of location shown
+• **Step 6:** Tap bus marker
+  Expected: Info window shows: Bus number, route, speed, ETA
+• **Step 7:** Speed displayed
+  Expected: Current speed shown (if available)
+• **Step 8:** Direction indicator
+  Expected: Arrow or indicator shows direction of travel
+• **Step 9:** Stop arrival
+  Expected: When bus reaches stop, special indicator shown
+• **Step 10:** Network loss
+  Expected: If offline, cached position shown with timestamp
+• **Step 11:** Reconnect
+  Expected: Updates resume when network returns
+• **Step 12:** Toggle tracking
+  Expected: Can enable/disable live tracking
 
 ### **Expected Result**
 - Bus location updates in real-time
@@ -326,20 +376,30 @@ This test verifies ETA calculation for bus arrival time.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View map with bus | Bus location and route visible |
-| 2 | ETA displayed | Shows estimated arrival time |
-| 3 | Time format | Shows: "Arriving in 5 mins" or exact time "2:15 PM" |
-| 4 | Bus approaching | ETA decreases as bus gets closer |
-| 5 | ETA accuracy | Time should be relatively accurate (±2 min) |
-| 6 | Traffic considered | ETA adjusts for traffic conditions (if integrated) |
-| 7 | Stops considered | ETA accounts for upcoming stops |
-| 8 | Updates frequently | ETA refreshes every 30-60 seconds |
-| 9 | Exceeded ETA | If bus late, shows "Bus running late" warning |
-| 10 | Early arrival | If early, shows "Bus arriving early" |
-| 11 | Bus arrived | When bus reaches stop, "Bus arrived" shown |
-| 12 | Next bus ETA | Can view ETA for next bus on same route |
+• **Step 1:** View map with bus
+  Expected: Bus location and route visible
+• **Step 2:** ETA displayed
+  Expected: Shows estimated arrival time
+• **Step 3:** Time format
+  Expected: Shows: "Arriving in 5 mins" or exact time "2:15 PM"
+• **Step 4:** Bus approaching
+  Expected: ETA decreases as bus gets closer
+• **Step 5:** ETA accuracy
+  Expected: Time should be relatively accurate (±2 min)
+• **Step 6:** Traffic considered
+  Expected: ETA adjusts for traffic conditions (if integrated)
+• **Step 7:** Stops considered
+  Expected: ETA accounts for upcoming stops
+• **Step 8:** Updates frequently
+  Expected: ETA refreshes every 30-60 seconds
+• **Step 9:** Exceeded ETA
+  Expected: If bus late, shows "Bus running late" warning
+• **Step 10:** Early arrival
+  Expected: If early, shows "Bus arriving early"
+• **Step 11:** Bus arrived
+  Expected: When bus reaches stop, "Bus arrived" shown
+• **Step 12:** Next bus ETA
+  Expected: Can view ETA for next bus on same route
 
 ### **Expected Result**
 - ETA calculated and displayed
@@ -386,20 +446,29 @@ This test verifies hazard zones are marked on map and user warned.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View map | Hazard zones marked on map |
-| 2 | Zone color/icon | Hazard areas highlighted differently (orange/red) |
-| 3 | Tap hazard zone | Info shows: Zone type, severity, reason |
-| 4 | User entering hazard | Warning notification appears |
-| 5 | Warning content | "⚠️ Entering hazard zone: [Type]" |
-| 6 | Safety tips | Tips shown for hazard type |
-| 7 | User leaving hazard | "You have left the hazard zone" notification |
-| 8 | Multiple zones | If bus passes multiple, each warned |
-| 9 | Zone history | Can view zone history and statistics |
+• **Step 1:** View map
+  Expected: Hazard zones marked on map
+• **Step 2:** Zone color/icon
+  Expected: Hazard areas highlighted differently (orange/red)
+• **Step 3:** Tap hazard zone
+  Expected: Info shows: Zone type, severity, reason
+• **Step 4:** User entering hazard
+  Expected: Warning notification appears
+• **Step 5:** Warning content
+  Expected: "⚠️ Entering hazard zone: [Type]"
+• **Step 6:** Safety tips
+  Expected: Tips shown for hazard type
+• **Step 7:** User leaving hazard
+  Expected: "You have left the hazard zone" notification
+• **Step 8:** Multiple zones
+  Expected: If bus passes multiple, each warned
+• **Step 9:** Zone history
+  Expected: Can view zone history and statistics
 | 10 | Report hazard: Users can report new hazards |
-| 11 | Real-time updates | New hazards appear within 5 minutes |
-| 12 | Severity level | Zones color-coded: Green (low), Yellow (med), Red (high) |
+• **Step 11:** Real-time updates
+  Expected: New hazards appear within 5 minutes
+• **Step 12:** Severity level
+  Expected: Zones color-coded: Green (low), Yellow (med), Red (high)
 
 ### **Expected Result**
 - Hazard zones clearly marked on map
@@ -444,20 +513,30 @@ This test verifies app functionality when maps are offline.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Load maps offline | Cached map tiles display |
-| 2 | Zoom level | Can zoom in/out using cached zoom levels |
-| 3 | Pan/scroll | Can scroll around cached area |
-| 4 | Route visible | Previously loaded routes remain visible |
-| 5 | Current location | User location still shown (if GPS available) |
-| 6 | Search unavailable | Search disabled with "Offline mode" message |
-| 7 | Live tracking unavailable | Live bus tracking stopped |
-| 8 | Cached data used | Shows last known bus positions |
-| 9 | Reconnect | Online features resume when connection returns |
-| 10 | Auto-refresh | Map refreshes when connection restored |
-| 11 | Cache size | Limits cache to reasonable size (e.g., 50MB) |
-| 12 | Clear cache | Option to clear offline cache in settings |
+• **Step 1:** Load maps offline
+  Expected: Cached map tiles display
+• **Step 2:** Zoom level
+  Expected: Can zoom in/out using cached zoom levels
+• **Step 3:** Pan/scroll
+  Expected: Can scroll around cached area
+• **Step 4:** Route visible
+  Expected: Previously loaded routes remain visible
+• **Step 5:** Current location
+  Expected: User location still shown (if GPS available)
+• **Step 6:** Search unavailable
+  Expected: Search disabled with "Offline mode" message
+• **Step 7:** Live tracking unavailable
+  Expected: Live bus tracking stopped
+• **Step 8:** Cached data used
+  Expected: Shows last known bus positions
+• **Step 9:** Reconnect
+  Expected: Online features resume when connection returns
+• **Step 10:** Auto-refresh
+  Expected: Map refreshes when connection restored
+• **Step 11:** Cache size
+  Expected: Limits cache to reasonable size (e.g., 50MB)
+• **Step 12:** Clear cache
+  Expected: Option to clear offline cache in settings
 
 ### **Expected Result**
 - Maps display offline using cached data
@@ -501,20 +580,30 @@ This test verifies marker clustering for performance with many stops.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View map zoomed out | Individual markers may be clustered |
-| 2 | Cluster display | Number badge shows count of clustered markers |
-| 3 | Cluster color | Cluster color indicates quantity (gradient) |
-| 4 | Tap cluster | Cluster expands or zooms to show markers |
-| 5 | Zoom in | Clusters break apart into individual markers |
-| 6 | Zoom out | Markers recombine into clusters |
-| 7 | Performance | Map remains responsive with many markers |
-| 8 | Animation smooth | Clustering/unclustering is smooth |
-| 9 | Single marker | Tap single marker shows info window |
-| 10 | Cluster info | Info for cluster shows count and bounds |
-| 11 | Custom colors | Cluster styling matches app theme |
-| 12 | Different zoom levels | Clustering adjusts based on zoom |
+• **Step 1:** View map zoomed out
+  Expected: Individual markers may be clustered
+• **Step 2:** Cluster display
+  Expected: Number badge shows count of clustered markers
+• **Step 3:** Cluster color
+  Expected: Cluster color indicates quantity (gradient)
+• **Step 4:** Tap cluster
+  Expected: Cluster expands or zooms to show markers
+• **Step 5:** Zoom in
+  Expected: Clusters break apart into individual markers
+• **Step 6:** Zoom out
+  Expected: Markers recombine into clusters
+• **Step 7:** Performance
+  Expected: Map remains responsive with many markers
+• **Step 8:** Animation smooth
+  Expected: Clustering/unclustering is smooth
+• **Step 9:** Single marker
+  Expected: Tap single marker shows info window
+• **Step 10:** Cluster info
+  Expected: Info for cluster shows count and bounds
+• **Step 11:** Custom colors
+  Expected: Cluster styling matches app theme
+• **Step 12:** Different zoom levels
+  Expected: Clustering adjusts based on zoom
 
 ### **Expected Result**
 - Markers cluster at high zoom levels
@@ -560,20 +649,30 @@ This test verifies turn-by-turn directions calculation.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Select start location | User's current location or search result |
-| 2 | Select end location | Destination selected from suggestions |
-| 3 | Route calculated | Route line drawn between points |
-| 4 | Alternative routes | Shows multiple route options (if available) |
-| 5 | Distance displayed | Shows route distance  (e.g., "5.2 km") |
-| 6 | Duration shown | Estimated travel time (e.g., "15 mins") |
-| 7 | Turn-by-turn | Detailed turn instructions available |
-| 8 | Step details | Each step shows instruction and distance |
-| 9 | Icons | Clear icons for turns (left, right, straight) |
-| 10 | Scroll steps | Can scroll through direction list |
-| 11 | Start navigation | "Start" button begins voice guidance |
-| 12 | Avoid highways | Option to avoid highways/toll roads |
+• **Step 1:** Select start location
+  Expected: User's current location or search result
+• **Step 2:** Select end location
+  Expected: Destination selected from suggestions
+• **Step 3:** Route calculated
+  Expected: Route line drawn between points
+• **Step 4:** Alternative routes
+  Expected: Shows multiple route options (if available)
+• **Step 5:** Distance displayed
+  Expected: Shows route distance  (e.g., "5.2 km")
+• **Step 6:** Duration shown
+  Expected: Estimated travel time (e.g., "15 mins")
+• **Step 7:** Turn-by-turn
+  Expected: Detailed turn instructions available
+• **Step 8:** Step details
+  Expected: Each step shows instruction and distance
+• **Step 9:** Icons
+  Expected: Clear icons for turns (left, right, straight)
+• **Step 10:** Scroll steps
+  Expected: Can scroll through direction list
+• **Step 11:** Start navigation
+  Expected: "Start" button begins voice guidance
+• **Step 12:** Avoid highways
+  Expected: Option to avoid highways/toll roads
 
 ### **Expected Result**
 - Route calculated correctly
@@ -618,20 +717,30 @@ This test verifies accessibility features for screen readers and keyboard naviga
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Screen reader enabled | Activates on app launch |
-| 2 | Navigate by touch | Screen reader describes touched elements |
-| 3 | Map description | "Map showing bus route ABC" announced |
-| 4 | Marker focus | Current marker described with "Stop XYZ" |
-| 5 | Zoom controls | "Zoom in button" and "Zoom out button" announced |
-| 6 | Button labels | All buttons have descriptive labels for screen reader |
-| 7 | Color contrast | Text meets WCAG AA contrast requirements |
-| 8 | Text size | Can increase text size in accessibility settings |
-| 9 | Keyboard only | Can operate all functions via keyboard |
-| 10 | Focus indicators | Clear focus indicators visible on all controls |
-| 11 | Touch target size | All touchable elements minimum 48x48 dp |
-| 12 | Content descriptions | Alt text for images describes their purpose |
+• **Step 1:** Screen reader enabled
+  Expected: Activates on app launch
+• **Step 2:** Navigate by touch
+  Expected: Screen reader describes touched elements
+• **Step 3:** Map description
+  Expected: "Map showing bus route ABC" announced
+• **Step 4:** Marker focus
+  Expected: Current marker described with "Stop XYZ"
+• **Step 5:** Zoom controls
+  Expected: "Zoom in button" and "Zoom out button" announced
+• **Step 6:** Button labels
+  Expected: All buttons have descriptive labels for screen reader
+• **Step 7:** Color contrast
+  Expected: Text meets WCAG AA contrast requirements
+• **Step 8:** Text size
+  Expected: Can increase text size in accessibility settings
+• **Step 9:** Keyboard only
+  Expected: Can operate all functions via keyboard
+• **Step 10:** Focus indicators
+  Expected: Clear focus indicators visible on all controls
+• **Step 11:** Touch target size
+  Expected: All touchable elements minimum 48x48 dp
+• **Step 12:** Content descriptions
+  Expected: Alt text for images describes their purpose
 
 ### **Expected Result**
 - All map elements accessible to screen readers

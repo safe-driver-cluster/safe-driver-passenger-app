@@ -28,18 +28,26 @@ This test verifies the feedback system page opens and displays bus selection opt
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | On dashboard, tap "Give Feedback" button | Loading spinner briefly displays |
-| 2 | Wait for page load | Feedback system page opens with bus selection |
-| 3 | Verify page title | "Select Bus" or "Give Feedback" title displays |
-| 4 | Verify two tabs | Tabs visible: "Manual Selection" and "QR Scan" |
-| 5 | Check bus list | List of available buses displays with numbers and route info |
-| 6 | Verify each bus entry | Shows: Bus Number, Route, Current Time, Rating |
-| 7 | Scroll bus list | All buses visible, list scrollable |
-| 8 | Check recent buses | "Recent Buses" section shows recently used buses |
-| 9 | Tap a bus from recent | Bus selected, feedback form appears |
-| 10 | No data state | If no buses, "No buses available" message displays |
+• **Step 1:** On dashboard, tap "Give Feedback" button
+  Expected: Loading spinner briefly displays
+• **Step 2:** Wait for page load
+  Expected: Feedback system page opens with bus selection
+• **Step 3:** Verify page title
+  Expected: "Select Bus" or "Give Feedback" title displays
+• **Step 4:** Verify two tabs
+  Expected: Tabs visible: "Manual Selection" and "QR Scan"
+• **Step 5:** Check bus list
+  Expected: List of available buses displays with numbers and route info
+• **Step 6:** Verify each bus entry
+  Expected: Shows: Bus Number, Route, Current Time, Rating
+• **Step 7:** Scroll bus list
+  Expected: All buses visible, list scrollable
+• **Step 8:** Check recent buses
+  Expected: "Recent Buses" section shows recently used buses
+• **Step 9:** Tap a bus from recent
+  Expected: Bus selected, feedback form appears
+• **Step 10:** No data state
+  Expected: If no buses, "No buses available" message displays
 
 ### **Expected Result**
 - Feedback system page accessible from dashboard
@@ -84,18 +92,26 @@ This test verifies the manual bus selection process from the list.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View bus list | Multiple buses displayed with details |
-| 2 | Tap first bus (Bus #25) | Bus card highlights/shows selection |
-| 3 | Verify bus info displays | Shows: Number, Route, Schedule, Driver Rating |
-| 4 | Tap "Select" button | Bus selected, feedback form opens |
-| 5 | Next page header | Shows "Feedback for Bus #25 - Route ABC" |
-| 6 | Form displays | Feedback type selection shows |
-| 7 | Go back | Bus selection page displays again |
-| 8 | Select different bus | Previous selection cleared, new bus selected |
-| 9 | Search bus feature | If available, search by bus number works |
-| 10 | Filter options | Sort by rating, recent, etc. (if available) |
+• **Step 1:** View bus list
+  Expected: Multiple buses displayed with details
+• **Step 2:** Tap first bus (Bus #25)
+  Expected: Bus card highlights/shows selection
+• **Step 3:** Verify bus info displays
+  Expected: Shows: Number, Route, Schedule, Driver Rating
+• **Step 4:** Tap "Select" button
+  Expected: Bus selected, feedback form opens
+• **Step 5:** Next page header
+  Expected: Shows "Feedback for Bus #25 - Route ABC"
+• **Step 6:** Form displays
+  Expected: Feedback type selection shows
+• **Step 7:** Go back
+  Expected: Bus selection page displays again
+• **Step 8:** Select different bus
+  Expected: Previous selection cleared, new bus selected
+• **Step 9:** Search bus feature
+  Expected: If available, search by bus number works
+• **Step 10:** Filter options
+  Expected: Sort by rating, recent, etc. (if available)
 
 ### **Expected Result**
 - Tapping bus selects it with visual feedback
@@ -146,18 +162,26 @@ This test verifies QR code scanning functionality to automatically identify buse
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap "QR Scan" tab | Camera view opens with scanning overlay |
-| 2 | Verify camera frame | QR code scanning guide displayed on screen |
-| 3 | Point camera at valid QR code | QR code area highlights when detected |
-| 4 | QR code scanned | Bus information loads automatically from QR data |
-| 5 | Auto-proceed | Feedback form opens automatically with bus selected |
-| 6 | Scan invalid QR code | "Invalid QR code" error message displays |
-| 7 | Try scanning text QR | "This is not a bus QR code" error displays |
-| 8 | Point camera but don't scan | Camera remains open, scanner ready |
-| 9 | Go back button | Returns to bus selection page |
-| 10 | Camera off button | Can close camera without scanning |
+• **Step 1:** Tap "QR Scan" tab
+  Expected: Camera view opens with scanning overlay
+• **Step 2:** Verify camera frame
+  Expected: QR code scanning guide displayed on screen
+• **Step 3:** Point camera at valid QR code
+  Expected: QR code area highlights when detected
+• **Step 4:** QR code scanned
+  Expected: Bus information loads automatically from QR data
+• **Step 5:** Auto-proceed
+  Expected: Feedback form opens automatically with bus selected
+• **Step 6:** Scan invalid QR code
+  Expected: "Invalid QR code" error message displays
+• **Step 7:** Try scanning text QR
+  Expected: "This is not a bus QR code" error displays
+• **Step 8:** Point camera but don't scan
+  Expected: Camera remains open, scanner ready
+• **Step 9:** Go back button
+  Expected: Returns to bus selection page
+• **Step 10:** Camera off button
+  Expected: Can close camera without scanning
 
 ### **Expected Result**
 - Camera opens with QR scanning interface
@@ -203,18 +227,26 @@ This test verifies the feedback type selection interface.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View feedback type options | Two cards displayed: "Bus Feedback" and "Driver Feedback" |
-| 2 | Tap "Bus Feedback" | Bus feedback form opens |
-| 3 | Verify form fields | Shows: Cleanliness, Comfort, Facilities, Safety ratings |
-| 4 | Go back and select Driver | Driver feedback form opens |
-| 5 | Verify driver form | Shows: Driving Skill, Courtesy, Professionalism ratings |
-| 6 | Tap bus feedback again | Form updates to bus feedback fields |
-| 7 | Visual difference | Bus and driver forms have different categories |
-| 8 | Icons/colors | Each type has distinct visual representation |
-| 9 | Description text | Clear descriptions for each feedback type |
-| 10 | Selection state | Currently selected type highlighted |
+• **Step 1:** View feedback type options
+  Expected: Two cards displayed: "Bus Feedback" and "Driver Feedback"
+• **Step 2:** Tap "Bus Feedback"
+  Expected: Bus feedback form opens
+• **Step 3:** Verify form fields
+  Expected: Shows: Cleanliness, Comfort, Facilities, Safety ratings
+• **Step 4:** Go back and select Driver
+  Expected: Driver feedback form opens
+• **Step 5:** Verify driver form
+  Expected: Shows: Driving Skill, Courtesy, Professionalism ratings
+• **Step 6:** Tap bus feedback again
+  Expected: Form updates to bus feedback fields
+• **Step 7:** Visual difference
+  Expected: Bus and driver forms have different categories
+• **Step 8:** Icons/colors
+  Expected: Each type has distinct visual representation
+• **Step 9:** Description text
+  Expected: Clear descriptions for each feedback type
+• **Step 10:** Selection state
+  Expected: Currently selected type highlighted
 
 ### **Expected Result**
 - Two feedback types clearly presented
@@ -258,20 +290,30 @@ This test verifies the star rating functionality for feedback.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View rating section | 5 stars displayed, empty/gray by default |
-| 2 | Hover over 3rd star | Stars fill up to 3rd star, showing preview |
-| 3 | Tap 3rd star | 3 stars are selected (filled/highlighted) |
-| 4 | Hover over 5th star | Shows preview of 5 stars |
-| 5 | Tap 5th star | Rating changes to 5 stars |
-| 6 | Hover over 2nd star | Shows preview of 2 stars |
-| 7 | Tap 2nd star | Rating becomes 2 stars |
-| 8 | Rating label updates | Text shows "Good", "Excellent", "Poor" etc. based on rating |
-| 9 | Rating icon updates | Icon changes: Sad (1-2), Neutral (3), Happy (4-5) |
-| 10 | Animation smooth | Star selection has smooth fill animation |
-| 11 | Tap same star again | Can change rating by tapping different star |
-| 12 | Rating persists | Selected rating remains until changed |
+• **Step 1:** View rating section
+  Expected: 5 stars displayed, empty/gray by default
+• **Step 2:** Hover over 3rd star
+  Expected: Stars fill up to 3rd star, showing preview
+• **Step 3:** Tap 3rd star
+  Expected: 3 stars are selected (filled/highlighted)
+• **Step 4:** Hover over 5th star
+  Expected: Shows preview of 5 stars
+• **Step 5:** Tap 5th star
+  Expected: Rating changes to 5 stars
+• **Step 6:** Hover over 2nd star
+  Expected: Shows preview of 2 stars
+• **Step 7:** Tap 2nd star
+  Expected: Rating becomes 2 stars
+• **Step 8:** Rating label updates
+  Expected: Text shows "Good", "Excellent", "Poor" etc. based on rating
+• **Step 9:** Rating icon updates
+  Expected: Icon changes: Sad (1-2), Neutral (3), Happy (4-5)
+• **Step 10:** Animation smooth
+  Expected: Star selection has smooth fill animation
+• **Step 11:** Tap same star again
+  Expected: Can change rating by tapping different star
+• **Step 12:** Rating persists
+  Expected: Selected rating remains until changed
 
 ### **Expected Result**
 - Stars highlight on tap and hover
@@ -321,20 +363,30 @@ This test verifies text input for detailed feedback comments.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap comment field | Text field becomes active (keyboard opens) |
-| 2 | Type feedback | Text displays as typed without formatting |
-| 3 | Enter 50 characters | Characters count displays (50/500) |
-| 4 | Enter 200 characters | Continue typing, counter updates |
-| 5 | Enter 500 characters | Maximum reached, "500/500" shows |
-| 6 | Try typing beyond 500 | Additional characters not accepted |
-| 7 | Clear and retype | Can delete text and retype |
-| 8 | Emoji support | If supported, emojis display correctly |
-| 9 | Special characters | Apostrophes, quotes, etc. work fine |
-| 10 | Copy-paste text | Can paste text from clipboard |
-| 11 | Character counter helpful | Shows remaining characters |
-| 12 | Comments optional/required | App behavior when field empty clear |
+• **Step 1:** Tap comment field
+  Expected: Text field becomes active (keyboard opens)
+• **Step 2:** Type feedback
+  Expected: Text displays as typed without formatting
+• **Step 3:** Enter 50 characters
+  Expected: Characters count displays (50/500)
+• **Step 4:** Enter 200 characters
+  Expected: Continue typing, counter updates
+• **Step 5:** Enter 500 characters
+  Expected: Maximum reached, "500/500" shows
+• **Step 6:** Try typing beyond 500
+  Expected: Additional characters not accepted
+• **Step 7:** Clear and retype
+  Expected: Can delete text and retype
+• **Step 8:** Emoji support
+  Expected: If supported, emojis display correctly
+• **Step 9:** Special characters
+  Expected: Apostrophes, quotes, etc. work fine
+• **Step 10:** Copy-paste text
+  Expected: Can paste text from clipboard
+• **Step 11:** Character counter helpful
+  Expected: Shows remaining characters
+• **Step 12:** Comments optional/required
+  Expected: App behavior when field empty clear
 
 ### **Expected Result**
 - Text field accepts input up to 500 characters
@@ -385,20 +437,30 @@ This test verifies media upload functionality for evidence in feedback.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap "Attach Photo" button | Gallery picker opens showing photos |
-| 2 | Select image | Image selected, preview appears in form |
-| 3 | Add multiple photos | Can add up to 5 photos |
-| 4 | View thumbnails | Photo previews displayed in form |
-| 5 | Remove photo | Delete button available, photo removed |
-| 6 | Tap "Attach Video" button | Gallery opens showing video files |
-| 7 | Select video | Video preview displays |
-| 8 | Maximum videos | Only 1 video allowed (or configured limit) |
-| 9 | File size check | Video > 100MB: "File too large" error |
-| 10 | Video preview | Plays short preview in form |
-| 11 | Take photo option | "Take new photo" opens camera |
-| 12 | Supported formats | JPG, PNG, MP4 formats accepted |
+• **Step 1:** Tap "Attach Photo" button
+  Expected: Gallery picker opens showing photos
+• **Step 2:** Select image
+  Expected: Image selected, preview appears in form
+• **Step 3:** Add multiple photos
+  Expected: Can add up to 5 photos
+• **Step 4:** View thumbnails
+  Expected: Photo previews displayed in form
+• **Step 5:** Remove photo
+  Expected: Delete button available, photo removed
+• **Step 6:** Tap "Attach Video" button
+  Expected: Gallery opens showing video files
+• **Step 7:** Select video
+  Expected: Video preview displays
+• **Step 8:** Maximum videos
+  Expected: Only 1 video allowed (or configured limit)
+• **Step 9:** File size check
+  Expected: Video > 100MB: "File too large" error
+• **Step 10:** Video preview
+  Expected: Plays short preview in form
+• **Step 11:** Take photo option
+  Expected: "Take new photo" opens camera
+• **Step 12:** Supported formats
+  Expected: JPG, PNG, MP4 formats accepted
 
 ### **Expected Result**
 - Media picker opens on tap
@@ -449,18 +511,26 @@ This test verifies anonymous feedback submission option.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View form | Anonymous checkbox displayed (unchecked by default) |
-| 2 | Check "Submit Anonymous" | Checkbox marks as checked |
-| 3 | Submit feedback | Anonymous submission processed |
-| 4 | Verify in history | Feedback shows "Anonymous" instead of user name |
-| 5 | Check admin view | Admin cannot identify who submitted |
-| 6 | Uncheck anonymous | Can toggle anonymous off before submit |
-| 7 | Submit with identity | User name shows with feedback |
-| 8 | Data privacy | Anonymous feedback still has location/time data |
-| 9 | Cannot contact anonymous | No reply option for anonymous feedback |
-| 10 | Rating still counts | Anonymous feedback counts toward ratings |
+• **Step 1:** View form
+  Expected: Anonymous checkbox displayed (unchecked by default)
+• **Step 2:** Check "Submit Anonymous"
+  Expected: Checkbox marks as checked
+• **Step 3:** Submit feedback
+  Expected: Anonymous submission processed
+• **Step 4:** Verify in history
+  Expected: Feedback shows "Anonymous" instead of user name
+• **Step 5:** Check admin view
+  Expected: Admin cannot identify who submitted
+• **Step 6:** Uncheck anonymous
+  Expected: Can toggle anonymous off before submit
+• **Step 7:** Submit with identity
+  Expected: User name shows with feedback
+• **Step 8:** Data privacy
+  Expected: Anonymous feedback still has location/time data
+• **Step 9:** Cannot contact anonymous
+  Expected: No reply option for anonymous feedback
+• **Step 10:** Rating still counts
+  Expected: Anonymous feedback counts toward ratings
 
 ### **Expected Result**
 - Anonymous option available on form
@@ -506,20 +576,30 @@ This test verifies complete feedback submission process and data storage.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | All fields filled | Rating selected, comment entered (optional) |
-| 2 | Tap "Submit Feedback" | Form validation passes, no errors shown |
-| 3 | Loading state | "Submitting..." loading indicator appears |
-| 4 | Wait for submission | Loading for 2-5 seconds |
-| 5 | Success message | "Thank you for your feedback!" notification |
-| 6 | Navigation | Option to view feedback history or back to dashboard |
-| 7 | Check Firestore | Feedback appears in Firestore "feedbacks" collection |
-| 8 | Data verification | All submitted data stored correctly (rating, comment, timestamp) |
-| 9 | User association | Feedback linked to user account |
-| 10 | Bus/Driver association | Feedback linked to corresponding bus/driver |
-| 11 | Timestamp recorded | Submission time recorded accurately |
-| 12 | Reward notification | "You earned 10 points!" (if reward system active) |
+• **Step 1:** All fields filled
+  Expected: Rating selected, comment entered (optional)
+• **Step 2:** Tap "Submit Feedback"
+  Expected: Form validation passes, no errors shown
+• **Step 3:** Loading state
+  Expected: "Submitting..." loading indicator appears
+• **Step 4:** Wait for submission
+  Expected: Loading for 2-5 seconds
+• **Step 5:** Success message
+  Expected: "Thank you for your feedback!" notification
+• **Step 6:** Navigation
+  Expected: Option to view feedback history or back to dashboard
+• **Step 7:** Check Firestore
+  Expected: Feedback appears in Firestore "feedbacks" collection
+• **Step 8:** Data verification
+  Expected: All submitted data stored correctly (rating, comment, timestamp)
+• **Step 9:** User association
+  Expected: Feedback linked to user account
+• **Step 10:** Bus/Driver association
+  Expected: Feedback linked to corresponding bus/driver
+• **Step 11:** Timestamp recorded
+  Expected: Submission time recorded accurately
+• **Step 12:** Reward notification
+  Expected: "You earned 10 points!" (if reward system active)
 
 ### **Expected Result**
 - Form validates before submission
@@ -566,20 +646,30 @@ This test verifies feedback history page shows all submitted feedback.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Profile → Feedback History | History page loads |
-| 2 | Verify feedback list | Shows all submitted feedback in reverse chronological order |
-| 3 | Each entry shows | Date, bus number, rating, comment preview |
-| 4 | Tap on feedback | Feedback detail view opens |
-| 5 | Detail view shows | Full comment, attached photos, timestamps |
-| 6 | Status indication | Shows if feedback was "Reviewed", "Pending", "Resolved" |
-| 7 | Filter by status | Can filter: All, Recent, Highest Rated, Lowest Rated |
-| 8 | Search function | Can search feedback by bus number or keyword |
-| 9 | Sort options | Can sort by date, rating, recent |
-| 10 | Pagination | If many entries, pagination or infinite scroll |
-| 11 | No feedback state | If no feedback, "No feedback submitted yet" message |
-| 12 | Empty state CTA | Button to submit first feedback |
+• **Step 1:** Navigate to Profile → Feedback History
+  Expected: History page loads
+• **Step 2:** Verify feedback list
+  Expected: Shows all submitted feedback in reverse chronological order
+• **Step 3:** Each entry shows
+  Expected: Date, bus number, rating, comment preview
+• **Step 4:** Tap on feedback
+  Expected: Feedback detail view opens
+• **Step 5:** Detail view shows
+  Expected: Full comment, attached photos, timestamps
+• **Step 6:** Status indication
+  Expected: Shows if feedback was "Reviewed", "Pending", "Resolved"
+• **Step 7:** Filter by status
+  Expected: Can filter: All, Recent, Highest Rated, Lowest Rated
+• **Step 8:** Search function
+  Expected: Can search feedback by bus number or keyword
+• **Step 9:** Sort options
+  Expected: Can sort by date, rating, recent
+• **Step 10:** Pagination
+  Expected: If many entries, pagination or infinite scroll
+• **Step 11:** No feedback state
+  Expected: If no feedback, "No feedback submitted yet" message
+• **Step 12:** Empty state CTA
+  Expected: Button to submit first feedback
 
 ### **Expected Result**
 - History page loads all user's feedback
@@ -626,20 +716,30 @@ This test verifies dashboard statistics showing feedback metrics.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Feedback Analytics | Analytics page displays |
-| 2 | View statistics cards | Shows: Total Feedback, Average Rating, Submitted Count |
-| 3 | Average rating calculation | Calculates correctly (e.g., 4.5/5 ⭐) |
-| 4 | Feedback breakdown | Shows: Positive, Negative, Neutral count |
-| 5 | Rating distribution | Shows 1-star, 2-star, 3-star, 4-star, 5-star counts |
-| 6 | Visual chart | Bar chart or pie chart shows distribution |
-| 7 | Timeline graph | Shows feedback trend over time (daily, weekly, monthly) |
-| 8 | Category breakdown | If categorized, shows most/least common categories |
-| 9 | Top rated items | Shows highest-rated buses/drivers |
-| 10 | Recent feedback | Shows 5 most recent feedback entries |
-| 11 | Time period filter | Can filter analytics by: Last 7 days, 30 days, All time |
-| 12 | Export option | Option to export analytics (if available) |
+• **Step 1:** Navigate to Feedback Analytics
+  Expected: Analytics page displays
+• **Step 2:** View statistics cards
+  Expected: Shows: Total Feedback, Average Rating, Submitted Count
+• **Step 3:** Average rating calculation
+  Expected: Calculates correctly (e.g., 4.5/5 ⭐)
+• **Step 4:** Feedback breakdown
+  Expected: Shows: Positive, Negative, Neutral count
+• **Step 5:** Rating distribution
+  Expected: Shows 1-star, 2-star, 3-star, 4-star, 5-star counts
+• **Step 6:** Visual chart
+  Expected: Bar chart or pie chart shows distribution
+• **Step 7:** Timeline graph
+  Expected: Shows feedback trend over time (daily, weekly, monthly)
+• **Step 8:** Category breakdown
+  Expected: If categorized, shows most/least common categories
+• **Step 9:** Top rated items
+  Expected: Shows highest-rated buses/drivers
+• **Step 10:** Recent feedback
+  Expected: Shows 5 most recent feedback entries
+• **Step 11:** Time period filter
+  Expected: Can filter analytics by: Last 7 days, 30 days, All time
+• **Step 12:** Export option
+  Expected: Option to export analytics (if available)
 
 ### **Expected Result**
 - Analytics data calculates correctly
@@ -685,20 +785,30 @@ This test verifies app behavior when network is slow or unstable during submissi
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enable slow network (3G simulation) | Device on simulated slow connection |
-| 2 | Fill feedback form | All information entered |
-| 3 | Tap "Submit Feedback" | Submission starts |
-| 4 | During submission | Loading state displays with timeout indicator |
-| 5 | Wait 10+ seconds | Loading continues, app doesn't hang |
-| 6 | Submission eventually completes | "Thank you" message displays after delay |
-| 7 | Network interrupts | Disable network during submission |
-| 8 | Handle offline | "Network error" message displays with retry option |
-| 9 | Tap "Retry" | Resubmits feedback when network returns |
-| 10 | Network returns | Feedback submits successfully on retry |
-| 11 | Data not duplicated | Feedback not submitted twice |
-| 12 | User informed | Clear message about network status |
+• **Step 1:** Enable slow network (3G simulation)
+  Expected: Device on simulated slow connection
+• **Step 2:** Fill feedback form
+  Expected: All information entered
+• **Step 3:** Tap "Submit Feedback"
+  Expected: Submission starts
+• **Step 4:** During submission
+  Expected: Loading state displays with timeout indicator
+• **Step 5:** Wait 10+ seconds
+  Expected: Loading continues, app doesn't hang
+• **Step 6:** Submission eventually completes
+  Expected: "Thank you" message displays after delay
+• **Step 7:** Network interrupts
+  Expected: Disable network during submission
+• **Step 8:** Handle offline
+  Expected: "Network error" message displays with retry option
+• **Step 9:** Tap "Retry"
+  Expected: Resubmits feedback when network returns
+• **Step 10:** Network returns
+  Expected: Feedback submits successfully on retry
+• **Step 11:** Data not duplicated
+  Expected: Feedback not submitted twice
+• **Step 12:** User informed
+  Expected: Clear message about network status
 
 ### **Expected Result**
 - App doesn't freeze during slow uploads

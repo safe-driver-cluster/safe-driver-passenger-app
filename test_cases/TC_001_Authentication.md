@@ -30,18 +30,35 @@ This test verifies the complete phone registration flow including phone input va
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Launch the SafeDriver app | Splash screen displays for 2-3 seconds, then navigates to login screen |
-| 2 | Tap "Sign Up" button | Register page opens with phone number input field |
-| 3 | Enter valid Sri Lankan phone number (e.g., +94701234567) | Phone number is displayed without formatting errors |
-| 4 | Verify phone format validation shows no error | No error message displayed |
-| 5 | Tap "Send OTP" button | Loading spinner appears, then success message "OTP sent successfully" |
-| 6 | Wait for SMS | User receives SMS with 6-digit OTP within 60 seconds |
-| 7 | Enter OTP in verification screen | OTP fields fill correctly with numeric input only |
-| 8 | Tap "Verify OTP" button | OTP verification processes and profile creation screen appears |
-| 9 | Enter personal details (name, email, etc.) | All fields accept input without errors |
-| 10 | Tap "Complete Registration" | Account is created, user is logged in, dashboard displays |
+• **Step 1:** Launch the SafeDriver app  
+  Expected: Splash screen displays for 2-3 seconds, then navigates to login screen
+
+• **Step 2:** Tap "Sign Up" button  
+  Expected: Register page opens with phone number input field
+
+• **Step 3:** Enter valid Sri Lankan phone number (e.g., +94701234567)  
+  Expected: Phone number is displayed without formatting errors
+
+• **Step 4:** Verify phone format validation shows no error  
+  Expected: No error message displayed
+
+• **Step 5:** Tap "Send OTP" button  
+  Expected: Loading spinner appears, then success message "OTP sent successfully"
+
+• **Step 6:** Wait for SMS  
+  Expected: User receives SMS with 6-digit OTP within 60 seconds
+
+• **Step 7:** Enter OTP in verification screen  
+  Expected: OTP fields fill correctly with numeric input only
+
+• **Step 8:** Tap "Verify OTP" button  
+  Expected: OTP verification processes and profile creation screen appears
+
+• **Step 9:** Enter personal details (name, email, etc.)  
+  Expected: All fields accept input without errors
+
+• **Step 10:** Tap "Complete Registration"  
+  Expected: Account is created, user is logged in, dashboard displays
 
 ### **Expected Result**
 - User account is successfully created in Firebase Authentication
@@ -99,18 +116,35 @@ This test verifies email-based registration with password creation, email valida
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap "Sign Up" button | Register page with email option opens |
-| 2 | Select "Email" registration option | Email and password fields display |
-| 3 | Enter valid email (test@example.com) | Email field accepts input, no validation error |
-| 4 | Enter weak password (123456) | Password displays masking, warning about weak password appears |
-| 5 | Enter strong password (SecurePass123!) | Strength indicator shows "Strong" |
-| 6 | Re-enter password confirmation | Both passwords match, no error |
-| 7 | Tap "Register" button | Loading state appears, Account verification email is sent |
-| 8 | Check email inbox | Verification email received with verification link |
-| 9 | Tap verification link | Email is verified, success message shows |
-| 10 | Return to app | User can now login with email and password |
+• **Step 1:** Tap "Sign Up" button  
+  Expected: Register page with email option opens
+
+• **Step 2:** Select "Email" registration option  
+  Expected: Email and password fields display
+
+• **Step 3:** Enter valid email (test@example.com)  
+  Expected: Email field accepts input, no validation error
+
+• **Step 4:** Enter weak password (123456)  
+  Expected: Password displays masking, warning about weak password appears
+
+• **Step 5:** Enter strong password (SecurePass123!)  
+  Expected: Strength indicator shows "Strong"
+
+• **Step 6:** Re-enter password confirmation  
+  Expected: Both passwords match, no error
+
+• **Step 7:** Tap "Register" button  
+  Expected: Loading state appears, Account verification email is sent
+
+• **Step 8:** Check email inbox  
+  Expected: Verification email received with verification link
+
+• **Step 9:** Tap verification link  
+  Expected: Email is verified, success message shows
+
+• **Step 10:** Return to app  
+  Expected: User can now login with email and password
 
 ### **Expected Result**
 - Email validation working correctly
@@ -159,13 +193,20 @@ This test verifies proper validation of phone number input to prevent registrati
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enter empty phone number | "Phone number is required" error displays |
-| 2 | Enter less than 10 digits (94701) | "Phone number must be at least 10 digits" error shows |
-| 3 | Enter alphabetic characters (9470ABC1234) | Only numeric characters accepted, letters ignored |
-| 4 | Enter non-Sri Lankan format (14155552671) | Format validation error: "Please use Sri Lankan format (+94...)" |
-| 5 | Tap "Send OTP" without valid number | Button remains disabled, error message persists |
+• **Step 1:** Enter empty phone number  
+  Expected: "Phone number is required" error displays
+
+• **Step 2:** Enter less than 10 digits (94701)  
+  Expected: "Phone number must be at least 10 digits" error shows
+
+• **Step 3:** Enter alphabetic characters (9470ABC1234)  
+  Expected: Only numeric characters accepted, letters ignored
+
+• **Step 4:** Enter non-Sri Lankan format (14155552671)  
+  Expected: Format validation error: "Please use Sri Lankan format (+94...)"
+
+• **Step 5:** Tap "Send OTP" without valid number  
+  Expected: Button remains disabled, error message persists
 
 ### **Expected Result**
 - All invalid formats are properly rejected
@@ -208,18 +249,35 @@ This test verifies the forgot password functionality using email-based password 
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Tap "Forgot Password?" on login screen | Forgot password page opens |
-| 2 | Enter registered email | Email field accepts input |
-| 3 | Tap "Send Reset Link" button | Loading spinner displays, then success message shown |
-| 4 | Check email inbox | Password reset email received within 2 minutes |
-| 5 | Tap reset link in email | Browser opens with password reset form |
-| 6 | Enter new strong password | New password field accepts input |
-| 7 | Confirm new password | Confirmation field matches new password |
-| 8 | Tap "Reset Password" | Success message displays |
-| 9 | Return to app login screen | Login with new password credentials |
-| 10 | Attempt login with old password | Login fails with "Invalid credentials" |
+• **Step 1:** Tap "Forgot Password?" on login screen  
+  Expected: Forgot password page opens
+
+• **Step 2:** Enter registered email  
+  Expected: Email field accepts input
+
+• **Step 3:** Tap "Send Reset Link" button  
+  Expected: Loading spinner displays, then success message shown
+
+• **Step 4:** Check email inbox  
+  Expected: Password reset email received within 2 minutes
+
+• **Step 5:** Tap reset link in email  
+  Expected: Browser opens with password reset form
+
+• **Step 6:** Enter new strong password  
+  Expected: New password field accepts input
+
+• **Step 7:** Confirm new password  
+  Expected: Confirmation field matches new password
+
+• **Step 8:** Tap "Reset Password"  
+  Expected: Success message displays
+
+• **Step 9:** Return to app login screen  
+  Expected: Login with new password credentials
+
+• **Step 10:** Attempt login with old password  
+  Expected: Login fails with "Invalid credentials"
 
 ### **Expected Result**
 - Password reset email sent successfully
@@ -268,15 +326,26 @@ This test verifies that users can request a new OTP if they don't receive it or 
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | After 30 seconds on OTP screen | "Resend OTP" button becomes enabled |
-| 2 | Tap "Resend OTP" button | Loading spinner displays |
-| 3 | Wait for confirmation | Success message "New OTP sent to +94701234567" displays |
-| 4 | Check SMS | New 6-digit OTP received |
-| 5 | Enter new OTP | OTP verification processes successfully |
-| 6 | Tap "Verify" button | User proceeds to next screen |
-| 7 | Resend OTP 3 times (test rate limiting) | After 3 attempts, resend button shows "Wait 15 minutes" |
+• **Step 1:** After 30 seconds on OTP screen  
+  Expected: "Resend OTP" button becomes enabled
+
+• **Step 2:** Tap "Resend OTP" button  
+  Expected: Loading spinner displays
+
+• **Step 3:** Wait for confirmation  
+  Expected: Success message "New OTP sent to +94701234567" displays
+
+• **Step 4:** Check SMS  
+  Expected: New 6-digit OTP received
+
+• **Step 5:** Enter new OTP  
+  Expected: OTP verification processes successfully
+
+• **Step 6:** Tap "Verify" button  
+  Expected: User proceeds to next screen
+
+• **Step 7:** Resend OTP 3 times (test rate limiting)  
+  Expected: After 3 attempts, resend button shows "Wait 15 minutes"
 
 ### **Expected Result**
 - New OTP sent successfully after 30 seconds
@@ -320,14 +389,23 @@ This test verifies that OTP codes expire after a specified time period and user 
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | OTP sent and received | User on OTP verification screen |
-| 2 | Wait 9 minutes | Timer on screen counts down, "Resend OTP" remains disabled |
-| 3 | After 10 minutes | "This OTP has expired. Request a new one" error displays |
-| 4 | Try entering original OTP | "Invalid or expired OTP" error shows |
-| 5 | Tap "Resend OTP" | New OTP is sent |
-| 6 | Enter new OTP | Verification succeeds |
+• **Step 1:** OTP sent and received  
+  Expected: User on OTP verification screen
+
+• **Step 2:** Wait 9 minutes  
+  Expected: Timer on screen counts down, "Resend OTP" remains disabled
+
+• **Step 3:** After 10 minutes  
+  Expected: "This OTP has expired. Request a new one" error displays
+
+• **Step 4:** Try entering original OTP  
+  Expected: "Invalid or expired OTP" error shows
+
+• **Step 5:** Tap "Resend OTP"  
+  Expected: New OTP is sent
+
+• **Step 6:** Enter new OTP  
+  Expected: Verification succeeds
 
 ### **Expected Result**
 - OTP is valid for exactly 10 minutes
@@ -371,13 +449,20 @@ This test verifies OTP validation and prevents login with incorrect codes.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enter 5 digits (12345) | "Please enter all 6 digits" error displays |
-| 2 | Enter 6 incorrect digits (000000) | "Invalid OTP" error displays after verification attempt |
-| 3 | Attempt 5 incorrect OTPs | "Too many failed attempts. Please try again after 15 minutes" |
-| 4 | Try entering letters (ABCDEF) | Only numeric input accepted, letters rejected |
-| 5 | Enter correct OTP after being locked | "Please wait before trying again" message shows |
+• **Step 1:** Enter 5 digits (12345)  
+  Expected: "Please enter all 6 digits" error displays
+
+• **Step 2:** Enter 6 incorrect digits (000000)  
+  Expected: "Invalid OTP" error displays after verification attempt
+
+• **Step 3:** Attempt 5 incorrect OTPs  
+  Expected: "Too many failed attempts. Please try again after 15 minutes"
+
+• **Step 4:** Try entering letters (ABCDEF)  
+  Expected: Only numeric input accepted, letters rejected
+
+• **Step 5:** Enter correct OTP after being locked  
+  Expected: "Please wait before trying again" message shows
 
 ### **Expected Result**
 - Incorrect OTPs are rejected
@@ -428,15 +513,26 @@ This test verifies the basic login flow with valid phone number and OTP.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enter registered phone number (+94701234567) | Phone number field accepts input |
-| 2 | Tap "Send OTP" | Loading displays, "OTP sent successfully" message |
-| 3 | Receive OTP | SMS received with 6-digit code |
-| 4 | Enter OTP | OTP fields fill correctly |
-| 5 | Tap "Login" | Loading displays for 2-3 seconds |
-| 6 | Verify login | Dashboard displays, user logged in |
-| 7 | Check session | User remains logged in after app restart |
+• **Step 1:** Enter registered phone number (+94701234567)  
+  Expected: Phone number field accepts input
+
+• **Step 2:** Tap "Send OTP"  
+  Expected: Loading displays, "OTP sent successfully" message
+
+• **Step 3:** Receive OTP  
+  Expected: SMS received with 6-digit code
+
+• **Step 4:** Enter OTP  
+  Expected: OTP fields fill correctly
+
+• **Step 5:** Tap "Login"  
+  Expected: Loading displays for 2-3 seconds
+
+• **Step 6:** Verify login  
+  Expected: Dashboard displays, user logged in
+
+• **Step 7:** Check session  
+  Expected: User remains logged in after app restart
 
 ### **Expected Result**
 - OTP sent and received correctly
@@ -484,13 +580,20 @@ This test verifies that login fails when user enters wrong phone number.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enter non-registered phone number (+94702222222) | Phone field accepts input |
-| 2 | Tap "Send OTP" | "Phone number not registered" error displays |
-| 3 | Tap "Sign Up Instead" | Redirect to registration page |
-| 4 | Return to login | Login screen displays again |
-| 5 | Enter registered number | OTP sending works normally |
+• **Step 1:** Enter non-registered phone number (+94702222222)  
+  Expected: Phone field accepts input
+
+• **Step 2:** Tap "Send OTP"  
+  Expected: "Phone number not registered" error displays
+
+• **Step 3:** Tap "Sign Up Instead"  
+  Expected: Redirect to registration page
+
+• **Step 4:** Return to login  
+  Expected: Login screen displays again
+
+• **Step 5:** Enter registered number  
+  Expected: OTP sending works normally
 
 ### **Expected Result**
 - System recognizes unregistered phone numbers
@@ -532,16 +635,29 @@ This test verifies the logout functionality and proper session cleanup.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Open user profile menu | Menu displays with logout option |
-| 2 | Tap "Logout" button | Confirmation dialog appears: "Are you sure you want to sign out?" |
-| 3 | Tap "Cancel" | Dialog closes, user remains logged in on dashboard |
-| 4 | Open profile menu again | Tap logout again |
-| 5 | Tap "Yes, Sign Out" | Loading spinner displays |
-| 6 | Wait for logout | User redirected to login screen |
-| 7 | Try accessing dashboard URL | User redirected to login screen |
-| 8 | Restart app | App starts at login screen (session cleared) |
+• **Step 1:** Open user profile menu  
+  Expected: Menu displays with logout option
+
+• **Step 2:** Tap "Logout" button  
+  Expected: Confirmation dialog appears: "Are you sure you want to sign out?"
+
+• **Step 3:** Tap "Cancel"  
+  Expected: Dialog closes, user remains logged in on dashboard
+
+• **Step 4:** Open profile menu again  
+  Expected: Tap logout again
+
+• **Step 5:** Tap "Yes, Sign Out"  
+  Expected: Loading spinner displays
+
+• **Step 6:** Wait for logout  
+  Expected: User redirected to login screen
+
+• **Step 7:** Try accessing dashboard URL  
+  Expected: User redirected to login screen
+
+• **Step 8:** Restart app  
+  Expected: App starts at login screen (session cleared)
 
 ### **Expected Result**
 - Logout confirmation dialog displayed
@@ -585,14 +701,23 @@ This test verifies that inactive sessions automatically expire for security.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | User logs in | Dashboard displays |
-| 2 | Leave app inactive for 30 minutes | No user interaction |
-| 3 | After 30 minutes | User session expires silently |
-| 4 | Try to navigate or use app | "Your session has expired. Please login again" message |
-| 5 | Tap "Login Again" | User redirected to login screen |
-| 6 | App restart after timeout | Login screen displayed (not dashboard) |
+• **Step 1:** User logs in  
+  Expected: Dashboard displays
+
+• **Step 2:** Leave app inactive for 30 minutes  
+  Expected: No user interaction
+
+• **Step 3:** After 30 minutes  
+  Expected: User session expires silently
+
+• **Step 4:** Try to navigate or use app  
+  Expected: "Your session has expired. Please login again" message
+
+• **Step 5:** Tap "Login Again"  
+  Expected: User redirected to login screen
+
+• **Step 6:** App restart after timeout  
+  Expected: Login screen displayed (not dashboard)
 
 ### **Expected Result**
 - Session automatically expires after 30 minutes of inactivity
@@ -637,16 +762,29 @@ This test verifies fingerprint authentication on supported devices.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Enable biometric login in settings | Toggle switch turns on |
-| 2 | Exit and return to login screen | "Use Fingerprint" button appears |
-| 3 | Tap "Use Fingerprint" | Device fingerprint dialog appears requesting fingerprint |
-| 4 | Scan fingerprint (matching enrolled) | Fingerprint recognized, user logged in |
-| 5 | Dashboard displays | User authenticated successfully |
-| 6 | Logout and return to login | "Use Fingerprint" button available again |
-| 7 | Attempt with wrong fingerprint | "Fingerprint not recognized" message, dialog remains |
-| 8 | Try again with correct fingerprint | Authentication succeeds |
+• **Step 1:** Enable biometric login in settings  
+  Expected: Toggle switch turns on
+
+• **Step 2:** Exit and return to login screen  
+  Expected: "Use Fingerprint" button appears
+
+• **Step 3:** Tap "Use Fingerprint"  
+  Expected: Device fingerprint dialog appears requesting fingerprint
+
+• **Step 4:** Scan fingerprint (matching enrolled)  
+  Expected: Fingerprint recognized, user logged in
+
+• **Step 5:** Dashboard displays  
+  Expected: User authenticated successfully
+
+• **Step 6:** Logout and return to login  
+  Expected: "Use Fingerprint" button available again
+
+• **Step 7:** Attempt with wrong fingerprint  
+  Expected: "Fingerprint not recognized" message, dialog remains
+
+• **Step 8:** Try again with correct fingerprint  
+  Expected: Authentication succeeds
 
 ### **Expected Result**
 - Biometric login enabled in settings
@@ -692,16 +830,29 @@ This test verifies Face ID authentication on iOS devices with face recognition.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Open app on iOS Face ID device | Login screen displays |
-| 2 | Enable Face ID login in settings | Face ID authentication option enabled |
-| 3 | Return to login screen | "Use Face ID" button visible |
-| 4 | Tap "Use Face ID" | Face ID dialog appears with prompt |
-| 5 | Look at device (Face ID scan) | Face recognized, user logged in automatically |
-| 6 | Dashboard displays | User authenticated successfully |
-| 7 | Try with attention not required | Face ID recognizes with camera pointed at face |
-| 8 | Try with sunglasses | Face ID may still work depending on sensor quality |
+• **Step 1:** Open app on iOS Face ID device  
+  Expected: Login screen displays
+
+• **Step 2:** Enable Face ID login in settings  
+  Expected: Face ID authentication option enabled
+
+• **Step 3:** Return to login screen  
+  Expected: "Use Face ID" button visible
+
+• **Step 4:** Tap "Use Face ID"  
+  Expected: Face ID dialog appears with prompt
+
+• **Step 5:** Look at device (Face ID scan)  
+  Expected: Face recognized, user logged in automatically
+
+• **Step 6:** Dashboard displays  
+  Expected: User authenticated successfully
+
+• **Step 7:** Try with attention not required  
+  Expected: Face ID recognizes with camera pointed at face
+
+• **Step 8:** Try with sunglasses  
+  Expected: Face ID may still work depending on sensor quality
 
 ### **Expected Result**
 - Face ID authentication available on compatible iOS devices
@@ -746,16 +897,29 @@ This test verifies Google Sign-In integration for social authentication.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | On login screen, tap "Sign in with Google" | Google account picker dialog appears |
-| 2 | Select Google account | Account selected and dialog closes |
-| 3 | Grant app permissions | "Google Sign-In" permissions requested if first time |
-| 4 | Accept permissions | User logged in, redirected to profile setup (if first time) |
-| 5 | Enter passenger details | Profile form displays for additional information |
-| 6 | Complete profile setup | Dashboard displays |
-| 7 | Logout and login again | "Sign in with Google" available |
-| 8 | Tap Google sign-in again | Automatically logs in with same account (no account picker) |
+• **Step 1:** On login screen, tap "Sign in with Google"  
+  Expected: Google account picker dialog appears
+
+• **Step 2:** Select Google account  
+  Expected: Account selected and dialog closes
+
+• **Step 3:** Grant app permissions  
+  Expected: "Google Sign-In" permissions requested if first time
+
+• **Step 4:** Accept permissions  
+  Expected: User logged in, redirected to profile setup (if first time)
+
+• **Step 5:** Enter passenger details  
+  Expected: Profile form displays for additional information
+
+• **Step 6:** Complete profile setup  
+  Expected: Dashboard displays
+
+• **Step 7:** Logout and login again  
+  Expected: "Sign in with Google" available
+
+• **Step 8:** Tap Google sign-in again  
+  Expected: Automatically logs in with same account (no account picker)
 
 ### **Expected Result**
 - Google Sign-In works seamlessly
@@ -801,34 +965,45 @@ This test verifies that users can enable 2FA for additional account security.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Go to Settings → Security | Security options displayed |
-| 2 | Tap "Enable Two-Factor Authentication" | 2FA setup wizard starts |
-| 3 | Select authentication method | Options: Authenticator App or SMS |
-| 4 | Choose "Authenticator App" | QR code displays for scanning |
-| 5 | Scan QR code with authenticator app | Code appears in authenticator app |
-| 6 | Enter 6-digit code from app | Code validated, 2FA enabled |
-| 7 | Save backup codes | User can save emergency recovery codes |
-| 8 | Next login attempt | After password entry, 2FA code requested |
-| 9 | Enter code from authenticator | Login proceeds to dashboard |
-| 10 | Disable 2FA | Option available with account verification |
+• **Step 1:** Go to Settings → Security  
+  Expected: Security options displayed
+
+• **Step 2:** Tap "Enable Two-Factor Authentication"  
+  Expected: 2FA setup wizard starts
+
+• **Step 3:** Select authentication method  
+  Expected: Options: Authenticator App or SMS
+
+• **Step 4:** Choose "Authenticator App"  
+  Expected: QR code displays for scanning
+
+• **Step 5:** Scan QR code with authenticator app  
+  Expected: Authenticator app shows 6-digit code
+
+• **Step 6:** Enter 6-digit code from authenticator  
+  Expected: Code accepted, 2FA enabled
+
+• **Step 7:** Logout and login again  
+  Expected: After OTP verification, 2FA code requested
+
+• **Step 8:** Enter 2FA code from authenticator  
+  Expected: User logged in successfully
 
 ### **Expected Result**
-- 2FA can be enabled in settings
-- QR code scans correctly in authenticator app
-- 6-digit code required for login after enabling 2FA
-- Backup codes provided for account recovery
-- 2FA can be disabled by user
-- 2FA adds security layer to account
+- 2FA setup completed successfully
+- QR code scans into authenticator app
+- Time-based OTP codes work correctly
+- 2FA required on login
+- Backup codes provided
+- User account is more secure
 
 ### **Actual Result**
 [To be filled]
 
 ### **Pass Criteria**
 ✅ 2FA enabled  
-✅ Login verification works  
-✅ Backup codes provided  
+✅ Authenticator code works  
+✅ Login requires 2FA  
 
 ### **Status**
 - [ ] Pass
@@ -837,44 +1012,6 @@ This test verifies that users can enable 2FA for additional account security.
 
 ---
 
-## 📊 Test Execution Summary - Authentication
-
-| TC ID | Title | Status | Pass | Fail | Blocked | Notes |
-|-------|-------|--------|------|------|---------|-------|
-| TC-001-001 | Phone OTP Registration | | [ ] | [ ] | [ ] | |
-| TC-001-002 | Email/Password Registration | | [ ] | [ ] | [ ] | |
-| TC-001-003 | Invalid Phone Validation | | [ ] | [ ] | [ ] | |
-| TC-001-004 | Forgot Password Email | | [ ] | [ ] | [ ] | |
-| TC-001-005 | OTP Resend | | [ ] | [ ] | [ ] | |
-| TC-001-006 | OTP Expiration | | [ ] | [ ] | [ ] | |
-| TC-001-007 | Invalid OTP Input | | [ ] | [ ] | [ ] | |
-| TC-001-008 | Login Valid Credentials | | [ ] | [ ] | [ ] | |
-| TC-001-009 | Login Invalid Credentials | | [ ] | [ ] | [ ] | |
-| TC-001-010 | Logout Functionality | | [ ] | [ ] | [ ] | |
-| TC-001-011 | Session Timeout | | [ ] | [ ] | [ ] | |
-| TC-001-012 | Fingerprint Auth | | [ ] | [ ] | [ ] | |
-| TC-001-013 | Face ID Auth | | [ ] | [ ] | [ ] | |
-| TC-001-014 | Google Sign-In | | [ ] | [ ] | [ ] | |
-| TC-001-015 | Two-Factor Auth | | [ ] | [ ] | [ ] | |
-
-**Total:** 15 Test Cases | **Passed:** [ ] | **Failed:** [ ] | **Blocked:** [ ]  
-**Pass Rate:** ____%
-
----
-
-## 📝 Notes
-
-### Known Issues
-- (To be filled during testing)
-
-### Observations
-- (To be filled during testing)
-
-### Recommendations
-- (To be filled after testing)
-
----
-
-**Test Module Created:** March 12, 2026  
-**Last Updated:** March 12, 2026  
-**Test Engineer:** QA Team
+**Total Test Cases in Module:** 15  
+**All steps formatted as bullet points for easy GitHub copy-paste**  
+**Last Updated:** March 12, 2026

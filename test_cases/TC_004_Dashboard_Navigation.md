@@ -28,20 +28,30 @@ This test verifies the dashboard homepage displays all required UI components.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | User logs in | Dashboard loads automatically after auth |
-| 2 | Wait for page | Dashboard displays within 3 seconds |
-| 3 | Verify header | App title or logo displays at top |
-| 4 | Check notification icon | Notification bell with badge (if unread) |
-| 5 | View welcome section | "Welcome, [User Name]" greeting displays |
-| 6 | Check quick stats | Quick info cards shown (trips, rating, points) |
-| 7 | Verify action buttons | 4 main action buttons visible: Scan, Routes, Emergency, Feedback |
-| 8 | Recent activity section | Shows recent trips or activities |
-| 9 | Promotional banner | If configured, banner displays (no crash) |
-| 10 | Navigation bar | Bottom or side navigation visible |
-| 11 | No loading errors | No error messages displayed |
-| 12 | Responsive layout | All elements visible on different screen sizes |
+• **Step 1:** User logs in
+  Expected: Dashboard loads automatically after auth
+• **Step 2:** Wait for page
+  Expected: Dashboard displays within 3 seconds
+• **Step 3:** Verify header
+  Expected: App title or logo displays at top
+• **Step 4:** Check notification icon
+  Expected: Notification bell with badge (if unread)
+• **Step 5:** View welcome section
+  Expected: "Welcome, [User Name]" greeting displays
+• **Step 6:** Check quick stats
+  Expected: Quick info cards shown (trips, rating, points)
+• **Step 7:** Verify action buttons
+  Expected: 4 main action buttons visible: Scan, Routes, Emergency, Feedback
+• **Step 8:** Recent activity section
+  Expected: Shows recent trips or activities
+• **Step 9:** Promotional banner
+  Expected: If configured, banner displays (no crash)
+• **Step 10:** Navigation bar
+  Expected: Bottom or side navigation visible
+• **Step 11:** No loading errors
+  Expected: No error messages displayed
+• **Step 12:** Responsive layout
+  Expected: All elements visible on different screen sizes
 
 ### **Expected Result**
 - Dashboard loads completely within 3 seconds
@@ -84,20 +94,30 @@ This test verifies the navigation menu/drawer for accessing different app sectio
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | On dashboard | Navigation menu visible (visible or hidden) |
-| 2 | Tap hamburger menu icon (if hidden) | Navigation drawer/menu slides in |
-| 3 | View menu items | Menu sections visible: Home, Profile, Feedback, History, Settings, Help |
-| 4 | Tap "Home" | Navigate back to dashboard |
-| 5 | Tap "Profile" | Navigate to user profile page |
-| 6 | Tap "Feedback" | Navigate to feedback system |
-| 7 | Tap "Trip History" | Navigate to trip history page |
-| 8 | Tap "Settings" | Navigate to settings page |
-| 9 | Tap "Help & Support" | Navigate to help page |
-| 10 | Tap outside menu | Menu closes (if drawer) |
-| 11 | Each navigation item | Works correctly, navigates to right page |
-| 12 | Menu persists | Available on all pages |
+• **Step 1:** On dashboard
+  Expected: Navigation menu visible (visible or hidden)
+• **Step 2:** Tap hamburger menu icon (if hidden)
+  Expected: Navigation drawer/menu slides in
+• **Step 3:** View menu items
+  Expected: Menu sections visible: Home, Profile, Feedback, History, Settings, Help
+• **Step 4:** Tap "Home"
+  Expected: Navigate back to dashboard
+• **Step 5:** Tap "Profile"
+  Expected: Navigate to user profile page
+• **Step 6:** Tap "Feedback"
+  Expected: Navigate to feedback system
+• **Step 7:** Tap "Trip History"
+  Expected: Navigate to trip history page
+• **Step 8:** Tap "Settings"
+  Expected: Navigate to settings page
+• **Step 9:** Tap "Help & Support"
+  Expected: Navigate to help page
+• **Step 10:** Tap outside menu
+  Expected: Menu closes (if drawer)
+• **Step 11:** Each navigation item
+  Expected: Works correctly, navigates to right page
+• **Step 12:** Menu persists
+  Expected: Available on all pages
 
 ### **Expected Result**
 - Navigation menu opens/closes smoothly
@@ -141,20 +161,30 @@ This test verifies the 4 main action buttons on dashboard homepage.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View action buttons | 4 buttons visible: Scan QR, Find Routes, Emergency, Give Feedback |
-| 2 | Button styling | All buttons have consistent styling and clear icons |
-| 3 | Tap "Scan QR Code" | QR scanner page/camera opens |
-| 4 | Go back | Return to dashboard |
-| 5 | Tap "Find Routes" | Routes/buses page opens |
-| 6 | Back button works | Return to dashboard |
-| 7 | Tap "Emergency" | Emergency/SOS page opens |
-| 8 | Back navigation | Return to dashboard |
-| 9 | Tap "Give Feedback" | Feedback system page opens |
-| 10 | Each button responsive | Tap detected immediately without lag |
-| 11 | Position stable | Buttons don't move or resize |
-| 12 | Touch target size | Buttons large enough to easily tap |
+• **Step 1:** View action buttons
+  Expected: 4 buttons visible: Scan QR, Find Routes, Emergency, Give Feedback
+• **Step 2:** Button styling
+  Expected: All buttons have consistent styling and clear icons
+• **Step 3:** Tap "Scan QR Code"
+  Expected: QR scanner page/camera opens
+• **Step 4:** Go back
+  Expected: Return to dashboard
+• **Step 5:** Tap "Find Routes"
+  Expected: Routes/buses page opens
+• **Step 6:** Back button works
+  Expected: Return to dashboard
+• **Step 7:** Tap "Emergency"
+  Expected: Emergency/SOS page opens
+• **Step 8:** Back navigation
+  Expected: Return to dashboard
+• **Step 9:** Tap "Give Feedback"
+  Expected: Feedback system page opens
+• **Step 10:** Each button responsive
+  Expected: Tap detected immediately without lag
+• **Step 11:** Position stable
+  Expected: Buttons don't move or resize
+• **Step 12:** Touch target size
+  Expected: Buttons large enough to easily tap
 
 ### **Expected Result**
 - All 4 buttons present and clearly labeled
@@ -199,20 +229,30 @@ This test verifies the stats cards show user's journey and feedback data.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View stats section | Stats cards visible below welcome message |
-| 2 | Check trip count | Shows total trips completed (e.g., "12 Trips") |
-| 3 | Check rating | Shows current user rating (e.g., "4.5 ⭐") |
-| 4 | Check reward points | Shows accumulated points (e.g., "250 Points") |
-| 5 | Submit new feedback | Add feedback and navigate back to dashboard |
-| 6 | Stats updated | Trip/Feedback count increases |
-| 7 | Tap on stat card | Opens detailed view/history |
-| 8 | Visual change | Stat cards animate on update |
-| 9 | Correct calculations | Stats match actual data in Firestore |
-| 10 | Refresh dashboard | Pull down to refresh stats |
-| 11 | Pull-to-refresh works | Loads latest data |
-| 12 | Loading state | Shows loading during refresh |
+• **Step 1:** View stats section
+  Expected: Stats cards visible below welcome message
+• **Step 2:** Check trip count
+  Expected: Shows total trips completed (e.g., "12 Trips")
+• **Step 3:** Check rating
+  Expected: Shows current user rating (e.g., "4.5 ⭐")
+• **Step 4:** Check reward points
+  Expected: Shows accumulated points (e.g., "250 Points")
+• **Step 5:** Submit new feedback
+  Expected: Add feedback and navigate back to dashboard
+• **Step 6:** Stats updated
+  Expected: Trip/Feedback count increases
+• **Step 7:** Tap on stat card
+  Expected: Opens detailed view/history
+• **Step 8:** Visual change
+  Expected: Stat cards animate on update
+• **Step 9:** Correct calculations
+  Expected: Stats match actual data in Firestore
+• **Step 10:** Refresh dashboard
+  Expected: Pull down to refresh stats
+• **Step 11:** Pull-to-refresh works
+  Expected: Loads latest data
+• **Step 12:** Loading state
+  Expected: Shows loading during refresh
 
 ### **Expected Result**
 - Stats cards display correct values
@@ -257,20 +297,30 @@ This test verifies the recent activity section shows user's recent trips.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Scroll dashboard | Recent activity section visible |
-| 2 | Section title | "Recent Trips" or "Your Journeys" heading |
-| 3 | Trip cards display | Shows last 5 trips in reverse chronological order |
-| 4 | Each trip shows | Bus number, date, time, route |
-| 5 | Trip details | Tap trip to see details |
-| 6 | Feedback option | Option to give feedback on trip |
-| 7 | Rebook option | Option to rebook the bus/route |
-| 8 | Empty state | If no trips, "No trips yet" message |
-| 9 | Navigation | "View All" link to see complete history |
-| 10 | Time formatting | Shows relative time (e.g., "2 days ago") |
-| 11 | Status indicator | Shows trip completed/cancelled status |
-| 12 | Scroll within section | Can scroll horizontally if too many (if cards) |
+• **Step 1:** Scroll dashboard
+  Expected: Recent activity section visible
+• **Step 2:** Section title
+  Expected: "Recent Trips" or "Your Journeys" heading
+• **Step 3:** Trip cards display
+  Expected: Shows last 5 trips in reverse chronological order
+• **Step 4:** Each trip shows
+  Expected: Bus number, date, time, route
+• **Step 5:** Trip details
+  Expected: Tap trip to see details
+• **Step 6:** Feedback option
+  Expected: Option to give feedback on trip
+• **Step 7:** Rebook option
+  Expected: Option to rebook the bus/route
+• **Step 8:** Empty state
+  Expected: If no trips, "No trips yet" message
+• **Step 9:** Navigation
+  Expected: "View All" link to see complete history
+• **Step 10:** Time formatting
+  Expected: Shows relative time (e.g., "2 days ago")
+• **Step 11:** Status indicator
+  Expected: Shows trip completed/cancelled status
+• **Step 12:** Scroll within section
+  Expected: Can scroll horizontally if too many (if cards)
 
 ### **Expected Result**
 - Recent trips display in correct order
@@ -315,20 +365,30 @@ This test verifies the notification icon displays badge with unread count.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Dashboard header | Notification bell icon visible |
-| 2 | Check badge | Red badge with number shows unread count |
-| 3 | Badge accurate | Number matches unread notifications |
-| 4 | Tap notification icon | Notifications page/dropdown opens |
-| 5 | Notifications list | Shows list of recent notifications |
-| 6 | Mark as read | Notification marked read when viewed |
-| 7 | Badge updates | Badge count decreases when notification read |
-| 8 | All read notifications | Badge disappears when all read |
-| 9 | New notification received | Badge reappears with new count |
-| 10 | Badge animates | Subtle animation when count changes |
-| 11 | Notification details | Tap notification shows full message |
-| 12 | Clear notifications | Option to clear all notifications |
+• **Step 1:** Dashboard header
+  Expected: Notification bell icon visible
+• **Step 2:** Check badge
+  Expected: Red badge with number shows unread count
+• **Step 3:** Badge accurate
+  Expected: Number matches unread notifications
+• **Step 4:** Tap notification icon
+  Expected: Notifications page/dropdown opens
+• **Step 5:** Notifications list
+  Expected: Shows list of recent notifications
+• **Step 6:** Mark as read
+  Expected: Notification marked read when viewed
+• **Step 7:** Badge updates
+  Expected: Badge count decreases when notification read
+• **Step 8:** All read notifications
+  Expected: Badge disappears when all read
+• **Step 9:** New notification received
+  Expected: Badge reappears with new count
+• **Step 10:** Badge animates
+  Expected: Subtle animation when count changes
+• **Step 11:** Notification details
+  Expected: Tap notification shows full message
+• **Step 12:** Clear notifications
+  Expected: Option to clear all notifications
 
 ### **Expected Result**
 - Notification badge displays correct count
@@ -373,20 +433,30 @@ This test verifies the pull-to-refresh functionality loads fresh data.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Dashboard displayed | Current data shown |
-| 2 | Scroll to top | Ensures pull position available |
-| 3 | Pull down gesture | Pull-to-refresh indicator appears |
-| 4 | Pull beyond threshold | Refresh trigger activated |
-| 5 | Release | Loading spinner displays |
-| 6 | Loading state | "Refreshing..." message appears |
-| 7 | Wait for refresh | Data reloads from server (2-5 seconds) |
-| 8 | Refresh completes | Spinner disappears, data updates |
-| 9 | New data displays | Stats and activities update |
-| 10 | If no changes | Message shows "Already up to date" |
-| 11 | Error handling | If offline, shows "No connection" error |
-| 12 | Retry option | Can retry if refresh failed |
+• **Step 1:** Dashboard displayed
+  Expected: Current data shown
+• **Step 2:** Scroll to top
+  Expected: Ensures pull position available
+• **Step 3:** Pull down gesture
+  Expected: Pull-to-refresh indicator appears
+• **Step 4:** Pull beyond threshold
+  Expected: Refresh trigger activated
+• **Step 5:** Release
+  Expected: Loading spinner displays
+• **Step 6:** Loading state
+  Expected: "Refreshing..." message appears
+• **Step 7:** Wait for refresh
+  Expected: Data reloads from server (2-5 seconds)
+• **Step 8:** Refresh completes
+  Expected: Spinner disappears, data updates
+• **Step 9:** New data displays
+  Expected: Stats and activities update
+• **Step 10:** If no changes
+  Expected: Message shows "Already up to date"
+• **Step 11:** Error handling
+  Expected: If offline, shows "No connection" error
+• **Step 12:** Retry option
+  Expected: Can retry if refresh failed
 
 ### **Expected Result**
 - Pull-to-refresh gesture recognized
@@ -430,20 +500,30 @@ This test verifies the navigation bar with icons and labels.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | View screen bottom | Navigation bar visible with 4-5 tabs |
-| 2 | Tabs displayed | Each tab has icon and label |
-| 3 | Current page highlighted | Active tab is highlighted/colored |
-| 4 | Tap "Home" | Navigate to dashboard (tab highlights) |
-| 5 | Tap "Feedback" | Navigate to feedback page |
-| 6 | Tap "Profile" | Navigate to profile page |
-| 7 | Tap "Help" | Navigate to help/support page |
-| 8 | Tab titles | Icons have clear labels below |
-| 9 | Touch targets | Each tab is easily tappable (min 48x48 dp) |
-| 10 | Badge indicators | If unread items, badge shows on tab |
-| 11 | Active state visual | Current page clearly indicated |
-| 12 | Responsive | Tabs adjust on different screen sizes |
+• **Step 1:** View screen bottom
+  Expected: Navigation bar visible with 4-5 tabs
+• **Step 2:** Tabs displayed
+  Expected: Each tab has icon and label
+• **Step 3:** Current page highlighted
+  Expected: Active tab is highlighted/colored
+• **Step 4:** Tap "Home"
+  Expected: Navigate to dashboard (tab highlights)
+• **Step 5:** Tap "Feedback"
+  Expected: Navigate to feedback page
+• **Step 6:** Tap "Profile"
+  Expected: Navigate to profile page
+• **Step 7:** Tap "Help"
+  Expected: Navigate to help/support page
+• **Step 8:** Tab titles
+  Expected: Icons have clear labels below
+• **Step 9:** Touch targets
+  Expected: Each tab is easily tappable (min 48x48 dp)
+• **Step 10:** Badge indicators
+  Expected: If unread items, badge shows on tab
+• **Step 11:** Active state visual
+  Expected: Current page clearly indicated
+• **Step 12:** Responsive
+  Expected: Tabs adjust on different screen sizes
 
 ### **Expected Result**
 - Navigation bar visible and stable
@@ -487,20 +567,30 @@ This test verifies back navigation works correctly across pages.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | On Dashboard | Back button may not be visible/disabled |
-| 2 | Navigate to Profile | "Profile" page displays, back button visible |
-| 3 | Tap back button | Returns to previous page (Dashboard) |
-| 4 | Navigate Multiple times | Dashboard → Profile → Settings → Help |
-| 5 | Tap back | Goes back one page (Help → Settings) |
-| 6 | Tap back | Goes back another (Settings → Profile) |
-| 7 | Continue back | Returns to Dashboard |
-| 8 | Physical back (Android) | System back button also works |
-| 9 | Gesture back (iOS) | Swipe from edge goes back |
-| 10 | Navigation menu use | Using menu doesn't clear back history |
-| 11 | Forms - back on form | Back button: confirm discard changes dialog |
-| 12 | Modals - back | Closing modal returns to previous screen |
+• **Step 1:** On Dashboard
+  Expected: Back button may not be visible/disabled
+• **Step 2:** Navigate to Profile
+  Expected: "Profile" page displays, back button visible
+• **Step 3:** Tap back button
+  Expected: Returns to previous page (Dashboard)
+• **Step 4:** Navigate Multiple times
+  Expected: Dashboard → Profile → Settings → Help
+• **Step 5:** Tap back
+  Expected: Goes back one page (Help → Settings)
+• **Step 6:** Tap back
+  Expected: Goes back another (Settings → Profile)
+• **Step 7:** Continue back
+  Expected: Returns to Dashboard
+• **Step 8:** Physical back (Android)
+  Expected: System back button also works
+• **Step 9:** Gesture back (iOS)
+  Expected: Swipe from edge goes back
+• **Step 10:** Navigation menu use
+  Expected: Using menu doesn't clear back history
+• **Step 11:** Forms - back on form
+  Expected: Back button: confirm discard changes dialog
+• **Step 12:** Modals - back
+  Expected: Closing modal returns to previous screen
 
 ### **Expected Result**
 - Back button navigates to previous screen
@@ -545,20 +635,30 @@ This test verifies deep linking allows direct page access via URLs.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Open link: safedriver://home | App opens to dashboard |
-| 2 | Open link: safedriver://feedback | App opens feedback page |
-| 3 | Open link: safedriver://profile | App opens profile page |
-| 4 | Open link: safedriver://trip/123 | Opens specific trip detail |
-| 5 | Open link: safedriver://notification | Opens notifications |
-| 6 | Not logged in case | Deep link opens app and redirects to login |
-| 7 | After login | Deep link navigates to intended page |
-| 8 | Invalid link | Shows error or home page |
-| 9 | External link | Opens in-app browser or external link handler |
-| 10 | From email link | Tapping link in email opens app correctly |
-| 11 | From notification | Tapping notification link opens relevant page |
-| 12 | App in background | Deep link brings app to foreground |
+• **Step 1:** Open link: safedriver://home
+  Expected: App opens to dashboard
+• **Step 2:** Open link: safedriver://feedback
+  Expected: App opens feedback page
+• **Step 3:** Open link: safedriver://profile
+  Expected: App opens profile page
+• **Step 4:** Open link: safedriver://trip/123
+  Expected: Opens specific trip detail
+• **Step 5:** Open link: safedriver://notification
+  Expected: Opens notifications
+• **Step 6:** Not logged in case
+  Expected: Deep link opens app and redirects to login
+• **Step 7:** After login
+  Expected: Deep link navigates to intended page
+• **Step 8:** Invalid link
+  Expected: Shows error or home page
+• **Step 9:** External link
+  Expected: Opens in-app browser or external link handler
+• **Step 10:** From email link
+  Expected: Tapping link in email opens app correctly
+• **Step 11:** From notification
+  Expected: Tapping notification link opens relevant page
+• **Step 12:** App in background
+  Expected: Deep link brings app to foreground
 
 ### **Expected Result**
 - Deep links work and navigate correctly
@@ -603,20 +703,30 @@ This test verifies responsive design works in landscape mode.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Portrait orientation | App displays in portrait mode |
-| 2 | Rotate device 90° | Orientation changes to landscape |
-| 3 | Layout adjustment | UI elements reflow to landscape format |
-| 4 | Navigation bar | Tab bar or drawer adapts to landscape |
-| 5 | No overlapping | Elements don't overlap in new layout |
-| 6 | Scrolling works | Can still scroll if content exceeds screen |
-| 7 | Buttons accessible | Action buttons still easily reachable |
-| 8 | Text readable | Text remains readable, not squished |
-| 9 | Images fit | Images scale appropriately |
-| 10 | Back to portrait | Rotate back, layout returns to portrait |
-| 11 | Forms in landscape | Form fields arrange properly |
-| 12 | No data loss | Entered data preserved during rotation |
+• **Step 1:** Portrait orientation
+  Expected: App displays in portrait mode
+• **Step 2:** Rotate device 90°
+  Expected: Orientation changes to landscape
+• **Step 3:** Layout adjustment
+  Expected: UI elements reflow to landscape format
+• **Step 4:** Navigation bar
+  Expected: Tab bar or drawer adapts to landscape
+• **Step 5:** No overlapping
+  Expected: Elements don't overlap in new layout
+• **Step 6:** Scrolling works
+  Expected: Can still scroll if content exceeds screen
+• **Step 7:** Buttons accessible
+  Expected: Action buttons still easily reachable
+• **Step 8:** Text readable
+  Expected: Text remains readable, not squished
+• **Step 9:** Images fit
+  Expected: Images scale appropriately
+• **Step 10:** Back to portrait
+  Expected: Rotate back, layout returns to portrait
+• **Step 11:** Forms in landscape
+  Expected: Form fields arrange properly
+• **Step 12:** No data loss
+  Expected: Entered data preserved during rotation
 
 ### **Expected Result**
 - Layout properly adapts to landscape
@@ -660,20 +770,30 @@ This test verifies page transitions are smooth and not jarring.
 
 ### **Test Steps**
 
-| Step | Action | Expected Result |
-|------|--------|-----------------|
-| 1 | Navigate to Profile | Smooth transition animation (slide/fade) |
-| 2 | Observe duration | Animation completes within 300-500ms |
-| 3 | Animation smooth | No stuttering or jank |
-| 4 | Back navigation | Return animation is smooth |
-| 5 | Menu navigation | Opening/closing menu transitions smoothly |
-| 6 | Bottom nav | Tab switching animated smoothly |
-| 7 | Modal open | Modal appears with animation |
-| 8 | Modal close | Modal disappears with animation |
-| 9 | Loading state | Loading spinner animates smoothly |
-| 10 | Data transitions | Data appears/updates with animations |
-| 11 | Orientation change | Rotation animated smoothly |
-| 12 | Performance | High FPS during animations (60fps target) |
+• **Step 1:** Navigate to Profile
+  Expected: Smooth transition animation (slide/fade)
+• **Step 2:** Observe duration
+  Expected: Animation completes within 300-500ms
+• **Step 3:** Animation smooth
+  Expected: No stuttering or jank
+• **Step 4:** Back navigation
+  Expected: Return animation is smooth
+• **Step 5:** Menu navigation
+  Expected: Opening/closing menu transitions smoothly
+• **Step 6:** Bottom nav
+  Expected: Tab switching animated smoothly
+• **Step 7:** Modal open
+  Expected: Modal appears with animation
+• **Step 8:** Modal close
+  Expected: Modal disappears with animation
+• **Step 9:** Loading state
+  Expected: Loading spinner animates smoothly
+• **Step 10:** Data transitions
+  Expected: Data appears/updates with animations
+• **Step 11:** Orientation change
+  Expected: Rotation animated smoothly
+• **Step 12:** Performance
+  Expected: High FPS during animations (60fps target)
 
 ### **Expected Result**
 - Page transitions smooth and not jarring
