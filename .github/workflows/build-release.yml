@@ -43,6 +43,16 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
+      - name: Ensure asset directories exist
+        run: |
+          mkdir -p assets/images
+          mkdir -p assets/icons
+          mkdir -p assets/animations
+          mkdir -p assets/fonts
+          mkdir -p assets/audio
+          mkdir -p assets/videos
+          mkdir -p assets/data
+
       - name: Build Release APK
         run: flutter build apk --release
 
