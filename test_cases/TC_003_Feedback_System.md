@@ -29,25 +29,25 @@ This test verifies the feedback system page opens and displays bus selection opt
 ### **Test Steps**
 
 • **Step 1:** On dashboard, tap "Give Feedback" button
-  Expected: Loading spinner briefly displays
+• **Expected:** Loading spinner briefly displays
 • **Step 2:** Wait for page load
-  Expected: Feedback system page opens with bus selection
+• **Expected:** Feedback system page opens with bus selection
 • **Step 3:** Verify page title
-  Expected: "Select Bus" or "Give Feedback" title displays
+• **Expected:** "Select Bus" or "Give Feedback" title displays
 • **Step 4:** Verify two tabs
-  Expected: Tabs visible: "Manual Selection" and "QR Scan"
+• **Expected:** Tabs visible: "Manual Selection" and "QR Scan"
 • **Step 5:** Check bus list
-  Expected: List of available buses displays with numbers and route info
+• **Expected:** List of available buses displays with numbers and route info
 • **Step 6:** Verify each bus entry
-  Expected: Shows: Bus Number, Route, Current Time, Rating
+• **Expected:** Shows: Bus Number, Route, Current Time, Rating
 • **Step 7:** Scroll bus list
-  Expected: All buses visible, list scrollable
+• **Expected:** All buses visible, list scrollable
 • **Step 8:** Check recent buses
-  Expected: "Recent Buses" section shows recently used buses
+• **Expected:** "Recent Buses" section shows recently used buses
 • **Step 9:** Tap a bus from recent
-  Expected: Bus selected, feedback form appears
+• **Expected:** Bus selected, feedback form appears
 • **Step 10:** No data state
-  Expected: If no buses, "No buses available" message displays
+• **Expected:** If no buses, "No buses available" message displays
 
 ### **Expected Result**
 - Feedback system page accessible from dashboard
@@ -93,25 +93,25 @@ This test verifies the manual bus selection process from the list.
 ### **Test Steps**
 
 • **Step 1:** View bus list
-  Expected: Multiple buses displayed with details
+• **Expected:** Multiple buses displayed with details
 • **Step 2:** Tap first bus (Bus #25)
-  Expected: Bus card highlights/shows selection
+• **Expected:** Bus card highlights/shows selection
 • **Step 3:** Verify bus info displays
-  Expected: Shows: Number, Route, Schedule, Driver Rating
+• **Expected:** Shows: Number, Route, Schedule, Driver Rating
 • **Step 4:** Tap "Select" button
-  Expected: Bus selected, feedback form opens
+• **Expected:** Bus selected, feedback form opens
 • **Step 5:** Next page header
-  Expected: Shows "Feedback for Bus #25 - Route ABC"
+• **Expected:** Shows "Feedback for Bus #25 - Route ABC"
 • **Step 6:** Form displays
-  Expected: Feedback type selection shows
+• **Expected:** Feedback type selection shows
 • **Step 7:** Go back
-  Expected: Bus selection page displays again
+• **Expected:** Bus selection page displays again
 • **Step 8:** Select different bus
-  Expected: Previous selection cleared, new bus selected
+• **Expected:** Previous selection cleared, new bus selected
 • **Step 9:** Search bus feature
-  Expected: If available, search by bus number works
+• **Expected:** If available, search by bus number works
 • **Step 10:** Filter options
-  Expected: Sort by rating, recent, etc. (if available)
+• **Expected:** Sort by rating, recent, etc. (if available)
 
 ### **Expected Result**
 - Tapping bus selects it with visual feedback
@@ -163,25 +163,25 @@ This test verifies QR code scanning functionality to automatically identify buse
 ### **Test Steps**
 
 • **Step 1:** Tap "QR Scan" tab
-  Expected: Camera view opens with scanning overlay
+• **Expected:** Camera view opens with scanning overlay
 • **Step 2:** Verify camera frame
-  Expected: QR code scanning guide displayed on screen
+• **Expected:** QR code scanning guide displayed on screen
 • **Step 3:** Point camera at valid QR code
-  Expected: QR code area highlights when detected
+• **Expected:** QR code area highlights when detected
 • **Step 4:** QR code scanned
-  Expected: Bus information loads automatically from QR data
+• **Expected:** Bus information loads automatically from QR data
 • **Step 5:** Auto-proceed
-  Expected: Feedback form opens automatically with bus selected
+• **Expected:** Feedback form opens automatically with bus selected
 • **Step 6:** Scan invalid QR code
-  Expected: "Invalid QR code" error message displays
+• **Expected:** "Invalid QR code" error message displays
 • **Step 7:** Try scanning text QR
-  Expected: "This is not a bus QR code" error displays
+• **Expected:** "This is not a bus QR code" error displays
 • **Step 8:** Point camera but don't scan
-  Expected: Camera remains open, scanner ready
+• **Expected:** Camera remains open, scanner ready
 • **Step 9:** Go back button
-  Expected: Returns to bus selection page
+• **Expected:** Returns to bus selection page
 • **Step 10:** Camera off button
-  Expected: Can close camera without scanning
+• **Expected:** Can close camera without scanning
 
 ### **Expected Result**
 - Camera opens with QR scanning interface
@@ -228,25 +228,25 @@ This test verifies the feedback type selection interface.
 ### **Test Steps**
 
 • **Step 1:** View feedback type options
-  Expected: Two cards displayed: "Bus Feedback" and "Driver Feedback"
+• **Expected:** Two cards displayed: "Bus Feedback" and "Driver Feedback"
 • **Step 2:** Tap "Bus Feedback"
-  Expected: Bus feedback form opens
+• **Expected:** Bus feedback form opens
 • **Step 3:** Verify form fields
-  Expected: Shows: Cleanliness, Comfort, Facilities, Safety ratings
+• **Expected:** Shows: Cleanliness, Comfort, Facilities, Safety ratings
 • **Step 4:** Go back and select Driver
-  Expected: Driver feedback form opens
+• **Expected:** Driver feedback form opens
 • **Step 5:** Verify driver form
-  Expected: Shows: Driving Skill, Courtesy, Professionalism ratings
+• **Expected:** Shows: Driving Skill, Courtesy, Professionalism ratings
 • **Step 6:** Tap bus feedback again
-  Expected: Form updates to bus feedback fields
+• **Expected:** Form updates to bus feedback fields
 • **Step 7:** Visual difference
-  Expected: Bus and driver forms have different categories
+• **Expected:** Bus and driver forms have different categories
 • **Step 8:** Icons/colors
-  Expected: Each type has distinct visual representation
+• **Expected:** Each type has distinct visual representation
 • **Step 9:** Description text
-  Expected: Clear descriptions for each feedback type
+• **Expected:** Clear descriptions for each feedback type
 • **Step 10:** Selection state
-  Expected: Currently selected type highlighted
+• **Expected:** Currently selected type highlighted
 
 ### **Expected Result**
 - Two feedback types clearly presented
@@ -291,29 +291,29 @@ This test verifies the star rating functionality for feedback.
 ### **Test Steps**
 
 • **Step 1:** View rating section
-  Expected: 5 stars displayed, empty/gray by default
+• **Expected:** 5 stars displayed, empty/gray by default
 • **Step 2:** Hover over 3rd star
-  Expected: Stars fill up to 3rd star, showing preview
+• **Expected:** Stars fill up to 3rd star, showing preview
 • **Step 3:** Tap 3rd star
-  Expected: 3 stars are selected (filled/highlighted)
+• **Expected:** 3 stars are selected (filled/highlighted)
 • **Step 4:** Hover over 5th star
-  Expected: Shows preview of 5 stars
+• **Expected:** Shows preview of 5 stars
 • **Step 5:** Tap 5th star
-  Expected: Rating changes to 5 stars
+• **Expected:** Rating changes to 5 stars
 • **Step 6:** Hover over 2nd star
-  Expected: Shows preview of 2 stars
+• **Expected:** Shows preview of 2 stars
 • **Step 7:** Tap 2nd star
-  Expected: Rating becomes 2 stars
+• **Expected:** Rating becomes 2 stars
 • **Step 8:** Rating label updates
-  Expected: Text shows "Good", "Excellent", "Poor" etc. based on rating
+• **Expected:** Text shows "Good", "Excellent", "Poor" etc. based on rating
 • **Step 9:** Rating icon updates
-  Expected: Icon changes: Sad (1-2), Neutral (3), Happy (4-5)
+• **Expected:** Icon changes: Sad (1-2), Neutral (3), Happy (4-5)
 • **Step 10:** Animation smooth
-  Expected: Star selection has smooth fill animation
+• **Expected:** Star selection has smooth fill animation
 • **Step 11:** Tap same star again
-  Expected: Can change rating by tapping different star
+• **Expected:** Can change rating by tapping different star
 • **Step 12:** Rating persists
-  Expected: Selected rating remains until changed
+• **Expected:** Selected rating remains until changed
 
 ### **Expected Result**
 - Stars highlight on tap and hover
@@ -364,29 +364,29 @@ This test verifies text input for detailed feedback comments.
 ### **Test Steps**
 
 • **Step 1:** Tap comment field
-  Expected: Text field becomes active (keyboard opens)
+• **Expected:** Text field becomes active (keyboard opens)
 • **Step 2:** Type feedback
-  Expected: Text displays as typed without formatting
+• **Expected:** Text displays as typed without formatting
 • **Step 3:** Enter 50 characters
-  Expected: Characters count displays (50/500)
+• **Expected:** Characters count displays (50/500)
 • **Step 4:** Enter 200 characters
-  Expected: Continue typing, counter updates
+• **Expected:** Continue typing, counter updates
 • **Step 5:** Enter 500 characters
-  Expected: Maximum reached, "500/500" shows
+• **Expected:** Maximum reached, "500/500" shows
 • **Step 6:** Try typing beyond 500
-  Expected: Additional characters not accepted
+• **Expected:** Additional characters not accepted
 • **Step 7:** Clear and retype
-  Expected: Can delete text and retype
+• **Expected:** Can delete text and retype
 • **Step 8:** Emoji support
-  Expected: If supported, emojis display correctly
+• **Expected:** If supported, emojis display correctly
 • **Step 9:** Special characters
-  Expected: Apostrophes, quotes, etc. work fine
+• **Expected:** Apostrophes, quotes, etc. work fine
 • **Step 10:** Copy-paste text
-  Expected: Can paste text from clipboard
+• **Expected:** Can paste text from clipboard
 • **Step 11:** Character counter helpful
-  Expected: Shows remaining characters
+• **Expected:** Shows remaining characters
 • **Step 12:** Comments optional/required
-  Expected: App behavior when field empty clear
+• **Expected:** App behavior when field empty clear
 
 ### **Expected Result**
 - Text field accepts input up to 500 characters
@@ -438,29 +438,29 @@ This test verifies media upload functionality for evidence in feedback.
 ### **Test Steps**
 
 • **Step 1:** Tap "Attach Photo" button
-  Expected: Gallery picker opens showing photos
+• **Expected:** Gallery picker opens showing photos
 • **Step 2:** Select image
-  Expected: Image selected, preview appears in form
+• **Expected:** Image selected, preview appears in form
 • **Step 3:** Add multiple photos
-  Expected: Can add up to 5 photos
+• **Expected:** Can add up to 5 photos
 • **Step 4:** View thumbnails
-  Expected: Photo previews displayed in form
+• **Expected:** Photo previews displayed in form
 • **Step 5:** Remove photo
-  Expected: Delete button available, photo removed
+• **Expected:** Delete button available, photo removed
 • **Step 6:** Tap "Attach Video" button
-  Expected: Gallery opens showing video files
+• **Expected:** Gallery opens showing video files
 • **Step 7:** Select video
-  Expected: Video preview displays
+• **Expected:** Video preview displays
 • **Step 8:** Maximum videos
-  Expected: Only 1 video allowed (or configured limit)
+• **Expected:** Only 1 video allowed (or configured limit)
 • **Step 9:** File size check
-  Expected: Video > 100MB: "File too large" error
+• **Expected:** Video > 100MB: "File too large" error
 • **Step 10:** Video preview
-  Expected: Plays short preview in form
+• **Expected:** Plays short preview in form
 • **Step 11:** Take photo option
-  Expected: "Take new photo" opens camera
+• **Expected:** "Take new photo" opens camera
 • **Step 12:** Supported formats
-  Expected: JPG, PNG, MP4 formats accepted
+• **Expected:** JPG, PNG, MP4 formats accepted
 
 ### **Expected Result**
 - Media picker opens on tap
@@ -512,25 +512,25 @@ This test verifies anonymous feedback submission option.
 ### **Test Steps**
 
 • **Step 1:** View form
-  Expected: Anonymous checkbox displayed (unchecked by default)
+• **Expected:** Anonymous checkbox displayed (unchecked by default)
 • **Step 2:** Check "Submit Anonymous"
-  Expected: Checkbox marks as checked
+• **Expected:** Checkbox marks as checked
 • **Step 3:** Submit feedback
-  Expected: Anonymous submission processed
+• **Expected:** Anonymous submission processed
 • **Step 4:** Verify in history
-  Expected: Feedback shows "Anonymous" instead of user name
+• **Expected:** Feedback shows "Anonymous" instead of user name
 • **Step 5:** Check admin view
-  Expected: Admin cannot identify who submitted
+• **Expected:** Admin cannot identify who submitted
 • **Step 6:** Uncheck anonymous
-  Expected: Can toggle anonymous off before submit
+• **Expected:** Can toggle anonymous off before submit
 • **Step 7:** Submit with identity
-  Expected: User name shows with feedback
+• **Expected:** User name shows with feedback
 • **Step 8:** Data privacy
-  Expected: Anonymous feedback still has location/time data
+• **Expected:** Anonymous feedback still has location/time data
 • **Step 9:** Cannot contact anonymous
-  Expected: No reply option for anonymous feedback
+• **Expected:** No reply option for anonymous feedback
 • **Step 10:** Rating still counts
-  Expected: Anonymous feedback counts toward ratings
+• **Expected:** Anonymous feedback counts toward ratings
 
 ### **Expected Result**
 - Anonymous option available on form
@@ -577,29 +577,29 @@ This test verifies complete feedback submission process and data storage.
 ### **Test Steps**
 
 • **Step 1:** All fields filled
-  Expected: Rating selected, comment entered (optional)
+• **Expected:** Rating selected, comment entered (optional)
 • **Step 2:** Tap "Submit Feedback"
-  Expected: Form validation passes, no errors shown
+• **Expected:** Form validation passes, no errors shown
 • **Step 3:** Loading state
-  Expected: "Submitting..." loading indicator appears
+• **Expected:** "Submitting..." loading indicator appears
 • **Step 4:** Wait for submission
-  Expected: Loading for 2-5 seconds
+• **Expected:** Loading for 2-5 seconds
 • **Step 5:** Success message
-  Expected: "Thank you for your feedback!" notification
+• **Expected:** "Thank you for your feedback!" notification
 • **Step 6:** Navigation
-  Expected: Option to view feedback history or back to dashboard
+• **Expected:** Option to view feedback history or back to dashboard
 • **Step 7:** Check Firestore
-  Expected: Feedback appears in Firestore "feedbacks" collection
+• **Expected:** Feedback appears in Firestore "feedbacks" collection
 • **Step 8:** Data verification
-  Expected: All submitted data stored correctly (rating, comment, timestamp)
+• **Expected:** All submitted data stored correctly (rating, comment, timestamp)
 • **Step 9:** User association
-  Expected: Feedback linked to user account
+• **Expected:** Feedback linked to user account
 • **Step 10:** Bus/Driver association
-  Expected: Feedback linked to corresponding bus/driver
+• **Expected:** Feedback linked to corresponding bus/driver
 • **Step 11:** Timestamp recorded
-  Expected: Submission time recorded accurately
+• **Expected:** Submission time recorded accurately
 • **Step 12:** Reward notification
-  Expected: "You earned 10 points!" (if reward system active)
+• **Expected:** "You earned 10 points!" (if reward system active)
 
 ### **Expected Result**
 - Form validates before submission
@@ -647,29 +647,29 @@ This test verifies feedback history page shows all submitted feedback.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Profile → Feedback History
-  Expected: History page loads
+• **Expected:** History page loads
 • **Step 2:** Verify feedback list
-  Expected: Shows all submitted feedback in reverse chronological order
+• **Expected:** Shows all submitted feedback in reverse chronological order
 • **Step 3:** Each entry shows
-  Expected: Date, bus number, rating, comment preview
+• **Expected:** Date, bus number, rating, comment preview
 • **Step 4:** Tap on feedback
-  Expected: Feedback detail view opens
+• **Expected:** Feedback detail view opens
 • **Step 5:** Detail view shows
-  Expected: Full comment, attached photos, timestamps
+• **Expected:** Full comment, attached photos, timestamps
 • **Step 6:** Status indication
-  Expected: Shows if feedback was "Reviewed", "Pending", "Resolved"
+• **Expected:** Shows if feedback was "Reviewed", "Pending", "Resolved"
 • **Step 7:** Filter by status
-  Expected: Can filter: All, Recent, Highest Rated, Lowest Rated
+• **Expected:** Can filter: All, Recent, Highest Rated, Lowest Rated
 • **Step 8:** Search function
-  Expected: Can search feedback by bus number or keyword
+• **Expected:** Can search feedback by bus number or keyword
 • **Step 9:** Sort options
-  Expected: Can sort by date, rating, recent
+• **Expected:** Can sort by date, rating, recent
 • **Step 10:** Pagination
-  Expected: If many entries, pagination or infinite scroll
+• **Expected:** If many entries, pagination or infinite scroll
 • **Step 11:** No feedback state
-  Expected: If no feedback, "No feedback submitted yet" message
+• **Expected:** If no feedback, "No feedback submitted yet" message
 • **Step 12:** Empty state CTA
-  Expected: Button to submit first feedback
+• **Expected:** Button to submit first feedback
 
 ### **Expected Result**
 - History page loads all user's feedback
@@ -717,29 +717,29 @@ This test verifies dashboard statistics showing feedback metrics.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Feedback Analytics
-  Expected: Analytics page displays
+• **Expected:** Analytics page displays
 • **Step 2:** View statistics cards
-  Expected: Shows: Total Feedback, Average Rating, Submitted Count
+• **Expected:** Shows: Total Feedback, Average Rating, Submitted Count
 • **Step 3:** Average rating calculation
-  Expected: Calculates correctly (e.g., 4.5/5 ⭐)
+• **Expected:** Calculates correctly (e.g., 4.5/5 ⭐)
 • **Step 4:** Feedback breakdown
-  Expected: Shows: Positive, Negative, Neutral count
+• **Expected:** Shows: Positive, Negative, Neutral count
 • **Step 5:** Rating distribution
-  Expected: Shows 1-star, 2-star, 3-star, 4-star, 5-star counts
+• **Expected:** Shows 1-star, 2-star, 3-star, 4-star, 5-star counts
 • **Step 6:** Visual chart
-  Expected: Bar chart or pie chart shows distribution
+• **Expected:** Bar chart or pie chart shows distribution
 • **Step 7:** Timeline graph
-  Expected: Shows feedback trend over time (daily, weekly, monthly)
+• **Expected:** Shows feedback trend over time (daily, weekly, monthly)
 • **Step 8:** Category breakdown
-  Expected: If categorized, shows most/least common categories
+• **Expected:** If categorized, shows most/least common categories
 • **Step 9:** Top rated items
-  Expected: Shows highest-rated buses/drivers
+• **Expected:** Shows highest-rated buses/drivers
 • **Step 10:** Recent feedback
-  Expected: Shows 5 most recent feedback entries
+• **Expected:** Shows 5 most recent feedback entries
 • **Step 11:** Time period filter
-  Expected: Can filter analytics by: Last 7 days, 30 days, All time
+• **Expected:** Can filter analytics by: Last 7 days, 30 days, All time
 • **Step 12:** Export option
-  Expected: Option to export analytics (if available)
+• **Expected:** Option to export analytics (if available)
 
 ### **Expected Result**
 - Analytics data calculates correctly
@@ -786,29 +786,29 @@ This test verifies app behavior when network is slow or unstable during submissi
 ### **Test Steps**
 
 • **Step 1:** Enable slow network (3G simulation)
-  Expected: Device on simulated slow connection
+• **Expected:** Device on simulated slow connection
 • **Step 2:** Fill feedback form
-  Expected: All information entered
+• **Expected:** All information entered
 • **Step 3:** Tap "Submit Feedback"
-  Expected: Submission starts
+• **Expected:** Submission starts
 • **Step 4:** During submission
-  Expected: Loading state displays with timeout indicator
+• **Expected:** Loading state displays with timeout indicator
 • **Step 5:** Wait 10+ seconds
-  Expected: Loading continues, app doesn't hang
+• **Expected:** Loading continues, app doesn't hang
 • **Step 6:** Submission eventually completes
-  Expected: "Thank you" message displays after delay
+• **Expected:** "Thank you" message displays after delay
 • **Step 7:** Network interrupts
-  Expected: Disable network during submission
+• **Expected:** Disable network during submission
 • **Step 8:** Handle offline
-  Expected: "Network error" message displays with retry option
+• **Expected:** "Network error" message displays with retry option
 • **Step 9:** Tap "Retry"
-  Expected: Resubmits feedback when network returns
+• **Expected:** Resubmits feedback when network returns
 • **Step 10:** Network returns
-  Expected: Feedback submits successfully on retry
+• **Expected:** Feedback submits successfully on retry
 • **Step 11:** Data not duplicated
-  Expected: Feedback not submitted twice
+• **Expected:** Feedback not submitted twice
 • **Step 12:** User informed
-  Expected: Clear message about network status
+• **Expected:** Clear message about network status
 
 ### **Expected Result**
 - App doesn't freeze during slow uploads

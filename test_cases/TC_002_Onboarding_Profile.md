@@ -28,25 +28,25 @@ This test verifies the language selection interface appears for first-time users
 ### **Test Steps**
 
 • **Step 1:** Launch app for first time
-  Expected: Splash screen displays briefly
+• **Expected:** Splash screen displays briefly
 • **Step 2:** Wait for splash
-  Expected: Language selection screen appears automatically
+• **Expected:** Language selection screen appears automatically
 • **Step 3:** Screen displays
-  Expected: 3 language options visible: English, Sinhala (සිංහල), Tamil (தமிழ்)
+• **Expected:** 3 language options visible: English, Sinhala (සිංහල), Tamil (தமிழ்)
 • **Step 4:** Tap "English"
-  Expected: Language is selected (visual indicator shows selection)
+• **Expected:** Language is selected (visual indicator shows selection)
 • **Step 5:** Tap "Continue"
-  Expected: Onboarding screen loads with English content
+• **Expected:** Onboarding screen loads with English content
 • **Step 6:** Verify text
-  Expected: All text is in English (buttons, labels, descriptions)
+• **Expected:** All text is in English (buttons, labels, descriptions)
 • **Step 7:** Close app completely
-  Expected: Remove from recent apps
+• **Expected:** Remove from recent apps
 • **Step 8:** Reopen app
-  Expected: Onboarding/Dashboard displays in English (language preference saved)
+• **Expected:** Onboarding/Dashboard displays in English (language preference saved)
 • **Step 9:** Switch language to Sinhala
-  Expected: Settings → Language: select Sinhala
+• **Expected:** Settings → Language: select Sinhala
 • **Step 10:** Verify all text
-  Expected: App UI updates to Sinhala immediately
+• **Expected:** App UI updates to Sinhala immediately
 
 ### **Expected Result**
 - Language selection screen displays on first launch
@@ -96,25 +96,25 @@ This test verifies the onboarding flow with multiple screens showing app feature
 ### **Test Steps**
 
 • **Step 1:** Language selected
-  Expected: Onboarding Screen 1 appears with app introduction
+• **Expected:** Onboarding Screen 1 appears with app introduction
 • **Step 2:** View Screen 1 content
-  Expected: Title, description, and "Next" button displayed
+• **Expected:** Title, description, and "Next" button displayed
 • **Step 3:** Tap "Next" button
-  Expected: Smooth transition to Screen 2
+• **Expected:** Smooth transition to Screen 2
 • **Step 4:** Verify Screen 2
-  Expected: New content displays (different feature explanation)
+• **Expected:** New content displays (different feature explanation)
 • **Step 5:** Tap "Next" again
-  Expected: Transitions to Screen 3
+• **Expected:** Transitions to Screen 3
 • **Step 6:** Verify Screen 3
-  Expected: Final onboarding screen with "Get Started" button
+• **Expected:** Final onboarding screen with "Get Started" button
 • **Step 7:** Swipe left on Screen 2
-  Expected: Transitions to Screen 3 (gesture navigation)
+• **Expected:** Transitions to Screen 3 (gesture navigation)
 • **Step 8:** Swipe right on Screen 2
-  Expected: Transitions back to Screen 1
+• **Expected:** Transitions back to Screen 1
 • **Step 9:** Tap "Skip" (if available)
-  Expected: Bypasses remaining screens and goes to login
+• **Expected:** Bypasses remaining screens and goes to login
 • **Step 10:** Tap "Get Started" on Screen 3
-  Expected: Navigates to login screen
+• **Expected:** Navigates to login screen
 
 ### **Expected Result**
 - Onboarding contains 3 screens with engaging content
@@ -161,25 +161,25 @@ This test verifies the user profile page shows all personal information accurate
 ### **Test Steps**
 
 • **Step 1:** Tap profile icon on dashboard
-  Expected: Navigation to profile page
+• **Expected:** Navigation to profile page
 • **Step 2:** Profile page loads
-  Expected: User's profile information displays
+• **Expected:** User's profile information displays
 • **Step 3:** View personal information
-  Expected: Shows: Name, Email, Phone, Date of Birth, Gender
+• **Expected:** Shows: Name, Email, Phone, Date of Birth, Gender
 • **Step 4:** Check profile picture
-  Expected: User's profile image (if uploaded) displays
+• **Expected:** User's profile image (if uploaded) displays
 • **Step 5:** View membership info
-  Expected: Shows membership level, join date
+• **Expected:** Shows membership level, join date
 • **Step 6:** View achievements
-  Expected: Displays badges/awards earned
+• **Expected:** Displays badges/awards earned
 • **Step 7:** View statistics
-  Expected: Shows trips taken, average rating, feedback count
+• **Expected:** Shows trips taken, average rating, feedback count
 • **Step 8:** Scroll down
-  Expected: Additional information sections visible
+• **Expected:** Additional information sections visible
 • **Step 9:** Verify data accuracy
-  Expected: All information matches registered data
+• **Expected:** All information matches registered data
 • **Step 10:** Check last updated time
-  Expected: "Last updated: [date/time]" displayed
+• **Expected:** "Last updated: [date/time]" displayed
 
 ### **Expected Result**
 - Profile page loads within 2 seconds
@@ -225,31 +225,31 @@ This test verifies that users can update their profile information.
 ### **Test Steps**
 
 • **Step 1:** Tap "Edit Profile" button
-  Expected: Edit form opens with current information prefilled
+• **Expected:** Edit form opens with current information prefilled
 • **Step 2:** Clear first name field
-  Expected: Field becomes empty
+• **Expected:** Field becomes empty
 • **Step 3:** Enter new first name
-  Expected: New name displays in field
+• **Expected:** New name displays in field
 • **Step 4:** Edit email address
-  Expected: Email field editable only if not email-based login
+• **Expected:** Email field editable only if not email-based login
 • **Step 5:** Change phone number
-  Expected: Phone field shows current number
+• **Expected:** Phone field shows current number
 • **Step 6:** Update date of birth
-  Expected: Calendar picker opens for selection
+• **Expected:** Calendar picker opens for selection
 • **Step 7:** Select new date
-  Expected: Date updates in field
+• **Expected:** Date updates in field
 • **Step 8:** Change profile picture
-  Expected: Image picker opens to select new photo
+• **Expected:** Image picker opens to select new photo
 • **Step 9:** Select photo from gallery
-  Expected: Image preview displays
+• **Expected:** Image preview displays
 • **Step 10:** Tap "Save Changes"
-  Expected: Loading displays, update completes
+• **Expected:** Loading displays, update completes
 • **Step 11:** Confirmation message
-  Expected: "Profile updated successfully" notification
+• **Expected:** "Profile updated successfully" notification
 • **Step 12:** Return to profile
-  Expected: Updated information displays
+• **Expected:** Updated information displays
 • **Step 13:** Refresh page
-  Expected: Data persists (saved to database)
+• **Expected:** Data persists (saved to database)
 
 ### **Expected Result**
 - Edit form accessible from profile page
@@ -303,29 +303,29 @@ This test verifies profile picture upload from gallery and camera.
 ### **Test Steps**
 
 • **Step 1:** Tap on profile picture area
-  Expected: Image picker options appear
+• **Expected:** Image picker options appear
 • **Step 2:** Tap "Choose from Gallery"
-  Expected: Gallery app opens
+• **Expected:** Gallery app opens
 • **Step 3:** Select image
-  Expected: Selected image displays in preview
+• **Expected:** Selected image displays in preview
 • **Step 4:** Tap "Use this image"
-  Expected: Returns to edit form with image preview
+• **Expected:** Returns to edit form with image preview
 • **Step 5:** Verify image size
-  Expected: Image resized appropriately (not larger than 5MB)
+• **Expected:** Image resized appropriately (not larger than 5MB)
 • **Step 6:** Tap "Save"
-  Expected: Loading displays while uploading to Firebase Storage
+• **Expected:** Loading displays while uploading to Firebase Storage
 • **Step 7:** Wait for upload
-  Expected: Upload completes within 30 seconds
+• **Expected:** Upload completes within 30 seconds
 • **Step 8:** Success message
-  Expected: "Profile picture updated" notification
+• **Expected:** "Profile picture updated" notification
 • **Step 9:** Check profile page
-  Expected: New picture displays on profile (next time opened)
+• **Expected:** New picture displays on profile (next time opened)
 • **Step 10:** Try uploading very large file > 5MB
-  Expected: "File too large" error displays, upload prevented
+• **Expected:** "File too large" error displays, upload prevented
 • **Step 11:** Take photo option
-  Expected: Option to take new photo with camera
+• **Expected:** Option to take new photo with camera
 • **Step 12:** Tap "Take Photo"
-  Expected: Camera opens in capture mode
+• **Expected:** Camera opens in capture mode
 
 ### **Expected Result**
 - Image picker opens with gallery/camera options
@@ -377,31 +377,31 @@ This test verifies the change password functionality with validation.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Settings
-  Expected: Settings page displays
+• **Expected:** Settings page displays
 • **Step 2:** Tap "Change Password"
-  Expected: Change password form appears
+• **Expected:** Change password form appears
 • **Step 3:** Enter current password (wrong)
-  Expected: Current password field accepts input
+• **Expected:** Current password field accepts input
 • **Step 4:** Tap "Verify"
-  Expected: "Incorrect password" error displays
+• **Expected:** "Incorrect password" error displays
 • **Step 5:** Enter correct current password
-  Expected: Verification succeeds
+• **Expected:** Verification succeeds
 • **Step 6:** Enter new weak password (123456)
-  Expected: "Password too weak" warning displays
+• **Expected:** "Password too weak" warning displays
 • **Step 7:** Enter strong new password
-  Expected: Password strength meter shows "Strong"
+• **Expected:** Password strength meter shows "Strong"
 • **Step 8:** Confirm password field mismatch
-  Expected: "Passwords don't match" error shows
+• **Expected:** "Passwords don't match" error shows
 • **Step 9:** Enter matching confirmation
-  Expected: Confirmation matches new password
+• **Expected:** Confirmation matches new password
 • **Step 10:** Tap "Change Password"
-  Expected: Loading displays, update processes
+• **Expected:** Loading displays, update processes
 • **Step 11:** Success notification
-  Expected: "Password changed successfully"
+• **Expected:** "Password changed successfully"
 • **Step 12:** Logout and login with old password
-  Expected: Login fails with "Invalid credentials"
+• **Expected:** Login fails with "Invalid credentials"
 • **Step 13:** Login with new password
-  Expected: Login succeeds, dashboard displays
+• **Expected:** Login succeeds, dashboard displays
 
 ### **Expected Result**
 - Current password required for security
@@ -453,31 +453,31 @@ This test verifies adding, editing, and removing emergency contacts for safety f
 ### **Test Steps**
 
 • **Step 1:** Go to Settings → Emergency Contacts
-  Expected: Emergency contacts list displays
+• **Expected:** Emergency contacts list displays
 • **Step 2:** Tap "Add Emergency Contact"
-  Expected: Contact form opens
+• **Expected:** Contact form opens
 • **Step 3:** Enter contact name (Mother)
-  Expected: Name field accepts text input
+• **Expected:** Name field accepts text input
 • **Step 4:** Enter phone number
-  Expected: Phone field accepts valid format
+• **Expected:** Phone field accepts valid format
 • **Step 5:** Select relationship (Mother/Father/Friend/Other)
-  Expected: Dropdown list displays relation options
+• **Expected:** Dropdown list displays relation options
 • **Step 6:** Tap "Save"
-  Expected: Contact added to list, success message shown
+• **Expected:** Contact added to list, success message shown
 • **Step 7:** Add second contact
-  Expected: "Add another contact" option available
+• **Expected:** "Add another contact" option available
 • **Step 8:** Add up to 5 contacts
-  Expected: Maximum 5 emergency contacts
+• **Expected:** Maximum 5 emergency contacts
 • **Step 9:** Try adding 6th contact
-  Expected: "Maximum contacts reached" message displays
+• **Expected:** "Maximum contacts reached" message displays
 • **Step 10:** Edit existing contact
-  Expected: Edit button available, form prefilled with current data
+• **Expected:** Edit button available, form prefilled with current data
 • **Step 11:** Change contact phone number
-  Expected: Updates successfully
+• **Expected:** Updates successfully
 • **Step 12:** Delete contact
-  Expected: "Delete" button available, confirmation dialog appears
+• **Expected:** "Delete" button available, confirmation dialog appears
 • **Step 13:** Confirm deletion
-  Expected: Contact removed from list
+• **Expected:** Contact removed from list
 
 ### **Expected Result**
 - Users can add up to 5 emergency contacts
@@ -528,29 +528,29 @@ This test verifies users can control what data is shared and how.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Settings → Privacy
-  Expected: Privacy preferences page displays
+• **Expected:** Privacy preferences page displays
 • **Step 2:** View privacy options
-  Expected: Options displayed: Location Sharing, Analytics, Marketing
+• **Expected:** Options displayed: Location Sharing, Analytics, Marketing
 • **Step 3:** Toggle "Share Location"
-  Expected: Toggle switches on/off with visual feedback
+• **Expected:** Toggle switches on/off with visual feedback
 • **Step 4:** Check current state
-  Expected: Toggle shows current preference (ON/OFF)
+• **Expected:** Toggle shows current preference (ON/OFF)
 • **Step 5:** Disable location sharing
-  Expected: "Location Sharing Disabled" message
+• **Expected:** "Location Sharing Disabled" message
 • **Step 6:** Toggle "Personalized Analytics"
-  Expected: Affects data collection settings
+• **Expected:** Affects data collection settings
 • **Step 7:** Toggle "Marketing Emails"
-  Expected: Controls email marketing opt-in
+• **Expected:** Controls email marketing opt-in
 • **Step 8:** View "Data Collection" details
-  Expected: Shows what data is collected
+• **Expected:** Shows what data is collected
 • **Step 9:** Tap "Download My Data"
-  Expected: ZIP file begins downloading with personal data
+• **Expected:** ZIP file begins downloading with personal data
 • **Step 10:** Tap "Request Data Deletion"
-  Expected: Confirmation dialog appears warning of permanent deletion
+• **Expected:** Confirmation dialog appears warning of permanent deletion
 • **Step 11:** Cancel deletion
-  Expected: User returns to privacy settings
+• **Expected:** User returns to privacy settings
 • **Step 12:** Preferences saved
-  Expected: Settings persist on app restart
+• **Expected:** Settings persist on app restart
 
 ### **Expected Result**
 - All privacy preferences are toggleable
@@ -596,29 +596,29 @@ This test verifies notification settings and delivery options.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Settings → Notifications
-  Expected: Notification preferences page
+• **Expected:** Notification preferences page
 • **Step 2:** View notification types
-  Expected: Options: Safety Alerts, Feedback Replies, Promotions, Updates
+• **Expected:** Options: Safety Alerts, Feedback Replies, Promotions, Updates
 • **Step 3:** Toggle "Safety Alerts"
-  Expected: Can enable/disable critical safety notifications
+• **Expected:** Can enable/disable critical safety notifications
 • **Step 4:** Toggle "Feedback Replies"
-  Expected: Notifications when feedback receives response
+• **Expected:** Notifications when feedback receives response
 • **Step 5:** Toggle "Promotional Offers"
-  Expected: Controls marketing notifications
+• **Expected:** Controls marketing notifications
 • **Step 6:** Toggle "App Updates"
-  Expected: Notifications for app version updates
+• **Expected:** Notifications for app version updates
 • **Step 7:** Set notification quiet hours
-  Expected: Option to set "Do Not Disturb" time range (e.g., 10 PM - 8 AM)
+• **Expected:** Option to set "Do Not Disturb" time range (e.g., 10 PM - 8 AM)
 • **Step 8:** Configure sound
-  Expected: Option to enable/disable notification sound
+• **Expected:** Option to enable/disable notification sound
 • **Step 9:** Configure vibration
-  Expected: Option to enable/disable vibration
+• **Expected:** Option to enable/disable vibration
 • **Step 10:** Test notification (if available)
-  Expected: Send test notification to verify settings
+• **Expected:** Send test notification to verify settings
 • **Step 11:** Verify quiet hours work
-  Expected: Notifications muted during quiet hours
+• **Expected:** Notifications muted during quiet hours
 • **Step 12:** Preferences saved automatically
-  Expected: Settings persist without explicit save
+• **Expected:** Settings persist without explicit save
 
 ### **Expected Result**
 - Users can manage each notification type independently
@@ -664,25 +664,25 @@ This test verifies that all account details match what user registered with.
 ### **Test Steps**
 
 • **Step 1:** View account information
-  Expected: Account details section displays
+• **Expected:** Account details section displays
 • **Step 2:** Check account creation date
-  Expected: Shows date when account was created
+• **Expected:** Shows date when account was created
 • **Step 3:** Check registered email
-  Expected: Displays correct email address
+• **Expected:** Displays correct email address
 • **Step 4:** Check registered phone
-  Expected: Shows phone number used for registration
+• **Expected:** Shows phone number used for registration
 • **Step 5:** Check membership status
-  Expected: Shows active/inactive status
+• **Expected:** Shows active/inactive status
 • **Step 6:** Check account type
-  Expected: Shows if phone-based or email-based
+• **Expected:** Shows if phone-based or email-based
 • **Step 7:** Check last login
-  Expected: Shows last successful login date and time
+• **Expected:** Shows last successful login date and time
 • **Step 8:** Verify all fields mandatory
-  Expected: All required fields have values
+• **Expected:** All required fields have values
 • **Step 9:** Check account verification status
-  Expected: Shows verified/unverified status
+• **Expected:** Shows verified/unverified status
 • **Step 10:** View activity log
-  Expected: Shows recent account activities
+• **Expected:** Shows recent account activities
 
 ### **Expected Result**
 - All account information displays accurately

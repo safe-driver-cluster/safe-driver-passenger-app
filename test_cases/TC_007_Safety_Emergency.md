@@ -28,29 +28,29 @@ This test verifies the emergency button is prominently placed and activates quic
 ### **Test Steps**
 
 • **Step 1:** On dashboard
-  Expected: Emergency button visible and prominent
+• **Expected:** Emergency button visible and prominent
 • **Step 2:** Button color
-  Expected: Red or distinctive color (stands out)
+• **Expected:** Red or distinctive color (stands out)
 • **Step 3:** Button icon
-  Expected: Emergency/SOS icon clearly visible
+• **Expected:** Emergency/SOS icon clearly visible
 • **Step 4:** Button position
-  Expected: Consistent and findable on every screen
+• **Expected:** Consistent and findable on every screen
 • **Step 5:** Quick access
-  Expected: Easy to reach without multiple taps
+• **Expected:** Easy to reach without multiple taps
 • **Step 6:** Response time
-  Expected: Tap response immediate (< 200ms)
+• **Expected:** Tap response immediate (< 200ms)
 • **Step 7:** Confirmation dialog
-  Expected: "Activate Emergency Mode?" appears
+• **Expected:** "Activate Emergency Mode?" appears
 • **Step 8:** User can cancel
-  Expected: "Cancel" button available before full activation
+• **Expected:** "Cancel" button available before full activation
 • **Step 9:** Large touch target
-  Expected: Button at least 48x48 dp (recommended 60x60)
+• **Expected:** Button at least 48x48 dp (recommended 60x60)
 • **Step 10:** Accessible even locked
-  Expected: Emergency accessible without full unlock
+• **Expected:** Emergency accessible without full unlock
 • **Step 11:** Physical access
-  Expected: Widget or notification for quick access
+• **Expected:** Widget or notification for quick access
 • **Step 12:** Settings override
-  Expected: Cannot accidentally disable in normal settings
+• **Expected:** Cannot accidentally disable in normal settings
 
 ### **Expected Result**
 - Emergency button prominently displayed
@@ -97,29 +97,29 @@ This test verifies complete SOS functionality and alert sending.
 ### **Test Steps**
 
 • **Step 1:** Tap emergency button
-  Expected: Confirmation dialog appears
+• **Expected:** Confirmation dialog appears
 • **Step 2:** Confirm activation
-  Expected: "Are you sure?" confirmation shown
+• **Expected:** "Are you sure?" confirmation shown
 • **Step 3:** Tap "Activate SOS"
-  Expected: SOS activation begins
+• **Expected:** SOS activation begins
 • **Step 4:** Location acquired
-  Expected: App captures GPS location
+• **Expected:** App captures GPS location
 • **Step 5:** Loading state
-  Expected: "Sending emergency alert..." displays
+• **Expected:** "Sending emergency alert..." displays
 • **Step 6:** Contacts notified
-  Expected: Emergency contacts receive alert SMS
+• **Expected:** Emergency contacts receive alert SMS
 • **Step 7:** Alert content
-  Expected: Includes: Name, Location, Time, App confirmation
+• **Expected:** Includes: Name, Location, Time, App confirmation
 • **Step 8:** Siren/alarm
-  Expected: Visual alarm/siren indicator (if enabled)
+• **Expected:** Visual alarm/siren indicator (if enabled)
 • **Step 9:** Contact list
-  Expected: Shows which contacts were notified
+• **Expected:** Shows which contacts were notified
 • **Step 10:** Status display
-  Expected: "SOS Activated" indicator shown
+• **Expected:** "SOS Activated" indicator shown
 • **Step 11:** Counter
-  Expected: Shows time since activation
+• **Expected:** Shows time since activation
 • **Step 12:** Deactivate option
-  Expected: "Cancel SOS" button available
+• **Expected:** "Cancel SOS" button available
 
 ### **Expected Result**
 - SOS activates with confirmation
@@ -165,29 +165,29 @@ This test verifies SOS messages reach configured emergency contacts.
 ### **Test Steps**
 
 • **Step 1:** Configure emergency contacts
-  Expected: Add 3 emergency contacts with phone numbers
+• **Expected:** Add 3 emergency contacts with phone numbers
 • **Step 2:** Activate SOS
-  Expected: Send emergency alert
+• **Expected:** Send emergency alert
 • **Step 3:** Contact 1 alert
-  Expected: First contact receives SMS within 5 seconds
+• **Expected:** First contact receives SMS within 5 seconds
 • **Step 4:** Contact 2 alert
-  Expected: Second contact receives SMS
+• **Expected:** Second contact receives SMS
 • **Step 5:** Contact 3 alert
-  Expected: Third contact receives SMS
+• **Expected:** Third contact receives SMS
 • **Step 6:** Alert message format
-  Expected: Message includes: Your name, Location, Emergency activated
+• **Expected:** Message includes: Your name, Location, Emergency activated
 • **Step 7:** Alert response link
-  Expected: Message includes link to view location (if available)
+• **Expected:** Message includes link to view location (if available)
 • **Step 8:** Offline handling
-  Expected: If offline, queues alert for sending when online
+• **Expected:** If offline, queues alert for sending when online
 • **Step 9:** Network timeout
-  Expected: Retries sending if initially failed
+• **Expected:** Retries sending if initially failed
 • **Step 10:** Duplicate prevention
-  Expected: Each contact receives only one alert
+• **Expected:** Each contact receives only one alert
 • **Step 11:** Update contacts
-  Expected: Can modify contacts list after activation
+• **Expected:** Can modify contacts list after activation
 • **Step 12:** All contacts notified
-  Expected: Even if one fails, others still receive alert
+• **Expected:** Even if one fails, others still receive alert
 
 ### **Expected Result**
 - Emergency contacts receive alerts immediately
@@ -232,29 +232,29 @@ This test verifies in-app safety information and warnings.
 ### **Test Steps**
 
 • **Step 1:** Navigate to Safety section
-  Expected: Safety tips page displays
+• **Expected:** Safety tips page displays
 • **Step 2:** Safety tips listed
-  Expected: Categories: General, Bus, Driver, Route, Night Travel
+• **Expected:** Categories: General, Bus, Driver, Route, Night Travel
 • **Step 3:** Read tip
-  Expected: Tap a tip to expand and read full advice
+• **Expected:** Tap a tip to expand and read full advice
 • **Step 4:** Tips content
-  Expected: Clear, actionable safety advice provided
+• **Expected:** Clear, actionable safety advice provided
 • **Step 5:** Share tip
-  Expected: Option to share tip with others
+• **Expected:** Option to share tip with others
 • **Step 6:** Bookmark favorite
-  Expected: Can save favorite tips
+• **Expected:** Can save favorite tips
 • **Step 7:** Search tips
-  Expected: Can search for specific safety topics
+• **Expected:** Can search for specific safety topics
 • **Step 8:** Ratings
-  Expected: Can rate usefulness of each tip
+• **Expected:** Can rate usefulness of each tip
 • **Step 9:** Personalized alerts
-  Expected: App sends periodic safety reminders
+• **Expected:** App sends periodic safety reminders
 • **Step 10:** Alert timing
-  Expected: Alerts at appropriate times (e.g., late night)
+• **Expected:** Alerts at appropriate times (e.g., late night)
 • **Step 11:** Dismiss alert
-  Expected: Can dismiss or snooze alerts
+• **Expected:** Can dismiss or snooze alerts
 • **Step 12:** Emergency numbers
-  Expected: Emergency contact numbers displayed
+• **Expected:** Emergency contact numbers displayed
 
 ### **Expected Result**
 - Safety tips well-organized and searchable
@@ -300,29 +300,29 @@ This test verifies hazard reporting feature for user safety.
 ### **Test Steps**
 
 • **Step 1:** Tap "Report Hazard" button
-  Expected: Hazard reporting form opens
+• **Expected:** Hazard reporting form opens
 • **Step 2:** View hazard types
-  Expected: Categories: Accident, Bad road, Unsafe driver, Traffic jam, etc.
+• **Expected:** Categories: Accident, Bad road, Unsafe driver, Traffic jam, etc.
 • **Step 3:** Select hazard type
-  Expected: Choose from dropdown list
+• **Expected:** Choose from dropdown list
 • **Step 4:** Describe hazard
-  Expected: Optional description field
+• **Expected:** Optional description field
 • **Step 5:** Attach photo
-  Expected: Can add photo evidence (optional)
+• **Expected:** Can add photo evidence (optional)
 • **Step 6:** Location auto-filled
-  Expected: Current location automatically added
+• **Expected:** Current location automatically added
 • **Step 7:** Severity level
-  Expected: Option to select: Low, Medium, High
+• **Expected:** Option to select: Low, Medium, High
 • **Step 8:** Tap "Report"
-  Expected: Report submitted to server
+• **Expected:** Report submitted to server
 • **Step 9:** Confirmation
-  Expected: "Thank you for reporting" message shows
+• **Expected:** "Thank you for reporting" message shows
 • **Step 10:** Alert other users
-  Expected: Other users on route warned about hazard
+• **Expected:** Other users on route warned about hazard
 • **Step 11:** Report verification
-  Expected: False reports tracked and users warned
+• **Expected:** False reports tracked and users warned
 • **Step 12:** Reward system
-  Expected: Users earn points for valid hazard reports
+• **Expected:** Users earn points for valid hazard reports
 
 ### **Expected Result**
 - Hazard reporting interface intuitive
@@ -369,29 +369,29 @@ This test verifies location sharing during travel.
 ### **Test Steps**
 
 • **Step 1:** Before starting trip
-  Expected: Option to "Share journey with contact"
+• **Expected:** Option to "Share journey with contact"
 • **Step 2:** Select contact
-  Expected: Choose from emergency contacts list
+• **Expected:** Choose from emergency contacts list
 • **Step 3:** Set duration
-  Expected: Select sharing duration: Until destination, 1 hour, etc.
+• **Expected:** Select sharing duration: Until destination, 1 hour, etc.
 • **Step 4:** Confirmation
-  Expected: "Sharing location with [Name]" message
+• **Expected:** "Sharing location with [Name]" message
 • **Step 5:** Contact notification
-  Expected: Trusted contact receives link to track journey
+• **Expected:** Trusted contact receives link to track journey
 • **Step 6:** Real-time tracking
-  Expected: Contact sees live location on map
+• **Expected:** Contact sees live location on map
 • **Step 7:** ETA shared
-  Expected: Estimated arrival time sent to contact
+• **Expected:** Estimated arrival time sent to contact
 • **Step 8:** Journey complete
-  Expected: Automatic stop sharing when destination reached
+• **Expected:** Automatic stop sharing when destination reached
 • **Step 9:** Manual stop
-  Expected: User can stop sharing before destination
+• **Expected:** User can stop sharing before destination
 • **Step 10:** Contact still tracking
-  Expected: Contact notified when sharing stopped
+• **Expected:** Contact notified when sharing stopped
 • **Step 11:** Safety alert
-  Expected: If journey takes unusually long, alert sent
+• **Expected:** If journey takes unusually long, alert sent
 • **Step 12:** Unshare location
-  Expected: Can revoke access anytime
+• **Expected:** Can revoke access anytime
 
 ### **Expected Result**
 - Location sharing set up easily
@@ -437,29 +437,29 @@ This test verifies personal safety score based on behaviors and history.
 ### **Test Steps**
 
 • **Step 1:** View profile
-  Expected: Safety score visible (e.g., "94/100")
+• **Expected:** Safety score visible (e.g., "94/100")
 • **Step 2:** Score display
-  Expected: Shows as percentage or number out of 100
+• **Expected:** Shows as percentage or number out of 100
 • **Step 3:** Safety level indicator
-  Expected: "Excellent", "Good", "Fair", "Poor" label
+• **Expected:** "Excellent", "Good", "Fair", "Poor" label
 • **Step 4:** Score color
-  Expected: Green (high), Yellow (medium), Red (low)
+• **Expected:** Green (high), Yellow (medium), Red (low)
 • **Step 5:** Factors explained
-  Expected: Tap score to see what affects it
+• **Expected:** Tap score to see what affects it
 • **Step 6:** Trip count
-  Expected: Number and frequency of trips
+• **Expected:** Number and frequency of trips
 • **Step 7:** Rating history
-  Expected: Average rating from other users
+• **Expected:** Average rating from other users
 • **Step 8:** Safety alerts
-  Expected: Number of safety incidents
+• **Expected:** Number of safety incidents
 • **Step 9:** Profile completion
-  Expected: Fully completed profile increases score
+• **Expected:** Fully completed profile increases score
 • **Step 10:** Feedback received
-  Expected: Positive feedback improves score
+• **Expected:** Positive feedback improves score
 • **Step 11:** Hazard reports
-  Expected: Reports filed improve community safety rating
+• **Expected:** Reports filed improve community safety rating
 • **Step 12:** Tips compliance
-  Expected: Following safety tips improves score
+• **Expected:** Following safety tips improves score
 
 ### **Expected Result**
 - Safety score calculated from multiple factors
@@ -504,29 +504,29 @@ This test verifies anomaly detection for fraudulent activity.
 ### **Test Steps**
 
 • **Step 1:** Normal login
-  Expected: User logs in from regular location
+• **Expected:** User logs in from regular location
 • **Step 2:** New device login
-  Expected: User logs in from different device
+• **Expected:** User logs in from different device
 • **Step 3:** Alert received
-  Expected: "New device login from [Location]" notification
+• **Expected:** "New device login from [Location]" notification
 • **Step 4:** Confirm login
-  Expected: User confirms this was them
+• **Expected:** User confirms this was them
 • **Step 5:** Device remembered
-  Expected: Device whitelisted for future logins
+• **Expected:** Device whitelisted for future logins
 • **Step 6:** Unusual location
-  Expected: Login attempt from very different location
+• **Expected:** Login attempt from very different location
 • **Step 7:** Suspicious alert
-  Expected: "Suspicious login from [Location]" alert
+• **Expected:** "Suspicious login from [Location]" alert
 • **Step 8:** Require confirmation
-  Expected: User must verify with OTP
+• **Expected:** User must verify with OTP
 • **Step 9:** Rapid consecutive requests
-  Expected: Multiple attempts in short time detected
+• **Expected:** Multiple attempts in short time detected
 • **Step 10:** Account locked
-  Expected: Account temporarily locked if suspicious activity
+• **Expected:** Account temporarily locked if suspicious activity
 • **Step 11:** Unlock process
-  Expected: User unlocks via email/phone verification
+• **Expected:** User unlocks via email/phone verification
 • **Step 12:** Brute force protection
-  Expected: Protection against repeated login attempts
+• **Expected:** Protection against repeated login attempts
 
 ### **Expected Result**
 - Suspicious activity detected automatically
@@ -571,29 +571,29 @@ This test verifies data security and encryption.
 ### **Test Steps**
 
 • **Step 1:** API calls
-  Expected: All communication uses HTTPS/TLS 1.2+
+• **Expected:** All communication uses HTTPS/TLS 1.2+
 • **Step 2:** Data in transit
-  Expected: Network traffic encrypted
+• **Expected:** Network traffic encrypted
 • **Step 3:** Sensitive data
-  Expected: Passwords, location never logged plaintext
+• **Expected:** Passwords, location never logged plaintext
 • **Step 4:** Database encryption
-  Expected: Firestore data encrypted at rest
+• **Expected:** Firestore data encrypted at rest
 • **Step 5:** Local storage
-  Expected: Sensitive data encrypted on device
+• **Expected:** Sensitive data encrypted on device
 • **Step 6:** Shared preferences
-  Expected: Any stored tokens encrypted
+• **Expected:** Any stored tokens encrypted
 • **Step 7:** API authentication
-  Expected: Authorization tokens properly managed
+• **Expected:** Authorization tokens properly managed
 • **Step 8:** No hardcoded secrets
-  Expected: API keys not exposed in code
+• **Expected:** API keys not exposed in code
 • **Step 9:** SSL certificate
-  Expected: Valid SSL certificate for all domains
+• **Expected:** Valid SSL certificate for all domains
 • **Step 10:** Certificate validation
-  Expected: App validates server certificate
+• **Expected:** App validates server certificate
 • **Step 11:** Token expiration
-  Expected: Auth tokens expire and refresh properly
+• **Expected:** Auth tokens expire and refresh properly
 • **Step 12:** Logout cleanup
-  Expected: Sensitive data cleared on logout
+• **Expected:** Sensitive data cleared on logout
 
 ### **Expected Result**
 - All data communication encrypted
@@ -638,29 +638,29 @@ This test verifies error handling and crash recovery.
 ### **Test Steps**
 
 • **Step 1:** Trigger error
-  Expected: Perform action that causes error (if possible in controlled test)
+• **Expected:** Perform action that causes error (if possible in controlled test)
 • **Step 2:** Error caught
-  Expected: App doesn't force close
+• **Expected:** App doesn't force close
 • **Step 3:** Error message
-  Expected: User-friendly error message displayed
+• **Expected:** User-friendly error message displayed
 • **Step 4:** Crash not reported
-  Expected: Benign errors don't trigger crash report
+• **Expected:** Benign errors don't trigger crash report
 • **Step 5:** Critical error
-  Expected: App crashes catastrophically (tests recovery)
+• **Expected:** App crashes catastrophically (tests recovery)
 • **Step 6:** Restart enabled
-  Expected: User can restart app
+• **Expected:** User can restart app
 • **Step 7:** State recovery
-  Expected: App returns to last stable state (or login)
+• **Expected:** App returns to last stable state (or login)
 • **Step 8:** Data preserved
-  Expected: User data not lost
+• **Expected:** User data not lost
 • **Step 9:** Crash report
-  Expected: Critical crash reported to developers via Crashlytics
+• **Expected:** Critical crash reported to developers via Crashlytics
 • **Step 10:** Diagnostic info
-  Expected: Crash logs include device info, stack trace
+• **Expected:** Crash logs include device info, stack trace
 • **Step 11:** No PII in logs
-  Expected: Personal information not included in crash reports
+• **Expected:** Personal information not included in crash reports
 • **Step 12:** Recovery notification
-  Expected: "App experienced an issue" notification with recovery option
+• **Expected:** "App experienced an issue" notification with recovery option
 
 ### **Expected Result**
 - App handles errors gracefully
