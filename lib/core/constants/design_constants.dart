@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class AppDesign {
   // Professional Spacing System
   static const double spaceXS = 4.0;
-  static const double spaceSM = 8.0;
-  static const double spaceMD = 16.0;
-  static const double spaceLG = 24.0;
-  static const double spaceXL = 32.0;
-  static const double space2XL = 48.0;
-  static const double space3XL = 64.0;
+  static const double spaceSM = 6.0;
+  static const double spaceMD = 12.0;
+  static const double spaceLG = 16.0;
+  static const double spaceXL = 24.0;
+  static const double space2XL = 32.0;
+  static const double space3XL = 48.0;
 
   // Modern Border Radius
   static const double radiusXS = 4.0;
@@ -29,15 +29,15 @@ class AppDesign {
   static const double elevation3XL = 24.0;
 
   // Typography Scale
-  static const double textXS = 12.0;
-  static const double textSM = 14.0;
-  static const double textMD = 16.0;
-  static const double textLG = 18.0;
-  static const double textXL = 20.0;
-  static const double text2XL = 24.0;
-  static const double text3XL = 30.0;
-  static const double text4XL = 36.0;
-  static const double text5XL = 48.0;
+  static const double textXS = 10.0;
+  static const double textSM = 12.0;
+  static const double textMD = 14.0;
+  static const double textLG = 16.0;
+  static const double textXL = 18.0;
+  static const double text2XL = 22.0;
+  static const double text3XL = 28.0;
+  static const double text4XL = 32.0;
+  static const double text5XL = 42.0;
 
   // Professional Shadows
   static List<BoxShadow> get shadowSM => [
