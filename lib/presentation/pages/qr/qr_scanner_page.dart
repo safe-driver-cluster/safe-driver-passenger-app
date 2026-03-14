@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -387,14 +388,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   color: Colors.white.withOpacity(0.2),
                 ),
               ),
-              child: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.white,
-                  size: AppDesign.iconMD,
-                ),
-              ),
+              child: const CustomBackButton(color: Colors.white, ),
             ),
             const SizedBox(width: AppDesign.spaceLG),
             Expanded(

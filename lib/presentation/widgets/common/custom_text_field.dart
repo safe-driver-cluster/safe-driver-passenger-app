@@ -84,7 +84,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: _isFocused ? AppColors.primaryColor : AppColors.textPrimary,
+              color:
+                  _isFocused ? AppColors.primaryColor : AppColors.textPrimary,
             ),
             child: Text(widget.label!),
           ),
@@ -131,7 +132,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 fontSize: 15,
                 color: AppColors.textHint,
                 fontWeight: FontWeight.w400,
@@ -164,9 +165,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               filled: true,
               fillColor: widget.fillColor ??
                   (widget.enabled
-                      ? (_isFocused
-                          ? Colors.white
-                          : AppColors.greyExtraLight)
+                      ? (_isFocused ? Colors.white : AppColors.greyExtraLight)
                       : AppColors.greyLight),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -174,7 +173,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: AppColors.greyLight,
                   width: 1.5,
                 ),
@@ -202,7 +201,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: AppColors.textDisabled,
                   width: 1,
                 ),

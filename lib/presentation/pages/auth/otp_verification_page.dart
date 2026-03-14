@@ -9,6 +9,7 @@ import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -170,10 +171,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
+          leading: const CustomBackButton(color: Colors.white),
         ),
         body: SafeArea(
           child: SingleChildScrollView(

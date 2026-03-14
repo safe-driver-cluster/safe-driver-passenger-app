@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CountryCodePicker extends StatelessWidget {
   final String selectedCountryCode;
@@ -105,6 +106,9 @@ class PhoneNumberField extends StatelessWidget {
             controller: controller,
             keyboardType: TextInputType.phone,
             enabled: enabled,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
             decoration: InputDecoration(
               labelText: labelText,
               prefixIcon: Icon(

@@ -5,6 +5,7 @@ import '../../../data/services/sms_gateway_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/custom_snackbar.dart';
+import '../../widgets/common/custom_back_button.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -119,21 +120,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   child: Column(
                     children: [
                       // Back Button
-                      Row(
+                      const Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
+                          CustomBackButton(color: Colors.white),
                         ],
                       ),
                       const SizedBox(height: 40),

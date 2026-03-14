@@ -205,8 +205,9 @@ class FirebaseDataService {
       if (userId != null || busId != null || favoriteRoutes != null) {
         alerts = alerts.where((alert) {
           // Include if user is affected
-          if (userId != null && alert.affectedUsers.contains(userId))
+          if (userId != null && alert.affectedUsers.contains(userId)) {
             return true;
+          }
 
           // Include if alert is for current bus
           if (busId != null && alert.busId == busId) return true;
@@ -214,7 +215,9 @@ class FirebaseDataService {
           // Include if alert is for favorite routes
           if (favoriteRoutes != null &&
               alert.routeId != null &&
-              favoriteRoutes.contains(alert.routeId)) return true;
+              favoriteRoutes.contains(alert.routeId)) {
+            return true;
+          }
 
           // Include high priority alerts
           if (alert.severity >= 4) return true;

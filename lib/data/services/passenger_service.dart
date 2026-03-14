@@ -95,7 +95,7 @@ class PassengerService {
       }
       print('📭 No profile document found');
       return null;
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('❌ Error getting passenger profile: $e');
       print('🔍 Error type: ${e.runtimeType}');
 

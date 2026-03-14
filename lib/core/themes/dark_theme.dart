@@ -166,7 +166,8 @@ class DarkTheme {
   );
 
   /// Navigation bar theme
-  static const NavigationBarThemeData _navigationBarThemeData = NavigationBarThemeData(
+  static const NavigationBarThemeData _navigationBarThemeData =
+      NavigationBarThemeData(
     backgroundColor: Color(0xFF1E1E1E),
     elevation: 8,
     height: 80,

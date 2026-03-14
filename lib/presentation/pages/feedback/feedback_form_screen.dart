@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
@@ -307,14 +308,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconLG,
-                  ),
-                ),
+                child: const CustomBackButton(color: Colors.white, ),
               ),
               Container(
                 decoration: BoxDecoration(
@@ -469,7 +463,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: InputDecoration(
                 labelText: 'Feedback Type',
                 border:
@@ -489,7 +483,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               decoration: InputDecoration(
                 labelText: 'Category',
                 border:
@@ -691,7 +685,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedPriority,
+              initialValue: _selectedPriority,
               decoration: InputDecoration(
                 labelText: 'Priority',
                 border:

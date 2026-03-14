@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -93,14 +94,7 @@ class _DriverListPageState extends State<DriverListPage> {
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
+                child: const CustomBackButton(color: Colors.white, ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
               const Text(
@@ -263,13 +257,23 @@ class _DriverListPageState extends State<DriverListPage> {
             );
           }
 
-          return ListView.builder(
-            itemCount: filteredDrivers.length,
-            itemBuilder: (context, index) {
-              final driverData =
-                  filteredDrivers[index].data() as Map<String, dynamic>;
-              return _buildDriverCard(driverData);
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Since this uses StreamBuilder, it's already real-time.
+              // But we can add a slight delay or manually trigger a reload if needed.
+              await Future.delayed(const Duration(seconds: 1));
             },
+            color: AppColors.primaryColor,
+            backgroundColor: Colors.white,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: filteredDrivers.length,
+              itemBuilder: (context, index) {
+                final driverData =
+                    filteredDrivers[index].data() as Map<String, dynamic>;
+                return _buildDriverCard(driverData);
+              },
+            ),
           );
         },
       ),

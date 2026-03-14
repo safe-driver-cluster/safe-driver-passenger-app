@@ -122,8 +122,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const BusListPage(
-                        //busId: 'demo-bus-001', // Demo bus ID
-                      ),
+                          //busId: 'demo-bus-001', // Demo bus ID
+                          ),
                     ),
                   ),
                 ),

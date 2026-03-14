@@ -497,8 +497,10 @@ class DashboardHome extends ConsumerWidget {
       return 'Morning';
     } else if (hour < 17) {
       return 'Afternoon';
-    } else {
+    } else if (hour < 20) {
       return 'Evening';
+    } else {
+      return 'Night';
     }
   }
 }

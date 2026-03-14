@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class QrTicketPage extends StatelessWidget {
   const QrTicketPage({super.key});
@@ -33,10 +34,7 @@ class QrTicketPage extends StatelessWidget {
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
+                      child: const CustomBackButton(color: Colors.white),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(

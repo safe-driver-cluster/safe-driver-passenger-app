@@ -804,7 +804,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     required IconData icon,
   }) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
@@ -880,7 +880,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryColor,
+            activeThumbColor: AppColors.primaryColor,
           ),
         ],
       ),

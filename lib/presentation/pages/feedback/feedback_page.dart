@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -134,14 +135,7 @@ class _FeedbackPageState extends State<FeedbackPage>
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
+                child: const CustomBackButton(color: Colors.white, ),
               ),
               Expanded(
                 child: Padding(

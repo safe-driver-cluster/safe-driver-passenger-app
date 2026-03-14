@@ -42,7 +42,8 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -54,7 +55,8 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: _getSafetyScoreColor(dashboardState.fleetSafetyScore)
+                        color: _getSafetyScoreColor(
+                                dashboardState.fleetSafetyScore)
                             .withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
@@ -146,7 +148,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
 
             // Safety Trend Chart
@@ -252,7 +254,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
         drawVerticalLine: false,
         horizontalInterval: 1,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
+          return const FlLine(
             color: AppColors.greyLight,
             strokeWidth: 1,
           );

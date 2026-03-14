@@ -105,8 +105,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
     print('🔍 User: ${authState.user?.uid ?? 'null'}');
 
     // Check if language has been selected first
-    final languageSelected = StorageService.instance.getBool('language_selected', defaultValue: false);
-    
+    final languageSelected = StorageService.instance
+        .getBool('language_selected', defaultValue: false);
+
     if (languageSelected == false) {
       print('🌐 Language not selected, navigating to language selection');
       Navigator.pushReplacementNamed(context, '/language-selection');
