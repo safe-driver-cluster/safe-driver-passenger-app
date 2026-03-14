@@ -18,6 +18,7 @@ class PassengerService {
     required String lastName,
     required String email,
     required String phoneNumber,
+    String? password,
   }) async {
     try {
       print('🚀 Starting to create passenger profile for user: $userId');
@@ -50,6 +51,7 @@ class PassengerService {
         lastName: lastName,
         email: email,
         phoneNumber: phoneNumber,
+        password: password,
         preferences: PassengerPreferences(),
         stats: PassengerStats(),
         createdAt: now,

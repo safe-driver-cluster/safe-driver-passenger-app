@@ -7,6 +7,7 @@ class PassengerModel {
   final String lastName;
   final String email;
   final String phoneNumber;
+  final String? password; // Hashed password for phone-based login
   final String? profileImageUrl;
   final DateTime? dateOfBirth;
   final String? gender;
@@ -28,6 +29,7 @@ class PassengerModel {
     required this.lastName,
     required this.email,
     required this.phoneNumber,
+    this.password,
     this.profileImageUrl,
     this.dateOfBirth,
     this.gender,
@@ -55,6 +57,7 @@ class PassengerModel {
       lastName: json['lastName'] ?? '',
       email: json['email'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
+      password: json['password'],
       profileImageUrl: json['profileImageUrl'],
       dateOfBirth: json['dateOfBirth'] != null
           ? (json['dateOfBirth'] is Timestamp
@@ -99,6 +102,7 @@ class PassengerModel {
       'lastName': lastName,
       'email': email,
       'phoneNumber': phoneNumber,
+      'password': password,
       'profileImageUrl': profileImageUrl,
       'dateOfBirth': dateOfBirth?.toIso8601String(),
       'gender': gender,
@@ -124,6 +128,7 @@ class PassengerModel {
     String? lastName,
     String? email,
     String? phoneNumber,
+    String? password,
     String? profileImageUrl,
     DateTime? dateOfBirth,
     String? gender,
@@ -145,6 +150,7 @@ class PassengerModel {
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      password: password ?? this.password,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,

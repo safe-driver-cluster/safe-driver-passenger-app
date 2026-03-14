@@ -271,8 +271,7 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       print('🎯 Starting phone sign in process for: $phoneNumber');
       state = state.copyWith(isLoading: true, error: null);
 
-      // For now, we'll query Firestore to find user by phone number
-      // then use their email to sign in with Firebase Auth
+      // Query Firestore to find user by phone number
       final querySnapshot = await FirebaseFirestore.instance
           .collection('passenger_details')
           .where('phoneNumber', isEqualTo: phoneNumber)
@@ -285,33 +284,39 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       final userDoc = querySnapshot.docs.first;
       final userData = userDoc.data();
-      final email = userData['email'] as String?;
+      final storedPassword = userData['password'] as String?;
 
-      if (email == null || email.isEmpty) {
+      if (storedPassword == null || storedPassword.isEmpty) {
         throw Exception(
-            'Account found but no email associated. Please contact support.');
+            'Account found but no password set. Please try resetting your password.');
       }
 
-      // Use the existing email-based sign in
-      final userCredential = await _authService.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-        rememberMe: rememberMe,
-      );
+      // Verify password matches (for phone-based authentication)
+      if (storedPassword != password) {
+        throw Exception('Incorrect password. Please try again.');
+      }
 
-      // For phone-based login, skip email verification since phone was already verified during registration
+      print('✅ Phone authentication successful!');
+      
+      // For phone-based login, we don't use Firebase Auth
+      // Instead, we load the user profile from Firestore
+      final passengerProfile = PassengerModel.fromJson({
+        ...userData,
+        'id': userDoc.id,
+      });
 
-      print('🎉 Phone sign in successful!');
       state = state.copyWith(
         isLoading: false,
+        passengerProfile: passengerProfile,
         isRemembered: rememberMe,
         currentStep: AuthStep.signIn,
       );
 
+      print('🎉 Phone sign in successful!');
+
       return AuthResult(
         success: true,
         message: 'Sign in successful',
-        user: userCredential.user,
       );
     } catch (e) {
       print('💥 Phone sign in error in provider: $e');
@@ -335,97 +340,42 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      // Create Firebase Auth user
-      final userCredential = await _authService.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      // Create a UUID based on phone number for consistency
+      // Phone number is the unique identifier, not Firebase Auth UID
+      final userId = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+
+      print('🚀 Creating passenger profile for phone: $phoneNumber');
+
+      // Only save user data to Firestore - NO Firebase Auth email/password creation
+      // Phone authentication is handled separately via SMS OTP
+      try {
+        await _passengerService.createPassengerProfile(
+          userId: userId,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password, // Save password for phone-based login verification
+        );
+      } catch (profileError) {
+        print('Error creating passenger profile: $profileError');
+        throw Exception('Failed to create passenger profile: $profileError');
+      }
+
+      print('✅ Passenger profile created successfully');
+
+      state = state.copyWith(
+        isLoading: false,
+        currentStep: AuthStep.signIn,
       );
 
-      if (userCredential.user != null) {
-        // Update display name
-        await userCredential.user!.updateDisplayName('$firstName $lastName');
-
-        // Send email verification
-        await sendEmailVerification();
-
-        // Create passenger profile with error handling
-        try {
-          await _passengerService.createPassengerProfile(
-            userId: userCredential.user!.uid,
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phoneNumber: phoneNumber,
-          );
-        } catch (profileError) {
-          print('Error creating passenger profile: $profileError');
-          // Allow signup to succeed even if profile creation fails
-          // User can complete profile later
-        }
-
-        state = state.copyWith(
-          isLoading: false,
-          currentStep: AuthStep.emailVerification,
-        );
-
-        return AuthResult(
-          success: true,
-          message: 'Account created successfully. Please verify your email.',
-          user: userCredential.user,
-        );
-      }
-
-      throw Exception('Failed to create user account');
+      return const AuthResult(
+        success: true,
+        message: 'Account created successfully. Phone number verified.',
+      );
     } catch (e) {
-      // Handle errors gracefully
-      String errorMessage = _getFirebaseErrorMessage(e.toString());
-
-      // Check if user was actually created despite the error
-      if (e.toString().contains('PigeonUserDetails') ||
-          e.toString().contains('List<Object?>')) {
-        await Future.delayed(const Duration(seconds: 1));
-
-        if (_authService.currentUser != null) {
-          try {
-            // Update display name
-            await _authService.currentUser!
-                .updateDisplayName('$firstName $lastName');
-
-            // Send email verification
-            await sendEmailVerification();
-
-            // Create passenger profile with error handling
-            try {
-              await _passengerService.createPassengerProfile(
-                userId: _authService.currentUser!.uid,
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                phoneNumber: phoneNumber,
-              );
-            } catch (profileError) {
-              print('Error creating passenger profile in retry: $profileError');
-              // Allow signup to succeed even if profile creation fails in retry
-            }
-
-            state = state.copyWith(
-              isLoading: false,
-              currentStep: AuthStep.emailVerification,
-            );
-
-            return AuthResult(
-              success: true,
-              message:
-                  'Account created successfully. Please verify your email.',
-              user: _authService.currentUser,
-            );
-          } catch (profileError) {
-            print('Error creating passenger profile: $profileError');
-            errorMessage =
-                'Account created but profile setup failed. Please try again.';
-          }
-        }
-      }
+      print('❌ SignUp error: $e');
+      String errorMessage = 'Failed to create account: ${e.toString()}';
 
       state = state.copyWith(
         isLoading: false,

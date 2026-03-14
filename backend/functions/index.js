@@ -344,96 +344,19 @@ exports.verifyOTP = functions
                 updatedAt: admin.firestore.FieldValue.serverTimestamp(),
             });
 
-            // Create or update Firebase Auth user
-            let customToken;
-            let userId;
-            let isNewUser = false;
+            console.log(`✅ OTP verified successfully for ${formattedPhone}`);
 
-            try {
-                // Try to get existing user by phone number
-                const userRecord = await auth.getUserByPhoneNumber(formattedPhone);
-                userId = userRecord.uid;
-
-                // Update last login
-                await auth.setCustomUserClaims(userId, {
-                    phoneVerified: true,
-                    lastLogin: Date.now(),
-                });
-
-            } catch (error) {
-                if (error.code === 'auth/user-not-found') {
-                    // Create new user
-                    isNewUser = true;
-                    const newUser = await auth.createUser({
-                        phoneNumber: formattedPhone,
-                        emailVerified: false,
-                        disabled: false,
-                    });
-
-                    userId = newUser.uid;
-
-                    // Set custom claims
-                    await auth.setCustomUserClaims(userId, {
-                        phoneVerified: true,
-                        lastLogin: Date.now(),
-                    });
-
-                    // Create user profile in Firestore
-                    await db.collection('users').doc(userId).set({
-                        phoneNumber: formattedPhone,
-                        isVerified: true,
-                        isActive: true,
-                        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-                        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-                        authMethod: 'phone',
-                        preferences: {
-                            language: 'en',
-                            theme: 'system',
-                            notifications: {
-                                safetyAlerts: true,
-                                journeyUpdates: true,
-                                emergencyAlerts: true,
-                                systemAnnouncements: true,
-                            },
-                        },
-                        stats: {
-                            todayTrips: 0,
-                            totalTrips: 0,
-                            carbonSaved: 0.0,
-                            pointsEarned: 0,
-                            safetyScore: 5.0,
-                        },
-                    });
-                } else {
-                    throw error;
-                }
-            }
-
-            // Create a temporary token that can be used for authentication
-            // Since we can't create custom tokens, we'll return user data for client-side authentication
-            console.log(`OTP verified successfully for ${formattedPhone}, userId: ${userId}`);
-
-            // Update user claims to mark phone as verified (this doesn't require special permissions)
-            try {
-                await auth.setCustomUserClaims(userId, {
-                    phoneVerified: true,
-                    verificationId,
-                    verifiedAt: Date.now(),
-                });
-            } catch (claimsError) {
-                console.log('Warning: Could not set custom claims:', claimsError.message);
-            }
-
+            // Return success WITHOUT trying to create Firebase Auth users
+            // The client will handle user profile creation and authentication
             return {
                 success: true,
                 message: 'Phone number verified successfully',
-                userId,
                 phoneNumber: formattedPhone,
-                isNewUser: isNewUser,
+                verificationId: verificationId,
             };
 
         } catch (error) {
-            console.error('VerifyOTP error:', error);
+            console.error('❌ VerifyOTP error:', error);
 
             if (error instanceof functions.https.HttpsError) {
                 throw error;

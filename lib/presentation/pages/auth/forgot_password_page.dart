@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/services/sms_gateway_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
-import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/custom_back_button.dart';
+import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -238,9 +238,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                         keyboardType: TextInputType.phone,
                                         decoration: InputDecoration(
                                           labelText: 'Phone Number',
-                                          prefixIcon: const Icon(Icons.phone_outlined),
+                                          prefixIcon:
+                                              const Icon(Icons.phone_outlined),
                                           border: InputBorder.none,
-                                          contentPadding: const EdgeInsets.symmetric(
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
                                             horizontal: 16,
                                             vertical: 18,
                                           ),
@@ -250,7 +252,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                           ),
                                         ),
                                         validator: (value) {
-                                          if (value == null || value.trim().isEmpty) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
                                             return 'Phone number is required';
                                           }
                                           if (value.length < 9) {
