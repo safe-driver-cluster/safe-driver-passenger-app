@@ -318,7 +318,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'We sent a 6-digit code to\\n$_phoneNumber',
+                        'We sent a 6-digit code to\n$_phoneNumber',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
