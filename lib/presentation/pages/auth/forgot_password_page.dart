@@ -199,34 +199,69 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Phone Number Field with modern design
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.grey[200]!,
-                                    width: 1,
+                              // Phone Number Field with Country Code (Same Row)
+                              Row(
+                                children: [
+                                  // Country Code Picker
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[50],
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.grey[200]!,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: CountryCodePicker(
+                                      selectedCountryCode: _selectedCountryCode,
+                                      onCountryCodeChanged: (code) {
+                                        setState(() {
+                                          _selectedCountryCode = code;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                                child: PhoneNumberField(
-                                  controller: _phoneController,
-                                  selectedCountryCode: _selectedCountryCode,
-                                  onCountryCodeChanged: (code) {
-                                    setState(() {
-                                      _selectedCountryCode = code;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Phone number is required';
-                                    }
-                                    if (value.length < 9) {
-                                      return 'Please enter a valid phone number';
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                  const SizedBox(width: 12),
+                                  // Phone Number Input Field
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[50],
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: Colors.grey[200]!,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: TextFormField(
+                                        controller: _phoneController,
+                                        keyboardType: TextInputType.phone,
+                                        decoration: InputDecoration(
+                                          labelText: 'Phone Number',
+                                          prefixIcon: const Icon(Icons.phone_outlined),
+                                          border: InputBorder.none,
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 18,
+                                          ),
+                                          labelStyle: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.trim().isEmpty) {
+                                            return 'Phone number is required';
+                                          }
+                                          if (value.length < 9) {
+                                            return 'Please enter a valid phone number';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
 
                               const SizedBox(height: 32),
