@@ -164,7 +164,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your phone number and we will send you\\na code to reset your password',
+                        'Enter your phone number and we will send you\na code to reset your password',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),

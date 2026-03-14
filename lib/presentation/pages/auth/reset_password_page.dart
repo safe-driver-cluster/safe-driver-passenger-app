@@ -230,13 +230,8 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                       // Back Button
                       Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const CustomBackButton(color: Colors.white, ),
-                      )],
+                          const CustomBackButton(color: Colors.white),
+                        ],
                       ),
                       const SizedBox(height: 40),
 
@@ -277,7 +272,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create a strong new password\\nfor your account',
+                        'Create a strong new password\nfor your account',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
