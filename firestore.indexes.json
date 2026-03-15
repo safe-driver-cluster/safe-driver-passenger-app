@@ -124,12 +124,5 @@
                 }
             ]
         }
-    ],
-    "fieldOverrides": [
-        {
-            "collectionGroup": "otp_verifications",
-            "fieldPath": "expiresAt",
-            "ttl": true
-        }
     ]
 }
