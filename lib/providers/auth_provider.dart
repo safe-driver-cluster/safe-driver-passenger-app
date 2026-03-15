@@ -16,7 +16,8 @@ final phoneAuthServiceProvider =
     Provider<PhoneAuthService>((ref) => PhoneAuthService());
 final smsGatewayServiceProvider =
     Provider<SmsGatewayService>((ref) => SmsGatewayService());
-final biometricServiceProvider = Provider<BiometricService>((ref) => BiometricService());
+final biometricServiceProvider =
+    Provider<BiometricService>((ref) => BiometricService());
 
 // Firebase user provider that listens to Firebase Auth state
 final firebaseUserProvider = StreamProvider<User?>((ref) {
