@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Notification types
 enum NotificationType {
-  registration,      // Account created
-  login,            // First login - welcome
-  feedback,         // Feedback submitted
-  feedbackStatus,   // Feedback status update
-  profile,          // Profile updated
-  journey,          // Active journey notification
-  general,          // General app notification
+  registration, // Account created
+  login, // First login - welcome
+  feedback, // Feedback submitted
+  feedbackStatus, // Feedback status update
+  profile, // Profile updated
+  journey, // Active journey notification
+  general, // General app notification
 }
 
 /// Notification priorities
@@ -139,7 +139,8 @@ class NotificationModel {
       'status': status.toString().split('.').last,
       'sentAt': Timestamp.fromDate(sentAt),
       'readAt': readAt != null ? Timestamp.fromDate(readAt!) : null,
-      'deliveredAt': deliveredAt != null ? Timestamp.fromDate(deliveredAt!) : null,
+      'deliveredAt':
+          deliveredAt != null ? Timestamp.fromDate(deliveredAt!) : null,
       'isSilent': isSilent,
       'actionUrl': actionUrl,
     };
