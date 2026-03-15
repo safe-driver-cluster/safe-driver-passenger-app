@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/data/services/biometric_service.dart';
+
 import '../../core/services/storage_service.dart';
 
 // Biometric service provider
@@ -51,8 +52,7 @@ class BiometricSettings {
       requireBiometricOnAppOpen:
           requireBiometricOnAppOpen ?? this.requireBiometricOnAppOpen,
       isBiometricSupported: isBiometricSupported ?? this.isBiometricSupported,
-      primaryBiometricType:
-          primaryBiometricType ?? this.primaryBiometricType,
+      primaryBiometricType: primaryBiometricType ?? this.primaryBiometricType,
       isLoading: isLoading ?? this.isLoading,
       error: error,
     );
@@ -105,7 +105,8 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
         isBiometricEnabled: isBiometricEnabled,
         isFingerPrintEnabled:
             isFingerPrintEnabled && _biometricService.hasFingerprint,
-        isFaceIdEnabled: isFaceIdEnabled && _biometricService.hasFaceRecognition,
+        isFaceIdEnabled:
+            isFaceIdEnabled && _biometricService.hasFaceRecognition,
         requireBiometricOnAppOpen: requireBiometricOnAppOpen,
         primaryBiometricType: _biometricService.getPrimaryBiometricType(),
       );
@@ -121,8 +122,7 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   Future<void> setBiometricEnabled(bool enabled) async {
     try {
       if (!_biometricService.isBiometricSupported) {
-        state = state.copyWith(
-            error: 'Biometric not supported on this device');
+        state = state.copyWith(error: 'Biometric not supported on this device');
         return;
       }
 
@@ -155,7 +155,8 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   Future<void> setFingerPrintEnabled(bool enabled) async {
     try {
       if (!_biometricService.hasFingerprint) {
-        state = state.copyWith(error: 'Fingerprint not available on this device');
+        state =
+            state.copyWith(error: 'Fingerprint not available on this device');
         return;
       }
 
@@ -222,8 +223,7 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   Future<void> setRequireBiometricOnAppOpen(bool required) async {
     try {
       if (!state.isBiometricEnabled) {
-        state =
-            state.copyWith(error: 'Please enable biometric first');
+        state = state.copyWith(error: 'Please enable biometric first');
         return;
       }
 
