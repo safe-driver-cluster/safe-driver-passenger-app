@@ -15,7 +15,7 @@ class BiometricService {
     try {
       _biometricSupported = await _localAuth.canCheckBiometrics;
       _availableBiometrics = await _localAuth.getAvailableBiometrics();
-      
+
       debugPrint('🔐 Biometric Support: $_biometricSupported');
       debugPrint('📱 Available Biometrics: $_availableBiometrics');
     } catch (e) {
