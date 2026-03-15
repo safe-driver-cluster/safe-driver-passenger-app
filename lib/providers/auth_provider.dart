@@ -289,10 +289,12 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
       final userData = querySnapshot.docs.first.data();
       final userEmail = userData['email'] as String?;
-      
+
       if (userEmail == null || userEmail.isEmpty) {
-        print('⚠️ Email not found in Firestore profile for phone: $formattedPhone');
-        throw Exception('Account found but email not set. Please try again or use the email login option.');
+        print(
+            '⚠️ Email not found in Firestore profile for phone: $formattedPhone');
+        throw Exception(
+            'Account found but email not set. Please try again or use the email login option.');
       }
 
       print('📧 Found email: $userEmail');
