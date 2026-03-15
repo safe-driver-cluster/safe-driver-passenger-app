@@ -38,8 +38,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                 final passengerAsyncValue = ref.watch(currentPassengerProvider);
                 return passengerAsyncValue.when(
                   data: (passenger) {
-                    final greeting =
-                        GreetingUtil.getFullGreeting(passenger?.firstName ?? '');
+                    final greeting = GreetingUtil.getFullGreeting(
+                        passenger?.firstName ?? '');
                     return Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
