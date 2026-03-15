@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../controllers/dashboard_controller.dart';
