@@ -19,6 +19,7 @@ class AuthService {
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
   static const String _autoLoginKey = 'auto_login';
+  static const String _persistentLoginKey = 'persistent_login';
 
   /// Initialize the auth service
   Future<void> initialize() async {
@@ -56,6 +57,9 @@ class AuthService {
 
       // ✅ Save device token for push notifications
       await _saveDeviceToken(userCredential.user!.uid);
+
+      // Enable persistent login by default for all logins
+      await enablePersistentLogin();
 
       // Save credentials if remember me is enabled
       if (rememberMe) {
@@ -106,9 +110,54 @@ class AuthService {
       // If user explicitly signs out, we should also clear remember me
       await _clearSavedCredentials();
 
+      // Clear persistent login when user explicitly signs out
+      await _storage.saveBool(_persistentLoginKey, false);
+
       await _firebaseAuth.signOut();
     } catch (e) {
       throw _handleAuthError(e);
+    }
+  }
+
+  /// Enable persistent login (keeps session alive after app close)
+  Future<void> enablePersistentLogin() async {
+    try {
+      await _storage.saveBool(_persistentLoginKey, true);
+      print('💾 Persistent login enabled');
+    } catch (e) {
+      print('❌ Error enabling persistent login: $e');
+    }
+  }
+
+  /// Disable persistent login
+  Future<void> disablePersistentLogin() async {
+    try {
+      await _storage.saveBool(_persistentLoginKey, false);
+      print('💾 Persistent login disabled');
+    } catch (e) {
+      print('❌ Error disabling persistent login: $e');
+    }
+  }
+
+  /// Check if persistent login is enabled
+  Future<bool> isPersistentLoginEnabled() async {
+    await initialize();
+    return _storage.getBool(_persistentLoginKey) ?? false;
+  }
+
+  /// Check for persistent session (user should remain logged in)
+  /// This is called on app startup
+  Future<bool> checkPersistentSession() async {
+    try {
+      final isPersistent = await isPersistentLoginEnabled();
+      if (isPersistent && currentUser != null) {
+        print('✅ Persistent session found - user remains logged in');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('❌ Error checking persistent session: $e');
+      return false;
     }
   }
 
