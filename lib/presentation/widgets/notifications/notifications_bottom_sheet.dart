@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/data/models/notification_model.dart';
+
 import '../../../core/constants/color_constants.dart';
-import '../../../core/constants/design_constants.dart';
 import '../../../providers/notification_provider.dart';
 
 class NotificationsBottomSheet extends ConsumerStatefulWidget {
@@ -94,8 +94,7 @@ class _NotificationsBottomSheetState
                           children: [
                             IconButton(
                               icon: const Icon(Icons.done_all),
-                              onPressed: () =>
-                                  _markAllAsRead(context, ref),
+                              onPressed: () => _markAllAsRead(context, ref),
                               tooltip: 'Mark all as read',
                             ),
                             IconButton(
@@ -168,8 +167,7 @@ class _NotificationsBottomSheetState
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: 8),
                           itemBuilder: (context, index) {
-                            final notification =
-                                filteredNotifications[index];
+                            final notification = filteredNotifications[index];
                             return _buildNotificationCard(
                               context,
                               ref,
@@ -178,7 +176,7 @@ class _NotificationsBottomSheetState
                           },
                         );
                       },
-                      loading: () => Center(
+                      loading: () => const Center(
                         child: CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
                             AppColors.primaryColor,
@@ -233,16 +231,13 @@ class _NotificationsBottomSheetState
       backgroundColor: Colors.white,
       selectedColor: AppColors.primaryColor.withOpacity(0.15),
       labelStyle: TextStyle(
-        color: _filterType == value
-            ? AppColors.primaryColor
-            : Colors.grey[600],
+        color: _filterType == value ? AppColors.primaryColor : Colors.grey[600],
         fontWeight: FontWeight.w600,
         fontSize: 13,
       ),
       side: BorderSide(
-        color: _filterType == value
-            ? AppColors.primaryColor
-            : Colors.grey[300]!,
+        color:
+            _filterType == value ? AppColors.primaryColor : Colors.grey[300]!,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -295,8 +290,7 @@ class _NotificationsBottomSheetState
           notification.title,
           style: TextStyle(
             fontSize: 14,
-            fontWeight:
-                notification.isRead ? FontWeight.w500 : FontWeight.w700,
+            fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.w700,
             color: Colors.black87,
           ),
         ),
