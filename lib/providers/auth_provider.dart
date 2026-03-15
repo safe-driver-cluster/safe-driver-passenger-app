@@ -639,6 +639,32 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  // Refresh passenger profile data from Firebase
+  Future<void> refreshPassengerProfile() async {
+    try {
+      final user = state.user;
+      if (user == null) return;
+
+      state = state.copyWith(isLoading: true, error: null);
+
+      // Fetch fresh passenger profile from Firebase
+      final profile = await _passengerService.getPassengerProfile(user.uid);
+
+      state = state.copyWith(
+        passengerProfile: profile,
+        isLoading: false,
+        error: null,
+      );
+      print('✅ Passenger profile refreshed successfully');
+    } catch (e) {
+      print('❌ Error refreshing passenger profile: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to refresh profile: $e',
+      );
+    }
+  }
+
   // Biometric authentication
   Future<bool> authenticateWithBiometric({
     String reason = 'Authenticate to access SafeDriver',

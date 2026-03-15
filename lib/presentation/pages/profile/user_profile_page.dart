@@ -48,10 +48,10 @@ class UserProfilePage extends ConsumerWidget {
               await ref
                   .read(authStateProvider.notifier)
                   .refreshPassengerProfile();
-              
+
               // Also refresh the passenger provider stream
               ref.refresh(currentPassengerProvider);
-              
+
               // Extra wait to ensure all data is loaded
               await Future.delayed(const Duration(milliseconds: 800));
             },
@@ -88,7 +88,8 @@ class UserProfilePage extends ConsumerWidget {
                         // User Stats Section
                         authState.isLoading
                             ? _buildLoadingStats()
-                            : _buildProfessionalStats(authState.passengerProfile),
+                            : _buildProfessionalStats(
+                                authState.passengerProfile),
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // Account & Settings Section
