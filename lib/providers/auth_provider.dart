@@ -268,13 +268,18 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     bool rememberMe = false,
   }) async {
     try {
-      print('🎯 Starting phone sign in process for: $phoneNumber');
+      print('🎯 Starting sign in with phone: $phoneNumber');
       state = state.copyWith(isLoading: true, error: null);
 
-      // Query Firestore to find user by phone number
+      // Format phone number to match storage format
+      final smsGateway = _ref.read(smsGatewayServiceProvider);
+      final formattedPhone = smsGateway.formatSriLankanPhoneNumber(phoneNumber);
+      print('📞 Formatted phone: $formattedPhone');
+
+      // Look up user by phone number in Firestore to get email
       final querySnapshot = await FirebaseFirestore.instance
           .collection('passenger_details')
-          .where('phoneNumber', isEqualTo: phoneNumber)
+          .where('phoneNumber', isEqualTo: formattedPhone)
           .limit(1)
           .get();
 
@@ -282,44 +287,50 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         throw Exception('No account found with this phone number');
       }
 
-      final userDoc = querySnapshot.docs.first;
-      final userData = userDoc.data();
-      final storedPassword = userData['password'] as String?;
-
-      if (storedPassword == null || storedPassword.isEmpty) {
-        throw Exception(
-            'Account found but no password set. Please try resetting your password.');
-      }
-
-      // Verify password matches (for phone-based authentication)
-      if (storedPassword != password) {
-        throw Exception('Incorrect password. Please try again.');
-      }
-
-      print('✅ Phone authentication successful!');
+      final userData = querySnapshot.docs.first.data();
+      final userEmail = userData['email'] as String?;
       
-      // For phone-based login, we don't use Firebase Auth
-      // Instead, we load the user profile from Firestore
-      final passengerProfile = PassengerModel.fromJson({
-        ...userData,
-        'id': userDoc.id,
-      });
+      if (userEmail == null || userEmail.isEmpty) {
+        print('⚠️ Email not found in Firestore profile for phone: $formattedPhone');
+        throw Exception('Account found but email not set. Please try again or use the email login option.');
+      }
+
+      print('📧 Found email: $userEmail');
+
+      // Sign in with Firebase Auth using email and password
+      final userCredential = await _authService.signInWithEmailAndPassword(
+        email: userEmail,
+        password: password,
+      );
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Failed to sign in: User is null');
+      }
+
+      print('✅ Firebase Auth sign in successful!');
+      print('👤 User UID: ${user.uid}');
+
+      // Load passenger profile from Firestore using Firebase Auth UID
+      final profile = await _passengerService.getPassengerProfile(user.uid);
 
       state = state.copyWith(
+        user: user,
+        passengerProfile: profile,
         isLoading: false,
-        passengerProfile: passengerProfile,
         isRemembered: rememberMe,
+        isEmailVerified: user.emailVerified,
         currentStep: AuthStep.signIn,
       );
 
-      print('🎉 Phone sign in successful!');
-
+      print('🎉 Sign in successful!');
       return AuthResult(
         success: true,
         message: 'Sign in successful',
+        user: user,
       );
     } catch (e) {
-      print('💥 Phone sign in error in provider: $e');
+      print('💥 Sign in error: $e');
       final errorMessage = _getFirebaseErrorMessage(e.toString());
       state = state.copyWith(
         isLoading: false,
@@ -329,7 +340,60 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Sign up with email and password
+  // Sign in with email and password (fallback/alternative)
+  Future<AuthResult> signInWithEmail({
+    required String email,
+    required String password,
+    bool rememberMe = false,
+  }) async {
+    try {
+      print('🎯 Starting sign in with email: $email');
+      state = state.copyWith(isLoading: true, error: null);
+
+      // Sign in with Firebase Auth
+      final userCredential = await _authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Failed to sign in: User is null');
+      }
+
+      print('✅ Firebase Auth sign in successful!');
+      print('👤 User UID: ${user.uid}');
+
+      // Load passenger profile from Firestore using Firebase Auth UID
+      final profile = await _passengerService.getPassengerProfile(user.uid);
+
+      state = state.copyWith(
+        user: user,
+        passengerProfile: profile,
+        isLoading: false,
+        isRemembered: rememberMe,
+        isEmailVerified: user.emailVerified,
+        currentStep: AuthStep.signIn,
+      );
+
+      print('🎉 Email sign in successful!');
+      return AuthResult(
+        success: true,
+        message: 'Sign in successful',
+        user: user,
+      );
+    } catch (e) {
+      print('💥 Email sign in error: $e');
+      final errorMessage = _getFirebaseErrorMessage(e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: errorMessage,
+      );
+      return AuthResult(success: false, message: errorMessage);
+    }
+  }
+
+  // Sign up with email and password (after OTP verification)
   Future<AuthResult> signUp({
     required String email,
     required String password,
@@ -340,38 +404,60 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      // Create a UUID based on phone number for consistency
-      // Phone number is the unique identifier, not Firebase Auth UID
-      final userId = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+      print('🚀 Creating Firebase Auth user for email: $email');
 
-      print('🚀 Creating passenger profile for phone: $phoneNumber');
+      // Validate email is not empty
+      if (email.isEmpty) {
+        throw Exception('Email cannot be empty');
+      }
 
-      // Only save user data to Firestore - NO Firebase Auth email/password creation
-      // Phone authentication is handled separately via SMS OTP
+      // Create Firebase Auth user with email and password
+      final userCredential = await _authService.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw Exception('Failed to create user: User is null');
+      }
+
+      final uid = user.uid;
+      print('✅ Firebase Auth user created successfully');
+      print('👤 User UID: $uid');
+
+      print('📧 Email to save in Firestore: $email');
+      print('📝 Creating passenger profile in Firestore...');
+
+      // Save user data to Firestore (using Firebase Auth UID as document ID)
+      // PASSWORD IS NOT STORED - it's in Firebase Auth
       try {
         await _passengerService.createPassengerProfile(
-          userId: userId,
+          userId: uid,
           firstName: firstName,
           lastName: lastName,
           email: email,
           phoneNumber: phoneNumber,
-          password: password, // Save password for phone-based login verification
         );
       } catch (profileError) {
         print('Error creating passenger profile: $profileError');
+        // Delete the Firebase Auth user since profile creation failed
+        await user.delete();
         throw Exception('Failed to create passenger profile: $profileError');
       }
 
-      print('✅ Passenger profile created successfully');
+      print('✅ Passenger profile created successfully with email: $email');
 
       state = state.copyWith(
+        user: user,
         isLoading: false,
         currentStep: AuthStep.signIn,
       );
 
-      return const AuthResult(
+      return AuthResult(
         success: true,
-        message: 'Account created successfully. Phone number verified.',
+        message: 'Account created successfully.',
+        user: user,
       );
     } catch (e) {
       print('❌ SignUp error: $e');
