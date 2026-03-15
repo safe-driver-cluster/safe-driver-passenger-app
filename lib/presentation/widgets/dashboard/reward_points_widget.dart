@@ -66,7 +66,8 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
           begin: _previousProgress,
           end: newProgress,
         ).animate(
-          CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+          CurvedAnimation(
+              parent: _animationController, curve: Curves.easeInOut),
         );
 
         _animationController.forward(from: 0.0);
@@ -90,8 +91,9 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
       animation: _progressAnimation,
       builder: (context, child) {
         // Use animated value if available, otherwise use current progress
-        final displayProgress =
-            _animationController.isAnimating ? _progressAnimation.value : currentProgress;
+        final displayProgress = _animationController.isAnimating
+            ? _progressAnimation.value
+            : currentProgress;
 
         return Container(
           decoration: BoxDecoration(
@@ -164,8 +166,10 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                                 boxShadow: [
                                   BoxShadow(
                                     color: displayProgress >= 1.0
-                                        ? AppColors.successColor.withOpacity(0.3)
-                                        : const Color(0xFFFF6B6B).withOpacity(0.25),
+                                        ? AppColors.successColor
+                                            .withOpacity(0.3)
+                                        : const Color(0xFFFF6B6B)
+                                            .withOpacity(0.25),
                                     blurRadius: 25,
                                     spreadRadius: 8,
                                   ),
@@ -202,11 +206,11 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                                 ShaderMask(
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
-                                        colors: [
-                                          Color(0xFFFF6B6B),
-                                          Color(0xFFFFD93D)
-                                        ],
-                                      ).createShader(bounds),
+                                    colors: [
+                                      Color(0xFFFF6B6B),
+                                      Color(0xFFFFD93D)
+                                    ],
+                                  ).createShader(bounds),
                                   child: Text(
                                     '${widget.currentPoints}',
                                     style: AppTextStyles.headline4.copyWith(
@@ -670,7 +674,8 @@ class ProgressCirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ProgressCirclePainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.isComplete != isComplete;
+    return oldDelegate.progress != progress ||
+        oldDelegate.isComplete != isComplete;
   }
 }
 
@@ -725,4 +730,3 @@ class CheckpointDotsPainter extends CustomPainter {
     return oldDelegate.progress != progress;
   }
 }
-
