@@ -3,14 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../providers/passenger_provider.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
+import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
 import '../drivers/driver_list_page.dart';
 import '../maps/map_page.dart';
-import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -188,76 +189,233 @@ class DashboardHome extends ConsumerWidget {
   }
 
   Widget _buildRedesignedHeader(BuildContext context, dynamic dashboardState) {
-    final greeting = _getGreeting();
+    return Consumer(
+      builder: (context, ref, child) {
+        final passengerAsyncValue = ref.watch(currentPassengerProvider);
+        final greeting = _getGreeting();
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        AppDesign.spaceSM,
-        AppDesign.spaceLG,
-        AppDesign.spaceLG,
-      ),
-      child: Column(
-        children: [
-          // Top Row - Greeting and notifications
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Good $greeting',
-                      style: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Ready for your journey?',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white.withOpacity(0.9),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
+        return passengerAsyncValue.when(
+          data: (passenger) {
+            final firstName = passenger?.firstName ?? 'Traveler';
+            return Container(
+              padding: const EdgeInsets.fromLTRB(
+                AppDesign.spaceLG,
+                AppDesign.spaceSM,
+                AppDesign.spaceLG,
+                AppDesign.spaceLG,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NotificationsPage(),
+              child: Column(
+                children: [
+                  // Top Row - Greeting and notifications
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Good $greeting, $firstName 👋',
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Ready for your journey?',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.notifications_rounded,
-                    color: Colors.white,
-                    size: 22,
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.glassGradient,
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.notifications_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ],
-      ),
+            );
+          },
+          loading: () {
+            return Container(
+              padding: const EdgeInsets.fromLTRB(
+                AppDesign.spaceLG,
+                AppDesign.spaceSM,
+                AppDesign.spaceLG,
+                AppDesign.spaceLG,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Good $greeting 👋',
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Ready for your journey?',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.glassGradient,
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.notifications_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+          error: (error, stack) {
+            final greeting = _getGreeting();
+            return Container(
+              padding: const EdgeInsets.fromLTRB(
+                AppDesign.spaceLG,
+                AppDesign.spaceSM,
+                AppDesign.spaceLG,
+                AppDesign.spaceLG,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Good $greeting 👋',
+                              style: const TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Ready for your journey?',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.white.withOpacity(0.9),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.glassGradient,
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.notifications_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -497,8 +655,10 @@ class DashboardHome extends ConsumerWidget {
       return 'Morning';
     } else if (hour < 17) {
       return 'Afternoon';
-    } else {
+    } else if (hour < 20) {
       return 'Evening';
+    } else {
+      return 'Night';
     }
   }
 }

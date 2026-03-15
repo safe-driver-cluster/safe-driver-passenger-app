@@ -2,23 +2,45 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/feedback_model.dart';
+import '../services/reward_points_service.dart';
 
 /// Repository for feedback operations
 class FeedbackRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collection = 'feedback';
+  final RewardPointsService _rewardPointsService = RewardPointsService();
 
-  /// Submit feedback
+  /// Submit feedback with reward points tracking
   Future<void> submitFeedback(FeedbackModel feedback) async {
     try {
       debugPrint('🔥 FeedbackRepository: Preparing to submit feedback...');
       debugPrint('📄 FeedbackRepository: Feedback JSON: ${feedback.toJson()}');
+
+      // Check for fake feedback
+      final isFakeFeedback = _rewardPointsService.checkIfFakeFeedback(feedback);
+      if (isFakeFeedback) {
+        debugPrint('⚠️  FeedbackRepository: Feedback appears to be fake!');
+      }
 
       final docRef =
           await _firestore.collection(_collection).add(feedback.toJson());
 
       debugPrint(
           '✅ FeedbackRepository: Successfully submitted with ID: ${docRef.id}');
+
+      // Award points for feedback submission
+      try {
+        await _rewardPointsService.addFeedbackSubmissionPoints(
+          feedback.userId,
+          feedback.category,
+          feedback.type,
+        );
+        debugPrint(
+            '🎁 FeedbackRepository: Reward points added for user ${feedback.userId}');
+      } catch (e) {
+        debugPrint('⚠️  FeedbackRepository: Could not add reward points: $e');
+        // Don't throw - feedback was already submitted successfully
+      }
     } catch (e) {
       debugPrint('❌ FeedbackRepository: Error submitting feedback: $e');
       throw Exception('Failed to submit feedback: $e');

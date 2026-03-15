@@ -69,19 +69,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         });
       }
     } catch (e) {
-      print('Error loading saved credentials: $e');
+      debugPrint('Error loading saved credentials: $e');
     }
   }
 
   Future<void> _login() async {
-    print('🚀 Login button pressed');
+    debugPrint('🚀 Login button pressed');
 
     if (!_formKey.currentState!.validate()) {
-      print('❌ Form validation failed');
+      debugPrint('❌ Form validation failed');
       return;
     }
 
-    print(
+    debugPrint(
         '✅ Form validated, attempting login with phone: $_selectedCountryCode${_phoneController.text.trim()}');
 
     // Add haptic feedback
@@ -251,11 +251,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
           child: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Header Section
-                  Container(
+            child: Column(
+              children: [
+                // Header Section
+                Expanded(
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: 60, horizontal: 24),
                     child: Column(
@@ -317,16 +317,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ],
                     ),
                   ),
+                ),
 
-                  // Form Section
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                // Form Section
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
                     ),
+                  ),
+                  child: SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
@@ -625,8 +628,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

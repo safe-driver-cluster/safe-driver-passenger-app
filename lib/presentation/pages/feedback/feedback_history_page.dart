@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -445,13 +446,8 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconLG,
-                  ),
+                child: const CustomBackButton(
+                  color: Colors.white,
                 ),
               ),
               // Right corner refresh process icon

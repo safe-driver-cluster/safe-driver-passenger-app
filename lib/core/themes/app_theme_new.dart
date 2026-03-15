@@ -95,7 +95,7 @@ class AppTheme {
       ),
 
       // Professional Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.cardColor,
         shadowColor: Colors.black.withOpacity(0.08),
         elevation: 0,
@@ -314,7 +314,7 @@ class AppTheme {
       ),
 
       // Dark Card Theme
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkCard,
         shadowColor: Colors.black.withOpacity(0.2),
         elevation: 2,

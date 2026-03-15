@@ -1,3 +1,5 @@
+// ignore_for_file: undefined_hidden_name, unused_field, unused_element, avoid_print
+
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

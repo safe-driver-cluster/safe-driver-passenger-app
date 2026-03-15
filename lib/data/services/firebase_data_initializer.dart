@@ -341,13 +341,13 @@ class FirebaseDataInitializer {
 }
 
 /// Usage example:
-/// 
+///
 /// void main() async {
 ///   WidgetsFlutterBinding.ensureInitialized();
 ///   await Firebase.initializeApp();
-///   
+///
 ///   // Initialize sample data (run once)
 ///   await FirebaseDataInitializer.initializeCollections();
-///   
+///
 ///   runApp(MyApp());
 /// }

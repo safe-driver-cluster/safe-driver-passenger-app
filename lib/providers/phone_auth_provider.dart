@@ -149,37 +149,26 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
       if (!mounted) return;
 
       if (result.success) {
-        final nextStep = result.isNewUser ||
-                result.passengerProfile?.firstName.isEmpty == true
-            ? PhoneAuthStep.onboarding
-            : PhoneAuthStep.complete;
-
+        // OTP verified successfully
+        // Profile creation will happen in account_verification_page -> auth.signUp()
         state = state.copyWith(
           isLoading: false,
-          user: result.user,
-          passengerProfile: result.passengerProfile,
-          isNewUser: result.isNewUser,
-          currentStep: nextStep,
+          error: null,
+          currentStep: PhoneAuthStep.complete,
         );
 
-        // Update the main auth provider
-        _ref.read(authStateProvider.notifier).setPhoneAuthUser(
-              result.user!,
-              result.passengerProfile,
-              result.isNewUser,
-            );
+        print('✅ OTP verification complete - ready for account creation');
       } else {
         state = state.copyWith(
           isLoading: false,
-          error: result.error ?? 'Failed to verify OTP',
+          error: result.error,
         );
       }
     } catch (e) {
       if (!mounted) return;
-
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to verify OTP: $e',
       );
     }
   }

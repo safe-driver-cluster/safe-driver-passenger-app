@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -229,19 +230,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                       // Back Button
                       Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
+                          const CustomBackButton(color: Colors.white),
                         ],
                       ),
                       const SizedBox(height: 40),
@@ -283,7 +272,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create a strong new password\\nfor your account',
+                        'Create a strong new password\nfor your account',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),

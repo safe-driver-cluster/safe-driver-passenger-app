@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CountryCodePicker extends StatelessWidget {
   final String selectedCountryCode;
@@ -101,27 +102,40 @@ class PhoneNumberField extends StatelessWidget {
         const SizedBox(width: 12),
         // Phone Number Field
         Expanded(
-          child: TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.phone,
-            enabled: enabled,
-            decoration: InputDecoration(
-              labelText: labelText,
-              prefixIcon: Icon(
-                Icons.phone_outlined,
-                color: Colors.grey[600],
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 20,
-              ),
-              labelStyle: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 16,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.grey[300]!,
+                width: 1,
               ),
             ),
-            validator: validator,
+            child: TextFormField(
+              controller: controller,
+              keyboardType: TextInputType.phone,
+              enabled: enabled,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              decoration: InputDecoration(
+                labelText: labelText,
+                prefixIcon: Icon(
+                  Icons.phone_outlined,
+                  color: Colors.grey[600],
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 18,
+                ),
+                labelStyle: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 16,
+                ),
+              ),
+              validator: validator,
+            ),
           ),
         ),
       ],

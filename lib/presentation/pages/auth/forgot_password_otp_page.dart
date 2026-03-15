@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -275,15 +276,8 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
-                        ],
+                            child: const CustomBackButton(color: Colors.white, ),
+                      )],
                       ),
                       const SizedBox(height: 40),
 
@@ -324,7 +318,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'We sent a 6-digit code to\\n$_phoneNumber',
+                        'We sent a 6-digit code to\n$_phoneNumber',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),

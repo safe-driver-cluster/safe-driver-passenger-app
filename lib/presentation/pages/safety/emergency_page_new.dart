@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -76,15 +77,7 @@ class EmergencyPage extends StatelessWidget {
                   color: Colors.white.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconMD,
-                  ),
-                ),
-              ),
+                child: const CustomBackButton(color: Colors.white, ),
 
               const SizedBox(width: AppDesign.spaceLG),
 

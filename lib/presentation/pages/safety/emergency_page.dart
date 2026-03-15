@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
@@ -56,14 +57,7 @@ class EmergencyPage extends StatelessWidget {
                   color: AppColors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: AppColors.white,
-                    size: 24,
-                  ),
-                ),
+                child: const CustomBackButton(color: AppColors.white, ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
               const Text(

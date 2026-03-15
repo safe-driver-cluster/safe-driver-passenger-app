@@ -253,13 +253,23 @@ class _BusListPageState extends State<BusListPage> {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(AppDesign.spaceLG),
-          itemCount: filteredBuses.length,
-          itemBuilder: (context, index) {
-            final busData = filteredBuses[index].data() as Map<String, dynamic>;
-            return _buildBusCard(busData);
+        return RefreshIndicator(
+          onRefresh: () async {
+            // Since this uses StreamBuilder, it's already real-time.
+            // But we can add a slight delay or manually trigger a reload if needed.
+            await Future.delayed(const Duration(seconds: 1));
           },
+          color: AppColors.primaryColor,
+          backgroundColor: Colors.white,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            itemCount: filteredBuses.length,
+            itemBuilder: (context, index) {
+              final busData = filteredBuses[index].data() as Map<String, dynamic>;
+              return _buildBusCard(busData);
+            },
+          ),
         );
       },
     );

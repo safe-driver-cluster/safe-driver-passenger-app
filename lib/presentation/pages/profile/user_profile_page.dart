@@ -7,34 +7,24 @@ import 'package:safedriver_passenger_app/presentation/pages/feedback/feedback_hi
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/passenger_model.dart';
-import '../../../data/services/passenger_service.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/passenger_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../widgets/dashboard/reward_points_widget.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
-import 'passenger_profile_screen.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
-
-// Passenger profile provider for Firebase data
-final passengerProfileProvider =
-    FutureProvider.autoDispose<PassengerModel?>((ref) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return null;
-
-  final passengerService = PassengerService.instance;
-  return await passengerService.getPassengerProfile(user.uid);
-});
 
 class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final passengerProfileAsync = ref.watch(passengerProfileProvider);
     final authState = ref.watch(authStateProvider);
+    final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -54,7 +44,16 @@ class UserProfilePage extends ConsumerWidget {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(passengerProfileProvider);
+              // Force refresh passenger profile data from Firebase
+              await ref
+                  .read(authStateProvider.notifier)
+                  .refreshPassengerProfile();
+
+              // Also refresh the passenger provider stream
+              ref.refresh(currentPassengerProvider);
+
+              // Extra wait to ensure all data is loaded
+              await Future.delayed(const Duration(milliseconds: 800));
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
@@ -63,16 +62,14 @@ class UserProfilePage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Professional Header with user data
-                  passengerProfileAsync.when(
-                    data: (userProfile) => _buildProfessionalHeader(
-                      context,
-                      userProfile,
-                      authState.user,
-                    ),
-                    loading: () => _buildLoadingHeader(),
-                    error: (error, _) => _buildErrorHeader(context, error),
-                  ),
+                  // Show loading header during data fetch, or professional header with data
+                  authState.isLoading
+                      ? _buildLoadingHeader()
+                      : _buildProfessionalHeader(
+                          context,
+                          authState.passengerProfile,
+                          authState.user,
+                        ),
 
                   // Main Content
                   Padding(
@@ -89,12 +86,10 @@ class UserProfilePage extends ConsumerWidget {
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // User Stats Section
-                        passengerProfileAsync.when(
-                          data: (userProfile) =>
-                              _buildProfessionalStats(userProfile),
-                          loading: () => _buildLoadingStats(),
-                          error: (_, __) => const SizedBox(),
-                        ),
+                        authState.isLoading
+                            ? _buildLoadingStats()
+                            : _buildProfessionalStats(
+                                authState.passengerProfile),
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // Account & Settings Section
@@ -117,10 +112,19 @@ class UserProfilePage extends ConsumerWidget {
     PassengerModel? userProfile,
     User? firebaseUser,
   ) {
-    final displayName =
-        userProfile?.fullName ?? firebaseUser?.displayName ?? 'User';
-    final email = userProfile?.email ?? firebaseUser?.email ?? 'No email';
-    final phoneNumber = userProfile?.phoneNumber ?? 'Not provided';
+    if (userProfile == null) {
+      return _buildLoadingHeader();
+    }
+
+    final displayName = userProfile.fullName.isNotEmpty
+        ? userProfile.fullName
+        : '${userProfile.firstName} ${userProfile.lastName}'.trim().isNotEmpty
+            ? '${userProfile.firstName} ${userProfile.lastName}'.trim()
+            : 'User';
+    final email = userProfile.email.isNotEmpty ? userProfile.email : 'No email';
+    final phoneNumber = userProfile.phoneNumber.isNotEmpty
+        ? userProfile.phoneNumber
+        : 'Not provided';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
@@ -154,10 +158,12 @@ class UserProfilePage extends ConsumerWidget {
                 child: CircleAvatar(
                   radius: 45,
                   backgroundColor: Colors.white,
-                  backgroundImage: userProfile?.profileImageUrl != null
-                      ? NetworkImage(userProfile!.profileImageUrl!)
+                  backgroundImage: userProfile.profileImageUrl != null &&
+                          userProfile.profileImageUrl!.isNotEmpty
+                      ? NetworkImage(userProfile.profileImageUrl!)
                       : null,
-                  child: userProfile?.profileImageUrl == null
+                  child: userProfile.profileImageUrl == null ||
+                          userProfile.profileImageUrl!.isEmpty
                       ? Container(
                           decoration: const BoxDecoration(
                             gradient: AppColors.accentGradient,
@@ -276,53 +282,19 @@ class UserProfilePage extends ConsumerWidget {
         AppDesign.spaceLG,
         AppDesign.spaceLG,
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            ),
+      child: const SizedBox(
+        height: 120,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
           ),
-          const SizedBox(width: AppDesign.spaceLG),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 24,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 16,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildErrorHeader(BuildContext context, Object error) {
+  Widget _buildErrorHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -330,46 +302,17 @@ class UserProfilePage extends ConsumerWidget {
         AppDesign.spaceLG,
         AppDesign.spaceLG,
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 40,
+      child: const SizedBox(
+        height: 120,
+        child: Center(
+          child: Text(
+            'Unable to load profile',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white70,
             ),
           ),
-          const SizedBox(width: AppDesign.spaceLG),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Profile Error',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Failed to load profile data',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -568,128 +511,15 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildProfessionalStats(PassengerModel? userProfile) {
-    // TODO: Add these fields to UserModel in future iterations
-    // For now using placeholder data - should be fetched from travel history
-    const totalTrips = 47; // Should be calculated from user's travel records
-    const totalDistance = 1234.5; // Should be sum of all trip distances
-    const safetyScore = 98.0; // Should be calculated from safety incidents
+    // Get reward points from passenger model, default to 0
+    final rewardPoints = userProfile?.stats.pointsEarned ?? 0;
+    // Goal can be adjusted - currently set to 100 points
+    const goalPoints = 100;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowMD,
-        border: Border.all(
-          color: AppColors.greyLight,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Professional section header
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: const BoxDecoration(
-              gradient: AppColors.successGradient,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppDesign.radiusXL),
-                topRight: Radius.circular(AppDesign.radiusXL),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.analytics_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Text(
-                  'Travel Statistics',
-                  style: AppTextStyles.headline6.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Stats content
-          Padding(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    'Total Trips',
-                    '$totalTrips',
-                    Icons.directions_bus_rounded,
-                    AppColors.primaryColor,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatItem(
-                    'Distance',
-                    '${totalDistance.toStringAsFixed(1)} km',
-                    Icons.route_rounded,
-                    AppColors.accentColor,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatItem(
-                    'Safety Score',
-                    '${safetyScore.toStringAsFixed(0)}%',
-                    Icons.security_rounded,
-                    AppColors.successColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceMD),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          ),
-          child: Icon(
-            icon,
-            color: color,
-            size: AppDesign.iconMD,
-          ),
-        ),
-        const SizedBox(height: AppDesign.spaceSM),
-        Text(
-          value,
-          style: AppTextStyles.headline6.copyWith(
-            color: color,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Text(
-          title,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+    return RewardPointsWidget(
+      currentPoints: rewardPoints,
+      goalPoints: goalPoints,
+      userProfile: userProfile,
     );
   }
 
@@ -769,13 +599,6 @@ class UserProfilePage extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const EditProfilePage()),
-        );
-      }),
-      MenuItemData('Passenger Details', Icons.account_circle_outlined, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const PassengerProfileScreen()),
         );
       }),
       MenuItemData('Trip History', Icons.history_rounded, () {
