@@ -65,7 +65,7 @@ class PhoneAuthService {
 
       if (result.success) {
         print('✅ OTP verified successfully. Phone: ${result.phoneNumber}');
-        
+
         // Just return verification success
         // Profile creation happens in auth_provider.signUp() with email + password + names
         return PhoneAuthResult(
