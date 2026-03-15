@@ -11,7 +11,8 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 });
 
 /// Current user's notifications stream
-final userNotificationsProvider = StreamProvider<List<NotificationModel>>((ref) {
+final userNotificationsProvider =
+    StreamProvider<List<NotificationModel>>((ref) {
   final authState = ref.watch(authStateProvider);
   final user = authState.user;
 
@@ -51,9 +52,9 @@ final recentNotificationsProvider =
 });
 
 /// Notifications by type
-final notificationsByTypeProvider = StreamProvider.family<
-    List<NotificationModel>,
-    NotificationType>((ref, type) {
+final notificationsByTypeProvider =
+    StreamProvider.family<List<NotificationModel>, NotificationType>(
+        (ref, type) {
   final authState = ref.watch(authStateProvider);
   final user = authState.user;
 
@@ -146,7 +147,8 @@ class NotificationController extends StateNotifier<AsyncValue<void>> {
     try {
       state = const AsyncValue.loading();
       final functions = FirebaseFunctions.instance;
-      final callable = functions.httpsCallable('sendJourneyStartedNotification');
+      final callable =
+          functions.httpsCallable('sendJourneyStartedNotification');
       await callable.call({
         'journeyId': journeyId,
         'busNumber': busNumber,
