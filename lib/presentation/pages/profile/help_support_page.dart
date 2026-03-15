@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
@@ -175,20 +175,6 @@ class HelpSupportPage extends StatelessWidget {
                           child: ListView(
                             children: [
                               _buildSupportCategory(
-                                '🎫',
-                                'Booking & Tickets',
-                                'Help with reservations and ticket issues',
-                                () => _showComingSoon(context),
-                              ),
-
-                              _buildSupportCategory(
-                                '💳',
-                                'Payment Issues',
-                                'Problems with payments and refunds',
-                                () => _showComingSoon(context),
-                              ),
-
-                              _buildSupportCategory(
                                 '📱',
                                 'App Issues',
                                 'Technical problems and app bugs',
@@ -208,15 +194,6 @@ class HelpSupportPage extends StatelessWidget {
                                 'Login issues and account security',
                                 () => _showComingSoon(context),
                               ),
-
-                              _buildSupportCategory(
-                                '📝',
-                                'Feedback & Suggestions',
-                                'Share your thoughts with us',
-                                () => _showComingSoon(context),
-                              ),
-
-                              const SizedBox(height: 24),
 
                               // Contact Information
                               Container(
