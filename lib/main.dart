@@ -96,7 +96,8 @@ void main() async {
     // Enable Firebase Auth persistence to keep user logged in
     try {
       await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-      debugPrint('✅ Firebase Auth persistence ENABLED - User will stay logged in');
+      debugPrint(
+          '✅ Firebase Auth persistence ENABLED - User will stay logged in');
     } catch (e) {
       debugPrint('⚠️ Firebase Auth persistence configuration: $e');
       // Persistence might be enabled by default on mobile, this is fine
