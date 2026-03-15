@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../core/services/notification_service.dart';
 import '../../core/services/storage_service.dart';
 
 class AuthService {
@@ -52,6 +54,9 @@ class AuthService {
 
       print('✅ Firebase Auth successful for user: ${userCredential.user?.uid}');
 
+      // ✅ Save device token for push notifications
+      await _saveDeviceToken(userCredential.user!.uid);
+
       // Save credentials if remember me is enabled
       if (rememberMe) {
         print('💾 Saving credentials for remember me');
@@ -79,6 +84,9 @@ class AuthService {
         email: email,
         password: password,
       );
+
+      // ✅ Save device token for push notifications
+      await _saveDeviceToken(userCredential.user!.uid);
 
       // Clear any saved credentials when creating new account
       await _clearSavedCredentials();
@@ -175,6 +183,28 @@ class AuthService {
     await _storage.saveBool(_autoLoginKey, false);
     await _storage.saveString(_savedEmailKey, '');
     await _storage.saveString(_savedPasswordKey, '');
+  }
+
+  /// Save device token to Firestore for push notifications
+  Future<void> _saveDeviceToken(String userId) async {
+    try {
+      final token = await NotificationService.instance.getFCMToken();
+      if (token != null && token.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('passenger_details')
+            .doc(userId)
+            .update({
+          'deviceTokens': FieldValue.arrayUnion([token]),
+        }).catchError((e) {
+          print('⚠️ Error saving device token: $e');
+          // Don't throw - token saving shouldn't fail auth flow
+        });
+        print('✅ Device token saved for user: $userId');
+      }
+    } catch (e) {
+      print('⚠️ Error getting FCM token: $e');
+      // Don't throw - token saving shouldn't fail auth flow
+    }
   }
 
   /// Reset password
