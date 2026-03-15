@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
-import '../../../providers/language_provider.dart';
 import '../../../providers/biometric_settings_provider.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import '../../../providers/language_provider.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -708,11 +708,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Biometric Authentication',
                         style: TextStyle(
                           fontSize: 16,
@@ -720,8 +720,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      const Text(
+                      SizedBox(height: 4),
+                      Text(
                         'Not supported on this device',
                         style: TextStyle(
                           fontSize: 12,
@@ -747,36 +747,35 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   : 'Enable biometric authentication',
               biometricSettings.isBiometricEnabled,
               (value) async {
-                final notifier =
-                    ref.read(biometricSettingsProvider.notifier);
+                final notifier = ref.read(biometricSettingsProvider.notifier);
                 await notifier.setBiometricEnabled(value);
               },
             ),
 
             // Fingerprint Option
-            if (biometricSettings.isBiometricSupported && biometricSettings.isBiometricEnabled)
+            if (biometricSettings.isBiometricSupported &&
+                biometricSettings.isBiometricEnabled)
               _buildSwitchSetting(
                 '👆',
                 'Fingerprint',
                 'Allow fingerprint authentication',
                 biometricSettings.isFingerPrintEnabled,
                 (value) async {
-                  final notifier =
-                      ref.read(biometricSettingsProvider.notifier);
+                  final notifier = ref.read(biometricSettingsProvider.notifier);
                   await notifier.setFingerPrintEnabled(value);
                 },
               ),
 
             // Face ID Option
-            if (biometricSettings.isBiometricSupported && biometricSettings.isBiometricEnabled)
+            if (biometricSettings.isBiometricSupported &&
+                biometricSettings.isBiometricEnabled)
               _buildSwitchSetting(
                 '😊',
                 'Face Recognition',
                 'Allow face ID authentication',
                 biometricSettings.isFaceIdEnabled,
                 (value) async {
-                  final notifier =
-                      ref.read(biometricSettingsProvider.notifier);
+                  final notifier = ref.read(biometricSettingsProvider.notifier);
                   await notifier.setFaceIdEnabled(value);
                 },
               ),
@@ -789,8 +788,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 'Ask for biometric when opening the app',
                 biometricSettings.requireBiometricOnAppOpen,
                 (value) async {
-                  final notifier =
-                      ref.read(biometricSettingsProvider.notifier);
+                  final notifier = ref.read(biometricSettingsProvider.notifier);
                   await notifier.setRequireBiometricOnAppOpen(value);
                 },
               ),
@@ -801,7 +799,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   biometricSettings.error ?? 'An error occurred',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.errorColor,
                   ),
