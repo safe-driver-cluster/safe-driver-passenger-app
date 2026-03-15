@@ -12,7 +12,6 @@ import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
 import '../drivers/driver_list_page.dart';
 import '../maps/map_page.dart';
-import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -194,7 +193,7 @@ class DashboardHome extends ConsumerWidget {
       builder: (context, ref, child) {
         final passengerAsyncValue = ref.watch(currentPassengerProvider);
         final greeting = _getGreeting();
-        
+
         return passengerAsyncValue.when(
           data: (passenger) {
             final firstName = passenger?.firstName ?? 'Traveler';
@@ -240,7 +239,8 @@ class DashboardHome extends ConsumerWidget {
                       Container(
                         decoration: BoxDecoration(
                           gradient: AppColors.glassGradient,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.2),
                             width: 1,
@@ -252,7 +252,8 @@ class DashboardHome extends ConsumerWidget {
                               context: context,
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => const NotificationsBottomSheet(),
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
                             );
                           },
                           icon: const Icon(
@@ -310,7 +311,8 @@ class DashboardHome extends ConsumerWidget {
                       Container(
                         decoration: BoxDecoration(
                           gradient: AppColors.glassGradient,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.2),
                             width: 1,
@@ -322,7 +324,8 @@ class DashboardHome extends ConsumerWidget {
                               context: context,
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => const NotificationsBottomSheet(),
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
                             );
                           },
                           icon: const Icon(
@@ -381,7 +384,8 @@ class DashboardHome extends ConsumerWidget {
                       Container(
                         decoration: BoxDecoration(
                           gradient: AppColors.glassGradient,
-                          borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.2),
                             width: 1,
@@ -393,7 +397,8 @@ class DashboardHome extends ConsumerWidget {
                               context: context,
                               isScrollControlled: true,
                               backgroundColor: Colors.transparent,
-                              builder: (context) => const NotificationsBottomSheet(),
+                              builder: (context) =>
+                                  const NotificationsBottomSheet(),
                             );
                           },
                           icon: const Icon(
