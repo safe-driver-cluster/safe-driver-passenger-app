@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:safedriver_passenger_app/data/models/notification_model.dart';
 
 class NotificationRepository {
-  static final NotificationRepository _instance = NotificationRepository._internal();
+  static final NotificationRepository _instance =
+      NotificationRepository._internal();
   factory NotificationRepository() => _instance;
   NotificationRepository._internal();
 
@@ -31,10 +32,10 @@ class NotificationRepository {
           .orderBy('sentAt', descending: true)
           .snapshots()
           .map((snapshot) {
-            return snapshot.docs
-                .map((doc) => NotificationModel.fromFirestore(doc))
-                .toList();
-          });
+        return snapshot.docs
+            .map((doc) => NotificationModel.fromFirestore(doc))
+            .toList();
+      });
     } catch (e) {
       print('Error getting user notifications: $e');
       throw _handleException(e);
@@ -49,19 +50,16 @@ class NotificationRepository {
           .where('userId', isEqualTo: userId)
           .snapshots()
           .map((snapshot) {
-            // Count notifications that are NOT read
-            return snapshot.docs
-                .where((doc) {
-                  final data = doc.data();
-                  final status = data['status'] ?? 'sent';
-                  return status != 'read';
-                })
-                .length;
-          })
-          .handleError((error) {
-            print('Error in getUnreadNotificationCount stream: $error');
-            return 0;
-          });
+        // Count notifications that are NOT read
+        return snapshot.docs.where((doc) {
+          final data = doc.data();
+          final status = data['status'] ?? 'sent';
+          return status != 'read';
+        }).length;
+      }).handleError((error) {
+        print('Error in getUnreadNotificationCount stream: $error');
+        return 0;
+      });
     } catch (e) {
       print('Error setting up unread notification count stream: $e');
       return Stream.error(e);
@@ -137,10 +135,10 @@ class NotificationRepository {
           .orderBy('sentAt', descending: true)
           .snapshots()
           .map((snapshot) {
-            return snapshot.docs
-                .map((doc) => NotificationModel.fromFirestore(doc))
-                .toList();
-          });
+        return snapshot.docs
+            .map((doc) => NotificationModel.fromFirestore(doc))
+            .toList();
+      });
     } catch (e) {
       print('Error getting notifications by type: $e');
       throw _handleException(e);
@@ -194,10 +192,10 @@ class NotificationRepository {
           .orderBy('sentAt', descending: true)
           .snapshots()
           .map((snapshot) {
-            return snapshot.docs
-                .map((doc) => NotificationModel.fromFirestore(doc))
-                .toList();
-          });
+        return snapshot.docs
+            .map((doc) => NotificationModel.fromFirestore(doc))
+            .toList();
+      });
     } catch (e) {
       print('Error getting recent notifications: $e');
       throw _handleException(e);
