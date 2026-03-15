@@ -46,7 +46,8 @@ class PhoneAuthService {
     }
   }
 
-  /// Verify OTP and sign in user
+  /// Verify OTP - Just verify, don't create profile
+  /// Profile creation happens later in auth_provider.signUp() with all required data
   Future<PhoneAuthResult> verifyOtp({
     required String verificationId,
     required String otpCode,
@@ -63,44 +64,14 @@ class PhoneAuthService {
       );
 
       if (result.success) {
-        // Use phone number (digits only) as userId for Firestore-based authentication
-        final userId = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+        print('✅ OTP verified successfully. Phone: ${result.phoneNumber}');
         
-        print('✅ OTP verified successfully. UserId: $userId');
-
-        // Check if user has a passenger profile
-        PassengerModel? passengerProfile;
-        try {
-          passengerProfile =
-              await _passengerService.getPassengerProfile(userId);
-        } catch (e) {
-          print('No existing passenger profile found, will create one');
-        }
-
-        // If new user or no profile, create passenger profile
-        if (passengerProfile == null) {
-          print('Creating new passenger profile for: $userId');
-
-          await _passengerService.createPassengerProfile(
-            userId: userId,
-            firstName: '', // Will be updated during onboarding
-            lastName: '',
-            email: '', // Optional
-            phoneNumber: result.phoneNumber!,
-          );
-
-          // Get the newly created profile
-          passengerProfile =
-              await _passengerService.getPassengerProfile(userId);
-        }
-
+        // Just return verification success
+        // Profile creation happens in auth_provider.signUp() with email + password + names
         return PhoneAuthResult(
           success: true,
-          user: result.user, // Can be null
-          passengerProfile: passengerProfile,
           verificationId: verificationId,
           phoneNumber: result.phoneNumber!,
-          isNewUser: passengerProfile?.firstName.isEmpty ?? true,
         );
       } else {
         return PhoneAuthResult.error(result.error ?? 'Failed to verify OTP');
