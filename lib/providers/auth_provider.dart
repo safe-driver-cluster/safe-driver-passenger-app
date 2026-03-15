@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/services/firebase_service.dart';
 import '../data/models/passenger_model.dart';
 import '../data/services/auth_service.dart';
+import '../data/services/biometric_service.dart';
 import '../data/services/passenger_service.dart';
 import '../data/services/phone_auth_service.dart';
 import '../data/services/sms_gateway_service.dart';
@@ -15,6 +16,7 @@ final phoneAuthServiceProvider =
     Provider<PhoneAuthService>((ref) => PhoneAuthService());
 final smsGatewayServiceProvider =
     Provider<SmsGatewayService>((ref) => SmsGatewayService());
+final biometricServiceProvider = Provider<BiometricService>((ref) => BiometricService());
 
 // Firebase user provider that listens to Firebase Auth state
 final firebaseUserProvider = StreamProvider<User?>((ref) {
@@ -633,6 +635,24 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         isLoading: false,
         error: _getFirebaseErrorMessage(e.toString()),
       );
+    }
+  }
+
+  // Biometric authentication
+  Future<bool> authenticateWithBiometric({
+    String reason = 'Authenticate to access SafeDriver',
+  }) async {
+    try {
+      final biometricService = BiometricService();
+      await biometricService.initialize();
+      final isAuthenticated = await biometricService.authenticate(
+        reason: reason,
+        useErrorDialogs: true,
+      );
+      return isAuthenticated;
+    } catch (e) {
+      print('Biometric authentication error: $e');
+      return false;
     }
   }
 
