@@ -1,4 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,7 @@ import 'core/services/notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/themes/app_theme.dart';
 import 'data/services/auth_service.dart';
+import 'data/services/biometric_service.dart';
 import 'firebase_options.dart';
 
 // Top-level function to handle background messages
@@ -91,6 +93,15 @@ void main() async {
       // Continue without App Check in development
     }
 
+    // Enable Firebase Auth persistence to keep user logged in
+    try {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      debugPrint('✅ Firebase Auth persistence ENABLED - User will stay logged in');
+    } catch (e) {
+      debugPrint('⚠️ Firebase Auth persistence configuration: $e');
+      // Persistence might be enabled by default on mobile, this is fine
+    }
+
     // Initialize Firebase services
     await FirebaseService.instance.initialize();
 
@@ -114,6 +125,12 @@ void main() async {
     final authService = AuthService();
     await authService.initialize();
     print('🔐 Auth service initialized');
+
+    // Initialize biometric service
+    print('🔐 Initializing biometric service...');
+    final biometricService = BiometricService();
+    await biometricService.initialize();
+    print('📱 Biometric service initialized');
 
     // Initialize notification service
     final notificationService = NotificationService.instance;
