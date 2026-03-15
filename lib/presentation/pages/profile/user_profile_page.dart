@@ -8,7 +8,9 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/passenger_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../widgets/dashboard/reward_points_widget.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
@@ -22,6 +24,7 @@ class UserProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
+    final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -41,8 +44,16 @@ class UserProfilePage extends ConsumerWidget {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              // Refresh auth state to reload passenger profile
-              ref.refresh(authStateProvider);
+              // Force refresh passenger profile data from Firebase
+              await ref
+                  .read(authStateProvider.notifier)
+                  .refreshPassengerProfile();
+              
+              // Also refresh the passenger provider stream
+              ref.refresh(currentPassengerProvider);
+              
+              // Extra wait to ensure all data is loaded
+              await Future.delayed(const Duration(milliseconds: 800));
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
@@ -51,12 +62,14 @@ class UserProfilePage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Professional Header with user data
-                  _buildProfessionalHeader(
-                    context,
-                    authState.passengerProfile,
-                    authState.user,
-                  ),
+                  // Show loading header during data fetch, or professional header with data
+                  authState.isLoading
+                      ? _buildLoadingHeader()
+                      : _buildProfessionalHeader(
+                          context,
+                          authState.passengerProfile,
+                          authState.user,
+                        ),
 
                   // Main Content
                   Padding(
@@ -73,7 +86,9 @@ class UserProfilePage extends ConsumerWidget {
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // User Stats Section
-                        _buildProfessionalStats(authState.passengerProfile),
+                        authState.isLoading
+                            ? _buildLoadingStats()
+                            : _buildProfessionalStats(authState.passengerProfile),
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // Account & Settings Section
@@ -495,128 +510,15 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildProfessionalStats(PassengerModel? userProfile) {
-    // TODO: Add these fields to UserModel in future iterations
-    // For now using placeholder data - should be fetched from travel history
-    const totalTrips = 47; // Should be calculated from user's travel records
-    const totalDistance = 1234.5; // Should be sum of all trip distances
-    const safetyScore = 98.0; // Should be calculated from safety incidents
+    // Get reward points from passenger model, default to 0
+    final rewardPoints = userProfile?.stats.pointsEarned ?? 0;
+    // Goal can be adjusted - currently set to 100 points
+    const goalPoints = 100;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowMD,
-        border: Border.all(
-          color: AppColors.greyLight,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Professional section header
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: const BoxDecoration(
-              gradient: AppColors.successGradient,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppDesign.radiusXL),
-                topRight: Radius.circular(AppDesign.radiusXL),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.analytics_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Text(
-                  'Travel Statistics',
-                  style: AppTextStyles.headline6.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Stats content
-          Padding(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    'Total Trips',
-                    '$totalTrips',
-                    Icons.directions_bus_rounded,
-                    AppColors.primaryColor,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatItem(
-                    'Distance',
-                    '${totalDistance.toStringAsFixed(1)} km',
-                    Icons.route_rounded,
-                    AppColors.accentColor,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatItem(
-                    'Safety Score',
-                    '${safetyScore.toStringAsFixed(0)}%',
-                    Icons.security_rounded,
-                    AppColors.successColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceMD),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          ),
-          child: Icon(
-            icon,
-            color: color,
-            size: AppDesign.iconMD,
-          ),
-        ),
-        const SizedBox(height: AppDesign.spaceSM),
-        Text(
-          value,
-          style: AppTextStyles.headline6.copyWith(
-            color: color,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        Text(
-          title,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+    return RewardPointsWidget(
+      currentPoints: rewardPoints,
+      goalPoints: goalPoints,
+      userProfile: userProfile,
     );
   }
 
