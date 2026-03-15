@@ -11,23 +11,32 @@ class PassengerService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collection = 'passenger_details';
 
-  /// Create a new passenger profile
+  /// Create a new passenger profile (PASSWORD NOT STORED HERE - USE FIREBASE AUTH)
+  /// Email MUST be provided and saved for login functionality
   Future<void> createPassengerProfile({
     required String userId,
     required String firstName,
     required String lastName,
     required String email,
     required String phoneNumber,
-    String? password,
   }) async {
     try {
+      // Validate required fields
+      if (email.isEmpty) {
+        throw Exception('Email is required to create passenger profile');
+      }
+      if (phoneNumber.isEmpty) {
+        throw Exception('Phone number is required to create passenger profile');
+      }
+
       print('🚀 Starting to create passenger profile for user: $userId');
       print('📝 Data: $firstName $lastName, $email, $phoneNumber');
 
-      // Check if profile already exists (with PigeonUserInfo error handling)
+      // Check if profile already exists
+      PassengerModel? existingProfile;
       try {
         print('🔍 Checking existing profile...');
-        final existingProfile = await getPassengerProfile(userId);
+        existingProfile = await getPassengerProfile(userId);
         if (existingProfile != null) {
           print('ℹ️ Passenger profile already exists for user: $userId');
           return;
@@ -51,7 +60,6 @@ class PassengerService {
         lastName: lastName,
         email: email,
         phoneNumber: phoneNumber,
-        password: password,
         preferences: PassengerPreferences(),
         stats: PassengerStats(),
         createdAt: now,
