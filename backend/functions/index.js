@@ -473,6 +473,12 @@ exports.resetPassword = functions
         }
     });
 
+// ============================================================================
+// IMPORT NOTIFICATION FUNCTIONS
+// ============================================================================
+const notificationFunctions = require('./notifications');
+Object.assign(exports, notificationFunctions);
+
 // Health check endpoint
 exports.healthCheck = functions
     .region('asia-south1')
