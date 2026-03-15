@@ -174,7 +174,7 @@ class _AccountVerificationPageState
       // Check if OTP verification was successful
       if (phoneAuthState.error == null) {
         print('✅ OTP verified - creating user account');
-        
+
         // Create user account with Firebase Auth + Firestore
         // This happens after OTP verification with all required data
         await _createUserAccount(widget.phoneNumber);
@@ -207,11 +207,12 @@ class _AccountVerificationPageState
       if (mounted) {
         // Clear OTP fields on error
         _clearOtp();
-        
+
         // Show specific error message
         String errorMessage = 'Verification failed';
         if (e.toString().contains('email')) {
-          errorMessage = 'Email validation failed. Please check your email address.';
+          errorMessage =
+              'Email validation failed. Please check your email address.';
         } else if (e.toString().contains('password')) {
           errorMessage = 'Password validation failed. Please try again.';
         } else if (e.toString().contains('already exists')) {
@@ -219,7 +220,7 @@ class _AccountVerificationPageState
         } else {
           errorMessage = 'Verification failed: ${e.toString()}';
         }
-        
+
         CustomSnackBar.showError(context, errorMessage);
       }
     }
@@ -445,8 +446,7 @@ class _AccountVerificationPageState
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
-                              onChanged: (value) =>
-                                  _onOtpChanged(value, index),
+                              onChanged: (value) => _onOtpChanged(value, index),
                             ),
                           );
                         }),
