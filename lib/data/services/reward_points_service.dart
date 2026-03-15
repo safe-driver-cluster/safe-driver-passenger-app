@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+
 import '../models/feedback_model.dart';
-import '../models/passenger_model.dart';
 
 /// Service for managing reward points
 class RewardPointsService {
@@ -31,23 +31,25 @@ class RewardPointsService {
   }
 
   /// Add bonus points when feedback is approved/resolved
-  Future<void> addFeedbackApprovalBonus(String userId, String feedbackId) async {
+  Future<void> addFeedbackApprovalBonus(
+      String userId, String feedbackId) async {
     try {
       debugPrint(
           '✅ RewardPointsService: Adding feedback approval bonus for user: $userId');
-      debugPrint('   FeedbackId: $feedbackId, Bonus Points: +$approvedFeedbackAdditionalPoints');
+      debugPrint(
+          '   FeedbackId: $feedbackId, Bonus Points: +$approvedFeedbackAdditionalPoints');
 
       await _updateUserPoints(userId, approvedFeedbackAdditionalPoints,
           'Feedback approved - $feedbackId');
     } catch (e) {
-      debugPrint(
-          '❌ RewardPointsService: Error adding approval bonus: $e');
+      debugPrint('❌ RewardPointsService: Error adding approval bonus: $e');
       throw Exception('Failed to add approval bonus: $e');
     }
   }
 
   /// Deduct points for fake/rejected feedback
-  Future<void> deductFakeFeedbackPenalty(String userId, String feedbackId) async {
+  Future<void> deductFakeFeedbackPenalty(
+      String userId, String feedbackId) async {
     try {
       debugPrint(
           '⚠️ RewardPointsService: Deducting penalty for fake feedback - User: $userId');
@@ -121,14 +123,14 @@ class RewardPointsService {
         'submittedFeedback': submittedCount,
         'approvedFeedback': approvedCount,
         'rejectedFeedback': rejectedCount,
-        'estimatedPointsFromSubmissions': submittedCount * initialFeedbackPoints,
+        'estimatedPointsFromSubmissions':
+            submittedCount * initialFeedbackPoints,
         'estimatedPointsFromApprovals':
             approvedCount * approvedFeedbackAdditionalPoints,
         'estimatedPointsFromPenalties': rejectedCount * rejectedFeedbackPenalty,
       };
 
-      debugPrint(
-          '✅ RewardPointsService: Summary - $summary');
+      debugPrint('✅ RewardPointsService: Summary - $summary');
       return summary;
     } catch (e) {
       debugPrint('❌ RewardPointsService: Error fetching summary: $e');
@@ -148,8 +150,7 @@ class RewardPointsService {
       debugPrint(
           '💾 RewardPointsService: Updating points for user: $userId, Delta: $pointsDelta, Reason: $reason');
 
-      final userRef =
-          _firestore.collection(_passengersCollection).doc(userId);
+      final userRef = _firestore.collection(_passengersCollection).doc(userId);
 
       // Get current points
       final currentPoints = await getUserRewardPoints(userId);
@@ -184,8 +185,7 @@ class RewardPointsService {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      debugPrint(
-          '⚠️  RewardPointsService: Could not log transaction: $e');
+      debugPrint('⚠️  RewardPointsService: Could not log transaction: $e');
       // Don't throw - this is non-critical
     }
   }
@@ -197,7 +197,8 @@ class RewardPointsService {
 
     // 1. Very short feedback
     if (feedback.description.length < 5) {
-      debugPrint('⚠️  Anti-fraud: Feedback too short (${feedback.description.length} chars)');
+      debugPrint(
+          '⚠️  Anti-fraud: Feedback too short (${feedback.description.length} chars)');
       return true;
     }
 
