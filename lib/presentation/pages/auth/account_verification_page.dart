@@ -171,14 +171,17 @@ class _AccountVerificationPageState
 
       final phoneAuthState = ref.read(phoneAuthControllerProvider);
 
-      // For phone-based auth, check if we have a passenger profile
-      if (phoneAuthState.passengerProfile != null) {
-        // Create user account with Firestore
-        await _createUserAccount(phoneAuthState.passengerProfile!.phoneNumber);
+      // Check if OTP verification was successful
+      if (phoneAuthState.error == null) {
+        print('✅ OTP verified - creating user account');
+        
+        // Create user account with Firebase Auth + Firestore
+        // This happens after OTP verification with all required data
+        await _createUserAccount(widget.phoneNumber);
 
         // Show success message and navigate to login
         if (mounted) {
-          CustomSnackBar.showSuccess(context, 'Account verified successfully!');
+          CustomSnackBar.showSuccess(context, 'Account created successfully!');
 
           // Navigate to login page
           Navigator.of(context).pushNamedAndRemoveUntil(
@@ -188,10 +191,11 @@ class _AccountVerificationPageState
               'message':
                   'Account created and verified successfully! Please login with your credentials.',
               'email': widget.email,
+              'phone': widget.phoneNumber,
             },
           );
         }
-      } else if (phoneAuthState.error != null) {
+      } else {
         if (mounted) {
           // Clear OTP fields on error
           _clearOtp();
@@ -199,18 +203,35 @@ class _AccountVerificationPageState
         }
       }
     } catch (e) {
-      print('OTP verification error: $e');
+      print('❌ OTP verification error: $e');
       if (mounted) {
         // Clear OTP fields on error
         _clearOtp();
-        CustomSnackBar.showError(
-            context, 'Verification failed: ${e.toString()}');
+        
+        // Show specific error message
+        String errorMessage = 'Verification failed';
+        if (e.toString().contains('email')) {
+          errorMessage = 'Email validation failed. Please check your email address.';
+        } else if (e.toString().contains('password')) {
+          errorMessage = 'Password validation failed. Please try again.';
+        } else if (e.toString().contains('already exists')) {
+          errorMessage = 'An account with this email already exists.';
+        } else {
+          errorMessage = 'Verification failed: ${e.toString()}';
+        }
+        
+        CustomSnackBar.showError(context, errorMessage);
       }
     }
   }
 
   Future<void> _createUserAccount(String phoneNumber) async {
     try {
+      print('🚀 Creating user account with:');
+      print('  Email: ${widget.email}');
+      print('  Phone: $phoneNumber');
+      print('  Name: ${widget.firstName} ${widget.lastName}');
+
       // Import auth service
       final authService = ref.read(authStateProvider.notifier);
 
@@ -223,11 +244,18 @@ class _AccountVerificationPageState
         phoneNumber: phoneNumber,
       );
 
-      // Sign out the phone auth user
-      await ref.read(phoneAuthControllerProvider.notifier).signOut();
+      print('✅ Account created successfully in Firebase Auth + Firestore');
+
+      // Sign out the phone auth user (cleanup)
+      try {
+        await ref.read(phoneAuthControllerProvider.notifier).signOut();
+      } catch (e) {
+        print('⚠️ Error signing out phone auth user: $e');
+        // Don't fail - phone auth cleanup is not critical
+      }
     } catch (e) {
-      print('Error creating user account: $e');
-      // Don't throw error here, phone verification was successful
+      print('❌ Error creating user account: $e');
+      rethrow; // Re-throw so caller can handle error
     }
   }
 
