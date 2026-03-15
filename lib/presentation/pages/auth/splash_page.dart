@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -100,17 +101,16 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
   void _checkAuthenticationState() async {
     print('🔍 Checking authentication state...');
-    final authState = ref.read(authStateProvider);
-    print('🔍 Auth state: ${authState.toString()}');
-    print('🔍 User: ${authState.user?.uid ?? 'null'}');
-
+    
     // Check if language has been selected first
     final languageSelected = StorageService.instance
         .getBool('language_selected', defaultValue: false);
 
     if (languageSelected == false) {
       print('🌐 Language not selected, navigating to language selection');
-      Navigator.pushReplacementNamed(context, '/language-selection');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/language-selection');
+      }
       return;
     }
 
@@ -121,18 +121,29 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
     if (!onboardingState.isCompleted) {
       print('📚 First time user, navigating to onboarding');
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/onboarding');
+      }
       return;
     }
 
-    if (authState.user != null) {
-      print('✅ User is authenticated, navigating to dashboard');
-      // User is authenticated, go to dashboard
-      Navigator.pushReplacementNamed(context, '/dashboard');
+    // Check Firebase Auth directly for persistent user (most important!)
+    final currentUser = FirebaseAuth.instance.currentUser;
+    print('🔐 Firebase Auth Current User: ${currentUser?.uid ?? "null"}');
+    print('👤 Firebase Auth Email: ${currentUser?.email ?? "null"}');
+
+    if (currentUser != null) {
+      print('✅ User session found in Firebase Auth, navigating to dashboard');
+      // Firebase Auth has a persisted user, keep them logged in
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      }
     } else {
-      print('❌ User is not authenticated, navigating to login');
-      // User is not authenticated, go to login
-      Navigator.pushReplacementNamed(context, '/login');
+      print('❌ No user session found, navigating to login');
+      // No persisted session, show login
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
     }
   }
 
