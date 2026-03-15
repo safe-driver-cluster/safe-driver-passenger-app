@@ -168,12 +168,11 @@ class DashboardController extends StateNotifier<DashboardState> {
 
   Future<void> _loadRecentActivity() async {
     try {
-      // For now, load from repositories (this can be enhanced with user-specific data later)
       final activities = <String>[];
 
       // Get recent safety alerts to show as activity
       try {
-        final alerts = await _safetyRepository.getRecentAlerts(limit: 3);
+        final alerts = await _safetyRepository.getRecentAlerts(limit: 5);
         for (var alert in alerts) {
           activities.add('Safety Alert: ${alert.title}');
         }
@@ -181,30 +180,12 @@ class DashboardController extends StateNotifier<DashboardState> {
         print('Error loading safety alerts: $e');
       }
 
-      // Add some general activity items for now
-      activities.addAll([
-        'System monitoring active',
-        'Fleet safety score updated',
-        'Bus locations synchronized',
-      ]);
-
-      // If no activities, show welcome messages
-      if (activities.isEmpty) {
-        activities.addAll([
-          'Welcome to SafeDriver!',
-          'Start monitoring bus safety',
-          'Check nearby buses and routes',
-        ]);
-      }
-
+      // Return only real activities - empty list if no data
       state = state.copyWith(recentActivity: activities.take(5).toList());
     } catch (e) {
       print('Error loading recent activity: $e');
-      // Fallback activity
-      state = state.copyWith(recentActivity: [
-        'Welcome to SafeDriver!',
-        'System ready for monitoring'
-      ]);
+      // Return empty list instead of fallback hardcoded messages
+      state = state.copyWith(recentActivity: []);
     }
   }
 
