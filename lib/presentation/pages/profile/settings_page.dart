@@ -4,6 +4,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/language_provider.dart';
+import '../../../providers/biometric_settings_provider.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -214,6 +215,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 ),
                               ),
                               const SizedBox(height: 16),
+
+                              // Biometric Settings
+                              _buildBiometricSettings(),
+
+                              const SizedBox(height: 24),
 
                               _buildActionSetting(
                                 '🔒',
@@ -673,6 +679,137 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBiometricSettings() {
+    return Consumer(
+      builder: (context, watch, _) {
+        final biometricSettings = ref.watch(biometricSettingsProvider);
+
+        if (!biometricSettings.isBiometricSupported) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.scaffoldBackground,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Text('🔐', style: TextStyle(fontSize: 20)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Biometric Authentication',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Not supported on this device',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Column(
+          children: [
+            // Main Biometric Toggle
+            _buildSwitchSetting(
+              '🔐',
+              'Biometric Lock',
+              biometricSettings.primaryBiometricType != null
+                  ? 'Use ${biometricSettings.primaryBiometricType} to unlock'
+                  : 'Enable biometric authentication',
+              biometricSettings.isBiometricEnabled,
+              (value) async {
+                final notifier =
+                    ref.read(biometricSettingsProvider.notifier);
+                await notifier.setBiometricEnabled(value);
+              },
+            ),
+
+            // Fingerprint Option
+            if (biometricSettings.isBiometricSupported && biometricSettings.isBiometricEnabled)
+              _buildSwitchSetting(
+                '👆',
+                'Fingerprint',
+                'Allow fingerprint authentication',
+                biometricSettings.isFingerPrintEnabled,
+                (value) async {
+                  final notifier =
+                      ref.read(biometricSettingsProvider.notifier);
+                  await notifier.setFingerPrintEnabled(value);
+                },
+              ),
+
+            // Face ID Option
+            if (biometricSettings.isBiometricSupported && biometricSettings.isBiometricEnabled)
+              _buildSwitchSetting(
+                '😊',
+                'Face Recognition',
+                'Allow face ID authentication',
+                biometricSettings.isFaceIdEnabled,
+                (value) async {
+                  final notifier =
+                      ref.read(biometricSettingsProvider.notifier);
+                  await notifier.setFaceIdEnabled(value);
+                },
+              ),
+
+            // Require on App Open
+            if (biometricSettings.isBiometricEnabled)
+              _buildSwitchSetting(
+                '📱',
+                'Require on App Open',
+                'Ask for biometric when opening the app',
+                biometricSettings.requireBiometricOnAppOpen,
+                (value) async {
+                  final notifier =
+                      ref.read(biometricSettingsProvider.notifier);
+                  await notifier.setRequireBiometricOnAppOpen(value);
+                },
+              ),
+
+            // Error Message - Inline text only
+            if (biometricSettings.error != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  biometricSettings.error ?? 'An error occurred',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.errorColor,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
