@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/storage_service.dart';
-import '../../../providers/auth_provider.dart';
 import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -101,7 +100,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
   void _checkAuthenticationState() async {
     print('🔍 Checking authentication state...');
-    
+
     // Check if language has been selected first
     final languageSelected = StorageService.instance
         .getBool('language_selected', defaultValue: false);
