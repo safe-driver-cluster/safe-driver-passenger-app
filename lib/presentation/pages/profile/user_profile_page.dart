@@ -7,33 +7,20 @@ import 'package:safedriver_passenger_app/presentation/pages/feedback/feedback_hi
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/passenger_model.dart';
-import '../../../data/services/passenger_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
 import 'notifications_page.dart';
-import 'passenger_profile_screen.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
-
-// Passenger profile provider for Firebase data
-final passengerProfileProvider =
-    FutureProvider.autoDispose<PassengerModel?>((ref) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return null;
-
-  final passengerService = PassengerService.instance;
-  return await passengerService.getPassengerProfile(user.uid);
-});
 
 class UserProfilePage extends ConsumerWidget {
   const UserProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final passengerProfileAsync = ref.watch(passengerProfileProvider);
     final authState = ref.watch(authStateProvider);
 
     return Scaffold(
@@ -54,7 +41,8 @@ class UserProfilePage extends ConsumerWidget {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(passengerProfileProvider);
+              // Refresh auth state to reload passenger profile
+              ref.refresh(authStateProvider);
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
@@ -64,14 +52,10 @@ class UserProfilePage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Professional Header with user data
-                  passengerProfileAsync.when(
-                    data: (userProfile) => _buildProfessionalHeader(
-                      context,
-                      userProfile,
-                      authState.user,
-                    ),
-                    loading: () => _buildLoadingHeader(),
-                    error: (error, _) => _buildErrorHeader(context, error),
+                  _buildProfessionalHeader(
+                    context,
+                    authState.passengerProfile,
+                    authState.user,
                   ),
 
                   // Main Content
@@ -89,12 +73,7 @@ class UserProfilePage extends ConsumerWidget {
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // User Stats Section
-                        passengerProfileAsync.when(
-                          data: (userProfile) =>
-                              _buildProfessionalStats(userProfile),
-                          loading: () => _buildLoadingStats(),
-                          error: (_, __) => const SizedBox(),
-                        ),
+                        _buildProfessionalStats(authState.passengerProfile),
                         const SizedBox(height: AppDesign.spaceLG),
 
                         // Account & Settings Section
@@ -117,10 +96,19 @@ class UserProfilePage extends ConsumerWidget {
     PassengerModel? userProfile,
     User? firebaseUser,
   ) {
-    final displayName =
-        userProfile?.fullName ?? firebaseUser?.displayName ?? 'User';
-    final email = userProfile?.email ?? firebaseUser?.email ?? 'No email';
-    final phoneNumber = userProfile?.phoneNumber ?? 'Not provided';
+    if (userProfile == null) {
+      return _buildLoadingHeader();
+    }
+
+    final displayName = userProfile.fullName.isNotEmpty
+        ? userProfile.fullName
+        : '${userProfile.firstName} ${userProfile.lastName}'.trim().isNotEmpty
+            ? '${userProfile.firstName} ${userProfile.lastName}'.trim()
+            : 'User';
+    final email = userProfile.email.isNotEmpty ? userProfile.email : 'No email';
+    final phoneNumber = userProfile.phoneNumber.isNotEmpty
+        ? userProfile.phoneNumber
+        : 'Not provided';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
@@ -154,10 +142,12 @@ class UserProfilePage extends ConsumerWidget {
                 child: CircleAvatar(
                   radius: 45,
                   backgroundColor: Colors.white,
-                  backgroundImage: userProfile?.profileImageUrl != null
-                      ? NetworkImage(userProfile!.profileImageUrl!)
+                  backgroundImage: userProfile.profileImageUrl != null &&
+                          userProfile.profileImageUrl!.isNotEmpty
+                      ? NetworkImage(userProfile.profileImageUrl!)
                       : null,
-                  child: userProfile?.profileImageUrl == null
+                  child: userProfile.profileImageUrl == null ||
+                          userProfile.profileImageUrl!.isEmpty
                       ? Container(
                           decoration: const BoxDecoration(
                             gradient: AppColors.accentGradient,
@@ -276,53 +266,19 @@ class UserProfilePage extends ConsumerWidget {
         AppDesign.spaceLG,
         AppDesign.spaceLG,
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            ),
+      child: const SizedBox(
+        height: 120,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
           ),
-          const SizedBox(width: AppDesign.spaceLG),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 24,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  height: 16,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildErrorHeader(BuildContext context, Object error) {
+  Widget _buildErrorHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -330,46 +286,17 @@ class UserProfilePage extends ConsumerWidget {
         AppDesign.spaceLG,
         AppDesign.spaceLG,
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 40,
+      child: const SizedBox(
+        height: 120,
+        child: Center(
+          child: Text(
+            'Unable to load profile',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white70,
             ),
           ),
-          const SizedBox(width: AppDesign.spaceLG),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Profile Error',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Failed to load profile data',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -769,13 +696,6 @@ class UserProfilePage extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const EditProfilePage()),
-        );
-      }),
-      MenuItemData('Passenger Details', Icons.account_circle_outlined, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const PassengerProfileScreen()),
         );
       }),
       MenuItemData('Trip History', Icons.history_rounded, () {
