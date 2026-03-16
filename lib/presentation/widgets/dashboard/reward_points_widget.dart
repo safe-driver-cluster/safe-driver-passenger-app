@@ -702,7 +702,7 @@ class CheckpointDotsPainter extends CustomPainter {
       if (dotProgress <= progress) {
         // Active dot (reached)
         final activePaint = Paint()
-        ..color = AppColors.primaryColor
+          ..color = AppColors.primaryColor
           ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2.0);
 
         canvas.drawCircle(Offset(dotX, dotY), 4.5, activePaint);
