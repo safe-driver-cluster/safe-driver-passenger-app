@@ -11,6 +11,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/passenger_service.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../widgets/sos/sos_contacts_dialog.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
   const EditProfilePage({super.key});
@@ -608,6 +609,48 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceMD),
+            decoration: BoxDecoration(
+              color: AppColors.errorColor.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              border: Border.all(
+                color: AppColors.errorColor.withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.contacts_rounded,
+                  color: AppColors.errorColor,
+                  size: 20,
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                const Expanded(
+                  child: Text(
+                    'Manage SOS contacts for emergency alerts',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => showSosContactsDialog(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.errorColor,
+                    foregroundColor: AppColors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    ),
+                  ),
+                  child: const Text('Manage'),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
 

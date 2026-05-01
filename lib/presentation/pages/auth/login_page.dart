@@ -251,15 +251,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
           child: SafeArea(
-            child: Column(
-              children: [
-                // Header Section
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 60, horizontal: 24),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
                     child: Column(
                       children: [
+                        // Header Section
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 60, horizontal: 24),
+                          child: Column(
+                            children: [
                         // Logo with glow effect
                         Container(
                           decoration: BoxDecoration(
@@ -314,27 +318,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             color: Colors.white.withOpacity(0.8),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
+                            ],
+                          ),
+                        ),
 
-                // Form Section
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                        // Form Section
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
                           const SizedBox(height: 8),
 
                           // Login Form
@@ -624,12 +625,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
