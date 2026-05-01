@@ -237,7 +237,7 @@ class SosService {
   }) async {
     debugPrint('=== SOS ALERT START ===');
     final contacts = await getContacts();
-    
+
     if (contacts.isEmpty) {
       debugPrint('SOS: No contacts configured');
       return SosAlertResult(
@@ -249,7 +249,7 @@ class SosService {
         errors: ['No SOS contacts configured'],
       );
     }
-    
+
     debugPrint('SOS: Found ${contacts.length} SOS contacts');
 
     // Get location
@@ -283,7 +283,7 @@ class SosService {
       }
     }
     message += '\n🕐 Time: $timestamp';
-    
+
     debugPrint('SOS: Alert message prepared (length: ${message.length})');
 
     int smsSent = 0;
@@ -344,8 +344,9 @@ class SosService {
 
     // Log SOS event to Firestore
     await _logSosEvent(contacts, message, locationUrl);
-    
-    debugPrint('SOS: Alert complete - SMS: $smsSent sent, $smsFailed failed | WhatsApp: $whatsappLaunched launched, $whatsappFailed failed');
+
+    debugPrint(
+        'SOS: Alert complete - SMS: $smsSent sent, $smsFailed failed | WhatsApp: $whatsappLaunched launched, $whatsappFailed failed');
     debugPrint('=== SOS ALERT END ===');
 
     return SosAlertResult(
@@ -382,15 +383,16 @@ class SosService {
           phoneNumber: phoneNumber,
           message: message,
         );
-        
+
         debugPrint('SMS: background_sms returned status: $result');
-        
+
         // The plugin may return success but not actually send, so we add extra diagnostics
         if (result == SmsStatus.sent) {
           debugPrint('SMS: Reported as sent to $phoneNumber');
           return true;
         } else {
-          debugPrint('SMS: background_sms returned status $result, falling back to SMS app');
+          debugPrint(
+              'SMS: background_sms returned status $result, falling back to SMS app');
           return _launchSmsApp(phoneNumber, message);
         }
       } catch (pluginError) {

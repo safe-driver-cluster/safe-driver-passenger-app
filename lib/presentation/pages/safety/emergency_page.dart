@@ -1,11 +1,11 @@
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:safedriver_passenger_app/core/services/sos_service.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/sos/sos_contacts_dialog.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:safedriver_passenger_app/core/services/sos_service.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/sos/sos_contacts_dialog.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -599,16 +599,17 @@ class _EmergencyPageState extends State<EmergencyPage> {
     try {
       debugPrint('Emergency Page: Starting SOS alert...');
       final result = await _sosService.sendSosAlert();
-      
+
       debugPrint('Emergency Page: SOS alert completed');
-      debugPrint('Emergency Page: Result - SMS: ${result.smsSent}/${result.totalContacts}, WhatsApp: ${result.whatsappLaunched}/${result.totalContacts}');
+      debugPrint(
+          'Emergency Page: Result - SMS: ${result.smsSent}/${result.totalContacts}, WhatsApp: ${result.whatsappLaunched}/${result.totalContacts}');
 
       if (mounted) {
         setState(() => _isSendingSos = false);
-        
+
         // Show result dialog with detailed feedback
         _showSosResultDialog(result);
-        
+
         // Also log the result for debugging
         if (result.isCompleteSuccess) {
           debugPrint('Emergency Page: SOS alert was completely successful');
@@ -750,7 +751,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
   void _showSosResultDialog(SosAlertResult result) {
     final isSuccess = result.isPartialSuccess;
     final isCompleteSuccess = result.isCompleteSuccess;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -816,7 +817,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
                 ),
               ),
               const SizedBox(height: AppDesign.spaceMD),
-              
+
               // Detailed breakdown
               Container(
                 padding: const EdgeInsets.all(AppDesign.spaceMD),
@@ -830,17 +831,21 @@ class _EmergencyPageState extends State<EmergencyPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildStatusRow('SMS Sent', result.smsSent, result.totalContacts, AppColors.successColor),
+                    _buildStatusRow('SMS Sent', result.smsSent,
+                        result.totalContacts, AppColors.successColor),
                     if (result.smsFailed > 0)
-                      _buildStatusRow('SMS Failed', result.smsFailed, result.totalContacts, AppColors.dangerColor),
+                      _buildStatusRow('SMS Failed', result.smsFailed,
+                          result.totalContacts, AppColors.dangerColor),
                     if (result.whatsappLaunched > 0)
-                      _buildStatusRow('WhatsApp Sent', result.whatsappLaunched, result.totalContacts, AppColors.successColor),
+                      _buildStatusRow('WhatsApp Sent', result.whatsappLaunched,
+                          result.totalContacts, AppColors.successColor),
                     if (result.whatsappFailed > 0)
-                      _buildStatusRow('WhatsApp Failed', result.whatsappFailed, result.totalContacts, AppColors.dangerColor),
+                      _buildStatusRow('WhatsApp Failed', result.whatsappFailed,
+                          result.totalContacts, AppColors.dangerColor),
                   ],
                 ),
               ),
-              
+
               // Errors section if any
               if (result.errors.isNotEmpty) ...[
                 const SizedBox(height: AppDesign.spaceMD),
@@ -856,15 +861,15 @@ class _EmergencyPageState extends State<EmergencyPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
                             color: AppColors.dangerColor,
                             size: 18,
                           ),
-                          const SizedBox(width: AppDesign.spaceSM),
-                          const Text(
+                          SizedBox(width: AppDesign.spaceSM),
+                          Text(
                             'Issues Encountered:',
                             style: TextStyle(
                               color: AppColors.dangerColor,
@@ -876,7 +881,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
                       ),
                       const SizedBox(height: AppDesign.spaceSM),
                       ...result.errors.map((e) => Padding(
-                            padding: const EdgeInsets.only(bottom: AppDesign.spaceXS),
+                            padding: const EdgeInsets.only(
+                                bottom: AppDesign.spaceXS),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -903,7 +909,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
                   ),
                 ),
               ],
-              
+
               // Recommendation
               if (!isCompleteSuccess) ...[
                 const SizedBox(height: AppDesign.spaceMD),
@@ -916,7 +922,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
                       color: AppColors.accentColor.withOpacity(0.2),
                     ),
                   ),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
@@ -926,8 +932,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
                             color: AppColors.accentColor,
                             size: 18,
                           ),
-                          const SizedBox(width: AppDesign.spaceSM),
-                          const Text(
+                          SizedBox(width: AppDesign.spaceSM),
+                          Text(
                             'What to do next:',
                             style: TextStyle(
                               color: AppColors.accentColor,
@@ -937,8 +943,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppDesign.spaceSM),
-                      const Text(
+                      SizedBox(height: AppDesign.spaceSM),
+                      Text(
                         '1. Manually call your emergency contacts\n2. Call police emergency: 119\n3. Check SMS settings if SMS failed\n4. Verify contact numbers are correct',
                         style: TextStyle(
                           color: AppColors.textSecondary,
