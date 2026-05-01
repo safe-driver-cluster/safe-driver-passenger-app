@@ -94,6 +94,8 @@ dependencies:
   intl: ^0.20.0
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
+  background_sms:
+    path: third_party/background_sms
   device_info_plus: ^9.1.1
   package_info_plus: ^8.0.2
   flutter_dotenv: ^5.1.0
