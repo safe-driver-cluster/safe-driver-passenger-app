@@ -348,28 +348,6 @@ class _AboutPageState extends State<AboutPage> {
                   'Use SafeDriver responsibly and keep your emergency contact details accurate. Navigation and safety information can depend on device permissions, network availability, and third-party map providers.',
             ),
           ),
-          const Divider(height: 1, color: AppColors.greyLight),
-          _ActionTile(
-            icon: Icons.workspace_premium_outlined,
-            title: 'Open Source Licenses',
-            subtitle: 'Packages used by this app',
-            onTap: () => showLicensePage(
-              context: context,
-              applicationName: 'SafeDriver',
-              applicationIcon: Padding(
-                padding: const EdgeInsets.all(AppDesign.spaceMD),
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  width: 48,
-                  height: 48,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.directions_bus_rounded,
-                    size: 48,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
