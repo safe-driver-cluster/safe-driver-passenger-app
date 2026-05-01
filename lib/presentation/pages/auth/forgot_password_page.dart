@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/services/sms_gateway_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -119,21 +120,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   child: Column(
                     children: [
                       // Back Button
-                      Row(
+                      const Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
+                          CustomBackButton(color: Colors.white),
                         ],
                       ),
                       const SizedBox(height: 40),
@@ -175,7 +164,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your phone number and we will send you\\na code to reset your password',
+                        'Enter your phone number and we will send you\na code to reset your password',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
@@ -210,34 +199,72 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Phone Number Field with modern design
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[50],
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: Colors.grey[200]!,
-                                    width: 1,
+                              // Phone Number Field with Country Code (Same Row)
+                              Row(
+                                children: [
+                                  // Country Code Picker
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[50],
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.grey[200]!,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: CountryCodePicker(
+                                      selectedCountryCode: _selectedCountryCode,
+                                      onCountryCodeChanged: (code) {
+                                        setState(() {
+                                          _selectedCountryCode = code;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                                child: PhoneNumberField(
-                                  controller: _phoneController,
-                                  selectedCountryCode: _selectedCountryCode,
-                                  onCountryCodeChanged: (code) {
-                                    setState(() {
-                                      _selectedCountryCode = code;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Phone number is required';
-                                    }
-                                    if (value.length < 9) {
-                                      return 'Please enter a valid phone number';
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                  const SizedBox(width: 12),
+                                  // Phone Number Input Field
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[50],
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: Colors.grey[200]!,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: TextFormField(
+                                        controller: _phoneController,
+                                        keyboardType: TextInputType.phone,
+                                        decoration: InputDecoration(
+                                          labelText: 'Phone Number',
+                                          prefixIcon:
+                                              const Icon(Icons.phone_outlined),
+                                          border: InputBorder.none,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 18,
+                                          ),
+                                          labelStyle: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return 'Phone number is required';
+                                          }
+                                          if (value.length < 9) {
+                                            return 'Please enter a valid phone number';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
 
                               const SizedBox(height: 32),

@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/phone_auth_provider.dart';
-import '../../widgets/common/custom_button.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -42,6 +42,7 @@ class _AccountVerificationPageState
   bool _canResend = false;
   String? _verificationId;
   bool _isOtpSent = false;
+  int _focusedIndex = -1; // Track which OTP field has focus
 
   @override
   void initState() {
@@ -49,6 +50,14 @@ class _AccountVerificationPageState
     // Delay the OTP sending to avoid provider modification during widget build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _sendInitialOtp();
+      // Add focus listeners
+      for (int i = 0; i < _focusNodes.length; i++) {
+        _focusNodes[i].addListener(() {
+          setState(() {
+            _focusedIndex = _focusNodes[i].hasFocus ? i : -1;
+          });
+        });
+      }
     });
   }
 
@@ -86,27 +95,34 @@ class _AccountVerificationPageState
   }
 
   void _onOtpChanged(String value, int index) {
-    if (value.isNotEmpty) {
-      if (index < 5) {
+    if (value.isEmpty) {
+      // Backspace was pressed - move to previous field
+      if (index > 0) {
+        _otpControllers[index - 1].clear();
+        _focusNodes[index - 1].requestFocus();
+      }
+    } else if (value.isNotEmpty) {
+      // Move to next field if value entered
+      if (index < 5 && value.length == 1) {
         _focusNodes[index + 1].requestFocus();
       } else {
         _focusNodes[index].unfocus();
-        if (_otpCode.length == 6) {
-          _verifyOtp();
-        }
       }
-    } else {
-      if (index > 0) {
-        _focusNodes[index - 1].requestFocus();
+
+      // Auto-verify when all 6 digits are entered
+      if (_otpCode.length == 6) {
+        _verifyOtp();
       }
     }
   }
 
-  void _onOtpBackspace(int index) {
-    if (index > 0 && _otpControllers[index].text.isEmpty) {
-      _otpControllers[index - 1].clear();
-      _focusNodes[index - 1].requestFocus();
+  void _clearOtp() {
+    // Clear all OTP fields
+    for (var controller in _otpControllers) {
+      controller.clear();
     }
+    // Focus on first field
+    _focusNodes[0].requestFocus();
   }
 
   Future<void> _sendInitialOtp() async {
@@ -155,13 +171,17 @@ class _AccountVerificationPageState
 
       final phoneAuthState = ref.read(phoneAuthControllerProvider);
 
-      if (phoneAuthState.isAuthenticated && phoneAuthState.user != null) {
-        // Create user account with email/password for future login
-        await _createUserAccount(phoneAuthState.user!.uid);
+      // Check if OTP verification was successful
+      if (phoneAuthState.error == null) {
+        print('✅ OTP verified - creating user account');
+
+        // Create user account with Firebase Auth + Firestore
+        // This happens after OTP verification with all required data
+        await _createUserAccount(widget.phoneNumber);
 
         // Show success message and navigate to login
         if (mounted) {
-          CustomSnackBar.showSuccess(context, 'Account verified successfully!');
+          CustomSnackBar.showSuccess(context, 'Account created successfully!');
 
           // Navigate to login page
           Navigator.of(context).pushNamedAndRemoveUntil(
@@ -171,42 +191,72 @@ class _AccountVerificationPageState
               'message':
                   'Account created and verified successfully! Please login with your credentials.',
               'email': widget.email,
+              'phone': widget.phoneNumber,
             },
           );
         }
-      } else if (phoneAuthState.error != null) {
+      } else {
         if (mounted) {
+          // Clear OTP fields on error
+          _clearOtp();
           CustomSnackBar.showError(context, phoneAuthState.error!);
         }
       }
     } catch (e) {
-      print('OTP verification error: $e');
+      print('❌ OTP verification error: $e');
       if (mounted) {
-        CustomSnackBar.showError(
-            context, 'Verification failed: ${e.toString()}');
+        // Clear OTP fields on error
+        _clearOtp();
+
+        // Show specific error message
+        String errorMessage = 'Verification failed';
+        if (e.toString().contains('email')) {
+          errorMessage =
+              'Email validation failed. Please check your email address.';
+        } else if (e.toString().contains('password')) {
+          errorMessage = 'Password validation failed. Please try again.';
+        } else if (e.toString().contains('already exists')) {
+          errorMessage = 'An account with this email already exists.';
+        } else {
+          errorMessage = 'Verification failed: ${e.toString()}';
+        }
+
+        CustomSnackBar.showError(context, errorMessage);
       }
     }
   }
 
-  Future<void> _createUserAccount(String phoneUserId) async {
+  Future<void> _createUserAccount(String phoneNumber) async {
     try {
+      print('🚀 Creating user account with:');
+      print('  Email: ${widget.email}');
+      print('  Phone: $phoneNumber');
+      print('  Name: ${widget.firstName} ${widget.lastName}');
+
       // Import auth service
       final authService = ref.read(authStateProvider.notifier);
 
-      // Create Firebase Auth account with email/password
+      // Create user account with email/password for login
       await authService.signUp(
         email: widget.email,
         password: widget.password,
         firstName: widget.firstName,
         lastName: widget.lastName,
-        phoneNumber: widget.phoneNumber,
+        phoneNumber: phoneNumber,
       );
 
-      // Sign out the phone auth user
-      await ref.read(phoneAuthControllerProvider.notifier).signOut();
+      print('✅ Account created successfully in Firebase Auth + Firestore');
+
+      // Sign out the phone auth user (cleanup)
+      try {
+        await ref.read(phoneAuthControllerProvider.notifier).signOut();
+      } catch (e) {
+        print('⚠️ Error signing out phone auth user: $e');
+        // Don't fail - phone auth cleanup is not critical
+      }
     } catch (e) {
-      print('Error creating user account: $e');
-      // Don't throw error here, phone verification was successful
+      print('❌ Error creating user account: $e');
+      rethrow; // Re-throw so caller can handle error
     }
   }
 
@@ -258,54 +308,58 @@ class _AccountVerificationPageState
       isLoading: isLoading,
       child: Scaffold(
         backgroundColor: AppColors.primaryColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: const Text(
-            'Account Verification',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-
-                // Header
-                Column(
+          child: Column(
+            children: [
+              // Header Section with Back Button
+              Container(
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  left: 24,
+                  right: 24,
+                  bottom: 20,
+                ),
+                child: Column(
                   children: [
+                    // Back Button
+                    const Row(
+                      children: [
+                        CustomBackButton(color: Colors.white),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Icon with glow effect
                     Container(
-                      width: 100,
-                      height: 100,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.white.withOpacity(0.3),
                             blurRadius: 20,
-                            offset: const Offset(0, 10),
+                            spreadRadius: 5,
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.verified_user,
-                        size: 50,
-                        color: AppColors.primaryColor,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Icon(
+                          Icons.verified_user,
+                          size: 60,
+                          color: AppColors.primaryColor,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     const Text(
                       'Verify Your Account',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -313,72 +367,59 @@ class _AccountVerificationPageState
                     const SizedBox(height: 8),
                     Text(
                       'We sent a verification code to\n${widget.phoneNumber}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white70,
+                        color: Colors.white.withOpacity(0.8),
+                        height: 1.4,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
+              ),
 
-                const SizedBox(height: 60),
+              // Spacer to push white sheet down
+              const Spacer(),
 
-                // OTP Form
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
+              // Form Section - Fixed at bottom
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32),
                   ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        'Enter Verification Code',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      const SizedBox(height: 12),
 
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
 
-                      const Text(
-                        'Type the 6-digit code we sent you',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      // OTP Input Fields
+                      // OTP Input Fields with focus styling
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: List.generate(6, (index) {
+                          final isFocused = _focusedIndex == index;
                           return Container(
-                            width: 45,
-                            height: 55,
+                            width: 54,
+                            height: 54,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: _otpControllers[index].text.isNotEmpty
+                                color: isFocused
                                     ? AppColors.primaryColor
-                                    : Colors.grey.shade300,
-                                width: 2,
+                                    : (_otpControllers[index].text.isNotEmpty
+                                        ? AppColors.primaryColor
+                                        : Colors.grey.shade300),
+                                width: 2.5,
                               ),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(18),
+                              color: isFocused
+                                  ? AppColors.primaryColor.withOpacity(0.08)
+                                  : Colors.white,
                             ),
                             child: TextField(
                               controller: _otpControllers[index],
@@ -387,46 +428,79 @@ class _AccountVerificationPageState
                               keyboardType: TextInputType.number,
                               maxLength: 1,
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
                               ),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
                                 counterText: '',
+                                contentPadding: EdgeInsets.zero,
+                                filled: false,
                               ),
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
                               onChanged: (value) => _onOtpChanged(value, index),
-                              onTap: () {
-                                if (_otpControllers[index].text.isNotEmpty) {
-                                  _otpControllers[index].selection =
-                                      TextSelection.fromPosition(
-                                    TextPosition(
-                                        offset:
-                                            _otpControllers[index].text.length),
-                                  );
-                                }
-                              },
-                              onEditingComplete: () {
-                                if (_otpControllers[index].text.isEmpty &&
-                                    index > 0) {
-                                  _onOtpBackspace(index);
-                                }
-                              },
                             ),
                           );
                         }),
                       ),
 
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 20),
 
                       // Verify Button
-                      CustomButton(
-                        text: 'Verify & Create Account',
-                        onPressed: _isOtpSent ? _verifyOtp : null,
-                        isLoading: isLoading,
+                      Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF2563EB),
+                              Color(0xFF1E40AF),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF2563EB).withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _isOtpSent ? _verifyOtp : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Text(
+                                  'Verify & Create Account',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
                       ),
 
                       const SizedBox(height: 24),
@@ -463,7 +537,7 @@ class _AccountVerificationPageState
                         ],
                       ),
 
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 8),
 
                       // Change Phone Number
                       TextButton(
@@ -473,18 +547,19 @@ class _AccountVerificationPageState
                         child: const Text(
                           'Change phone number',
                           style: TextStyle(
+                            fontSize: 16,
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
+
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 40),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

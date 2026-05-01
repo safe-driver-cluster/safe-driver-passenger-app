@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../data/models/feedback_model.dart';
+import '../../../data/repositories/feedback_repository.dart';
+import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
 
-class FeedbackPage extends StatefulWidget {
+class FeedbackPage extends ConsumerStatefulWidget {
   final String? busId;
   final String? driverId;
   final String? tripId;
@@ -12,16 +17,17 @@ class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key, this.busId, this.driverId, this.tripId});
 
   @override
-  State<FeedbackPage> createState() => _FeedbackPageState();
+  ConsumerState<FeedbackPage> createState() => _FeedbackPageState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage>
+class _FeedbackPageState extends ConsumerState<FeedbackPage>
     with TickerProviderStateMixin {
   int selectedRating = 0;
   final TextEditingController _feedbackController = TextEditingController();
   String selectedCategory = 'General';
   late AnimationController _ratingAnimationController;
   late Animation<double> _ratingAnimation;
+  bool _isSubmitting = false;
 
   List<String> categories = [
     'General',
@@ -134,13 +140,8 @@ class _FeedbackPageState extends State<FeedbackPage>
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconMD,
-                  ),
+                child: const CustomBackButton(
+                  color: Colors.white,
                 ),
               ),
               Expanded(
@@ -522,16 +523,25 @@ class _FeedbackPageState extends State<FeedbackPage>
               ),
               padding: const EdgeInsets.symmetric(vertical: AppDesign.spaceLG),
             ),
-            child: const Text('Submit Feedback'),
+            child: _isSubmitting
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text('Submit Feedback'),
           ),
         ),
         const SizedBox(height: AppDesign.spaceMD),
         Text(
-          'Your feedback helps us improve our service',
+          'Your feedback helps us improve our service\n✨ Earn +1 Reward Point!',
+          textAlign: TextAlign.center,
           style: AppTextStyles.bodySmall.copyWith(
             color: AppColors.textHint,
           ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -567,19 +577,109 @@ class _FeedbackPageState extends State<FeedbackPage>
   }
 
   bool _canSubmit() {
-    return selectedRating > 0 && _feedbackController.text.trim().isNotEmpty;
+    return selectedRating > 0 &&
+        _feedbackController.text.trim().isNotEmpty &&
+        !_isSubmitting;
   }
 
-  void _submitFeedback() {
-    // Implement feedback submission
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Thank you for your feedback!'),
-        backgroundColor: AppColors.successColor,
-      ),
-    );
+  void _submitFeedback() async {
+    if (!_canSubmit()) return;
 
-    Navigator.pop(context);
+    setState(() => _isSubmitting = true);
+
+    try {
+      // Get current user
+      final authState = ref.read(authStateProvider);
+      final userId = authState.user?.uid;
+      final passengerProfile = authState.passengerProfile;
+
+      if (userId == null || passengerProfile == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('User not authenticated'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        setState(() => _isSubmitting = false);
+        return;
+      }
+
+      // Map category string to FeedbackCategory enum
+      final categoryMap = {
+        'General': FeedbackCategory.general,
+        'Driver': FeedbackCategory.driver,
+        'Bus Condition': FeedbackCategory.vehicle,
+        'Safety': FeedbackCategory.safety,
+        'Route': FeedbackCategory.route,
+        'Service': FeedbackCategory.service,
+      };
+
+      final category =
+          categoryMap[selectedCategory] ?? FeedbackCategory.general;
+
+      // Create feedback model
+      final feedback = FeedbackModel(
+        id: '', // Firestore will generate ID
+        userId: userId,
+        userName: passengerProfile.fullName,
+        busId: widget.busId,
+        driverId: widget.driverId,
+        routeId: null,
+        category: category,
+        type: FeedbackType.positive, // Can be enhanced to detect from rating
+        title: 'Feedback - $selectedCategory',
+        description: _feedbackController.text.trim(),
+        rating: FeedbackRating(overall: selectedRating),
+        tags: [selectedCategory, 'mobile'],
+        attachments: [],
+        location: null,
+        timestamp: DateTime.now(),
+        status: FeedbackStatus.submitted,
+        priority: FeedbackPriority.medium,
+        metadata: {
+          'tripId': widget.tripId,
+          'appVersion': '1.0.0',
+          'platform': 'mobile',
+        },
+        comment: _feedbackController.text.trim(),
+        images: [],
+        submittedAt: DateTime.now(),
+        isAnonymous: false,
+        relatedFeedbackIds: [],
+      );
+
+      // Submit feedback using repository
+      final repository = FeedbackRepository();
+      await repository.submitFeedback(feedback);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Thank you for your feedback! +1 Reward Point'),
+            backgroundColor: AppColors.successColor,
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      debugPrint('❌ Error submitting feedback: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to submit feedback: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
   }
 
   @override

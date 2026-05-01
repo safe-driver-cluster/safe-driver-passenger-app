@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../core/services/notification_service.dart';
 import '../../core/services/storage_service.dart';
 
 class AuthService {
@@ -17,6 +19,7 @@ class AuthService {
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
   static const String _autoLoginKey = 'auto_login';
+  static const String _persistentLoginKey = 'persistent_login';
 
   /// Initialize the auth service
   Future<void> initialize() async {
@@ -52,6 +55,12 @@ class AuthService {
 
       print('✅ Firebase Auth successful for user: ${userCredential.user?.uid}');
 
+      // ✅ Save device token for push notifications
+      await _saveDeviceToken(userCredential.user!.uid);
+
+      // Enable persistent login by default for all logins
+      await enablePersistentLogin();
+
       // Save credentials if remember me is enabled
       if (rememberMe) {
         print('💾 Saving credentials for remember me');
@@ -80,6 +89,9 @@ class AuthService {
         password: password,
       );
 
+      // ✅ Save device token for push notifications
+      await _saveDeviceToken(userCredential.user!.uid);
+
       // Clear any saved credentials when creating new account
       await _clearSavedCredentials();
 
@@ -98,9 +110,54 @@ class AuthService {
       // If user explicitly signs out, we should also clear remember me
       await _clearSavedCredentials();
 
+      // Clear persistent login when user explicitly signs out
+      await _storage.saveBool(_persistentLoginKey, false);
+
       await _firebaseAuth.signOut();
     } catch (e) {
       throw _handleAuthError(e);
+    }
+  }
+
+  /// Enable persistent login (keeps session alive after app close)
+  Future<void> enablePersistentLogin() async {
+    try {
+      await _storage.saveBool(_persistentLoginKey, true);
+      print('💾 Persistent login enabled');
+    } catch (e) {
+      print('❌ Error enabling persistent login: $e');
+    }
+  }
+
+  /// Disable persistent login
+  Future<void> disablePersistentLogin() async {
+    try {
+      await _storage.saveBool(_persistentLoginKey, false);
+      print('💾 Persistent login disabled');
+    } catch (e) {
+      print('❌ Error disabling persistent login: $e');
+    }
+  }
+
+  /// Check if persistent login is enabled
+  Future<bool> isPersistentLoginEnabled() async {
+    await initialize();
+    return _storage.getBool(_persistentLoginKey) ?? false;
+  }
+
+  /// Check for persistent session (user should remain logged in)
+  /// This is called on app startup
+  Future<bool> checkPersistentSession() async {
+    try {
+      final isPersistent = await isPersistentLoginEnabled();
+      if (isPersistent && currentUser != null) {
+        print('✅ Persistent session found - user remains logged in');
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('❌ Error checking persistent session: $e');
+      return false;
     }
   }
 
@@ -175,6 +232,28 @@ class AuthService {
     await _storage.saveBool(_autoLoginKey, false);
     await _storage.saveString(_savedEmailKey, '');
     await _storage.saveString(_savedPasswordKey, '');
+  }
+
+  /// Save device token to Firestore for push notifications
+  Future<void> _saveDeviceToken(String userId) async {
+    try {
+      final token = await NotificationService.instance.getFCMToken();
+      if (token != null && token.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('passenger_details')
+            .doc(userId)
+            .update({
+          'deviceTokens': FieldValue.arrayUnion([token]),
+        }).catchError((e) {
+          print('⚠️ Error saving device token: $e');
+          // Don't throw - token saving shouldn't fail auth flow
+        });
+        print('✅ Device token saved for user: $userId');
+      }
+    } catch (e) {
+      print('⚠️ Error getting FCM token: $e');
+      // Don't throw - token saving shouldn't fail auth flow
+    }
   }
 
   /// Reset password

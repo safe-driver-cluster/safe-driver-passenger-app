@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../controllers/dashboard_controller.dart';
@@ -13,117 +12,71 @@ class RecentActivityWidget extends ConsumerWidget {
     final dashboardState = ref.watch(dashboardControllerProvider);
     final recentActivity = dashboardState.recentActivity;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Recent Activity',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    // Navigate to full activity history
-                  },
-                  icon: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                  ),
-                  label: Text(AppLocalizations.of(context).viewAll),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primaryColor,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (recentActivity.isEmpty)
-              _buildEmptyState()
-            else
-              Column(
-                children: recentActivity
-                    .take(5)
-                    .map((activity) => _buildActivityItem(activity))
-                    .toList(),
-              ),
-          ],
-        ),
-      ),
+    if (recentActivity.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return Column(
+      children: recentActivity
+          .take(5)
+          .map((activity) => _buildActivityItem(activity))
+          .toList(),
     );
   }
 
   Widget _buildEmptyState() {
     return Container(
       padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primaryColor.withOpacity(0.1),
-                  AppColors.primaryColor.withOpacity(0.05),
-                ],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryColor.withOpacity(0.1),
+                    AppColors.primaryColor.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.primaryColor.withOpacity(0.2),
+                  width: 2,
+                ),
               ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: AppColors.primaryColor.withOpacity(0.2),
-                width: 2,
+              child: const Icon(
+                Icons.history_outlined,
+                size: 30,
+                color: AppColors.primaryColor,
               ),
             ),
-            child: const Icon(
-              Icons.history_outlined,
-              size: 30,
-              color: AppColors.primaryColor,
+            const SizedBox(height: 16),
+            const Text(
+              'No recent activity',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'No recent activity',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+            const SizedBox(height: 8),
+            const Text(
+              'Start your first journey with SafeDriver\nto see your activity here',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Start your first journey with SafeDriver\nto see your activity here',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -144,26 +97,13 @@ class RecentActivityWidget extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  activity,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _getTimeAgo(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
+            child: Text(
+              activity,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
           Icon(
@@ -200,18 +140,5 @@ class RecentActivityWidget extends ConsumerWidget {
       return Icons.notifications;
     }
     return Icons.info;
-  }
-
-  String _getTimeAgo() {
-    // Mock time ago - in a real app, this would calculate actual time difference
-    final times = [
-      '2 min ago',
-      '5 min ago',
-      '15 min ago',
-      '1 hour ago',
-      '2 hours ago'
-    ];
-    times.shuffle();
-    return times.first;
   }
 }

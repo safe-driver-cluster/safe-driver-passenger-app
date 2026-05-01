@@ -91,13 +91,38 @@
                     "order": "DESCENDING"
                 }
             ]
-        }
-    ],
-    "fieldOverrides": [
+        },
         {
-            "collectionGroup": "otp_verifications",
-            "fieldPath": "expiresAt",
-            "ttl": true
+            "collectionGroup": "notifications",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "userId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "sentAt",
+                    "order": "DESCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "notifications",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "userId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "type",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "sentAt",
+                    "order": "DESCENDING"
+                }
+            ]
         }
     ]
 }

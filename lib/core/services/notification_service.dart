@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -366,11 +367,6 @@ class NotificationService {
     return await _localNotifications.pendingNotificationRequests();
   }
 
-  /// Get FCM token
-  Future<String?> getFCMToken() async {
-    return await _firebaseMessaging.getToken();
-  }
-
   /// Subscribe to topic
   Future<void> subscribeToTopic(String topic) async {
     await _firebaseMessaging.subscribeToTopic(topic);
@@ -435,6 +431,23 @@ class NotificationService {
       default:
         return Importance.defaultImportance;
     }
+  }
+
+  /// Get FCM token for current device
+  Future<String?> getFCMToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      print('FCM Token: $token');
+      return token;
+    } catch (e) {
+      print('Error getting FCM token: $e');
+      return null;
+    }
+  }
+
+  /// Get FCM tokens stream (refreshes when token changes)
+  Stream<String> get tokenStream {
+    return _firebaseMessaging.onTokenRefresh;
   }
 
   /// Dispose service

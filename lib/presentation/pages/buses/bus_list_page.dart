@@ -253,13 +253,23 @@ class _BusListPageState extends State<BusListPage> {
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(AppDesign.spaceLG),
-          itemCount: filteredBuses.length,
-          itemBuilder: (context, index) {
-            final busData = filteredBuses[index].data() as Map<String, dynamic>;
-            return _buildBusCard(busData);
+        return RefreshIndicator(
+          onRefresh: () async {
+            // Since this uses StreamBuilder, it's already real-time.
+            // But we can add a slight delay or manually trigger a reload if needed.
+            await Future.delayed(const Duration(seconds: 1));
           },
+          color: AppColors.primaryColor,
+          backgroundColor: Colors.white,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            itemCount: filteredBuses.length,
+            itemBuilder: (context, index) {
+              final busData = filteredBuses[index].data() as Map<String, dynamic>;
+              return _buildBusCard(busData);
+            },
+          ),
         );
       },
     );
@@ -271,8 +281,6 @@ class _BusListPageState extends State<BusListPage> {
     final driverName = busData['driverName'] ?? 'Unknown Driver';
     final model = busData['model'] ?? 'N/A';
     final safetyScore = busData['safetyScore'] ?? 0;
-    final batteryLevel = busData['batteryLevel'] ?? 0;
-    final fuel = busData['fuel'] ?? 0;
     final location = busData['location'] as Map<String, dynamic>?;
     final address = location?['address'] ?? 'Location unavailable';
 
@@ -412,7 +420,7 @@ class _BusListPageState extends State<BusListPage> {
 
             const SizedBox(height: AppDesign.spaceMD),
 
-            // Bus details and status indicators
+            // Bus model
             Row(
               children: [
                 Expanded(
@@ -421,24 +429,6 @@ class _BusListPageState extends State<BusListPage> {
                     model,
                     Icons.directions_bus_rounded,
                     AppColors.primaryColor,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatusIndicator(
-                    'Battery',
-                    '$batteryLevel%',
-                    Icons.battery_full_rounded,
-                    _getBatteryColor(batteryLevel),
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildStatusIndicator(
-                    'Fuel',
-                    '$fuel%',
-                    Icons.local_gas_station_rounded,
-                    _getFuelColor(fuel),
                   ),
                 ),
               ],
@@ -489,18 +479,6 @@ class _BusListPageState extends State<BusListPage> {
   Color _getSafetyScoreColor(int score) {
     if (score >= 90) return AppColors.successColor;
     if (score >= 75) return AppColors.warningColor;
-    return AppColors.errorColor;
-  }
-
-  Color _getBatteryColor(int battery) {
-    if (battery >= 70) return AppColors.successColor;
-    if (battery >= 30) return AppColors.warningColor;
-    return AppColors.errorColor;
-  }
-
-  Color _getFuelColor(int fuel) {
-    if (fuel >= 50) return AppColors.successColor;
-    if (fuel >= 25) return AppColors.warningColor;
     return AppColors.errorColor;
   }
 }

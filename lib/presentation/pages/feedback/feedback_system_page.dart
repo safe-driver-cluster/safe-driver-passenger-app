@@ -1,3 +1,4 @@
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -114,26 +115,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                     width: 1,
                   ),
                 ),
-                child: IconButton(
-                  onPressed: () {
-                    if (isQRScanMode) {
-                      setState(() {
-                        isQRScanMode = false;
-                      });
-                    } else if (selectedBusNumber != null) {
-                      setState(() {
-                        selectedBusNumber = null;
-                      });
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Colors.white,
-                    size: AppDesign.iconLG,
-                  ),
-                ),
+                child: const CustomBackButton(color: Colors.white, ),
               ),
               Row(
                 children: [

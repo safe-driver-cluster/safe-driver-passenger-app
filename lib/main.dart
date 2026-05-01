@@ -1,4 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,7 @@ import 'core/services/notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/themes/app_theme.dart';
 import 'data/services/auth_service.dart';
+import 'data/services/biometric_service.dart';
 import 'firebase_options.dart';
 
 // Top-level function to handle background messages
@@ -69,14 +71,15 @@ void main() async {
     // Initialize Firebase App Check for security
     try {
       if (kDebugMode) {
-        // Use debug provider in debug mode
+        // Use debug provider in debug mode (for emulators)
         await FirebaseAppCheck.instance.activate(
           androidProvider: AndroidProvider.debug,
           appleProvider: AppleProvider.debug,
+          webProvider: ReCaptchaV3Provider(''),
         );
         debugPrint('✅ Firebase App Check initialized with DEBUG provider');
         debugPrint(
-            '🔑 Make sure debug secret is added to Firebase Console: b233b275-5b4c-4933-b79e-d22f6bf4cfc4');
+            '🔑 For production, register debug secret in Firebase Console');
       } else {
         // Production mode with proper App Check
         await FirebaseAppCheck.instance.activate(
@@ -88,6 +91,16 @@ void main() async {
     } catch (e) {
       debugPrint('⚠️ Firebase App Check initialization failed: $e');
       // Continue without App Check in development
+    }
+
+    // Enable Firebase Auth persistence to keep user logged in
+    try {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+      debugPrint(
+          '✅ Firebase Auth persistence ENABLED - User will stay logged in');
+    } catch (e) {
+      debugPrint('⚠️ Firebase Auth persistence configuration: $e');
+      // Persistence might be enabled by default on mobile, this is fine
     }
 
     // Initialize Firebase services
@@ -113,6 +126,12 @@ void main() async {
     final authService = AuthService();
     await authService.initialize();
     print('🔐 Auth service initialized');
+
+    // Initialize biometric service
+    print('🔐 Initializing biometric service...');
+    final biometricService = BiometricService();
+    await biometricService.initialize();
+    print('📱 Biometric service initialized');
 
     // Initialize notification service
     final notificationService = NotificationService.instance;

@@ -46,7 +46,8 @@ class PhoneAuthService {
     }
   }
 
-  /// Verify OTP and sign in user
+  /// Verify OTP - Just verify, don't create profile
+  /// Profile creation happens later in auth_provider.signUp() with all required data
   Future<PhoneAuthResult> verifyOtp({
     required String verificationId,
     required String otpCode,
@@ -62,40 +63,15 @@ class PhoneAuthService {
         phoneNumber: phoneNumber,
       );
 
-      if (result.success && result.user != null) {
-        // Check if user has a passenger profile
-        PassengerModel? passengerProfile;
-        try {
-          passengerProfile =
-              await _passengerService.getPassengerProfile(result.userId!);
-        } catch (e) {
-          print('No existing passenger profile found, will create one');
-        }
+      if (result.success) {
+        print('✅ OTP verified successfully. Phone: ${result.phoneNumber}');
 
-        // If new user or no profile, create passenger profile
-        if (result.isNewUser || passengerProfile == null) {
-          print('Creating new passenger profile for: ${result.userId}');
-
-          await _passengerService.createPassengerProfile(
-            userId: result.userId!,
-            firstName: '', // Will be updated during onboarding
-            lastName: '',
-            email: '', // Optional
-            phoneNumber: result.phoneNumber!,
-          );
-
-          // Get the newly created profile
-          passengerProfile =
-              await _passengerService.getPassengerProfile(result.userId!);
-        }
-
+        // Just return verification success
+        // Profile creation happens in auth_provider.signUp() with email + password + names
         return PhoneAuthResult(
           success: true,
-          user: result.user!,
-          passengerProfile: passengerProfile,
           verificationId: verificationId,
           phoneNumber: result.phoneNumber!,
-          isNewUser: result.isNewUser,
         );
       } else {
         return PhoneAuthResult.error(result.error ?? 'Failed to verify OTP');

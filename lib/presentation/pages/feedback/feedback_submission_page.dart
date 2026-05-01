@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -219,12 +220,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                 ),
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
+                child: const CustomBackButton(
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),

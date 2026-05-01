@@ -712,6 +712,14 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     }
   }
 
+  void _zoomIn() {
+    _mapController?.animateCamera(CameraUpdate.zoomIn());
+  }
+
+  void _zoomOut() {
+    _mapController?.animateCamera(CameraUpdate.zoomOut());
+  }
+
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -948,6 +956,18 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       top: 120,
       child: Column(
         children: [
+          _MapControlButton(
+            icon: Icons.add_rounded,
+            onTap: _zoomIn,
+            tooltip: 'Zoom In',
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          _MapControlButton(
+            icon: Icons.remove_rounded,
+            onTap: _zoomOut,
+            tooltip: 'Zoom Out',
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
           _MapControlButton(
             icon:
                 _currentMapType == MapType.normal ? Icons.satellite : Icons.map,

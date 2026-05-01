@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:safedriver_passenger_app/presentation/pages/profile/faq_page.dart';
+import 'package:safedriver_passenger_app/presentation/pages/profile/live_chat_page.dart';
+import 'package:safedriver_passenger_app/presentation/pages/profile/support_category_page.dart';
+import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
@@ -8,6 +13,7 @@ class HelpSupportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final supportService = SupportDataService();
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -34,10 +40,7 @@ class HelpSupportPage extends StatelessWidget {
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      ),
+                      child: const CustomBackButton(color: Colors.white),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
@@ -143,7 +146,7 @@ class HelpSupportPage extends StatelessWidget {
                                 'Call Support',
                                 'Speak with our team',
                                 AppColors.successColor,
-                                () => _makeCall('1-800-SUPPORT'),
+                                () => _makeCall('1-800-SAFEDRIVER'),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -154,7 +157,12 @@ class HelpSupportPage extends StatelessWidget {
                                 'Live Chat',
                                 'Chat with us now',
                                 AppColors.primaryColor,
-                                () => _showComingSoon(context),
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const LiveChatPage(),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -177,48 +185,49 @@ class HelpSupportPage extends StatelessWidget {
                           child: ListView(
                             children: [
                               _buildSupportCategory(
-                                '🎫',
-                                'Booking & Tickets',
-                                'Help with reservations and ticket issues',
-                                () => _showComingSoon(context),
-                              ),
-
-                              _buildSupportCategory(
-                                '💳',
-                                'Payment Issues',
-                                'Problems with payments and refunds',
-                                () => _showComingSoon(context),
-                              ),
-
-                              _buildSupportCategory(
                                 '📱',
                                 'App Issues',
                                 'Technical problems and app bugs',
-                                () => _showComingSoon(context),
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SupportCategoryPage(
+                                          categoryName: 'App Issues',
+                                        ),
+                                  ),
+                                ),
                               ),
 
                               _buildSupportCategory(
                                 '🚌',
                                 'Bus Services',
                                 'Questions about routes and schedules',
-                                () => _showComingSoon(context),
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SupportCategoryPage(
+                                          categoryName: 'Bus Services',
+                                        ),
+                                  ),
+                                ),
                               ),
 
                               _buildSupportCategory(
                                 '🔒',
                                 'Account & Security',
                                 'Login issues and account security',
-                                () => _showComingSoon(context),
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SupportCategoryPage(
+                                          categoryName: 'Account & Security',
+                                        ),
+                                  ),
+                                ),
                               ),
-
-                              _buildSupportCategory(
-                                '📝',
-                                'Feedback & Suggestions',
-                                'Share your thoughts with us',
-                                () => _showComingSoon(context),
-                              ),
-
-                              const SizedBox(height: 24),
 
                               // Contact Information
                               Container(
@@ -294,7 +303,12 @@ class HelpSupportPage extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 12),
                                     ElevatedButton(
-                                      onPressed: () => _showComingSoon(context),
+                                      onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const FAQPage(),
+                                        ),
+                                      ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.infoColor,
                                         foregroundColor: Colors.white,
@@ -485,35 +499,5 @@ class HelpSupportPage extends StatelessWidget {
     } catch (e) {
       // Handle error
     }
-  }
-
-  void _showComingSoon(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
-          children: [
-            Icon(Icons.info_outline, color: AppColors.infoColor),
-            SizedBox(width: 12),
-            Text('Coming Soon'),
-          ],
-        ),
-        content: const Text(
-            'This feature will be available in a future update. Stay tuned!'),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-            ),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
   }
 }
