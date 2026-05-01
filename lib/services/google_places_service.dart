@@ -65,6 +65,8 @@ class TransitStep {
   final LatLng endLocation;
   final String duration;
   final String distance;
+  final int durationSeconds;
+  final int distanceMeters;
   final String polyline; // encoded polyline for this step
 
   // Transit-specific fields (only set when travelMode == 'TRANSIT')
@@ -84,6 +86,8 @@ class TransitStep {
     required this.endLocation,
     required this.duration,
     required this.distance,
+    required this.durationSeconds,
+    required this.distanceMeters,
     required this.polyline,
     this.lineName,
     this.lineShortName,
@@ -146,6 +150,10 @@ class TransitStep {
       ),
       duration: (json['duration'] as Map<String, dynamic>?)?['text'] as String? ?? '',
       distance: (json['distance'] as Map<String, dynamic>?)?['text'] as String? ?? '',
+      durationSeconds:
+          (json['duration'] as Map<String, dynamic>?)?['value'] as int? ?? 0,
+      distanceMeters:
+          (json['distance'] as Map<String, dynamic>?)?['value'] as int? ?? 0,
       polyline:
           (json['polyline'] as Map<String, dynamic>?)?['points'] as String? ?? '',
       lineName: lineName,
@@ -164,6 +172,8 @@ class TransitStep {
 class DirectionsResult {
   final String totalDuration;
   final String totalDistance;
+  final int totalDurationSeconds;
+  final int totalDistanceMeters;
   final String overviewPolyline;
   final List<TransitStep> steps;
   final LatLng startLocation;
@@ -174,6 +184,8 @@ class DirectionsResult {
   DirectionsResult({
     required this.totalDuration,
     required this.totalDistance,
+    required this.totalDurationSeconds,
+    required this.totalDistanceMeters,
     required this.overviewPolyline,
     required this.steps,
     required this.startLocation,
@@ -188,7 +200,12 @@ class GooglePlacesService {
 
   // ──────────────── Autocomplete (locked to Sri Lanka) ────────────────
 
-  Future<List<Prediction>> autocomplete(String input, {String? types}) async {
+  Future<List<Prediction>> autocomplete(
+    String input, {
+    String? types,
+    LatLng? locationBias,
+    int? radiusMeters,
+  }) async {
     if (_apiKey.isEmpty) {
       throw StateError(
           'Google API key is missing. Set GOOGLE_MAPS_API_KEY in .env file');
@@ -198,6 +215,9 @@ class GooglePlacesService {
       'input': input,
       'key': _apiKey,
       if (types != null) 'types': types,
+      if (locationBias != null)
+        'location': '${locationBias.latitude},${locationBias.longitude}',
+      if (radiusMeters != null) 'radius': '$radiusMeters',
       'components': 'country:lk', // locked to Sri Lanka
     };
 
@@ -366,6 +386,10 @@ class GooglePlacesService {
     return DirectionsResult(
       totalDuration: (leg['duration'] as Map<String, dynamic>)['text'] as String,
       totalDistance: (leg['distance'] as Map<String, dynamic>)['text'] as String,
+      totalDurationSeconds:
+          (leg['duration'] as Map<String, dynamic>)['value'] as int? ?? 0,
+      totalDistanceMeters:
+          (leg['distance'] as Map<String, dynamic>)['value'] as int? ?? 0,
       overviewPolyline: overviewPolyline,
       steps: steps,
       startLocation: LatLng(
