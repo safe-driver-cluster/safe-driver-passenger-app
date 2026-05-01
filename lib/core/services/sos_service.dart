@@ -235,8 +235,11 @@ class SosService {
     String? customMessage,
     bool includeLocation = true,
   }) async {
+    debugPrint('=== SOS ALERT START ===');
     final contacts = await getContacts();
+    
     if (contacts.isEmpty) {
+      debugPrint('SOS: No contacts configured');
       return SosAlertResult(
         totalContacts: 0,
         smsSent: 0,
@@ -246,12 +249,15 @@ class SosService {
         errors: ['No SOS contacts configured'],
       );
     }
+    
+    debugPrint('SOS: Found ${contacts.length} SOS contacts');
 
     // Get location
     String? locationUrl;
     String? locationText;
     if (includeLocation) {
       try {
+        debugPrint('SOS: Attempting to get location...');
         final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           timeLimit: const Duration(seconds: 10),
@@ -260,8 +266,9 @@ class SosService {
             'https://maps.google.com/?q=${position.latitude},${position.longitude}';
         locationText =
             'Lat: ${position.latitude.toStringAsFixed(6)}, Lng: ${position.longitude.toStringAsFixed(6)}';
+        debugPrint('SOS: Location obtained: $locationText');
       } catch (e) {
-        debugPrint('Could not get location for SOS: $e');
+        debugPrint('SOS: Could not get location: $e');
       }
     }
 
@@ -276,6 +283,8 @@ class SosService {
       }
     }
     message += '\n🕐 Time: $timestamp';
+    
+    debugPrint('SOS: Alert message prepared (length: ${message.length})');
 
     int smsSent = 0;
     int smsFailed = 0;
@@ -286,42 +295,58 @@ class SosService {
     // Send to each contact
     for (final contact in contacts) {
       final phone = _formatPhoneNumber(contact.phoneNumber);
+      debugPrint('SOS: Processing contact: ${contact.name} ($phone)');
 
       // Send SMS
       if (contact.sendSms) {
         try {
+          debugPrint('SOS: Sending SMS to ${contact.name}...');
           final result = await _sendSms(phone, message);
           if (result) {
             smsSent++;
+            debugPrint('SOS: SMS sent successfully to ${contact.name}');
           } else {
             smsFailed++;
-            errors.add('SMS failed for ${contact.name}');
+            final errorMsg = 'SMS failed for ${contact.name}';
+            debugPrint('SOS: $errorMsg');
+            errors.add(errorMsg);
           }
         } catch (e) {
           smsFailed++;
-          errors.add('SMS error for ${contact.name}: $e');
+          final errorMsg = 'SMS error for ${contact.name}: $e';
+          debugPrint('SOS: $errorMsg');
+          errors.add(errorMsg);
         }
       }
 
       // Send WhatsApp
       if (contact.sendWhatsapp) {
         try {
+          debugPrint('SOS: Launching WhatsApp for ${contact.name}...');
           final result = await _sendWhatsapp(phone, message);
           if (result) {
             whatsappLaunched++;
+            debugPrint('SOS: WhatsApp launched for ${contact.name}');
           } else {
             whatsappFailed++;
-            errors.add('WhatsApp failed for ${contact.name}');
+            final errorMsg = 'WhatsApp failed for ${contact.name}';
+            debugPrint('SOS: $errorMsg');
+            errors.add(errorMsg);
           }
         } catch (e) {
           whatsappFailed++;
-          errors.add('WhatsApp error for ${contact.name}: $e');
+          final errorMsg = 'WhatsApp error for ${contact.name}: $e';
+          debugPrint('SOS: $errorMsg');
+          errors.add(errorMsg);
         }
       }
     }
 
     // Log SOS event to Firestore
     await _logSosEvent(contacts, message, locationUrl);
+    
+    debugPrint('SOS: Alert complete - SMS: $smsSent sent, $smsFailed failed | WhatsApp: $whatsappLaunched launched, $whatsappFailed failed');
+    debugPrint('=== SOS ALERT END ===');
 
     return SosAlertResult(
       totalContacts: contacts.length,
@@ -337,40 +362,72 @@ class SosService {
   Future<bool> _sendSms(String phoneNumber, String message) async {
     try {
       if (!Platform.isAndroid) {
+        debugPrint('SMS: Non-Android platform, using SMS app');
         return _launchSmsApp(phoneNumber, message);
       }
 
+      // Verify and request SMS permission
+      debugPrint('SMS: Checking SMS permission...');
       final permission = await Permission.sms.request();
       if (!permission.isGranted) {
+        debugPrint('SMS: Permission denied, falling back to SMS app');
         return _launchSmsApp(phoneNumber, message);
       }
+      debugPrint('SMS: Permission granted');
 
-      // Send SMS in background
-      final result = await BackgroundSms.sendMessage(
-        phoneNumber: phoneNumber,
-        message: message,
-      );
-
-      return result == SmsStatus.sent;
+      // Send SMS in background using the plugin
+      debugPrint('SMS: Attempting to send via background_sms to $phoneNumber');
+      try {
+        final result = await BackgroundSms.sendMessage(
+          phoneNumber: phoneNumber,
+          message: message,
+        );
+        
+        debugPrint('SMS: background_sms returned status: $result');
+        
+        // The plugin may return success but not actually send, so we add extra diagnostics
+        if (result == SmsStatus.sent) {
+          debugPrint('SMS: Reported as sent to $phoneNumber');
+          return true;
+        } else {
+          debugPrint('SMS: background_sms returned status $result, falling back to SMS app');
+          return _launchSmsApp(phoneNumber, message);
+        }
+      } catch (pluginError) {
+        debugPrint('SMS: background_sms plugin error: $pluginError');
+        debugPrint('SMS: Falling back to SMS app launcher');
+        return _launchSmsApp(phoneNumber, message);
+      }
     } catch (e) {
-      debugPrint('SMS send error: $e');
-      // Fallback: open SMS app
+      debugPrint('SMS: Unexpected error in _sendSms: $e');
+      // Final fallback: open SMS app
       try {
         return await _launchSmsApp(phoneNumber, message);
       } catch (e2) {
-        debugPrint('SMS fallback error: $e2');
+        debugPrint('SMS: Final fallback also failed: $e2');
       }
       return false;
     }
   }
 
   Future<bool> _launchSmsApp(String phoneNumber, String message) async {
-    final uri =
-        Uri.parse('sms:$phoneNumber?body=${Uri.encodeComponent(message)}');
-    if (await canLaunchUrl(uri)) {
-      return await launchUrl(uri);
+    try {
+      debugPrint('SMS: Launching SMS app for $phoneNumber');
+      final uri =
+          Uri.parse('sms:$phoneNumber?body=${Uri.encodeComponent(message)}');
+      if (await canLaunchUrl(uri)) {
+        debugPrint('SMS: SMS URI is launchable, opening SMS app');
+        final result = await launchUrl(uri);
+        debugPrint('SMS: SMS app launch result: $result');
+        return result;
+      } else {
+        debugPrint('SMS: SMS URI cannot be launched');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('SMS: Error launching SMS app: $e');
+      return false;
     }
-    return false;
   }
 
   /// Send WhatsApp message via deep link
