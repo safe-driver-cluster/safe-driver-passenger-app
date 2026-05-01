@@ -30,10 +30,10 @@ import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
 import '../presentation/pages/qr/qr_scanner_page.dart';
 import '../presentation/pages/safety/emergency_page.dart';
-import '../presentation/pages/safety/sos_contacts_page.dart';
 import '../presentation/pages/safety/hazard_zones_page.dart';
 import '../presentation/pages/safety/safety_alerts_page.dart';
 import '../presentation/pages/safety/safety_hub_page.dart';
+import '../presentation/pages/safety/sos_contacts_page.dart';
 
 /// Application route configuration and navigation management
 class AppRoutes {

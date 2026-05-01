@@ -118,32 +118,32 @@ class _SosContactsPageState extends State<SosContactsPage> {
                 SwitchListTile(
                   value: sendSms,
                   onChanged: (v) => setDialogState(() => sendSms = v),
-                  title: Row(
+                  title: const Row(
                     children: [
                       Icon(Icons.sms_rounded,
                           color: AppColors.primaryColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('SMS',
+                      SizedBox(width: AppDesign.spaceSM),
+                      Text('SMS',
                           style: TextStyle(color: AppColors.textPrimary)),
                     ],
                   ),
-                  activeColor: AppColors.primaryColor,
+                  activeThumbColor: AppColors.primaryColor,
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                 ),
                 SwitchListTile(
                   value: sendWhatsapp,
                   onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                  title: Row(
+                  title: const Row(
                     children: [
                       Icon(Icons.chat_rounded,
                           color: AppColors.successColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('WhatsApp',
+                      SizedBox(width: AppDesign.spaceSM),
+                      Text('WhatsApp',
                           style: TextStyle(color: AppColors.textPrimary)),
                     ],
                   ),
-                  activeColor: AppColors.successColor,
+                  activeThumbColor: AppColors.successColor,
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                 ),
@@ -277,32 +277,32 @@ class _SosContactsPageState extends State<SosContactsPage> {
                 SwitchListTile(
                   value: sendSms,
                   onChanged: (v) => setDialogState(() => sendSms = v),
-                  title: Row(
+                  title: const Row(
                     children: [
                       Icon(Icons.sms_rounded,
                           color: AppColors.primaryColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('SMS',
+                      SizedBox(width: AppDesign.spaceSM),
+                      Text('SMS',
                           style: TextStyle(color: AppColors.textPrimary)),
                     ],
                   ),
-                  activeColor: AppColors.primaryColor,
+                  activeThumbColor: AppColors.primaryColor,
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                 ),
                 SwitchListTile(
                   value: sendWhatsapp,
                   onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                  title: Row(
+                  title: const Row(
                     children: [
                       Icon(Icons.chat_rounded,
                           color: AppColors.successColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('WhatsApp',
+                      SizedBox(width: AppDesign.spaceSM),
+                      Text('WhatsApp',
                           style: TextStyle(color: AppColors.textPrimary)),
                     ],
                   ),
-                  activeColor: AppColors.successColor,
+                  activeThumbColor: AppColors.successColor,
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                 ),
@@ -604,7 +604,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
             ),
           ],
         ),
-        activeColor: AppColors.dangerColor,
+        activeThumbColor: AppColors.dangerColor,
       ),
     );
   }
@@ -735,7 +735,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               contact.phoneNumber,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.primaryColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -809,7 +809,9 @@ class _SosContactsPageState extends State<SosContactsPage> {
         color: enabled ? activeColor.withOpacity(0.1) : AppColors.greyLight,
         borderRadius: BorderRadius.circular(AppDesign.radiusSM),
         border: Border.all(
-          color: enabled ? activeColor.withOpacity(0.3) : AppColors.greyMedium.withOpacity(0.3),
+          color: enabled
+              ? activeColor.withOpacity(0.3)
+              : AppColors.greyMedium.withOpacity(0.3),
         ),
       ),
       child: Row(

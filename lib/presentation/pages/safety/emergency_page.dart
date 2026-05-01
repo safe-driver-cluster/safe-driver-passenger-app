@@ -28,29 +28,29 @@ class _EmergencyPageState extends State<EmergencyPage> {
       body: _isSendingSos
           ? _buildSosSendingOverlay(context)
           : Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.dangerColor,
-              AppColors.criticalColor,
-              AppColors.scaffoldBackground,
-            ],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: _buildEmergencyContent(context),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.dangerColor,
+                    AppColors.criticalColor,
+                    AppColors.scaffoldBackground,
+                  ],
+                  stops: [0.0, 0.3, 1.0],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    _buildHeader(context),
+                    Expanded(
+                      child: _buildEmergencyContent(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -68,7 +68,9 @@ class _EmergencyPageState extends State<EmergencyPage> {
                   color: AppColors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
-                child: const CustomBackButton(color: AppColors.white, ),
+                child: const CustomBackButton(
+                  color: AppColors.white,
+                ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
               const Text(
@@ -614,7 +616,6 @@ class _EmergencyPageState extends State<EmergencyPage> {
     }
   }
 
-
   Future<bool?> _showSosConfirmationDialog(
       BuildContext context, List<SosContact> contacts) {
     return showDialog<bool>(
@@ -729,7 +730,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
               ),
               child: Icon(
                 isSuccess ? Icons.check_circle_rounded : Icons.error_rounded,
-                color: isSuccess ? AppColors.successColor : AppColors.dangerColor,
+                color:
+                    isSuccess ? AppColors.successColor : AppColors.dangerColor,
                 size: 20,
               ),
             ),
@@ -932,7 +934,4 @@ class _EmergencyPageState extends State<EmergencyPage> {
   void _viewEmergencyContacts(BuildContext context) {
     showSosContactsDialog(context);
   }
-
-  }
-
-
+}

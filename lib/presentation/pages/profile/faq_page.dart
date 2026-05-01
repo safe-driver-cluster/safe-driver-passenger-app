@@ -203,7 +203,7 @@ class _FAQPageState extends State<FAQPage> {
                                     });
                                     _filterFAQs();
                                   },
-                                  activeColor: AppColors.primaryColor,
+                                  activeThumbColor: AppColors.primaryColor,
                                 ),
                               ],
                             ),
@@ -351,13 +351,13 @@ class _FAQPageState extends State<FAQPage> {
         backgroundColor: AppColors.scaffoldBackground.withOpacity(0.5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
+          side: const BorderSide(
             color: AppColors.scaffoldBackground,
           ),
         ),
         collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
+          side: const BorderSide(
             color: AppColors.scaffoldBackground,
           ),
         ),

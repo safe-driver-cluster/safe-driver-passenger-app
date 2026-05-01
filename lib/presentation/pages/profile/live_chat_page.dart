@@ -24,7 +24,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
       timestamp: DateTime.now().subtract(const Duration(minutes: 1, seconds: 50)),
     ),
   ];
-  bool _isOnline = true;
+  final bool _isOnline = true;
   bool _isSending = false;
 
   @override
@@ -200,7 +200,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                       // Input Field
                       Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           border: Border(
                             top: BorderSide(
                               color: AppColors.scaffoldBackground,
@@ -220,14 +220,14 @@ class _LiveChatPageState extends State<LiveChatPage> {
                                   controller: _messageController,
                                   enabled: !_isSending,
                                   maxLines: null,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: 'Type your message...',
-                                    hintStyle: const TextStyle(
+                                    hintStyle: TextStyle(
                                       color: AppColors.textSecondary,
                                     ),
                                     border: InputBorder.none,
                                     contentPadding:
-                                        const EdgeInsets.symmetric(
+                                        EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,
                                     ),

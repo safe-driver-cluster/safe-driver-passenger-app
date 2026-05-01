@@ -17,9 +17,11 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 /** BackgroundSmsPlugin */
 public class BackgroundSmsPlugin implements FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
+  /// The MethodChannel that will the communication between Flutter and native
+  /// Android
   ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+  /// This local reference serves to register the plugin with the Flutter Engine
+  /// and unregister it
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
 
@@ -29,8 +31,6 @@ public class BackgroundSmsPlugin implements FlutterPlugin, MethodCallHandler {
     channel.setMethodCallHandler(this);
   }
 
-
-
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     if (call.method.equals("sendSms")) {
@@ -38,22 +38,22 @@ public class BackgroundSmsPlugin implements FlutterPlugin, MethodCallHandler {
       String msg = call.argument("msg");
       Integer simSlot = call.argument("simSlot");
       sendSMS(num, msg, simSlot, result);
-    }else if(call.method.equals("isSupportMultiSim")) {
+    } else if (call.method.equals("isSupportMultiSim")) {
       isSupportCustomSim(result);
-    } else{
+    } else {
       result.notImplemented();
     }
   }
 
-  private void isSupportCustomSim(Result result){
-    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+  private void isSupportCustomSim(Result result) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       result.success(true);
-    }else{
+    } else {
       result.success(false);
     }
   }
 
-  private void sendSMS(String num, String msg, Integer simSlot,Result result) {
+  private void sendSMS(String num, String msg, Integer simSlot, Result result) {
     try {
       SmsManager smsManager;
       if (simSlot == null) {

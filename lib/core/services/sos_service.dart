@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:background_sms/background_sms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Model for a user-defined SOS contact
 class SosContact {
@@ -84,14 +85,15 @@ class SosAlertResult {
 
   bool get isPartialSuccess => smsSent > 0 || whatsappLaunched > 0;
   bool get isCompleteSuccess =>
-      smsSent + whatsappLaunched > 0 &&
-      smsFailed == 0 &&
-      whatsappFailed == 0;
+      smsSent + whatsappLaunched > 0 && smsFailed == 0 && whatsappFailed == 0;
 
   String get summary {
     final parts = <String>[];
-    if (smsSent > 0) parts.add('SMS sent to $smsSent contact${smsSent > 1 ? 's' : ''}');
-    if (whatsappLaunched > 0) parts.add('WhatsApp sent to $whatsappLaunched contact${whatsappLaunched > 1 ? 's' : ''}');
+    if (smsSent > 0)
+      parts.add('SMS sent to $smsSent contact${smsSent > 1 ? 's' : ''}');
+    if (whatsappLaunched > 0)
+      parts.add(
+          'WhatsApp sent to $whatsappLaunched contact${whatsappLaunched > 1 ? 's' : ''}');
     if (smsFailed > 0) parts.add('$smsFailed SMS failed');
     if (whatsappFailed > 0) parts.add('$whatsappFailed WhatsApp failed');
     return parts.isEmpty ? 'No actions taken' : parts.join(', ');
@@ -203,7 +205,9 @@ class SosService {
     final jsonStr = prefs.getString(_contactsKey);
     if (jsonStr == null) return [];
     final List<dynamic> jsonList = json.decode(jsonStr);
-    return jsonList.map((j) => SosContact.fromJson(j as Map<String, dynamic>)).toList();
+    return jsonList
+        .map((j) => SosContact.fromJson(j as Map<String, dynamic>))
+        .toList();
   }
 
   Future<void> _saveContactsLocal(List<SosContact> contacts) async {
@@ -361,7 +365,8 @@ class SosService {
   }
 
   Future<bool> _launchSmsApp(String phoneNumber, String message) async {
-    final uri = Uri.parse('sms:$phoneNumber?body=${Uri.encodeComponent(message)}');
+    final uri =
+        Uri.parse('sms:$phoneNumber?body=${Uri.encodeComponent(message)}');
     if (await canLaunchUrl(uri)) {
       return await launchUrl(uri);
     }

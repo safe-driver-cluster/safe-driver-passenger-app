@@ -64,7 +64,8 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           ),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           title: Row(
             children: [
               Container(
@@ -100,76 +101,76 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDialogTextField(
-                  controller: nameController,
-                  label: 'Contact Name',
-                  hint: 'e.g., Mom, Dad, Spouse',
-                  icon: Icons.person_rounded,
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: phoneController,
-                  label: 'Phone Number',
-                  hint: 'e.g., 0771234567',
-                  icon: Icons.phone_rounded,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: relationshipController,
-                  label: 'Relationship',
-                  hint: 'e.g., Parent, Friend',
-                  icon: Icons.favorite_rounded,
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-                const Text(
-                  'Alert Methods',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDialogTextField(
+                    controller: nameController,
+                    label: 'Contact Name',
+                    hint: 'e.g., Mom, Dad, Spouse',
+                    icon: Icons.person_rounded,
                   ),
-                ),
-                const SizedBox(height: AppDesign.spaceSM),
-                SwitchListTile(
-                  value: sendSms,
-                  onChanged: (v) => setDialogState(() => sendSms = v),
-                  title: Row(
-                    children: [
-                      Icon(Icons.sms_rounded,
-                          color: AppColors.primaryColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('SMS',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: phoneController,
+                    label: 'Phone Number',
+                    hint: 'e.g., 0771234567',
+                    icon: Icons.phone_rounded,
+                    keyboardType: TextInputType.phone,
                   ),
-                  activeColor: AppColors.primaryColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-                SwitchListTile(
-                  value: sendWhatsapp,
-                  onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                  title: Row(
-                    children: [
-                      Icon(Icons.chat_rounded,
-                          color: AppColors.successColor, size: 20),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      const Text('WhatsApp',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: relationshipController,
+                    label: 'Relationship',
+                    hint: 'e.g., Parent, Friend',
+                    icon: Icons.favorite_rounded,
                   ),
-                  activeColor: AppColors.successColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-              ],
+                  const SizedBox(height: AppDesign.spaceLG),
+                  const Text(
+                    'Alert Methods',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  SwitchListTile(
+                    value: sendSms,
+                    onChanged: (v) => setDialogState(() => sendSms = v),
+                    title: const Row(
+                      children: [
+                        Icon(Icons.sms_rounded,
+                            color: AppColors.primaryColor, size: 20),
+                        SizedBox(width: AppDesign.spaceSM),
+                        Text('SMS',
+                            style: TextStyle(color: AppColors.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.primaryColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                  SwitchListTile(
+                    value: sendWhatsapp,
+                    onChanged: (v) => setDialogState(() => sendWhatsapp = v),
+                    title: const Row(
+                      children: [
+                        Icon(Icons.chat_rounded,
+                            color: AppColors.successColor, size: 20),
+                        SizedBox(width: AppDesign.spaceSM),
+                        Text('WhatsApp',
+                            style: TextStyle(color: AppColors.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.successColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                ],
+              ),
             ),
-          ),
           ),
           actions: [
             TextButton(
@@ -210,8 +211,9 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                 _loadContacts();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    contact == null ? AppColors.dangerColor : AppColors.primaryColor,
+                backgroundColor: contact == null
+                    ? AppColors.dangerColor
+                    : AppColors.primaryColor,
                 foregroundColor: AppColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -353,7 +355,7 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                         'Send alerts to all contacts instantly',
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
-                      activeColor: AppColors.dangerColor,
+                      activeThumbColor: AppColors.dangerColor,
                       contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: AppDesign.spaceMD),
