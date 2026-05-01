@@ -114,8 +114,8 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0xFFFF6B6B),
-                      Color(0xFFFFD93D),
+                      AppColors.primaryColor,
+                      AppColors.tealAccent,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -168,7 +168,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                                     color: displayProgress >= 1.0
                                         ? AppColors.successColor
                                             .withOpacity(0.3)
-                                        : const Color(0xFFFF6B6B)
+                                        : AppColors.primaryColor
                                             .withOpacity(0.25),
                                     blurRadius: 25,
                                     spreadRadius: 8,
@@ -207,8 +207,8 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
                                     colors: [
-                                      Color(0xFFFF6B6B),
-                                      Color(0xFFFFD93D)
+                                      AppColors.primaryColor,
+                                      AppColors.tealAccent,
                                     ],
                                   ).createShader(bounds),
                                   child: Text(
@@ -263,14 +263,14 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
         ),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFFFF6B6B), Color(0xFFFFD93D)],
+            colors: [AppColors.primaryColor, AppColors.tealAccent],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B6B).withOpacity(0.2),
+              color: AppColors.primaryColor.withOpacity(0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -341,7 +341,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                     padding: const EdgeInsets.all(AppDesign.spaceLG),
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFFFF6B6B), Color(0xFFFFD93D)],
+                        colors: [AppColors.primaryColor, AppColors.tealAccent],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -632,12 +632,12 @@ class ProgressCirclePainter extends CustomPainter {
       ..shader = LinearGradient(
         colors: isComplete
             ? [
-                const Color(0xFF059669),
-                const Color(0xFF10B981),
+                AppColors.successColor,
+                AppColors.secondaryLight,
               ]
             : [
-                const Color(0xFFFF6B6B),
-                const Color(0xFFFFD93D),
+                AppColors.primaryColor,
+                AppColors.tealAccent,
               ],
       ).createShader(
         Rect.fromCircle(
@@ -661,7 +661,7 @@ class ProgressCirclePainter extends CustomPainter {
     // Draw glow effect at the end of progress
     if (progress > 0 && progress < 1.0) {
       final glowPaint = Paint()
-        ..color = const Color(0xFFFF6B6B).withOpacity(0.5)
+        ..color = AppColors.primaryColor.withOpacity(0.5)
         ..style = PaintingStyle.fill;
 
       final angle = -3.14159 / 2 + (2 * 3.14159) * progress;
@@ -702,8 +702,7 @@ class CheckpointDotsPainter extends CustomPainter {
       if (dotProgress <= progress) {
         // Active dot (reached)
         final activePaint = Paint()
-          ..color = const Color(0xFFFFD93D)
-          ..style = PaintingStyle.fill
+          ..color = AppColors.primaryColor
           ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2.0);
 
         canvas.drawCircle(Offset(dotX, dotY), 4.5, activePaint);

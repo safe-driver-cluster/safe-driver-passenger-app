@@ -156,6 +156,8 @@ class AppColors {
   static const Color shadowLight = Color(0x1F000000);
   static const Color shadowMedium = Color(0x3D000000);
   static const Color shadowDark = Color(0x5C000000);
+
+  static Color? get white70 => null;
 }
 
 // Color utility methods

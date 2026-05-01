@@ -25,7 +25,6 @@ import '../presentation/pages/language/language_selection_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/onboarding/onboarding_page.dart';
 import '../presentation/pages/profile/notifications_page.dart';
-import '../presentation/pages/profile/passenger_profile_screen.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
@@ -34,6 +33,7 @@ import '../presentation/pages/safety/emergency_page.dart';
 import '../presentation/pages/safety/hazard_zones_page.dart';
 import '../presentation/pages/safety/safety_alerts_page.dart';
 import '../presentation/pages/safety/safety_hub_page.dart';
+import '../presentation/pages/safety/sos_contacts_page.dart';
 
 /// Application route configuration and navigation management
 class AppRoutes {
@@ -69,6 +69,7 @@ class AppRoutes {
   static const String safetyHub = '/safety-hub';
   static const String hazardZones = '/hazard-zones';
   static const String emergency = '/emergency';
+  static const String sosContacts = '/sos-contacts';
 
   // Feedback routes
   static const String feedback = '/feedback';
@@ -90,8 +91,8 @@ class AppRoutes {
   static const String hazardZoneIntelligence = '/hazard-zone-intelligence';
 
   // Profile routes
+  static const String profile = '/profile';
   static const String userProfile = '/user-profile';
-  static const String passengerProfile = '/passenger-profile';
   static const String settings = '/settings';
 
   /// Generate route based on route settings
@@ -275,6 +276,12 @@ class AppRoutes {
           settings: settings,
         );
 
+      case sosContacts:
+        return MaterialPageRoute(
+          builder: (_) => const SosContactsPage(),
+          settings: settings,
+        );
+
       case feedback:
         final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
@@ -349,9 +356,9 @@ class AppRoutes {
           settings: settings,
         );
 
-      case passengerProfile:
+      case profile:
         return MaterialPageRoute(
-          builder: (_) => const PassengerProfileScreen(),
+          builder: (_) => const UserProfilePage(),
           settings: settings,
         );
 
