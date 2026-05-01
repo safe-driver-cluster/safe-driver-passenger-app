@@ -35,7 +35,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _cityController;
   late final TextEditingController _stateController;
   late final TextEditingController _zipCodeController;
-  late final TextEditingController _countryController;
 
   // Emergency contact controllers
   late final TextEditingController _emergencyNameController;
@@ -72,7 +71,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _cityController = TextEditingController();
     _stateController = TextEditingController();
     _zipCodeController = TextEditingController();
-    _countryController = TextEditingController();
 
     _emergencyNameController = TextEditingController();
     _emergencyPhoneController = TextEditingController();
@@ -115,7 +113,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         _cityController.text = profile.address!.city;
         _stateController.text = ''; // No state field in model
         _zipCodeController.text = profile.address!.postalCode;
-        _countryController.text = profile.address!.country;
       }
 
       // Emergency contact
@@ -294,10 +291,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
             // Emergency Contact
             _buildEmergencyContactSection(),
-            const SizedBox(height: AppDesign.spaceLG),
-
-            // Preferences
-            _buildPreferencesSection(),
             const SizedBox(height: AppDesign.spaceXL),
           ],
         ),
@@ -561,27 +554,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
           const SizedBox(height: AppDesign.spaceMD),
 
-          // ZIP code and Country
-          Row(
-            children: [
-              Expanded(
-                child: _buildFormField(
-                  controller: _zipCodeController,
-                  label: AppLocalizations.of(context).zipCode,
-                  icon: Icons.markunread_mailbox_outlined,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                flex: 2,
-                child: _buildFormField(
-                  controller: _countryController,
-                  label: AppLocalizations.of(context).country,
-                  icon: Icons.public_outlined,
-                ),
-              ),
-            ],
+          // ZIP code
+          _buildFormField(
+            controller: _zipCodeController,
+            label: AppLocalizations.of(context).zipCode,
+            icon: Icons.markunread_mailbox_outlined,
+            keyboardType: TextInputType.number,
           ),
         ],
       ),
@@ -662,89 +640,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
           const SizedBox(height: AppDesign.spaceMD),
 
-          // Emergency contact phone and relationship
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: _buildFormField(
-                  controller: _emergencyPhoneController,
-                  label: 'Phone Number',
-                  icon: Icons.phone_in_talk_outlined,
-                  keyboardType: TextInputType.phone,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildFormField(
-                  controller: _emergencyRelationController,
-                  label: AppLocalizations.of(context).relationship,
-                  icon: Icons.family_restroom_outlined,
-                ),
-              ),
-            ],
+          // Emergency contact phone number
+          _buildFormField(
+            controller: _emergencyPhoneController,
+            label: 'Phone Number',
+            icon: Icons.phone_in_talk_outlined,
+            keyboardType: TextInputType.phone,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPreferencesSection() {
-    return ProfessionalCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section Header
-          Row(
-            children: [
-              const Icon(
-                Icons.settings_outlined,
-                color: AppColors.primaryColor,
-                size: 24,
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                AppLocalizations.of(context).preferences,
-                style: AppTextStyles.headline6.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDesign.spaceLG),
 
-          // Notification settings
-          _buildSwitchTile(
-            title: 'Push Notifications',
-            subtitle: 'Receive updates about your trips',
-            value: _notificationsEnabled,
-            onChanged: (value) => setState(() => _notificationsEnabled = value),
-            icon: Icons.notifications_outlined,
-          ),
-
-          _buildSwitchTile(
-            title: 'Location Sharing',
-            subtitle: 'Share location for better service',
-            value: _locationSharingEnabled,
-            onChanged: (value) =>
-                setState(() => _locationSharingEnabled = value),
-            icon: Icons.location_on_outlined,
-          ),
-
-          const SizedBox(height: AppDesign.spaceMD),
-
-          // Language preference
-          _buildDropdownField(
-            label: 'Language',
-            value: _preferredLanguage,
-            items: const ['English', 'Spanish', 'French', 'German'],
-            onChanged: (value) => setState(() => _preferredLanguage = value!),
-            icon: Icons.language_outlined,
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildReadOnlyField(String label, String value, IconData icon) {
     return Container(
@@ -877,59 +785,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     );
   }
 
-  Widget _buildSwitchTile({
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-    required IconData icon,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
-      padding: const EdgeInsets.all(AppDesign.spaceMD),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(color: AppColors.greyLight),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: AppColors.primaryColor,
-            size: 24,
-          ),
-          const SizedBox(width: AppDesign.spaceMD),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.greyMedium,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: AppColors.primaryColor,
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _selectImage() async {
     try {
       final XFile? image = await _imagePicker.pickImage(
@@ -989,23 +844,79 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         throw Exception('No authenticated user found');
       }
 
-      // For now, just show success without actual saving since we need to implement proper service methods
-      // TODO: Implement actual profile image upload and update methods
+      // Parse date of birth
+      DateTime? dateOfBirth;
+      if (_dateOfBirthController.text.isNotEmpty) {
+        try {
+          final parts = _dateOfBirthController.text.split('/');
+          if (parts.length == 3) {
+            dateOfBirth = DateTime(
+              int.parse(parts[2]),
+              int.parse(parts[1]),
+              int.parse(parts[0]),
+            );
+          }
+        } catch (e) {
+          // Keep existing date if parsing fails
+          dateOfBirth = _currentProfile?.dateOfBirth;
+        }
+      }
 
-      // TODO: Implement actual profile update
-      // Update basic fields only for now
-      // final updatedProfile = _currentProfile?.copyWith(
-      //   firstName: _firstNameController.text.trim(),
-      //   lastName: _lastNameController.text.trim(),
-      //   phoneNumber: _phoneController.text.trim(),
-      //   gender: _genderController.text.isNotEmpty
-      //       ? _genderController.text.trim()
-      //       : null,
-      //   updatedAt: DateTime.now(),
-      // );
+      // Map display gender value back to actual value
+      final genderValue = _mapDisplayValueToGender(_selectedGender);
 
-      // TODO: Save to Firestore when service is properly implemented
-      // await PassengerService.instance.updatePassengerProfile(updatedProfile);      // Show success message
+      // Create updated address
+      final updatedAddress = PassengerAddress(
+        street: _streetController.text.trim(),
+        city: _cityController.text.trim(),
+        postalCode: _zipCodeController.text.trim(),
+        country: 'Sri Lanka', // Default to Sri Lanka (no country input)
+        latitude: _currentProfile?.address?.latitude,
+        longitude: _currentProfile?.address?.longitude,
+      );
+
+      // Create updated preferences
+      final updatedPreferences = PassengerPreferences(
+        language: _mapDisplayNameToLanguageCode(_preferredLanguage),
+        theme: _currentProfile?.preferences.theme ?? 'system',
+        notifications: PassengerNotificationSettings(
+          safetyAlerts: _currentProfile?.preferences.notifications.safetyAlerts ?? true,
+          journeyUpdates: _notificationsEnabled,
+          emergencyAlerts: _currentProfile?.preferences.notifications.emergencyAlerts ?? true,
+          systemAnnouncements: _currentProfile?.preferences.notifications.systemAnnouncements ?? true,
+        ),
+        privacy: PassengerPrivacySettings(
+          shareLocation: _locationSharingEnabled,
+          shareJourneyData: _currentProfile?.preferences.privacy.shareJourneyData ?? true,
+        ),
+      );
+
+      // Create updated emergency contact
+      final updatedEmergencyContact = PassengerEmergencyContact(
+        name: _emergencyNameController.text.trim(),
+        phoneNumber: _emergencyPhoneController.text.trim(),
+        relationship: _emergencyRelationController.text.trim(),
+      );
+
+      // Create updated profile
+      final updatedProfile = _currentProfile!.copyWith(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        dateOfBirth: dateOfBirth,
+        gender: genderValue,
+        address: updatedAddress,
+        preferences: updatedPreferences,
+        emergencyContact: updatedEmergencyContact,
+        updatedAt: DateTime.now(),
+      );
+
+      // Save to Firestore
+      await PassengerService.instance.updatePassengerProfile(
+        userId: user.uid,
+        passenger: updatedProfile,
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1018,7 +929,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           ),
         );
 
-        Navigator.of(context).pop(true); // Return true to indicate success
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       _showErrorDialog('Error saving profile: $e');
@@ -1071,7 +982,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _cityController.dispose();
     _stateController.dispose();
     _zipCodeController.dispose();
-    _countryController.dispose();
     _emergencyNameController.dispose();
     _emergencyPhoneController.dispose();
     _emergencyRelationController.dispose();
