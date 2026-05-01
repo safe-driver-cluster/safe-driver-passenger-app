@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/auth_controller.dart';
 // import '../controllers/dashboard_controller.dart'; // Commented out - using simple_providers instead
@@ -204,10 +206,64 @@ final busSearchProvider =
 //   }
 // });
 
+class ThemeModeController extends StateNotifier<ThemeMode> {
+  static const String _themeModeKey = 'theme_mode';
+
+  ThemeModeController() : super(ThemeMode.system) {
+    _loadSavedThemeMode();
+  }
+
+  Future<void> _loadSavedThemeMode() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedThemeMode = prefs.getString(_themeModeKey);
+
+      if (savedThemeMode != null) {
+        state = _themeModeFromString(savedThemeMode);
+      }
+    } catch (e) {
+      debugPrint('Error loading saved theme mode: $e');
+    }
+  }
+
+  Future<void> changeThemeMode(ThemeMode themeMode) async {
+    try {
+      state = themeMode;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themeModeKey, _themeModeToString(themeMode));
+    } catch (e) {
+      debugPrint('Error saving theme mode: $e');
+    }
+  }
+
+  static ThemeMode _themeModeFromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'light':
+        return ThemeMode.light;
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  static String _themeModeToString(ThemeMode themeMode) {
+    switch (themeMode) {
+      case ThemeMode.light:
+        return 'light';
+      case ThemeMode.dark:
+        return 'dark';
+      case ThemeMode.system:
+        return 'system';
+    }
+  }
+}
+
 // Theme Mode Provider (for app theming)
-final themeModeProvider = StateProvider<bool>((ref) {
-  // Default to light theme (false = light, true = dark)
-  return false;
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeController, ThemeMode>((ref) {
+  return ThemeModeController();
 });
 
 // Language Provider (for localization)
