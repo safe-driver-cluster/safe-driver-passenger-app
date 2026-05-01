@@ -8,6 +8,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/services/sos_service.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/passenger_service.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -23,6 +24,7 @@ class EditProfilePage extends ConsumerStatefulWidget {
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _imagePicker = ImagePicker();
+  final _sosService = SosService();
 
   // Form controllers
   late final TextEditingController _firstNameController;
@@ -88,6 +90,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         if (profile != null) {
           _populateFormFields(profile);
         }
+        await _loadLatestSosContact();
       }
     } catch (e) {
       _showErrorDialog('Error loading profile: $e');
@@ -105,7 +108,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _firstNameController.text = profile.firstName;
       _lastNameController.text = profile.lastName;
       _phoneController.text = profile.phoneNumber;
-      _dateOfBirthController.text = profile.dateOfBirth?.toString() ?? '';
+      _dateOfBirthController.text = _formatDateOfBirth(profile.dateOfBirth);
 
       // Address
       if (profile.address != null) {
@@ -134,6 +137,36 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       // Set gender dropdown value
       _selectedGender = _mapGenderToDisplayValue(profile.gender);
     });
+  }
+
+  Future<void> _loadLatestSosContact() async {
+    final contacts = await _sosService.getContacts();
+    if (!mounted || contacts.isEmpty) return;
+
+    final latestContact = [...contacts]..sort(_compareSosContactsNewestFirst);
+    final contact = latestContact.first;
+
+    setState(() {
+      _emergencyNameController.text = contact.name;
+      _emergencyPhoneController.text = contact.phoneNumber;
+      _emergencyRelationController.text = contact.relationship;
+    });
+  }
+
+  int _compareSosContactsNewestFirst(SosContact a, SosContact b) {
+    final aId = int.tryParse(a.id);
+    final bId = int.tryParse(b.id);
+
+    if (aId != null && bId != null) {
+      return bId.compareTo(aId);
+    }
+
+    return b.id.compareTo(a.id);
+  }
+
+  String _formatDateOfBirth(DateTime? date) {
+    if (date == null) return '';
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   @override
@@ -617,7 +650,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => showSosContactsDialog(context),
+                  onPressed: () async {
+                    await showSosContactsDialog(context);
+                    await _loadLatestSosContact();
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.errorColor,
                     foregroundColor: AppColors.white,
