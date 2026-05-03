@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class ActiveJourneyWidget extends ConsumerWidget {
@@ -12,14 +13,15 @@ class ActiveJourneyWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardControllerProvider);
     final activeJourney = dashboardState.activeJourney;
+    final th = ThemeHelper.of(context);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: th.shadowLight,
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -36,6 +38,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
 
   Widget _buildActiveJourneyContent(
       BuildContext context, dynamic activeJourney) {
+    final th = ThemeHelper.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -60,17 +63,17 @@ class ActiveJourneyWidget extends ConsumerWidget {
                 children: [
                   Text(
                     'Route ${activeJourney.routeNumber}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                   Text(
                     activeJourney.routeName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                     ),
                   ),
                 ],
@@ -110,11 +113,11 @@ class ActiveJourneyWidget extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 4),
-        const Text(
+        Text(
           'Near Central Station',
           style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: th.textSecondary,
           ),
         ),
         const SizedBox(height: 12),
@@ -122,16 +125,16 @@ class ActiveJourneyWidget extends ConsumerWidget {
         // Progress Bar
         LinearProgressIndicator(
           value: 0.65, // Mock progress
-          backgroundColor: Colors.grey[300],
+          backgroundColor: th.inputFill,
           valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
           minHeight: 6,
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           '65% of journey completed',
           style: TextStyle(
             fontSize: 12,
-            color: AppColors.textSecondary,
+            color: th.textSecondary,
           ),
         ),
         const SizedBox(height: 16),
@@ -141,6 +144,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
           children: [
             Expanded(
               child: _buildJourneyDetail(
+                context,
                 'Safety Score',
                 '${activeJourney.safetyScore.toStringAsFixed(1)}/5.0',
                 Icons.shield,
@@ -150,6 +154,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildJourneyDetail(
+                context,
                 'ETA',
                 '15 min',
                 Icons.access_time,
@@ -159,6 +164,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _buildJourneyDetail(
+                context,
                 'Speed',
                 '45 km/h',
                 Icons.speed,
@@ -219,6 +225,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
   }
 
   Widget _buildNoActiveJourneyContent(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Column(
       children: [
         Container(
@@ -246,20 +253,20 @@ class ActiveJourneyWidget extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const Text(
+        Text(
           'No Active Journey',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: th.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Scan a QR code or search for a bus\nto start tracking your journey',
           style: TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondary,
+            color: th.textSecondary,
             height: 1.5,
           ),
           textAlign: TextAlign.center,
@@ -316,7 +323,8 @@ class ActiveJourneyWidget extends ConsumerWidget {
   }
 
   Widget _buildJourneyDetail(
-      String label, String value, IconData icon, Color color) {
+      BuildContext context, String label, String value, IconData icon, Color color) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -338,9 +346,9 @@ class ActiveJourneyWidget extends ConsumerWidget {
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safedriver_passenger_app/data/models/notification_model.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../providers/notification_provider.dart';
 
 class NotificationsBottomSheet extends ConsumerStatefulWidget {
@@ -19,6 +20,7 @@ class _NotificationsBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.8,
       minChildSize: 0.5,
@@ -26,9 +28,9 @@ class _NotificationsBottomSheetState
       expand: false,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+            color: th.surface,
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(24),
               topRight: Radius.circular(24),
             ),
@@ -45,7 +47,7 @@ class _NotificationsBottomSheetState
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                        color: th.subtleBackground,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -57,12 +59,12 @@ class _NotificationsBottomSheetState
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Notifications',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.black,
+                                color: th.textPrimary,
                               ),
                             ),
                             Consumer(
@@ -74,14 +76,14 @@ class _NotificationsBottomSheetState
                                     count > 0 ? '$count new' : 'All caught up',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey[600],
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                   loading: () => Text(
                                     'Loading...',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey[600],
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                   error: (_, __) => const SizedBox.shrink(),
@@ -144,14 +146,14 @@ class _NotificationsBottomSheetState
                                 Icon(
                                   Icons.notifications_none_rounded,
                                   size: 56,
-                                  color: Colors.grey[300],
+                                  color: th.subtleBackground,
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
                                   'No notifications',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Colors.grey[600],
+                                    color: th.textSecondary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -197,7 +199,7 @@ class _NotificationsBottomSheetState
                               'Failed to load',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey[600],
+                                color: th.textSecondary,
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -222,22 +224,23 @@ class _NotificationsBottomSheetState
   }
 
   Widget _buildFilterChip(String label, String value) {
+    final th = ThemeHelper.of(context);
     return FilterChip(
       label: Text(label),
       selected: _filterType == value,
       onSelected: (selected) {
         setState(() => _filterType = value);
       },
-      backgroundColor: Colors.white,
+      backgroundColor: th.surface,
       selectedColor: AppColors.primaryColor.withOpacity(0.15),
       labelStyle: TextStyle(
-        color: _filterType == value ? AppColors.primaryColor : Colors.grey[600],
+        color: _filterType == value ? AppColors.primaryColor : th.textSecondary,
         fontWeight: FontWeight.w600,
         fontSize: 13,
       ),
       side: BorderSide(
         color:
-            _filterType == value ? AppColors.primaryColor : Colors.grey[300]!,
+            _filterType == value ? AppColors.primaryColor : th.borderLight,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -261,15 +264,16 @@ class _NotificationsBottomSheetState
     WidgetRef ref,
     NotificationModel notification,
   ) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
         color: notification.isRead
-            ? Colors.grey[50]
+            ? th.cardBackground
             : AppColors.primaryColor.withOpacity(0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: notification.isRead
-              ? Colors.grey[200]!
+              ? th.borderLight
               : AppColors.primaryColor.withOpacity(0.2),
         ),
       ),
@@ -291,7 +295,7 @@ class _NotificationsBottomSheetState
           style: TextStyle(
             fontSize: 14,
             fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.w700,
-            color: Colors.black87,
+            color: th.textPrimary,
           ),
         ),
         subtitle: Column(
@@ -304,7 +308,7 @@ class _NotificationsBottomSheetState
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[700],
+                color: th.textSecondary,
                 height: 1.3,
               ),
             ),
@@ -313,7 +317,7 @@ class _NotificationsBottomSheetState
               _formatTime(notification.sentAt),
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.grey[500],
+                color: th.textHint,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -340,7 +344,7 @@ class _NotificationsBottomSheetState
           icon: Icon(
             Icons.more_vert,
             size: 18,
-            color: Colors.grey[600],
+            color: th.textSecondary,
           ),
         ),
         onTap: () {

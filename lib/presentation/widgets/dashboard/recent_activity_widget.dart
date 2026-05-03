@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class RecentActivityWidget extends ConsumerWidget {
@@ -9,22 +10,23 @@ class RecentActivityWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
     final dashboardState = ref.watch(dashboardControllerProvider);
     final recentActivity = dashboardState.recentActivity;
 
     if (recentActivity.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(th);
     }
 
     return Column(
       children: recentActivity
           .take(5)
-          .map((activity) => _buildActivityItem(activity))
+          .map((activity) => _buildActivityItem(th, activity))
           .toList(),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ThemeHelper th) {
     return Container(
       padding: const EdgeInsets.all(32),
       child: Center(
@@ -57,20 +59,20 @@ class RecentActivityWidget extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No recent activity',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Start your first journey with SafeDriver\nto see your activity here',
               style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -81,7 +83,7 @@ class RecentActivityWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildActivityItem(String activity) {
+  Widget _buildActivityItem(ThemeHelper th, String activity) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -99,17 +101,17 @@ class RecentActivityWidget extends ConsumerWidget {
           Expanded(
             child: Text(
               activity,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
           ),
           Icon(
             _getActivityIcon(activity),
             size: 16,
-            color: AppColors.textSecondary,
+            color: th.textSecondary,
           ),
         ],
       ),

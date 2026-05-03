@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../services/google_places_service.dart' as places_service;
 
 class MapPage extends ConsumerStatefulWidget {
@@ -578,6 +579,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   void _zoomOut() => _mapController?.animateCamera(CameraUpdate.zoomOut());
 
   Widget _buildHeader() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -587,7 +589,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.white.withOpacity(0.2),
+                  color: th.glassBackground,
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
                 child: IconButton(
@@ -628,13 +630,14 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildSearchBox() {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -650,8 +653,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: 'Search destination or bus stop',
-          hintStyle: const TextStyle(
-            color: AppColors.textHint,
+          hintStyle: TextStyle(
+            color: th.textHint,
             fontSize: 16,
           ),
           prefixIcon: const Icon(
@@ -674,9 +677,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               : _searchController.text.isNotEmpty
                   ? IconButton(
                       onPressed: _clearSearchAndRoute,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.clear_rounded,
-                        color: AppColors.textHint,
+                        color: th.textHint,
                       ),
                     )
                   : null,
@@ -691,14 +694,15 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildSuggestionsList() {
+    final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.08),
+            color: th.shadowLight,
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -756,13 +760,14 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildMapContainer() {
+    final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -809,8 +814,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildRouteSummaryCard(places_service.DirectionsResult directions) {
+    final th = ThemeHelper.of(context);
     return Material(
-      color: AppColors.white,
+      color: th.cardBackground,
       elevation: 6,
       borderRadius: BorderRadius.circular(AppDesign.radiusLG),
       child: InkWell(
@@ -841,16 +847,16 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                       _selectedDestinationName ?? 'Bus route',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        color: th.textPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: AppDesign.spaceXS),
                     Text(
                       '${directions.totalDistance} - ${directions.totalDuration} - ${_averageSpeed(directions)}${directions.isFallback ? ' - estimated' : ''}',
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
+                      style: TextStyle(
+                        color: th.textSecondary,
                         fontSize: 12,
                       ),
                     ),
@@ -918,158 +924,163 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         directions.steps.where((step) => step.travelMode == 'TRANSIT').toList();
 
     showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.55,
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.greyLight,
-                borderRadius: BorderRadius.circular(2),
-              ),
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) {
+          final th = ThemeHelper.of(context);
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.55,
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: th.borderLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.directions_bus,
-                          color: AppColors.primaryColor,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.directions_bus,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _selectedDestinationName ??
+                                  AppLocalizations.of(context)
+                                      .busRouteToDestination,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: th.textPrimary,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: _openGoogleMapsBusNavigation,
+                            icon: const Icon(Icons.open_in_new_rounded),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _selectedDestinationName ??
-                              AppLocalizations.of(context)
-                                  .busRouteToDestination,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                      const SizedBox(height: AppDesign.spaceMD),
+                      Row(
+                        children: [
+                          _RouteMetric(
+                            label: 'Distance',
+                            value: directions.totalDistance,
+                            icon: Icons.straighten_rounded,
+                          ),
+                          const SizedBox(width: AppDesign.spaceSM),
+                          _RouteMetric(
+                            label: 'Duration',
+                            value: directions.totalDuration,
+                            icon: Icons.schedule_rounded,
+                          ),
+                          const SizedBox(width: AppDesign.spaceSM),
+                          _RouteMetric(
+                            label: 'Avg speed',
+                            value: _averageSpeed(directions),
+                            icon: Icons.speed_rounded,
+                          ),
+                        ],
+                      ),
+                      if (directions.isFallback) ...[
+                        const SizedBox(height: AppDesign.spaceSM),
+                        const Text(
+                          'Estimated road route because Google bus directions are unavailable.',
+                          style: TextStyle(
+                            color: AppColors.warningColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: _openGoogleMapsBusNavigation,
-                        icon: const Icon(Icons.open_in_new_rounded),
-                      ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: AppDesign.spaceMD),
-                  Row(
-                    children: [
-                      _RouteMetric(
-                        label: 'Distance',
-                        value: directions.totalDistance,
-                        icon: Icons.straighten_rounded,
-                      ),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      _RouteMetric(
-                        label: 'Duration',
-                        value: directions.totalDuration,
-                        icon: Icons.schedule_rounded,
-                      ),
-                      const SizedBox(width: AppDesign.spaceSM),
-                      _RouteMetric(
-                        label: 'Avg speed',
-                        value: _averageSpeed(directions),
-                        icon: Icons.speed_rounded,
-                      ),
-                    ],
-                  ),
-                  if (directions.isFallback) ...[
-                    const SizedBox(height: AppDesign.spaceSM),
-                    const Text(
-                      'Estimated road route because Google bus directions are unavailable.',
-                      style: TextStyle(
-                        color: AppColors.warningColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                itemCount: directions.steps.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
-                itemBuilder: (context, index) {
-                  final step = directions.steps[index];
-                  return _TransitStepTile(
-                    step: step,
-                    title: step.travelMode == 'TRANSIT'
-                        ? _busLineLabel(step)
-                        : step.instructions,
-                  );
-                },
-              ),
-            ),
-            if (transitSteps.isEmpty)
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: Text(
-                  'Google did not return a bus segment for this route.',
-                  style: TextStyle(color: AppColors.textSecondary),
                 ),
-              ),
-          ],
-        ),
-      ),
-    );
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: directions.steps.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final step = directions.steps[index];
+                      return _TransitStepTile(
+                        step: step,
+                        title: step.travelMode == 'TRANSIT'
+                            ? _busLineLabel(step)
+                            : step.instructions,
+                      );
+                    },
+                  ),
+                ),
+                if (transitSteps.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: Text(
+                      'Google did not return a bus segment for this route.',
+                      style: TextStyle(color: th.textSecondary),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildErrorState() {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppDesign.space2XL),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.location_off,
               size: 64,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
             const SizedBox(height: AppDesign.spaceLG),
             Text(
               AppLocalizations.of(context).unableToLoadMap,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceMD),
             Text(
               _errorMessage ?? 'Unknown error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceLG),
@@ -1077,7 +1088,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               onPressed: _getCurrentLocation,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
@@ -1091,6 +1102,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildLoadingState() {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1099,8 +1111,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
           const SizedBox(height: AppDesign.spaceLG),
           Text(
             AppLocalizations.of(context).loadingMap,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
+            style: TextStyle(
+              color: th.textSecondary,
               fontSize: 16,
             ),
           ),
@@ -1111,19 +1123,20 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 1.0],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
@@ -1152,13 +1165,14 @@ class _RouteMetric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceSM),
         decoration: BoxDecoration(
-          color: AppColors.greyExtraLight,
+          color: th.inputFill,
           borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-          border: Border.all(color: AppColors.greyLight),
+          border: Border.all(color: th.borderLight),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1169,8 +1183,8 @@ class _RouteMetric extends StatelessWidget {
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                color: th.textPrimary,
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
               ),
@@ -1179,8 +1193,8 @@ class _RouteMetric extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: th.textSecondary,
                 fontSize: 11,
               ),
             ),
@@ -1202,6 +1216,7 @@ class _TransitStepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final isBus = step.travelMode == 'TRANSIT';
     final subtitle = isBus
         ? [
@@ -1213,9 +1228,9 @@ class _TransitStepTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: th.inputFill,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: th.borderLight),
       ),
       child: Row(
         children: [
@@ -1223,13 +1238,13 @@ class _TransitStepTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: (isBus ? AppColors.primaryColor : AppColors.greyMedium)
+              color: (isBus ? AppColors.primaryColor : th.textDisabled)
                   .withOpacity(0.12),
               borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             ),
             child: Icon(
               isBus ? Icons.directions_bus_rounded : Icons.directions_walk,
-              color: isBus ? AppColors.primaryColor : AppColors.greyMedium,
+              color: isBus ? AppColors.primaryColor : th.textDisabled,
               size: 20,
             ),
           ),
@@ -1242,8 +1257,8 @@ class _TransitStepTile extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
+                  style: TextStyle(
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1253,8 +1268,8 @@ class _TransitStepTile extends StatelessWidget {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      color: th.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -1274,8 +1289,8 @@ class _TransitStepTile extends StatelessWidget {
           if (isBus && step.numStops != null)
             Text(
               '${step.numStops} stops',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: th.textSecondary,
                 fontSize: 12,
               ),
             ),
@@ -1302,17 +1317,18 @@ class _SmallActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: th.surface,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withOpacity(0.1),
+              color: th.shadowMedium,
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -1341,9 +1357,7 @@ class _SmallActionButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: isLoading
-                      ? AppColors.textSecondary
-                      : AppColors.textPrimary,
+                  color: isLoading ? th.textSecondary : th.textPrimary,
                 ),
               ),
             ),
@@ -1369,6 +1383,7 @@ class _MapControlButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Tooltip(
       message: tooltip,
       child: GestureDetector(
@@ -1377,11 +1392,11 @@ class _MapControlButton extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryColor : AppColors.white,
+            color: isActive ? AppColors.primaryColor : th.surface,
             borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withOpacity(0.1),
+                color: th.shadowMedium,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -1389,7 +1404,7 @@ class _MapControlButton extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: isActive ? AppColors.white : AppColors.primaryColor,
+            color: isActive ? Colors.white : AppColors.primaryColor,
             size: 24,
           ),
         ),

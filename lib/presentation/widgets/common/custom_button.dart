@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -32,6 +33,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isEnabled = onPressed != null && !isLoading;
+    final th = ThemeHelper.of(context);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -57,7 +59,7 @@ class CustomButton extends StatelessWidget {
               ? Colors.transparent
               : backgroundColor ?? AppColors.primaryColor,
           foregroundColor:
-              isOutlined ? AppColors.primaryColor : textColor ?? Colors.white,
+              isOutlined ? th.primary : textColor ?? Colors.white,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -65,16 +67,16 @@ class CustomButton extends StatelessWidget {
             side: isOutlined
                 ? BorderSide(
                     color: isEnabled
-                        ? AppColors.primaryColor
-                        : AppColors.textDisabled,
+                        ? th.primary
+                        : th.textDisabled,
                     width: 2,
                   )
                 : BorderSide.none,
           ),
           padding: padding ?? const EdgeInsets.symmetric(horizontal: 20),
           disabledBackgroundColor:
-              isOutlined ? Colors.transparent : AppColors.greyLight,
-          disabledForegroundColor: AppColors.textDisabled,
+              isOutlined ? Colors.transparent : th.subtleBackground,
+          disabledForegroundColor: th.textDisabled,
         ),
         child: isLoading
             ? SizedBox(
@@ -83,7 +85,7 @@ class CustomButton extends StatelessWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isOutlined ? AppColors.primaryColor : Colors.white,
+                    isOutlined ? th.primary : Colors.white,
                   ),
                 ),
               )
@@ -103,9 +105,9 @@ class CustomButton extends StatelessWidget {
                       letterSpacing: 0.5,
                       color: isEnabled
                           ? (isOutlined
-                              ? AppColors.primaryColor
+                              ? th.primary
                               : textColor ?? Colors.white)
-                          : AppColors.textDisabled,
+                          : th.textDisabled,
                     ),
                   ),
                 ],
