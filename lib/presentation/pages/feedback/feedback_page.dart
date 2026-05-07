@@ -8,6 +8,7 @@ import '../../../data/models/feedback_model.dart';
 import '../../../data/repositories/feedback_repository.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class FeedbackPage extends ConsumerStatefulWidget {
   final String? busId;
@@ -56,6 +57,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(

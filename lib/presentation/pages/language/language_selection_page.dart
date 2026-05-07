@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../providers/language_provider.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class LanguageSelectionPage extends ConsumerStatefulWidget {
   const LanguageSelectionPage({super.key});
@@ -71,6 +72,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       body: Container(
         width: double.infinity,

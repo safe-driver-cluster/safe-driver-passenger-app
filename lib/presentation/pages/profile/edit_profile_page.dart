@@ -305,6 +305,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget _buildFormContent() {
+    final th = ThemeHelper.of(context);
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -706,7 +707,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         children: [
           Icon(
             icon,
-            color: AppColors.greyMedium,
+            color: th.textSecondary,
             size: 20,
           ),
           const SizedBox(width: AppDesign.spaceMD),
@@ -717,7 +718,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 Text(
                   label,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.greyMedium,
+                    color: th.textSecondary,
                     fontSize: 12,
                   ),
                 ),
@@ -725,7 +726,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 Text(
                   value,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.greyDark,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

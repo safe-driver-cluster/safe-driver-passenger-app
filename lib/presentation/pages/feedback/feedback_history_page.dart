@@ -5,6 +5,7 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -94,21 +95,22 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final feedbackController = ref.read(feedbackControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -138,12 +140,13 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
   }
 
   Widget _buildEmptyState() {
-    return const SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
+    final th = ThemeHelper.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: AppDesign.spaceXL),
+          const SizedBox(height: AppDesign.spaceXL),
           ProfessionalCard(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -151,24 +154,24 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 Icon(
                   Icons.history_rounded,
                   size: 64,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                 ),
-                SizedBox(height: AppDesign.spaceLG),
+                const SizedBox(height: AppDesign.spaceLG),
                 Text(
                   'No Feedback Yet',
                   style: TextStyle(
                     fontSize: AppDesign.text2XL,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
-                SizedBox(height: AppDesign.spaceSM),
+                const SizedBox(height: AppDesign.spaceSM),
                 Text(
                   'Share your feedback about buses and drivers to get started',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: AppDesign.textMD,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -203,18 +206,19 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
   }
 
   Widget _buildFeedbackCard(feedback) {
+    final th = ThemeHelper.of(context);
     final dateFormatter = DateFormat('MMM dd, yyyy • hh:mm a');
     final submittedDate = dateFormatter.format(feedback.submittedAt);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: AppColors.shadowLight,
+            color: th.shadowLight,
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -305,9 +309,9 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                         const SizedBox(width: AppDesign.spaceSM),
                         Text(
                           '${feedback.rating.overall}/5',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: th.textPrimary,
                           ),
                         ),
                       ],
@@ -318,12 +322,12 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                         vertical: AppDesign.spaceSM,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight.withOpacity(0.1),
+                        color: AppColors.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                       ),
-                      child: Text(
-                        _getCategoryText(feedback.category),
-                        style: const TextStyle(
+                      child: const Text(
+                        '',
+                        style: TextStyle(
                           fontSize: AppDesign.textSM,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primaryColor,
@@ -334,25 +338,46 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
 
+                // Category chip
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDesign.spaceMD,
+                    vertical: AppDesign.spaceSM,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                  ),
+                  child: Text(
+                    _getCategoryText(feedback.category),
+                    style: const TextStyle(
+                      fontSize: AppDesign.textSM,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+
                 // Comment
                 if (feedback.comment.isNotEmpty)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Comment',
                         style: TextStyle(
                           fontSize: AppDesign.textSM,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
+                          color: th.textSecondary,
                         ),
                       ),
                       const SizedBox(height: AppDesign.spaceSM),
                       Text(
                         feedback.comment,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: AppDesign.textMD,
-                          color: AppColors.textPrimary,
+                          color: th.textPrimary,
                           height: 1.5,
                         ),
                       ),
@@ -363,9 +388,9 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 // Date
                 Text(
                   'Submitted: $submittedDate',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDesign.textSM,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],

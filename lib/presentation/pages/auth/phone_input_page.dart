@@ -10,6 +10,7 @@ import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
 import 'otp_verification_page.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class PhoneInputPage extends ConsumerStatefulWidget {
   const PhoneInputPage({super.key});
@@ -65,6 +66,7 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
 

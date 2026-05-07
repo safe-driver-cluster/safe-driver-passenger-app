@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/storage_service.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -155,20 +156,28 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryDark,
-              AppColors.scaffoldBackground,
-            ],
-            stops: [0.0, 0.3, 0.7],
+            colors: th.isDark
+                ? [
+                    AppColors.primaryDark,
+                    AppColors.primaryColor,
+                    AppColors.darkBackground,
+                  ]
+                : [
+                    AppColors.primaryColor,
+                    AppColors.primaryDark,
+                    AppColors.scaffoldBackground,
+                  ],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: Stack(
@@ -255,7 +264,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             child: Container(
                               margin: const EdgeInsets.all(30),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: th.isDark
+                                    ? AppColors.darkCard
+                                    : Colors.white,
                                 borderRadius:
                                     BorderRadius.circular(AppDesign.radiusFull),
                                 boxShadow: [
@@ -267,10 +278,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.directions_bus_rounded,
                                 size: 80,
-                                color: AppColors.primaryColor,
+                                color: th.isDark
+                                    ? AppColors.primaryLight
+                                    : AppColors.primaryColor,
                               ),
                             ),
                           ),
@@ -306,35 +319,27 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                     ),
                                   ],
                                 ),
-                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: AppDesign.spaceMD),
+                              const Text(
+                                'Safe Journeys Start Here',
+                                style: TextStyle(
+                                  fontSize: AppDesign.textXL,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      offset: Offset(0, 2),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: AppDesign.spaceLG),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppDesign.space2XL,
-                                ),
-                                child: const Text(
-                                  'Your Safety, Our Priority',
-                                  style: TextStyle(
-                                    fontSize: AppDesign.textXL,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1.0,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(0, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              const SizedBox(height: AppDesign.space2XL),
-                              Container(
-                                width: 150,
-                                height: 6,
+                                width: 200,
+                                height: 3,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
@@ -344,7 +349,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                     ],
                                   ),
                                   borderRadius:
-                                      BorderRadius.circular(AppDesign.radiusLG),
+                                      BorderRadius.circular(AppDesign.radiusMD),
                                 ),
                               ),
                             ],
@@ -353,124 +358,90 @@ class _SplashPageState extends ConsumerState<SplashPage>
                       );
                     },
                   ),
-                ],
-              ),
-            ),
 
-            // Bottom loading section - positioned at bottom
-            Positioned(
-              bottom: AppDesign.space3XL,
-              left: 0,
-              right: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Modern Loading indicator - centered and larger
+                  const Spacer(),
+
+                  // Loading section
                   Container(
-                    width: 60,
-                    height: 60,
-                    padding: const EdgeInsets.all(AppDesign.spaceMD),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryColor.withOpacity(0.8),
-                          AppColors.primaryDark.withOpacity(0.6),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                      border: Border.all(
-                        color: AppColors.primaryColor.withOpacity(0.6),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                    padding: const EdgeInsets.all(AppDesign.spaceLG),
+                    child: Column(
+                      children: [
+                        const CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
                         ),
-                        BoxShadow(
-                          color: AppColors.primaryColor.withOpacity(0.3),
-                          blurRadius: 30,
-                          offset: const Offset(0, 5),
+                        const SizedBox(height: AppDesign.spaceLG),
+                        // Loading text
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppDesign.spaceLG,
+                            vertical: AppDesign.spaceSM,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.2),
+                            borderRadius:
+                                BorderRadius.circular(AppDesign.radiusLG),
+                          ),
+                          child: const Text(
+                            'Loading...',
+                            style: TextStyle(
+                              fontSize: AppDesign.textMD,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.0,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black54,
+                                  offset: Offset(0, 2),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: AppDesign.spaceLG),
+                        // Version and powered by
+                        Column(
+                          children: [
+                            Text(
+                              'Version 1.0.0',
+                              style: TextStyle(
+                                fontSize: AppDesign.textXS,
+                                color: Colors.white.withOpacity(0.8),
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.white.withOpacity(0.5),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: AppDesign.spaceXS),
+                            Text(
+                              'Powered by SafeDriver Technologies',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white.withOpacity(0.7),
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.3,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.white.withOpacity(0.5),
+                                    offset: const Offset(0, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
                   ),
-
                   const SizedBox(height: AppDesign.spaceLG),
-
-                  // Loading text
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDesign.spaceLG,
-                      vertical: AppDesign.spaceSM,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                    ),
-                    child: const Text(
-                      'Loading...',
-                      style: TextStyle(
-                        fontSize: AppDesign.textMD,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppDesign.spaceLG),
-
-                  // Version and powered by
-                  Column(
-                    children: [
-                      Text(
-                        'Version 1.0.0',
-                        style: TextStyle(
-                          fontSize: AppDesign.textXS,
-                          color: AppColors.textPrimary.withOpacity(0.8),
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withOpacity(0.5),
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppDesign.spaceXS),
-                      Text(
-                        'Powered by SafeDriver Technologies',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.3,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withOpacity(0.5),
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),

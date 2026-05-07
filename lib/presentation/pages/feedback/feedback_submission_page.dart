@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../../data/models/location_model.dart' as location_models;
 import '../../../data/services/firebase_storage_service.dart';
@@ -97,18 +98,19 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.backgroundColor,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: Column(
@@ -269,14 +271,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildMediaUploadSection() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -300,24 +303,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Add Photos or Videos (Optional)',
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          const Text(
+          Text(
             'Upload images or videos to better explain your feedback (Max 10MB)',
             style: TextStyle(
               fontSize: AppDesign.textSM,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -375,6 +378,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildMediaFileItem(File file) {
+    final th = ThemeHelper.of(context);
     final fileName = file.path.split('/').last;
     final fileSize = (file.lengthSync() / (1024 * 1024)).toStringAsFixed(2);
     final isVideo = fileName.toLowerCase().endsWith('.mp4') ||
@@ -385,10 +389,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       margin: const EdgeInsets.only(bottom: AppDesign.spaceSM),
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: th.subtleBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusMD),
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -406,19 +410,19 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               children: [
                 Text(
                   fileName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDesign.textSM,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   '${fileSize}MB',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDesign.textXS,
-                    color: AppColors.textHint,
+                    color: th.textHint,
                   ),
                 ),
               ],
@@ -438,14 +442,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildLocationSection() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -469,24 +474,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Location Information',
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          const Text(
+          Text(
             'Your location helps us understand the context of your feedback',
             style: TextStyle(
               fontSize: AppDesign.textSM,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -603,14 +608,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildContactOptionsSection() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -634,24 +640,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Need More Help?',
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          const Text(
+          Text(
             'For large files or detailed discussions, contact us directly',
             style: TextStyle(
               fontSize: AppDesign.textSM,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -858,14 +864,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildBusInfoHeader() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -910,10 +917,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               children: [
                 Text(
                   'Bus ${widget.busNumber}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: AppDesign.text2XL,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceXS),
@@ -944,14 +951,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildRatingSection() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -960,20 +968,20 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Rate your experience',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
           Text(
             _getRatingDescription(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               height: 1.4,
             ),
           ),
@@ -1051,6 +1059,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildQuickActionsSection() {
+    final th = ThemeHelper.of(context);
     final actions = widget.feedbackTarget == FeedbackTarget.bus
         ? busQuickActions
         : driverQuickActions;
@@ -1058,11 +1067,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -1086,24 +1095,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Quick Feedback (Select Multiple)',
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          const Text(
+          Text(
             'Choose one or more options that match your experience',
             style: TextStyle(
               fontSize: AppDesign.textSM,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -1119,6 +1128,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildQuickActionChip(String action) {
+    final th = ThemeHelper.of(context);
     final isSelected = selectedQuickActions.contains(action);
     final isPositive = _isPositiveAction(action);
 
@@ -1133,7 +1143,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         decoration: BoxDecoration(
           color: isSelected
               ? (isPositive ? AppColors.successColor : AppColors.warningColor)
-              : AppColors.greyLight,
+              : th.subtleBackground,
           borderRadius: BorderRadius.circular(AppDesign.radiusFull),
           border: isSelected
               ? Border.all(
@@ -1142,14 +1152,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                       : AppColors.warningColor,
                   width: 2,
                 )
-              : null,
+              : Border.all(color: th.border, width: 1),
         ),
         child: Text(
           action,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: isSelected ? AppColors.white : AppColors.textPrimary,
+            color: isSelected ? Colors.white : th.textPrimary,
           ),
         ),
       ),
@@ -1157,14 +1167,15 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildCommentSection() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 20,
             offset: const Offset(0, 5),
           ),
@@ -1188,24 +1199,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 ),
               ),
               const SizedBox(width: AppDesign.spaceLG),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Additional Comments',
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceSM),
-          const Text(
+          Text(
             'Share more details about your experience (optional)',
             style: TextStyle(
               fontSize: AppDesign.textSM,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -1215,11 +1226,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             maxLength: 500,
             decoration: InputDecoration(
               hintText: 'Type your feedback here...',
-              hintStyle: const TextStyle(
-                color: AppColors.textHint,
+              hintStyle: TextStyle(
+                color: th.textHint,
               ),
               filled: true,
-              fillColor: AppColors.greyExtraLight,
+              fillColor: th.inputFill,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                 borderSide: BorderSide.none,
@@ -1231,13 +1242,13 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   width: 2,
                 ),
               ),
-              counterStyle: const TextStyle(
-                color: AppColors.textHint,
+              counterStyle: TextStyle(
+                color: th.textHint,
                 fontSize: 12,
               ),
             ),
-            style: const TextStyle(
-              color: AppColors.textPrimary,
+            style: TextStyle(
+              color: th.textPrimary,
               fontSize: 16,
             ),
           ),
@@ -1247,13 +1258,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Widget _buildSubmitButton() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.1),
+            color: th.shadowMedium,
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -1527,6 +1539,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   void _showSuccessDialog() {
+    final th = ThemeHelper.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1550,20 +1563,20 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ),
             ),
             const SizedBox(height: AppDesign.spaceLG),
-            const Text(
+            Text(
               'Feedback Submitted!',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceSM),
-            const Text(
+            Text(
               'Thank you for your feedback. It helps us improve our service.',
               style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -1590,6 +1603,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   void _showErrorDialog(String error) {
+    final th = ThemeHelper.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1612,20 +1626,20 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ),
             ),
             const SizedBox(height: AppDesign.spaceLG),
-            const Text(
+            Text(
               'Submission Failed',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceSM),
-            const Text(
+            Text(
               'Failed to submit feedback. Please try again.',
               style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
               textAlign: TextAlign.center,
             ),

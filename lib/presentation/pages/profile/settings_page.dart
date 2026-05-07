@@ -7,6 +7,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../providers/app_providers.dart';
 import '../../../providers/biometric_settings_provider.dart';
 import '../../../providers/language_provider.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -47,6 +48,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;

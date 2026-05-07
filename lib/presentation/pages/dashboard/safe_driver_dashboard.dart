@@ -8,12 +8,14 @@ import '../../../providers/passenger_provider.dart';
 import '../driver/driver_info_page.dart';
 import '../hazard/hazard_zone_intelligence_page.dart';
 import '../qr/qr_scanner_page.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class SafeDriverDashboard extends ConsumerWidget {
   const SafeDriverDashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

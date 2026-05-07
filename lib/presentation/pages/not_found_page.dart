@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Page Not Found'),

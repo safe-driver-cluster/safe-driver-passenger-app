@@ -99,15 +99,16 @@ class ActiveJourneyWidget extends ConsumerWidget {
         const SizedBox(height: 16),
 
         // Journey Progress
-        const Row(
+        Row(
           children: [
-            Icon(Icons.location_on, color: Colors.green, size: 16),
-            SizedBox(width: 8),
+            const Icon(Icons.location_on, color: Colors.green, size: 16),
+            const SizedBox(width: 8),
             Text(
               'Current Location:',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
+                color: th.textPrimary,
               ),
             ),
           ],
@@ -322,8 +323,8 @@ class ActiveJourneyWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildJourneyDetail(
-      BuildContext context, String label, String value, IconData icon, Color color) {
+  Widget _buildJourneyDetail(BuildContext context, String label, String value,
+      IconData icon, Color color) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(8),

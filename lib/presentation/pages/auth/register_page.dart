@@ -8,6 +8,7 @@ import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/custom_back_button.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -93,7 +94,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: const Color(0xFFCF6679),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         action: SnackBarAction(
@@ -192,6 +193,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final authState = ref.watch(authStateProvider);
 
     // Listen for auth state changes and navigate accordingly

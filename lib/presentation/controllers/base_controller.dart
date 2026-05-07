@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/services/firebase_service.dart';
 import '../../data/services/passenger_service.dart';
+import '../../../core/utils/theme_helper.dart';
 
 // Base controller class for presentation layer
 abstract class BaseController extends StateNotifier<AsyncValue<void>> {

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/services/sms_gateway_service.dart';
 import '../../widgets/common/custom_snackbar.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
   const ForgotPasswordOtpPage({super.key});
@@ -240,6 +241,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(

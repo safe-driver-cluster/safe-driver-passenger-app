@@ -10,6 +10,7 @@ import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class AccountVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -301,6 +302,7 @@ class _AccountVerificationPageState
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
 

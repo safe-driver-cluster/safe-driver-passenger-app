@@ -5,6 +5,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../controllers/feedback_controller.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class FeedbackTestPage extends ConsumerStatefulWidget {
   const FeedbackTestPage({super.key});
@@ -57,6 +58,7 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(

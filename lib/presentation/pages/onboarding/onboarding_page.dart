@@ -6,6 +6,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/onboarding_model.dart';
 import '../auth/login_page.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -86,6 +87,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

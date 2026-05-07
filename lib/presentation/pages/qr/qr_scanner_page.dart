@@ -9,6 +9,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
   const QrScannerPage({super.key});
@@ -90,6 +91,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(

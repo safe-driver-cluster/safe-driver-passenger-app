@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/driver_model.dart';
 import '../../data/repositories/driver_repository.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Controller for driver-related operations and state management
 class DriverController extends StateNotifier<AsyncValue<void>> {

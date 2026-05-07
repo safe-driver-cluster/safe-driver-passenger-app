@@ -96,7 +96,8 @@ class _FAQPageState extends State<FAQPage> {
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const CustomBackButton(color: Colors.white),
+                      child: CustomBackButton(
+                          color: th.isDark ? th.textPrimary : Colors.white),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
@@ -234,7 +235,7 @@ class _FAQPageState extends State<FAQPage> {
                                       selectedColor: AppColors.primaryColor,
                                       labelStyle: TextStyle(
                                         color: isSelected
-                                            ? Colors.white
+                                            ? th.textOnPrimary
                                             : th.textPrimary,
                                         fontWeight: FontWeight.w600,
                                       ),

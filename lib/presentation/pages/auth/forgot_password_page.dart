@@ -6,6 +6,7 @@ import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -91,6 +92,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -181,9 +183,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   constraints: BoxConstraints(
                     minHeight: MediaQuery.of(context).size.height * 0.6,
                   ),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: th.cardBackground,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(32),
                       topRight: Radius.circular(32),
                     ),
@@ -205,10 +207,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                   // Country Code Picker
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[50],
+                                      color: th.inputFill,
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
-                                        color: Colors.grey[200]!,
+                                        color: th.border,
                                         width: 1,
                                       ),
                                     ),
@@ -226,10 +228,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                   Expanded(
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.grey[50],
+                                        color: th.inputFill,
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
-                                          color: Colors.grey[200]!,
+                                          color: th.border,
                                           width: 1,
                                         ),
                                       ),

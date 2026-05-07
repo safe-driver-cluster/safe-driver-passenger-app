@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class HomePage extends StatelessWidget {
   final void Function(int)? onNavigateToTab;
@@ -9,8 +10,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: th.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -154,17 +156,17 @@ class HomePage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: th.cardBackground,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: th.shadowLight,
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
                       ],
                     ),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -182,14 +184,14 @@ class HomePage extends StatelessWidget {
                               Icon(
                                 Icons.history,
                                 size: 60,
-                                color: Colors.grey,
+                                color: th.textSecondary,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Text(
                                 'No recent trips',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: AppColors.textSecondary,
+                                  color: th.textSecondary,
                                 ),
                               ),
                               SizedBox(height: 8),

@@ -161,6 +161,7 @@ class DashboardHome extends ConsumerWidget {
 
                         // Active Journey Section
                         _buildProfessionalSection(
+                          context: context,
                           title: 'Current Journey',
                           icon: Icons.directions_bus_rounded,
                           gradient: AppColors.primaryGradient,
@@ -170,6 +171,7 @@ class DashboardHome extends ConsumerWidget {
 
                         // Recent Activity Section
                         _buildProfessionalSection(
+                          context: context,
                           title: 'Recent Activity',
                           icon: Icons.history_rounded,
                           gradient: AppColors.accentGradient,
@@ -420,13 +422,14 @@ class DashboardHome extends ConsumerWidget {
   }
 
   Widget _buildProfessionalQuickActions(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowLG,
         border: Border.all(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: th.border,
           width: 1,
         ),
       ),
@@ -454,7 +457,7 @@ class DashboardHome extends ConsumerWidget {
                 Text(
                   'Quick Actions',
                   style: AppTextStyles.headline6.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -600,14 +603,16 @@ class DashboardHome extends ConsumerWidget {
     required IconData icon,
     required LinearGradient gradient,
     required Widget child,
+    required BuildContext context,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),

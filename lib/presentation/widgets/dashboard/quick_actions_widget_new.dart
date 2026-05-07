@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../common/professional_widgets.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class QuickActionsWidget extends StatelessWidget {
   final VoidCallback onQrScan;
@@ -24,6 +25,7 @@ class QuickActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return ProfessionalCard(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       gradient: AppColors.cardGradient,

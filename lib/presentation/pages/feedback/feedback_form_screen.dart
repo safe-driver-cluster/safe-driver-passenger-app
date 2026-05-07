@@ -8,6 +8,7 @@ import '../../../data/models/passenger_model.dart';
 import '../../../data/services/feedback_service.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class FeedbackFormScreen extends ConsumerStatefulWidget {
   final String? busId;
@@ -134,6 +135,7 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final passengerAsync = ref.watch(currentPassengerProvider);
 
     return Scaffold(

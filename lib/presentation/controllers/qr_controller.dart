@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/bus_repository.dart';
 import '../../data/models/bus_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 // QR Scanner State
 class QrState {

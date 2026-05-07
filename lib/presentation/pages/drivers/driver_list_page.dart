@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class DriverListPage extends StatefulWidget {
   const DriverListPage({super.key});
@@ -25,6 +26,7 @@ class _DriverListPageState extends State<DriverListPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(

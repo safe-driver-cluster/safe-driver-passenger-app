@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class EmergencyPage extends StatefulWidget {
   const EmergencyPage({super.key});
@@ -23,21 +24,22 @@ class _EmergencyPageState extends State<EmergencyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: _isSendingSos
           ? _buildSosSendingOverlay(context)
           : Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.dangerColor,
                     AppColors.criticalColor,
-                    AppColors.scaffoldBackground,
+                    th.background,
                   ],
-                  stops: [0.0, 0.3, 1.0],
+                  stops: const [0.0, 0.3, 1.0],
                 ),
               ),
               child: SafeArea(
@@ -55,6 +57,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(

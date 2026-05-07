@@ -3,6 +3,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/bus_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Bus card widget for displaying bus information in lists
 class BusCard extends StatelessWidget {
@@ -25,6 +26,7 @@ class BusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -326,6 +328,7 @@ class CompactBusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
