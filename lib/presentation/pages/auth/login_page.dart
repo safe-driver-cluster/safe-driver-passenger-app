@@ -270,34 +270,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 60, horizontal: 24),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Logo with glow effect
+                              // Logo with glow effect - Perfect Circle
                               Container(
+                                width: 140,
+                                height: 140,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.white.withOpacity(0.3),
-                                      blurRadius: 20,
-                                      spreadRadius: 5,
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 25,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 10),
                                     ),
                                   ],
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
+                                child: ClipOval(
                                   child: Image.asset(
                                     'assets/images/logo.png',
-                                    width: 120,
-                                    height: 120,
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Container(
-                                        width: 120,
-                                        height: 120,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
                                           color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(30),
                                         ),
                                         child: const Icon(
                                           Icons.local_taxi,
@@ -312,6 +311,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               const SizedBox(height: 32),
                               Text(
                                 l10n.welcomeTitle,
+                                textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.bold,
@@ -321,6 +321,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               const SizedBox(height: 8),
                               Text(
                                 l10n.appTagline,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white.withOpacity(0.8),
