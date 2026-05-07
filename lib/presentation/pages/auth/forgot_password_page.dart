@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/services/sms_gateway_service.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -28,6 +29,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   }
 
   Future<void> _sendOTP() async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -50,7 +52,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         if (mounted) {
           CustomSnackBar.showError(
             context,
-            'No account found with this phone number.',
+            l10n.noAccountFoundPhone,
           );
         }
         return;
@@ -73,13 +75,12 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(
-              context, result.error ?? 'Failed to send OTP');
+          CustomSnackBar.showError(context, result.error ?? l10n.otpFailed);
         }
       }
     } catch (e) {
       if (mounted) {
-        CustomSnackBar.showError(context, 'Failed to send OTP');
+        CustomSnackBar.showError(context, l10n.otpFailed);
       }
     } finally {
       if (mounted) {
@@ -92,7 +93,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -156,9 +158,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const Text(
-                        'Forgot Password?',
-                        style: TextStyle(
+                      Text(
+                        l10n.forgotPassword,
+                        style: const TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -166,7 +168,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Enter your phone number and we will send you\na code to reset your password',
+                        l10n.enterPhoneResetPassword,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
@@ -239,7 +241,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                         controller: _phoneController,
                                         keyboardType: TextInputType.phone,
                                         decoration: InputDecoration(
-                                          labelText: 'Phone Number',
+                                          labelText: l10n.phoneNumber,
                                           prefixIcon:
                                               const Icon(Icons.phone_outlined),
                                           border: InputBorder.none,
@@ -256,10 +258,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                         validator: (value) {
                                           if (value == null ||
                                               value.trim().isEmpty) {
-                                            return 'Phone number is required';
+                                            return l10n.phoneRequired;
                                           }
                                           if (value.length < 9) {
-                                            return 'Please enter a valid phone number';
+                                            return l10n.invalidPhone;
                                           }
                                           return null;
                                         },
@@ -311,9 +313,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                                                     Colors.white),
                                           ),
                                         )
-                                      : const Text(
-                                          'Send OTP',
-                                          style: TextStyle(
+                                      : Text(
+                                          l10n.sendOTP,
+                                          style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -328,9 +330,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                               Center(
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
-                                  child: const Text(
-                                    'Back to Login',
-                                    style: TextStyle(
+                                  child: Text(
+                                    l10n.backToLogin,
+                                    style: const TextStyle(
                                       color: Color(0xFF2563EB),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,

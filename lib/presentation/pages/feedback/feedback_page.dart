@@ -4,11 +4,12 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../../data/repositories/feedback_repository.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/professional_widgets.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class FeedbackPage extends ConsumerStatefulWidget {
   final String? busId;
@@ -57,7 +58,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -77,7 +79,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
           child: Column(
             children: [
               // Modern Header
-              _buildModernHeader(),
+              _buildModernHeader(l10n),
 
               // Feedback Content
               Expanded(
@@ -87,27 +89,27 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                   child: Column(
                     children: [
                       // Trip Info Card
-                      if (widget.busId != null) _buildTripInfoCard(),
+                      if (widget.busId != null) _buildTripInfoCard(l10n),
 
                       const SizedBox(height: AppDesign.space2XL),
 
                       // Rating Section
-                      _buildRatingSection(),
+                      _buildRatingSection(l10n),
 
                       const SizedBox(height: AppDesign.space2XL),
 
                       // Category Selection
-                      _buildCategorySection(),
+                      _buildCategorySection(l10n),
 
                       const SizedBox(height: AppDesign.space2XL),
 
                       // Feedback Text
-                      _buildFeedbackSection(),
+                      _buildFeedbackSection(l10n),
 
                       const SizedBox(height: AppDesign.space2XL),
 
                       // Submit Button
-                      _buildSubmitSection(),
+                      _buildSubmitSection(l10n),
                     ],
                   ),
                 ),
@@ -119,7 +121,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildModernHeader() {
+  Widget _buildModernHeader(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -153,9 +155,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Share Feedback',
-                        style: TextStyle(
+                      Text(
+                        l10n.shareFeedback,
+                        style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -164,7 +166,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Help us improve your experience',
+                        l10n.feedbackSubtitle,
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.white.withOpacity(0.9),
@@ -200,7 +202,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildTripInfoCard() {
+  Widget _buildTripInfoCard(AppLocalizations l10n) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +223,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Trip Information',
+                l10n.tripInformation,
                 style: AppTextStyles.headline6.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -233,10 +235,10 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
           Row(
             children: [
               Expanded(
-                child: _buildInfoItem('Bus ID', widget.busId ?? 'N/A'),
+                child: _buildInfoItem(l10n.busIdTitle, widget.busId ?? 'N/A'),
               ),
               Expanded(
-                child: _buildInfoItem('Trip ID', widget.tripId ?? 'N/A'),
+                child: _buildInfoItem(l10n.tripIdTitle, widget.tripId ?? 'N/A'),
               ),
             ],
           ),
@@ -267,7 +269,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildRatingSection() {
+  Widget _buildRatingSection(AppLocalizations l10n) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,7 +290,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Rate Your Experience',
+                l10n.rateExperience,
                 style: AppTextStyles.headline6.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -298,7 +300,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
           ),
           const SizedBox(height: AppDesign.spaceLG),
           Text(
-            'How was your overall experience?',
+            l10n.overallExperience,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -368,7 +370,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                   ),
                   const SizedBox(width: AppDesign.spaceXS),
                   Text(
-                    _getRatingText(),
+                    _getRatingText(l10n),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: _getRatingColor(),
                       fontWeight: FontWeight.w600,
@@ -383,7 +385,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildCategorySection() {
+  Widget _buildCategorySection(AppLocalizations l10n) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,7 +406,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Feedback Category',
+                l10n.feedbackCategory,
                 style: AppTextStyles.headline6.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -438,7 +440,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                     borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                   ),
                   child: Text(
-                    category,
+                    _getCategoryDisplayName(category, l10n),
                     style: AppTextStyles.labelMedium.copyWith(
                       color:
                           isSelected ? Colors.white : AppColors.textSecondary,
@@ -454,7 +456,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildFeedbackSection() {
+  Widget _buildFeedbackSection(AppLocalizations l10n) {
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,7 +477,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(
-                'Your Feedback',
+                l10n.yourFeedback,
                 style: AppTextStyles.headline6.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -488,7 +490,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
             controller: _feedbackController,
             maxLines: 5,
             decoration: InputDecoration(
-              hintText: 'Tell us about your experience...',
+              hintText: l10n.feedbackHint,
               hintStyle: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textHint,
               ),
@@ -509,13 +511,13 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     );
   }
 
-  Widget _buildSubmitSection() {
+  Widget _buildSubmitSection(AppLocalizations l10n) {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _canSubmit() ? _submitFeedback : null,
+            onPressed: _canSubmit() ? () => _submitFeedback(l10n) : null,
             style: ElevatedButton.styleFrom(
               backgroundColor:
                   _canSubmit() ? AppColors.primaryColor : AppColors.greyLight,
@@ -534,12 +536,12 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
-                : const Text('Submit Feedback'),
+                : Text(l10n.submitFeedback),
           ),
         ),
         const SizedBox(height: AppDesign.spaceMD),
         Text(
-          'Your feedback helps us improve our service\n✨ Earn +1 Reward Point!',
+          l10n.feedbackRewardNote,
           textAlign: TextAlign.center,
           style: AppTextStyles.bodySmall.copyWith(
             color: AppColors.textHint,
@@ -561,20 +563,39 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
     return Icons.sentiment_satisfied_rounded;
   }
 
-  String _getRatingText() {
+  String _getRatingText(AppLocalizations l10n) {
     switch (selectedRating) {
       case 1:
-        return 'Very Poor';
+        return l10n.veryPoor;
       case 2:
-        return 'Poor';
+        return l10n.poor;
       case 3:
-        return 'Average';
+        return l10n.average;
       case 4:
-        return 'Good';
+        return l10n.good;
       case 5:
-        return 'Excellent';
+        return l10n.excellent;
       default:
         return '';
+    }
+  }
+
+  String _getCategoryDisplayName(String category, AppLocalizations l10n) {
+    switch (category) {
+      case 'General':
+        return l10n.categoryGeneral;
+      case 'Driver':
+        return l10n.categoryDriver;
+      case 'Bus Condition':
+        return l10n.categoryBusCondition;
+      case 'Safety':
+        return l10n.categorySafety;
+      case 'Route':
+        return l10n.categoryRoute;
+      case 'Service':
+        return l10n.categoryService;
+      default:
+        return category;
     }
   }
 
@@ -584,7 +605,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
         !_isSubmitting;
   }
 
-  void _submitFeedback() async {
+  void _submitFeedback(AppLocalizations l10n) async {
     if (!_canSubmit()) return;
 
     setState(() => _isSubmitting = true);
@@ -598,8 +619,8 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
       if (userId == null || passengerProfile == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('User not authenticated'),
+            SnackBar(
+              content: Text(l10n.userNotAuthenticated),
               backgroundColor: Colors.red,
             ),
           );
@@ -658,10 +679,10 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Thank you for your feedback! +1 Reward Point'),
+          SnackBar(
+            content: Text(l10n.feedbackSuccess),
             backgroundColor: AppColors.successColor,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
 
@@ -672,7 +693,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to submit feedback: ${e.toString()}'),
+            content: Text(l10n.feedbackError(e.toString())),
             backgroundColor: Colors.red,
           ),
         );

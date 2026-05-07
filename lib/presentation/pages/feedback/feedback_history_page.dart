@@ -6,6 +6,7 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -96,6 +97,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final feedbackController = ref.read(feedbackControllerProvider.notifier);
 
     return Scaffold(
@@ -117,7 +119,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
           child: Column(
             children: [
               // Modern Header
-              _buildModernHeader(context),
+              _buildModernHeader(context, l10n),
 
               // Content Area
               Expanded(
@@ -127,8 +129,8 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     debugPrint(
                         '📋 FeedbackHistoryPage: Feedbacks updated: ${feedbacks.length} items');
                     return feedbacks.isEmpty
-                        ? _buildEmptyState()
-                        : _buildFeedbackList(feedbacks);
+                        ? _buildEmptyState(l10n)
+                        : _buildFeedbackList(feedbacks, l10n);
                   },
                 ),
               ),
@@ -139,7 +141,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
@@ -158,7 +160,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 ),
                 const SizedBox(height: AppDesign.spaceLG),
                 Text(
-                  'No Feedback Yet',
+                  l10n.noFeedbackYet,
                   style: TextStyle(
                     fontSize: AppDesign.text2XL,
                     fontWeight: FontWeight.bold,
@@ -167,7 +169,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 ),
                 const SizedBox(height: AppDesign.spaceSM),
                 Text(
-                  'Share your feedback about buses and drivers to get started',
+                  l10n.noFeedbackSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: AppDesign.textMD,
@@ -182,7 +184,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
     );
   }
 
-  Widget _buildFeedbackList(feedbacks) {
+  Widget _buildFeedbackList(feedbacks, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
       child: Column(
@@ -196,7 +198,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 const SizedBox(height: AppDesign.spaceMD),
             itemBuilder: (context, index) {
               final feedback = feedbacks[index];
-              return _buildFeedbackCard(feedback);
+              return _buildFeedbackCard(feedback, l10n);
             },
           ),
           const SizedBox(height: AppDesign.spaceLG),
@@ -205,7 +207,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
     );
   }
 
-  Widget _buildFeedbackCard(feedback) {
+  Widget _buildFeedbackCard(feedback, AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     final dateFormatter = DateFormat('MMM dd, yyyy • hh:mm a');
     final submittedDate = dateFormatter.format(feedback.submittedAt);
@@ -246,7 +248,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     children: [
                       if (feedback.busNumber != null)
                         Text(
-                          'Bus ${feedback.busNumber}',
+                          l10n.busLabel(feedback.busNumber!),
                           style: const TextStyle(
                             fontSize: AppDesign.textLG,
                             fontWeight: FontWeight.bold,
@@ -274,7 +276,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                   ),
                   child: Text(
-                    _getStatusText(feedback.status),
+                    _getStatusText(feedback.status, l10n),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -349,7 +351,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                   ),
                   child: Text(
-                    _getCategoryText(feedback.category),
+                    _getCategoryText(feedback.category, l10n),
                     style: const TextStyle(
                       fontSize: AppDesign.textSM,
                       fontWeight: FontWeight.w600,
@@ -365,7 +367,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Comment',
+                        l10n.commentLabel,
                         style: TextStyle(
                           fontSize: AppDesign.textSM,
                           fontWeight: FontWeight.w600,
@@ -387,7 +389,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
 
                 // Date
                 Text(
-                  'Submitted: $submittedDate',
+                  l10n.submittedDateLabel(submittedDate),
                   style: TextStyle(
                     fontSize: AppDesign.textSM,
                     color: th.textSecondary,
@@ -416,39 +418,39 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
     }
   }
 
-  String _getStatusText(status) {
+  String _getStatusText(status, AppLocalizations l10n) {
     switch (status.toString()) {
       case 'FeedbackStatus.submitted':
-        return 'Submitted';
+        return l10n.statusSubmitted;
       case 'FeedbackStatus.reviewed':
-        return 'Reviewed';
+        return l10n.statusReviewed;
       case 'FeedbackStatus.resolved':
-        return 'Resolved';
+        return l10n.statusResolved;
       case 'FeedbackStatus.rejected':
-        return 'Rejected';
+        return l10n.statusRejected;
       default:
-        return 'Pending';
+        return l10n.statusPending;
     }
   }
 
-  String _getCategoryText(category) {
+  String _getCategoryText(category, AppLocalizations l10n) {
     switch (category.toString()) {
       case 'FeedbackCategory.general':
-        return 'General';
+        return l10n.categoryGeneral;
       case 'FeedbackCategory.safety':
-        return 'Safety';
+        return l10n.categorySafety;
       case 'FeedbackCategory.service':
-        return 'Service';
+        return l10n.categoryService;
       case 'FeedbackCategory.driver':
-        return 'Driver';
+        return l10n.categoryDriver;
       case 'FeedbackCategory.busCondition':
-        return 'Bus Condition';
+        return l10n.categoryBusCondition;
       default:
-        return 'Other';
+        return l10n.categoryGeneral; // Default to general if unknown
     }
   }
 
-  Widget _buildModernHeader(BuildContext context) {
+  Widget _buildModernHeader(BuildContext context, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -508,9 +510,9 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Feedback History',
-                      style: TextStyle(
+                    Text(
+                      l10n.feedbackHistory,
+                      style: const TextStyle(
                         fontSize: AppDesign.text2XL,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -519,7 +521,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
                     ),
                     const SizedBox(height: AppDesign.spaceXS),
                     Text(
-                      'Track all your feedback submissions',
+                      l10n.feedbackHistorySubtitle,
                       style: TextStyle(
                         fontSize: AppDesign.textMD,
                         color: Colors.white.withOpacity(0.8),

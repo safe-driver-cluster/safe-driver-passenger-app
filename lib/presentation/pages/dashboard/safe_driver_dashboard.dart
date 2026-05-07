@@ -4,23 +4,25 @@ import 'package:safedriver_passenger_app/presentation/pages/buses/bus_list_page.
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/greeting_util.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/passenger_provider.dart';
 import '../driver/driver_info_page.dart';
 import '../hazard/hazard_zone_intelligence_page.dart';
 import '../qr/qr_scanner_page.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class SafeDriverDashboard extends ConsumerWidget {
   const SafeDriverDashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'SafeDriver',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),
@@ -41,7 +43,7 @@ class SafeDriverDashboard extends ConsumerWidget {
                 return passengerAsyncValue.when(
                   data: (passenger) {
                     final greeting = GreetingUtil.getFullGreeting(
-                        passenger?.firstName ?? '');
+                        passenger?.firstName ?? '', l10n);
                     return Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -75,9 +77,9 @@ class SafeDriverDashboard extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Your comprehensive bus safety monitoring platform',
-                            style: TextStyle(
+                          Text(
+                            l10n.appDescription,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w300,
@@ -113,7 +115,7 @@ class SafeDriverDashboard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${GreetingUtil.getTimeBasedGreeting()} ${GreetingUtil.getGreetingEmoji()}',
+                            '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
@@ -121,9 +123,9 @@ class SafeDriverDashboard extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Your comprehensive bus safety monitoring platform',
-                            style: TextStyle(
+                          Text(
+                            l10n.appDescription,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w300,
@@ -159,7 +161,7 @@ class SafeDriverDashboard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${GreetingUtil.getTimeBasedGreeting()} ${GreetingUtil.getGreetingEmoji()}',
+                            '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
@@ -167,9 +169,9 @@ class SafeDriverDashboard extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Your comprehensive bus safety monitoring platform',
-                            style: TextStyle(
+                          Text(
+                            l10n.appDescription,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w300,
@@ -186,9 +188,9 @@ class SafeDriverDashboard extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Main Features Section
-            const Text(
-              'Main Features',
-              style: TextStyle(
+            Text(
+              l10n.mainFeatures,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -208,8 +210,8 @@ class SafeDriverDashboard extends ConsumerWidget {
               children: [
                 _buildFeatureCard(
                   context,
-                  'QR Scanner',
-                  'Scan bus QR codes to get instant information',
+                  l10n.qrScanner,
+                  l10n.qrScannerDescription,
                   Icons.qr_code_scanner,
                   AppColors.primaryColor,
                   () => Navigator.push(
@@ -221,8 +223,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                 ),
                 _buildFeatureCard(
                   context,
-                  'Live Tracking',
-                  'Real-time bus location tracking with maps',
+                  l10n.liveTracking,
+                  l10n.liveTrackingDescription,
                   Icons.location_on,
                   AppColors.successColor,
                   () => Navigator.push(
@@ -236,8 +238,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                 ),
                 _buildFeatureCard(
                   context,
-                  'Driver Info',
-                  'Detailed driver information and performance',
+                  l10n.driverInfo,
+                  l10n.driverInfoDescription,
                   Icons.person,
                   AppColors.warningColor,
                   () => Navigator.push(
@@ -252,8 +254,8 @@ class SafeDriverDashboard extends ConsumerWidget {
                 ),
                 _buildFeatureCard(
                   context,
-                  'Hazard Zones',
-                  'Monitor dangerous areas and safety alerts',
+                  l10n.hazardZones,
+                  l10n.hazardZonesDescription,
                   Icons.warning,
                   AppColors.errorColor,
                   () => Navigator.push(
@@ -269,9 +271,9 @@ class SafeDriverDashboard extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Quick Stats Section
-            const Text(
-              'Quick Stats',
-              style: TextStyle(
+            Text(
+              l10n.quickStats,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -284,7 +286,7 @@ class SafeDriverDashboard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    'Active Buses',
+                    l10n.activeBuses,
                     '12',
                     Icons.directions_bus,
                     AppColors.primaryColor,
@@ -293,7 +295,7 @@ class SafeDriverDashboard extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildStatCard(
-                    'Safety Score',
+                    l10n.safetyScore,
                     '94%',
                     Icons.shield,
                     AppColors.successColor,
@@ -308,7 +310,7 @@ class SafeDriverDashboard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    'Drivers',
+                    l10n.drivers,
                     '8',
                     Icons.group,
                     AppColors.warningColor,
@@ -317,7 +319,7 @@ class SafeDriverDashboard extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildStatCard(
-                    'Hazard Zones',
+                    l10n.hazardZones,
                     '3',
                     Icons.warning_amber,
                     AppColors.errorColor,
@@ -329,9 +331,9 @@ class SafeDriverDashboard extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Recent Activity Section
-            const Text(
-              'Recent Activity',
-              style: TextStyle(
+            Text(
+              l10n.recentActivity,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -346,22 +348,22 @@ class SafeDriverDashboard extends ConsumerWidget {
                 child: Column(
                   children: [
                     _buildActivityItem(
-                      'Bus QR code scanned',
-                      '2 minutes ago',
+                      l10n.busQrScanned,
+                      l10n.timeAgo('2 minutes'),
                       Icons.qr_code_scanner,
                       AppColors.primaryColor,
                     ),
                     const Divider(),
                     _buildActivityItem(
-                      'Safety alert acknowledged',
-                      '15 minutes ago',
+                      l10n.safetyAlertAcknowledged,
+                      l10n.timeAgo('15 minutes'),
                       Icons.check_circle,
                       AppColors.successColor,
                     ),
                     const Divider(),
                     _buildActivityItem(
-                      'New hazard zone reported',
-                      '1 hour ago',
+                      l10n.newHazardZoneReported,
+                      l10n.timeAgo('1 hour'),
                       Icons.warning,
                       AppColors.warningColor,
                     ),

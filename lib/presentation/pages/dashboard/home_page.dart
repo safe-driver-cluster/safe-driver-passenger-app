@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
   final void Function(int)? onNavigateToTab;
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: th.background,
       body: CustomScrollView(
@@ -21,9 +23,9 @@ class HomePage extends StatelessWidget {
             pinned: true,
             backgroundColor: AppColors.primaryColor,
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'SafeDriver',
-                style: TextStyle(
+              title: Text(
+                l10n.appName,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -55,18 +57,18 @@ class HomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Welcome to SafeDriver',
-                    style: TextStyle(
+                  Text(
+                    l10n.welcomeTitle,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Your safety is our priority',
-                    style: TextStyle(
+                  Text(
+                    l10n.appTagline,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
                     ),
@@ -90,9 +92,9 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Quick Actions',
-                          style: TextStyle(
+                        Text(
+                          l10n.quickActions,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -104,8 +106,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: _buildQuickActionCard(
                                 icon: Icons.directions_bus_rounded,
-                                title: 'View Bus',
-                                subtitle: 'Available buses',
+                                title: l10n.viewBus,
+                                subtitle: l10n.availableBuses,
                                 onTap: () =>
                                     Navigator.pushNamed(context, '/buses'),
                               ),
@@ -114,8 +116,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: _buildQuickActionCard(
                                 icon: Icons.person_rounded,
-                                title: 'View Driver Details',
-                                subtitle: 'Driver information',
+                                title: l10n.viewDriverDetails,
+                                subtitle: l10n.driverInformation,
                                 onTap: () =>
                                     Navigator.pushNamed(context, '/drivers'),
                               ),
@@ -128,8 +130,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: _buildQuickActionCard(
                                 icon: Icons.history,
-                                title: 'My Trips',
-                                subtitle: 'View history',
+                                title: l10n.myTrips,
+                                subtitle: l10n.viewHistory,
                                 onTap: () => Navigator.pushNamed(
                                     context, '/trip-history'),
                               ),
@@ -138,8 +140,8 @@ class HomePage extends StatelessWidget {
                             Expanded(
                               child: _buildQuickActionCard(
                                 icon: Icons.security,
-                                title: 'Safety',
-                                subtitle: 'Emergency help',
+                                title: l10n.safety,
+                                subtitle: l10n.emergencyHelp,
                                 onTap: () =>
                                     Navigator.pushNamed(context, '/safety-hub'),
                               ),
@@ -169,9 +171,9 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Recent Activity',
-                          style: TextStyle(
+                        Text(
+                          l10n.recentActivity,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -188,16 +190,16 @@ class HomePage extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'No recent trips',
+                                l10n.noRecentTrips,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: th.textSecondary,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                'Start your first journey with SafeDriver',
-                                style: TextStyle(
+                              Text(
+                                l10n.startFirstJourney,
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),

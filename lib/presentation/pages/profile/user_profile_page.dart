@@ -123,10 +123,12 @@ class UserProfilePage extends ConsumerWidget {
         : '${userProfile.firstName} ${userProfile.lastName}'.trim().isNotEmpty
             ? '${userProfile.firstName} ${userProfile.lastName}'.trim()
             : 'User';
-    final email = userProfile.email.isNotEmpty ? userProfile.email : 'No email';
+    final l10n = AppLocalizations.of(context);
+    final email =
+        userProfile.email.isNotEmpty ? userProfile.email : l10n.noEmail;
     final phoneNumber = userProfile.phoneNumber.isNotEmpty
         ? userProfile.phoneNumber
-        : 'Not provided';
+        : l10n.notProvided;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
@@ -232,9 +234,9 @@ class UserProfilePage extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      child: const Text(
-                        'Verified Member',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.verifiedMember,
+                        style: const TextStyle(
                           fontSize: 11,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -304,12 +306,12 @@ class UserProfilePage extends ConsumerWidget {
         AppDesign.spaceLG,
         AppDesign.spaceLG,
       ),
-      child: const SizedBox(
+      child: SizedBox(
         height: 120,
         child: Center(
           child: Text(
-            'Unable to load profile',
-            style: TextStyle(
+            AppLocalizations.of(context).unableToLoadProfile,
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.white70,
             ),
@@ -321,6 +323,7 @@ class UserProfilePage extends ConsumerWidget {
 
   Widget _buildProfessionalQuickActions(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: th.cardBackground,
@@ -353,7 +356,7 @@ class UserProfilePage extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Quick Actions',
+                  l10n.quickActions,
                   style: AppTextStyles.headline6.copyWith(
                     color: th.textPrimary,
                     fontWeight: FontWeight.w700,
@@ -367,8 +370,8 @@ class UserProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Edit Profile',
-                    subtitle: 'Update info',
+                    title: l10n.editProfile,
+                    subtitle: l10n.updateInfo,
                     icon: Icons.edit_rounded,
                     gradient: AppColors.primaryGradient,
                     onTap: () {
@@ -384,8 +387,8 @@ class UserProfilePage extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Trip History',
-                    subtitle: 'View trips',
+                    title: l10n.tripHistory,
+                    subtitle: l10n.viewTrips,
                     icon: Icons.history_rounded,
                     gradient: AppColors.accentGradient,
                     onTap: () {
@@ -405,8 +408,8 @@ class UserProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Feedback History',
-                    subtitle: 'Your feedback',
+                    title: l10n.feedbackHistory,
+                    subtitle: l10n.yourFeedback,
                     icon: Icons.feedback_rounded,
                     gradient: AppColors.successGradient,
                     onTap: () {
@@ -422,8 +425,8 @@ class UserProfilePage extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Support',
-                    subtitle: 'Get help',
+                    title: l10n.support,
+                    subtitle: l10n.getHelp,
                     icon: Icons.help_rounded,
                     gradient: AppColors.warningGradient,
                     onTap: () {
@@ -547,6 +550,7 @@ class UserProfilePage extends ConsumerWidget {
 
   Widget _buildProfessionalMenuSection(BuildContext context, WidgetRef ref) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: th.cardBackground,
@@ -579,7 +583,7 @@ class UserProfilePage extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Account & Settings',
+                  l10n.accountAndSettings,
                   style: AppTextStyles.headline6.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -601,14 +605,15 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   List<Widget> _buildMenuItems(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final accountMenuItems = [
-      MenuItemData('Edit Profile', Icons.person_outline_rounded, () {
+      MenuItemData(l10n.editProfile, Icons.person_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const EditProfilePage()),
         );
       }),
-      MenuItemData('Trip History', Icons.history_rounded, () {
+      MenuItemData(l10n.tripHistory, Icons.history_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const TripHistoryPage()),
@@ -617,25 +622,25 @@ class UserProfilePage extends ConsumerWidget {
     ];
 
     final settingsMenuItems = [
-      MenuItemData('Notifications', Icons.notifications_outlined, () {
+      MenuItemData(l10n.notifications, Icons.notifications_outlined, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const NotificationsPage()),
         );
       }),
-      MenuItemData('App Settings', Icons.settings_outlined, () {
+      MenuItemData(l10n.appSettings, Icons.settings_outlined, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SettingsPage()),
         );
       }),
-      MenuItemData('Help & Support', Icons.help_outline_rounded, () {
+      MenuItemData(l10n.emergencyHelp, Icons.help_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const HelpSupportPage()),
         );
       }),
-      MenuItemData('About App', Icons.info_outline_rounded, () {
+      MenuItemData(l10n.aboutApp, Icons.info_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AboutPage()),
@@ -644,7 +649,7 @@ class UserProfilePage extends ConsumerWidget {
     ];
 
     final actionMenuItems = [
-      MenuItemData('Sign Out', Icons.logout_rounded, () {
+      MenuItemData(l10n.signOut, Icons.logout_rounded, () {
         showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
@@ -717,10 +722,10 @@ class UserProfilePage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ProfessionalButton(
-            text: 'Sign Out',
+            text: AppLocalizations.of(context).signOut,
             onPressed: () async {
               Navigator.pop(context);
 

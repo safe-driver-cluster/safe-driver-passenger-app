@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/custom_back_button.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -47,7 +47,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
 
     if (!_acceptTerms) {
-      _showErrorSnackBar('Please accept the terms and conditions');
+      _showErrorSnackBar(AppLocalizations.of(context).acceptTerms);
       return;
     }
 
@@ -79,7 +79,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Google Sign-Up failed');
+        _showErrorSnackBar(
+            result.message ?? AppLocalizations.of(context).registrationFailed);
       }
     }
   }
@@ -98,7 +99,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: AppLocalizations.of(context).dismiss,
           textColor: Colors.white,
           onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
@@ -125,75 +126,76 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   String? _validateFirstName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'First name is required';
+      return AppLocalizations.of(context).firstNameRequired;
     }
     if (value.length < 2) {
-      return 'First name must be at least 2 characters';
+      return AppLocalizations.of(context).firstNameMinLength;
     }
     return null;
   }
 
   String? _validateLastName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Last name is required';
+      return AppLocalizations.of(context).lastNameRequired;
     }
     if (value.length < 2) {
-      return 'Last name must be at least 2 characters';
+      return AppLocalizations.of(context).lastNameMinLength;
     }
     return null;
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context).emailRequired;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return AppLocalizations.of(context).invalidEmail;
     }
     return null;
   }
 
   String? _validatePhoneNumber(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required';
+      return AppLocalizations.of(context).phoneRequired;
     }
     // For Sri Lankan numbers, expect 9 digits (without country code)
     if (_selectedCountryCode == '+94' && value.length != 9) {
-      return 'Please enter a valid Sri Lankan phone number (9 digits)';
+      return AppLocalizations.of(context).invalidPhone;
     }
     // For other countries, basic length check
     if (value.length < 7 || value.length > 15) {
-      return 'Please enter a valid phone number';
+      return AppLocalizations.of(context).invalidPhone;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context).passwordRequired;
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters';
+      return AppLocalizations.of(context).passwordTooShort;
     }
     if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-      return 'Password must contain uppercase, lowercase, and number';
+      return AppLocalizations.of(context).passwordComplexity;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppLocalizations.of(context).confirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context).passwordsDoNotMatch;
     }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
 
     // Listen for auth state changes and navigate accordingly
@@ -287,9 +289,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        const Text(
-                          'Create Account',
-                          style: TextStyle(
+                        Text(
+                          l10n.createAccount,
+                          style: const TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -297,7 +299,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Join SafeDriver for secure travels',
+                          l10n.appTagline,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white.withOpacity(0.8),
@@ -339,7 +341,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                       child: TextFormField(
                                         controller: _firstNameController,
                                         decoration: InputDecoration(
-                                          labelText: 'First Name',
+                                          labelText: l10n.firstName,
                                           prefixIcon:
                                               const Icon(Icons.person_outlined),
                                           border: OutlineInputBorder(
@@ -367,7 +369,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                       child: TextFormField(
                                         controller: _lastNameController,
                                         decoration: InputDecoration(
-                                          labelText: 'Last Name',
+                                          labelText: l10n.lastName,
                                           prefixIcon:
                                               const Icon(Icons.person_outlined),
                                           border: OutlineInputBorder(
@@ -400,7 +402,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   controller: _emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
-                                    labelText: 'Email',
+                                    labelText: l10n.email,
                                     prefixIcon:
                                         const Icon(Icons.email_outlined),
                                     border: OutlineInputBorder(
@@ -431,7 +433,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                       _selectedCountryCode = code;
                                     });
                                   },
-                                  labelText: 'Phone Number',
+                                  labelText: l10n.phoneNumber,
                                   validator: _validatePhoneNumber,
                                 ),
 
@@ -442,7 +444,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   controller: _passwordController,
                                   obscureText: _obscurePassword,
                                   decoration: InputDecoration(
-                                    labelText: 'Password',
+                                    labelText: l10n.password,
                                     prefixIcon: const Icon(Icons.lock_outlined),
                                     suffixIcon: IconButton(
                                       icon: Icon(
@@ -480,7 +482,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   controller: _confirmPasswordController,
                                   obscureText: _obscureConfirmPassword,
                                   decoration: InputDecoration(
-                                    labelText: 'Confirm Password',
+                                    labelText: l10n.confirmPassword,
                                     prefixIcon: const Icon(Icons.lock_outlined),
                                     suffixIcon: IconButton(
                                       icon: Icon(
@@ -539,20 +541,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                                 color: Colors.grey[600],
                                                 fontSize: 14,
                                               ),
-                                              children: const [
+                                              children: [
+                                                TextSpan(text: l10n.iAgreeTo),
                                                 TextSpan(
-                                                    text: 'I agree to the '),
-                                                TextSpan(
-                                                  text: 'Terms of Service',
-                                                  style: TextStyle(
+                                                  text: l10n.termsOfService,
+                                                  style: const TextStyle(
                                                     color: Color(0xFF2563EB),
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
-                                                TextSpan(text: ' and '),
+                                                TextSpan(text: l10n.and),
                                                 TextSpan(
-                                                  text: 'Privacy Policy',
-                                                  style: TextStyle(
+                                                  text: l10n.privacyPolicy,
+                                                  style: const TextStyle(
                                                     color: Color(0xFF2563EB),
                                                     fontWeight: FontWeight.w600,
                                                   ),
@@ -592,9 +593,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                                     Colors.white),
                                           ),
                                         )
-                                      : const Text(
-                                          'Create Account',
-                                          style: TextStyle(
+                                      : Text(
+                                          l10n.createAccount,
+                                          style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -613,7 +614,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16),
                                       child: Text(
-                                        'OR',
+                                        l10n.or,
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontWeight: FontWeight.w500,
@@ -632,9 +633,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 OutlinedButton.icon(
                                   onPressed: isLoading ? null : _googleSignUp,
                                   icon: const GoogleIcon(size: 20),
-                                  label: const Text(
-                                    'Continue with Google',
-                                    style: TextStyle(
+                                  label: Text(
+                                    l10n.continueWithGoogle,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: Color(0xFF2563EB),
@@ -658,16 +659,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Already have an account?',
+                                      l10n.alreadyHaveAccount,
                                       style: TextStyle(color: Colors.grey[600]),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: const Text(
-                                        'Sign In',
-                                        style: TextStyle(
+                                      child: Text(
+                                        l10n.signIn,
+                                        style: const TextStyle(
                                           color: Color(0xFF2563EB),
                                           fontWeight: FontWeight.w600,
                                         ),

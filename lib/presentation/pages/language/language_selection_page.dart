@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/services/storage_service.dart';
-import '../../../providers/language_provider.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
+import '../../../providers/language_provider.dart';
 
 class LanguageSelectionPage extends ConsumerStatefulWidget {
   const LanguageSelectionPage({super.key});
@@ -56,7 +57,8 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error selecting language: $e'),
+              content: Text(AppLocalizations.of(context)
+                  .errorSelectingLanguage(e.toString())),
               backgroundColor: AppColors.dangerColor,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -72,7 +74,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -134,9 +136,9 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
         ),
         const SizedBox(height: 24),
         // Simple Title
-        const Text(
-          'Choose Language',
-          style: TextStyle(
+        Text(
+          AppLocalizations.of(context).chooseYourLanguage,
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -278,7 +280,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         child: Text(
-          'Continue',
+          AppLocalizations.of(context).continueButton,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,

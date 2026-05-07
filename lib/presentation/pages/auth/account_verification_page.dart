@@ -5,12 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class AccountVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -147,21 +148,21 @@ class _AccountVerificationPageState
     } catch (e) {
       print('Error sending initial OTP: $e');
       if (mounted) {
-        CustomSnackBar.showError(
-            context, 'Failed to send OTP: ${e.toString()}');
+        CustomSnackBar.showError(context,
+            '${AppLocalizations.of(context).otpFailed}: ${e.toString()}');
       }
     }
   }
 
   Future<void> _verifyOtp() async {
+    final l10n = AppLocalizations.of(context);
     if (_otpCode.length != 6) {
-      CustomSnackBar.showError(context, 'Please enter the complete OTP');
+      CustomSnackBar.showError(context, l10n.pleaseEnterCompleteOtp);
       return;
     }
 
     if (_verificationId == null) {
-      CustomSnackBar.showError(
-          context, 'Verification ID not found. Please try again.');
+      CustomSnackBar.showError(context, l10n.verificationIdNotFound);
       return;
     }
 
@@ -182,15 +183,15 @@ class _AccountVerificationPageState
 
         // Show success message and navigate to login
         if (mounted) {
-          CustomSnackBar.showSuccess(context, 'Account created successfully!');
+          CustomSnackBar.showSuccess(
+              context, AppLocalizations.of(context).accountCreatedSuccessfully);
 
           // Navigate to login page
           Navigator.of(context).pushNamedAndRemoveUntil(
             '/login',
             (route) => false,
             arguments: {
-              'message':
-                  'Account created and verified successfully! Please login with your credentials.',
+              'message': AppLocalizations.of(context).accountCreatedAndVerified,
               'email': widget.email,
               'phone': widget.phoneNumber,
             },
@@ -210,16 +211,15 @@ class _AccountVerificationPageState
         _clearOtp();
 
         // Show specific error message
-        String errorMessage = 'Verification failed';
+        String errorMessage = l10n.verificationFailed;
         if (e.toString().contains('email')) {
-          errorMessage =
-              'Email validation failed. Please check your email address.';
+          errorMessage = l10n.emailValidationFailed;
         } else if (e.toString().contains('password')) {
-          errorMessage = 'Password validation failed. Please try again.';
+          errorMessage = l10n.passwordValidationFailed;
         } else if (e.toString().contains('already exists')) {
-          errorMessage = 'An account with this email already exists.';
+          errorMessage = l10n.accountAlreadyExists;
         } else {
-          errorMessage = 'Verification failed: ${e.toString()}';
+          errorMessage = '${l10n.verificationFailed}: ${e.toString()}';
         }
 
         CustomSnackBar.showError(context, errorMessage);
@@ -284,7 +284,8 @@ class _AccountVerificationPageState
         _startTimer();
 
         if (mounted) {
-          CustomSnackBar.showSuccess(context, 'OTP sent successfully');
+          CustomSnackBar.showSuccess(
+              context, AppLocalizations.of(context).otpSentSuccessfully);
         }
       } else if (state.error != null) {
         if (mounted) {
@@ -294,15 +295,16 @@ class _AccountVerificationPageState
     } catch (e) {
       print('Resend OTP error: $e');
       if (mounted) {
-        CustomSnackBar.showError(
-            context, 'Failed to resend OTP: ${e.toString()}');
+        CustomSnackBar.showError(context,
+            '${AppLocalizations.of(context).otpFailed}: ${e.toString()}');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
 
@@ -358,9 +360,9 @@ class _AccountVerificationPageState
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Verify Your Account',
-                      style: TextStyle(
+                    Text(
+                      l10n.verifyYourAccount,
+                      style: const TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -368,7 +370,7 @@ class _AccountVerificationPageState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'We sent a verification code to\n${widget.phoneNumber}',
+                      l10n.verificationCodeSent(widget.phoneNumber),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white.withOpacity(0.8),
@@ -494,9 +496,9 @@ class _AccountVerificationPageState
                                         Colors.white),
                                   ),
                                 )
-                              : const Text(
-                                  'Verify & Create Account',
-                                  style: TextStyle(
+                              : Text(
+                                  l10n.verifyAndCreateAccount,
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
@@ -511,18 +513,18 @@ class _AccountVerificationPageState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            "Didn't receive the code? ",
-                            style: TextStyle(
+                          Text(
+                            l10n.didntReceiveCode,
+                            style: const TextStyle(
                               color: AppColors.textSecondary,
                             ),
                           ),
                           if (_canResend)
                             TextButton(
                               onPressed: _resendOtp,
-                              child: const Text(
-                                'Resend',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.resend,
+                                style: const TextStyle(
                                   color: AppColors.primaryColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -530,7 +532,7 @@ class _AccountVerificationPageState
                             )
                           else
                             Text(
-                              'Resend in $_seconds s',
+                              l10n.resendIn(_seconds),
                               style: const TextStyle(
                                 color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w600,
@@ -546,9 +548,9 @@ class _AccountVerificationPageState
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'Change phone number',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.changePhoneNumber,
+                          style: const TextStyle(
                             fontSize: 16,
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,

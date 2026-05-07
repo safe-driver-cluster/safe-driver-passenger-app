@@ -55,12 +55,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   bool _notificationsEnabled = true;
   bool _locationSharingEnabled = true;
   String _preferredLanguage = 'English';
-  String _selectedGender = 'Prefer not to say';
+  late String _selectedGender;
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    // Initialize _selectedGender with a placeholder that will be updated in _loadUserProfile or build
+    _selectedGender = '';
     _loadUserProfile();
   }
 
@@ -94,7 +96,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         await _loadLatestSosContact();
       }
     } catch (e) {
-      _showErrorDialog('Error loading profile: $e');
+      if (mounted) {
+        _showErrorDialog(
+            AppLocalizations.of(context).errorLoadingProfile(e.toString()));
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -173,6 +178,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    // Ensure _selectedGender is initialized with a localized value if it's still empty
+    if (_selectedGender.isEmpty) {
+      _selectedGender = l10n.preferNotToSay;
+    }
+
     return Scaffold(
       backgroundColor: th.background,
       body: Container(
@@ -306,6 +318,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   Widget _buildFormContent() {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -432,6 +445,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget _buildBasicInfoSection() {
+    final l10n = AppLocalizations.of(context);
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -473,7 +487,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'First name is required';
+                      return l10n.firstNameRequired;
                     }
                     return null;
                   },
@@ -487,7 +501,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   icon: Icons.person_outline,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Last name is required';
+                      return l10n.lastNameRequired;
                     }
                     return null;
                   },
@@ -505,7 +519,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             keyboardType: TextInputType.phone,
             validator: (value) {
               if (value?.isEmpty ?? true) {
-                return 'Phone number is required';
+                return l10n.phoneRequired;
               }
               return null;
             },
@@ -526,7 +540,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           _buildDropdownField(
             label: AppLocalizations.of(context).gender,
             value: _selectedGender,
-            items: const ['Male', 'Female', 'Other', 'Prefer not to say'],
+            items: [
+              l10n.male,
+              l10n.female,
+              l10n.other,
+              l10n.preferNotToSay,
+            ],
             onChanged: (value) => setState(() => _selectedGender = value!),
             icon: Icons.wc_outlined,
           ),
@@ -603,6 +622,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget _buildEmergencyContactSection() {
+    final l10n = AppLocalizations.of(context);
     return ProfessionalCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -643,10 +663,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   size: 20,
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Manage SOS contacts for emergency alerts',
-                    style: TextStyle(
+                    l10n.manageSosContacts,
+                    style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 14,
                     ),
@@ -664,7 +684,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                     ),
                   ),
-                  child: const Text('Manage'),
+                  child: Text(l10n.manage),
                 ),
               ],
             ),
@@ -682,7 +702,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           // Emergency contact phone number
           _buildFormField(
             controller: _emergencyPhoneController,
-            label: 'Phone Number',
+            label: l10n.phoneNumber,
             icon: Icons.phone_in_talk_outlined,
             keyboardType: TextInputType.phone,
           ),
@@ -838,7 +858,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         });
       }
     } catch (e) {
-      _showErrorDialog('Error selecting image: $e');
+      if (mounted) {
+        _showErrorDialog(
+            AppLocalizations.of(context).errorSelectingImage(e.toString()));
+      }
     }
   }
 
@@ -874,6 +897,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       return;
     }
 
+    final l10n = AppLocalizations.of(context);
     setState(() => _isSaving = true);
 
     try {
@@ -901,7 +925,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       }
 
       // Map display gender value back to actual value
-      final genderValue = _mapDisplayValueToGender(_selectedGender);
+      final genderValue = _mapDisplayValueToGender(
+          _selectedGender, AppLocalizations.of(context));
 
       // Create updated address
       final updatedAddress = PassengerAddress(
@@ -964,7 +989,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Profile updated successfully!'),
+            content: Text(l10n.profileUpdatedSuccessfully),
             backgroundColor: AppColors.successColor,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -976,7 +1001,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      _showErrorDialog('Error saving profile: $e');
+      if (mounted) {
+        _showErrorDialog(
+            AppLocalizations.of(context).errorSavingProfile(e.toString()));
+      }
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);
@@ -993,22 +1021,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         ),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline_rounded,
               color: AppColors.errorColor,
               size: 28,
             ),
-            SizedBox(width: AppDesign.spaceMD),
-            Text('Error'),
+            const SizedBox(width: AppDesign.spaceMD),
+            Text(AppLocalizations.of(context).error),
           ],
         ),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context).ok),
           ),
         ],
       ),
@@ -1034,68 +1062,59 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   // Helper method to map language codes to display names
   String _mapLanguageCodeToDisplayName(String languageCode) {
+    final l10n = AppLocalizations.of(context);
     switch (languageCode.toLowerCase()) {
       case 'en':
-        return 'English';
-      case 'es':
-        return 'Spanish';
-      case 'fr':
-        return 'French';
-      case 'de':
-        return 'German';
+        return l10n.english;
+      case 'si':
+        return l10n.sinhala;
+      case 'ta':
+        return l10n.tamil;
       default:
-        return 'English'; // Default fallback
+        return l10n.english; // Default fallback
     }
   }
 
   // Helper method to map display names back to language codes
   String _mapDisplayNameToLanguageCode(String displayName) {
-    switch (displayName) {
-      case 'English':
-        return 'en';
-      case 'Spanish':
-        return 'es';
-      case 'French':
-        return 'fr';
-      case 'German':
-        return 'de';
-      default:
-        return 'en'; // Default fallback
-    }
+    final l10n = AppLocalizations.of(context);
+    if (displayName == l10n.english) return 'en';
+    if (displayName == l10n.sinhala) return 'si';
+    if (displayName == l10n.tamil) return 'ta';
+    return 'en'; // Default fallback
   }
 
   // Helper method to map gender from model to display value
   String _mapGenderToDisplayValue(String? gender) {
-    if (gender == null || gender.isEmpty) return 'Prefer not to say';
+    final l10n = AppLocalizations.of(context);
+    if (gender == null || gender.isEmpty) return l10n.preferNotToSay;
 
     switch (gender.toLowerCase()) {
       case 'male':
       case 'm':
-        return 'Male';
+        return l10n.male;
       case 'female':
       case 'f':
-        return 'Female';
+        return l10n.female;
       case 'other':
       case 'o':
-        return 'Other';
+        return l10n.other;
       default:
-        return 'Prefer not to say';
+        return l10n.preferNotToSay;
     }
   }
 
   // Helper method to map display value back to gender code
-  String? _mapDisplayValueToGender(String displayValue) {
-    switch (displayValue) {
-      case 'Male':
-        return 'Male';
-      case 'Female':
-        return 'Female';
-      case 'Other':
-        return 'Other';
-      case 'Prefer not to say':
-        return null; // Store as null for prefer not to say
-      default:
-        return null;
+  String? _mapDisplayValueToGender(String displayValue, AppLocalizations l10n) {
+    if (displayValue == l10n.male) {
+      return 'Male';
+    } else if (displayValue == l10n.female) {
+      return 'Female';
+    } else if (displayValue == l10n.other) {
+      return 'Other';
+    } else if (displayValue == l10n.preferNotToSay) {
+      return null;
     }
+    return null;
   }
 }

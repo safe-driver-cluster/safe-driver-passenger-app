@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/user_model.dart';
 import '../../data/repositories/auth_repository.dart';
-import '../../../core/utils/theme_helper.dart';
 
 // Auth State
 class AuthState {

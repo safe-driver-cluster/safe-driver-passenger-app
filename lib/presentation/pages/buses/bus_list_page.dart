@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 
 class BusListPage extends StatefulWidget {
   const BusListPage({super.key});
@@ -25,6 +26,7 @@ class _BusListPageState extends State<BusListPage> {
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: th.background,
       body: Container(
@@ -43,9 +45,9 @@ class _BusListPageState extends State<BusListPage> {
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(th),
+              _buildHeader(th, l10n),
               Expanded(
-                child: _buildBusList(th),
+                child: _buildBusList(th, l10n),
               ),
             ],
           ),
@@ -54,7 +56,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildHeader(ThemeHelper th) {
+  Widget _buildHeader(ThemeHelper th, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -82,9 +84,9 @@ class _BusListPageState extends State<BusListPage> {
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Available Buses',
-                style: TextStyle(
+              Text(
+                l10n.availableBuses,
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -117,7 +119,7 @@ class _BusListPageState extends State<BusListPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by bus number, route, driver...',
+                hintText: l10n.searchBusesHint,
                 hintStyle: TextStyle(
                   color: th.textHint,
                   fontSize: 16,
@@ -154,7 +156,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusList(ThemeHelper th) {
+  Widget _buildBusList(ThemeHelper th, AppLocalizations l10n) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('vehicles')
@@ -173,7 +175,7 @@ class _BusListPageState extends State<BusListPage> {
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
                 Text(
-                  'Error loading buses',
+                  l10n.noBuses,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -182,7 +184,7 @@ class _BusListPageState extends State<BusListPage> {
                 ),
                 const SizedBox(height: AppDesign.spaceSM),
                 Text(
-                  'Please try again later',
+                  l10n.tryAgainLater,
                   style: TextStyle(
                     color: th.textSecondary,
                   ),
@@ -233,9 +235,7 @@ class _BusListPageState extends State<BusListPage> {
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
                 Text(
-                  _searchQuery.isEmpty
-                      ? 'No buses available'
-                      : 'No buses found',
+                  _searchQuery.isEmpty ? l10n.noBusesAvailable : l10n.noResults,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -245,8 +245,8 @@ class _BusListPageState extends State<BusListPage> {
                 const SizedBox(height: AppDesign.spaceSM),
                 Text(
                   _searchQuery.isEmpty
-                      ? 'Check back later for available buses'
-                      : 'Try adjusting your search terms',
+                      ? l10n.checkBackLaterBuses
+                      : l10n.tryDifferentSearch,
                   style: TextStyle(
                     color: th.textSecondary,
                   ),
@@ -271,7 +271,7 @@ class _BusListPageState extends State<BusListPage> {
             itemBuilder: (context, index) {
               final busData =
                   filteredBuses[index].data() as Map<String, dynamic>;
-              return _buildBusCard(th, busData);
+              return _buildBusCard(th, l10n, busData);
             },
           ),
         );
@@ -279,14 +279,15 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusCard(ThemeHelper th, Map<String, dynamic> busData) {
-    final route = busData['route'] ?? 'Unknown Route';
+  Widget _buildBusCard(
+      ThemeHelper th, AppLocalizations l10n, Map<String, dynamic> busData) {
+    final route = busData['route'] ?? l10n.unknown;
     final busNumber = busData['busNumberPlate'] ?? 'N/A';
-    final driverName = busData['driverName'] ?? 'Unknown Driver';
+    final driverName = busData['driverName'] ?? l10n.unknown;
     final model = busData['model'] ?? 'N/A';
     final safetyScore = busData['safetyScore'] ?? 0;
     final location = busData['location'] as Map<String, dynamic>?;
-    final address = location?['address'] ?? 'Location unavailable';
+    final address = location?['address'] ?? l10n.noData;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
@@ -429,7 +430,7 @@ class _BusListPageState extends State<BusListPage> {
               children: [
                 Expanded(
                   child: _buildStatusIndicator(
-                    'Model',
+                    l10n.model,
                     model,
                     Icons.directions_bus_rounded,
                     AppColors.primaryColor,

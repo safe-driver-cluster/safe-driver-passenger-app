@@ -8,6 +8,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -157,6 +158,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Container(
@@ -304,9 +306,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
                           opacity: _textOpacityAnimation,
                           child: Column(
                             children: [
-                              const Text(
-                                'SafeDriver',
-                                style: TextStyle(
+                              Text(
+                                l10n.appName,
+                                style: const TextStyle(
                                   fontSize: 56,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
@@ -321,9 +323,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
                                 ),
                               ),
                               const SizedBox(height: AppDesign.spaceMD),
-                              const Text(
-                                'Safe Journeys Start Here',
-                                style: TextStyle(
+                              Text(
+                                l10n.appTagline,
+                                style: const TextStyle(
                                   fontSize: AppDesign.textXL,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
@@ -382,9 +384,9 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             borderRadius:
                                 BorderRadius.circular(AppDesign.radiusLG),
                           ),
-                          child: const Text(
-                            'Loading...',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.loading,
+                            style: const TextStyle(
                               fontSize: AppDesign.textMD,
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -404,7 +406,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         Column(
                           children: [
                             Text(
-                              'Version 1.0.0',
+                              '${l10n.version} 1.0.0',
                               style: TextStyle(
                                 fontSize: AppDesign.textXS,
                                 color: Colors.white.withOpacity(0.8),
@@ -421,7 +423,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                             ),
                             const SizedBox(height: AppDesign.spaceXS),
                             Text(
-                              'Powered by SafeDriver Technologies',
+                              l10n.poweredBy,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.white.withOpacity(0.7),

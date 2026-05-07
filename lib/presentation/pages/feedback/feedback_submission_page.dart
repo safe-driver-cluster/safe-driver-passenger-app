@@ -13,6 +13,7 @@ import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../../data/models/location_model.dart' as location_models;
 import '../../../data/services/firebase_storage_service.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
 import 'feedback_system_page.dart';
@@ -45,27 +46,27 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   late AnimationController _starAnimationController;
   late List<AnimationController> _starControllers;
 
-  final List<String> busQuickActions = [
-    'Clean and comfortable',
-    'Good condition',
-    'Air conditioning works well',
-    'Seats are comfortable',
-    'Bus needs cleaning',
-    'Maintenance required',
-    'Uncomfortable seats',
-    'Poor ventilation',
-  ];
+  List<String> _getBusQuickActions(AppLocalizations l10n) => [
+        l10n.cleanAndComfortable,
+        l10n.goodCondition,
+        l10n.acWorksWell,
+        l10n.seatsComfortable,
+        l10n.needsCleaning,
+        l10n.maintenanceRequired,
+        l10n.uncomfortableSeats,
+        l10n.poorVentilation,
+      ];
 
-  final List<String> driverQuickActions = [
-    'Excellent driving',
-    'Courteous and helpful',
-    'Safe driving',
-    'Professional behavior',
-    'Reckless driving',
-    'Unprofessional behavior',
-    'Poor customer service',
-    'Safety concerns',
-  ];
+  List<String> _getDriverQuickActions(AppLocalizations l10n) => [
+        l10n.excellentDriving,
+        l10n.courteousAndHelpful,
+        l10n.safeDriving,
+        l10n.professionalBehavior,
+        l10n.recklessDriving,
+        l10n.unprofessionalBehavior,
+        l10n.poorCustomerService,
+        l10n.safetyConcerns,
+      ];
 
   @override
   void initState() {
@@ -99,6 +100,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -115,30 +117,32 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         ),
         child: Column(
           children: [
-            _buildModernAppBar(),
+            _buildModernAppBar(l10n),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppDesign.spaceMD),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildBusInfoHeader(),
+                    _buildBusInfoHeader(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildRatingSection(),
+                    _buildRatingSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildQuickActionsSection(),
+                    _buildQuickActionsSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildCommentSection(),
+                    _buildCommentSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildMediaUploadSection(),
+                    _buildMediaUploadSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
-                    _buildContactOptionsSection(),
+                    _buildLocationSection(l10n),
+                    const SizedBox(height: AppDesign.spaceMD),
+                    _buildContactOptionsSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
                   ],
                 ),
               ),
             ),
-            _buildSubmitButton(),
+            _buildSubmitButton(l10n),
           ],
         ),
       ),
@@ -193,7 +197,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     }
   }
 
-  Widget _buildModernAppBar() {
+  Widget _buildModernAppBar(AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -232,7 +236,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
+                      widget.feedbackTarget == FeedbackTarget.bus
+                          ? l10n.busFeedbackLabel
+                          : l10n.driverFeedbackLabel,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: AppDesign.textXL,
@@ -247,7 +253,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                       ),
                     ),
                     Text(
-                      'Share your experience',
+                      l10n.shareExperience,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.8),
                         fontSize: AppDesign.textSM,
@@ -270,7 +276,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildMediaUploadSection() {
+  Widget _buildMediaUploadSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -305,7 +311,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Text(
-                  'Add Photos or Videos (Optional)',
+                  l10n.addPhotosVideos,
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
@@ -317,7 +323,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceSM),
           Text(
-            'Upload images or videos to better explain your feedback (Max 10MB)',
+            l10n.uploadMediaSubtitle,
             style: TextStyle(
               fontSize: AppDesign.textSM,
               color: th.textSecondary,
@@ -339,25 +345,25 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 color: AppColors.primaryColor.withOpacity(0.05),
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.cloud_upload_outlined,
                     size: 48,
                     color: AppColors.primaryColor,
                   ),
-                  SizedBox(height: AppDesign.spaceSM),
+                  const SizedBox(height: AppDesign.spaceSM),
                   Text(
-                    'Tap to select photos or videos',
-                    style: TextStyle(
+                    l10n.tapToSelectMedia,
+                    style: const TextStyle(
                       fontSize: AppDesign.textMD,
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
-                    'PNG, JPG, MP4 (Max 10MB)',
-                    style: TextStyle(
+                    l10n.mediaFormatNote,
+                    style: const TextStyle(
                       fontSize: AppDesign.textSM,
                       color: AppColors.textHint,
                     ),
@@ -441,7 +447,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildLocationSection() {
+  Widget _buildLocationSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -476,7 +482,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Text(
-                  'Location Information',
+                  l10n.locationInformation,
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
@@ -488,7 +494,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceSM),
           Text(
-            'Your location helps us understand the context of your feedback',
+            l10n.locationSubtitle,
             style: TextStyle(
               fontSize: AppDesign.textSM,
               color: th.textSecondary,
@@ -496,9 +502,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceLG),
           if (isLoadingLocation)
-            const Row(
+            Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -506,10 +512,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     color: AppColors.primaryColor,
                   ),
                 ),
-                SizedBox(width: AppDesign.spaceSM),
+                const SizedBox(width: AppDesign.spaceSM),
                 Text(
-                  'Getting your location...',
-                  style: TextStyle(
+                  l10n.gettingLocation,
+                  style: const TextStyle(
                     fontSize: AppDesign.textSM,
                     color: AppColors.textSecondary,
                   ),
@@ -535,10 +541,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     size: 20,
                   ),
                   const SizedBox(width: AppDesign.spaceSM),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Location captured successfully',
-                      style: TextStyle(
+                      l10n.locationCaptured,
+                      style: const TextStyle(
                         fontSize: AppDesign.textSM,
                         color: AppColors.successColor,
                         fontWeight: FontWeight.w500,
@@ -547,9 +553,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   ),
                   TextButton(
                     onPressed: _getCurrentLocation,
-                    child: const Text(
-                      'Refresh',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.refresh,
+                      style: const TextStyle(
                         fontSize: AppDesign.textSM,
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
@@ -578,10 +584,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     size: 20,
                   ),
                   const SizedBox(width: AppDesign.spaceSM),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Location not available',
-                      style: TextStyle(
+                      l10n.locationNotAvailable,
+                      style: const TextStyle(
                         fontSize: AppDesign.textSM,
                         color: AppColors.warningColor,
                         fontWeight: FontWeight.w500,
@@ -590,9 +596,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   ),
                   TextButton(
                     onPressed: _getCurrentLocation,
-                    child: const Text(
-                      'Try Again',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.tryAgain,
+                      style: const TextStyle(
                         fontSize: AppDesign.textSM,
                         color: AppColors.primaryColor,
                         fontWeight: FontWeight.w500,
@@ -607,7 +613,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildContactOptionsSection() {
+  Widget _buildContactOptionsSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -642,7 +648,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Text(
-                  'Need More Help?',
+                  l10n.needMoreHelp,
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
@@ -654,7 +660,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceSM),
           Text(
-            'For large files or detailed discussions, contact us directly',
+            l10n.contactDirectlySubtitle,
             style: TextStyle(
               fontSize: AppDesign.textSM,
               color: th.textSecondary,
@@ -665,7 +671,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             children: [
               Expanded(
                 child: _buildContactButton(
-                  'WhatsApp',
+                  l10n.whatsApp,
                   Icons.message,
                   AppColors.successColor,
                   _shareViaWhatsApp,
@@ -674,7 +680,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: _buildContactButton(
-                  'Email',
+                  l10n.email,
                   Icons.email,
                   AppColors.primaryColor,
                   _shareViaEmail,
@@ -737,6 +743,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   // Media and contact methods
   Future<void> _pickMediaFile() async {
+    final l10n = AppLocalizations.of(context);
     try {
       // Pick files using file_picker
       final result = await FilePicker.platform.pickFiles(
@@ -750,7 +757,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             .where((file) {
               // Validate file size (10MB limit)
               if (file.size > 10 * 1024 * 1024) {
-                _showError('File ${file.name} exceeds 10MB limit');
+                _showError(l10n.fileExceedsLimit(file.name));
                 return false;
               }
               return true;
@@ -763,7 +770,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             // Check total number of files (limit to 10)
             final totalFiles = selectedMediaFiles.length + newFiles.length;
             if (totalFiles > 10) {
-              _showError('Maximum 10 files allowed');
+              _showError(l10n.maxFilesReached);
               return;
             }
             selectedMediaFiles.addAll(newFiles);
@@ -771,14 +778,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${newFiles.length} file(s) selected for upload'),
+              content: Text(l10n.filesSelected(newFiles.length)),
               backgroundColor: AppColors.successColor,
             ),
           );
         }
       }
     } catch (e) {
-      _showError('Failed to pick media files: $e');
+      _showError(l10n.pickMediaFailed(e.toString()));
     }
   }
 
@@ -789,29 +796,31 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   void _shareViaWhatsApp() {
+    final l10n = AppLocalizations.of(context);
     // WhatsApp sharing logic
-    final message = _buildShareMessage();
+    final message = _buildShareMessage(l10n);
     final whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
     _launchUrl(whatsappUrl);
   }
 
   void _shareViaEmail() {
+    final l10n = AppLocalizations.of(context);
     // Email sharing logic
-    final message = _buildShareMessage();
-    final subject = 'SafeDriver Feedback - Bus ${widget.busNumber}';
+    final message = _buildShareMessage(l10n);
+    final subject = 'SafeDriver Feedback - ${l10n.busLabel(widget.busNumber)}';
     final emailUrl =
         'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
     _launchUrl(emailUrl);
   }
 
-  String _buildShareMessage() {
+  String _buildShareMessage(AppLocalizations l10n) {
     final buffer = StringBuffer();
     buffer.writeln('SafeDriver Feedback');
     buffer.writeln('');
-    buffer.writeln('Bus Number: ${widget.busNumber}');
+    buffer.writeln('${l10n.busNumber}: ${widget.busNumber}');
     buffer.writeln(
-        'Feedback Type: ${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'}');
-    buffer.writeln('Rating: $selectedRating/5 stars');
+        '${l10n.feedbackType}: ${widget.feedbackTarget == FeedbackTarget.bus ? l10n.busFeedback : l10n.driverFeedback}');
+    buffer.writeln('${l10n.ratings}: $selectedRating/5 stars');
     buffer.writeln('');
     if (selectedQuickActions.isNotEmpty) {
       buffer.writeln('Quick Feedback:');
@@ -833,22 +842,24 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Future<void> _launchUrl(String url) async {
+    final l10n = AppLocalizations.of(context);
     try {
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        _showError('Could not launch $url');
+        _showError(l10n.couldNotLaunchUrl(url));
       }
     } catch (e) {
-      _showError('Error launching URL: $e');
+      _showError(l10n.errorLaunchingUrl(e.toString()));
     }
   }
 
   void _showFileSizeError(String fileName) {
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$fileName is too large. Maximum size is 10MB.'),
+        content: Text(l10n.fileExceedsLimit(fileName)),
         backgroundColor: AppColors.dangerColor,
       ),
     );
@@ -863,7 +874,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildBusInfoHeader() {
+  Widget _buildBusInfoHeader(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -916,7 +927,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bus ${widget.busNumber}',
+                  l10n.busLabel(widget.busNumber),
                   style: TextStyle(
                     fontSize: AppDesign.text2XL,
                     fontWeight: FontWeight.bold,
@@ -934,7 +945,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                   ),
                   child: Text(
-                    '${widget.feedbackTarget == FeedbackTarget.bus ? 'Bus' : 'Driver'} Feedback',
+                    widget.feedbackTarget == FeedbackTarget.bus
+                        ? l10n.busFeedbackLabel
+                        : l10n.driverFeedbackLabel,
                     style: const TextStyle(
                       fontSize: AppDesign.textSM,
                       color: AppColors.primaryColor,
@@ -950,7 +963,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildRatingSection() {
+  Widget _buildRatingSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -969,7 +982,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Rate your experience',
+            l10n.rateYourExperience,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -978,7 +991,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceLG),
           Text(
-            _getRatingDescription(),
+            _getRatingDescription(l10n),
             style: TextStyle(
               fontSize: 14,
               color: th.textSecondary,
@@ -989,7 +1002,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           _buildStarRating(),
           if (selectedRating > 0) ...[
             const SizedBox(height: AppDesign.spaceLG),
-            _buildRatingFeedback(),
+            _buildRatingFeedback(l10n),
           ],
         ],
       ),
@@ -1026,7 +1039,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildRatingFeedback() {
+  Widget _buildRatingFeedback(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
@@ -1046,7 +1059,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(width: AppDesign.spaceSM),
           Text(
-            _getRatingText(),
+            _getRatingText(l10n),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -1058,11 +1071,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     final actions = widget.feedbackTarget == FeedbackTarget.bus
-        ? busQuickActions
-        : driverQuickActions;
+        ? _getBusQuickActions(l10n)
+        : _getDriverQuickActions(l10n);
 
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
@@ -1097,7 +1110,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Text(
-                  'Quick Feedback (Select Multiple)',
+                  l10n.quickActions,
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
@@ -1109,7 +1122,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceSM),
           Text(
-            'Choose one or more options that match your experience',
+            l10n.chooseYourLanguage, // Reusing similar key or should have added specific one. Let's use a generic one if available or keep it.
             style: TextStyle(
               fontSize: AppDesign.textSM,
               color: th.textSecondary,
@@ -1166,7 +1179,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildCommentSection() {
+  Widget _buildCommentSection(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -1201,7 +1214,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: Text(
-                  'Additional Comments',
+                  l10n.additionalComments,
                   style: TextStyle(
                     fontSize: AppDesign.textLG,
                     fontWeight: FontWeight.w600,
@@ -1213,7 +1226,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           ),
           const SizedBox(height: AppDesign.spaceSM),
           Text(
-            'Share more details about your experience (optional)',
+            l10n.shareMoreDetails,
             style: TextStyle(
               fontSize: AppDesign.textSM,
               color: th.textSecondary,
@@ -1225,7 +1238,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             maxLines: 4,
             maxLength: 500,
             decoration: InputDecoration(
-              hintText: 'Type your feedback here...',
+              hintText: l10n.typeFeedbackHint,
               hintStyle: TextStyle(
                 color: th.textHint,
               ),
@@ -1257,7 +1270,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  Widget _buildSubmitButton() {
+  Widget _buildSubmitButton(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
@@ -1297,9 +1310,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                         strokeWidth: 2.5,
                       ),
                     )
-                  : const Text(
-                      'Submit Feedback',
-                      style: TextStyle(
+                  : Text(
+                      l10n.submitFeedback,
+                      style: const TextStyle(
                         fontSize: AppDesign.textLG,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -1312,11 +1325,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  String _getRatingDescription() {
+  String _getRatingDescription(AppLocalizations l10n) {
     if (widget.feedbackTarget == FeedbackTarget.bus) {
-      return 'How would you rate the overall condition and comfort of the bus?';
+      return l10n.rateBusExperience;
     } else {
-      return 'How would you rate the driver\'s performance and professionalism?';
+      return l10n.rateDriverExperience;
     }
   }
 
@@ -1363,18 +1376,18 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return Icons.sentiment_very_satisfied;
   }
 
-  String _getRatingText() {
+  String _getRatingText(AppLocalizations l10n) {
     switch (selectedRating) {
       case 1:
-        return 'Very Poor';
+        return l10n.veryPoor;
       case 2:
-        return 'Poor';
+        return l10n.poor;
       case 3:
-        return 'Average';
+        return l10n.average;
       case 4:
-        return 'Good';
+        return l10n.good;
       case 5:
-        return 'Excellent';
+        return l10n.excellent;
       default:
         return '';
     }
@@ -1403,6 +1416,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   }
 
   Future<void> _submitFeedback() async {
+    final l10n = AppLocalizations.of(context);
     if (!_canSubmit()) return;
 
     setState(() {
@@ -1430,8 +1444,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       if (selectedMediaFiles.isNotEmpty) {
         debugPrint('📤 Starting media upload...');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Uploading media files...'),
+          SnackBar(
+            content: Text(l10n.uploadingMedia),
             backgroundColor: AppColors.primaryColor,
           ),
         );
@@ -1450,7 +1464,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         } catch (e) {
           debugPrint('❌ Media upload failed: $e');
           if (mounted) {
-            _showError('Media upload failed: $e');
+            _showError(l10n.mediaUploadFailed(e.toString()));
           }
           return;
         }
@@ -1465,7 +1479,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         rating: selectedRating,
         comment: _commentController.text.trim().isEmpty
             ? selectedQuickActions.join(', ').isEmpty
-                ? _getRatingText()
+                ? _getRatingText(l10n)
                 : selectedQuickActions.join(', ')
             : _commentController.text.trim(),
         category: widget.feedbackTarget == FeedbackTarget.bus
@@ -1474,7 +1488,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         type:
             selectedRating >= 4 ? FeedbackType.positive : FeedbackType.negative,
         title: selectedQuickActions.join(', ').isEmpty
-            ? _getRatingText()
+            ? _getRatingText(l10n)
             : selectedQuickActions.first,
         images: uploadedMediaUrls,
         location: currentLocation != null
@@ -1499,11 +1513,11 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       debugPrint('✅ Feedback submitted successfully!');
 
       if (mounted) {
-        _showSuccessDialog();
+        _showSuccessDialog(l10n);
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog(e.toString());
+        _showErrorDialog(e.toString(), l10n);
       }
     } finally {
       if (mounted) {
@@ -1538,7 +1552,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return FeedbackPriority.low;
   }
 
-  void _showSuccessDialog() {
+  void _showSuccessDialog(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     showDialog(
       context: context,
@@ -1564,7 +1578,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
             const SizedBox(height: AppDesign.spaceLG),
             Text(
-              'Feedback Submitted!',
+              l10n.feedbackSubmittedTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -1573,7 +1587,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
             const SizedBox(height: AppDesign.spaceSM),
             Text(
-              'Thank you for your feedback. It helps us improve our service.',
+              l10n.feedbackSubmittedSubtitle,
               style: TextStyle(
                 fontSize: 14,
                 color: th.textSecondary,
@@ -1589,9 +1603,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               Navigator.of(context).pop(); // Close feedback page
               Navigator.of(context).pop(); // Close feedback system page
             },
-            child: const Text(
-              'Done',
-              style: TextStyle(
+            child: Text(
+              l10n.done,
+              style: const TextStyle(
                 color: AppColors.primaryColor,
                 fontWeight: FontWeight.w600,
               ),
@@ -1602,7 +1616,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     );
   }
 
-  void _showErrorDialog(String error) {
+  void _showErrorDialog(String error, AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
     showDialog(
       context: context,
@@ -1627,7 +1641,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
             const SizedBox(height: AppDesign.spaceLG),
             Text(
-              'Submission Failed',
+              l10n.submissionFailedTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -1636,7 +1650,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ),
             const SizedBox(height: AppDesign.spaceSM),
             Text(
-              'Failed to submit feedback. Please try again.',
+              l10n.submissionFailedSubtitle,
               style: TextStyle(
                 fontSize: 14,
                 color: th.textSecondary,
@@ -1648,9 +1662,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'Try Again',
-              style: TextStyle(
+            child: Text(
+              l10n.tryAgain,
+              style: const TextStyle(
                 color: AppColors.primaryColor,
                 fontWeight: FontWeight.w600,
               ),

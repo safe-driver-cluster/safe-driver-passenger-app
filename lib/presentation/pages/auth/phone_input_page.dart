@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/services/sms_gateway_service.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/phone_auth_provider.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
 import 'otp_verification_page.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class PhoneInputPage extends ConsumerStatefulWidget {
   const PhoneInputPage({super.key});
@@ -31,13 +32,14 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
   }
 
   String? _validatePhoneNumber(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Phone number is required';
+      return l10n.phoneRequired;
     }
 
     final formatted = _smsGateway.formatSriLankanPhoneNumber(value);
     if (!_smsGateway.isValidSriLankanPhoneNumber(formatted)) {
-      return 'Please enter a valid Sri Lankan phone number';
+      return l10n.invalidSriLankanPhone;
     }
 
     return null;
@@ -57,16 +59,18 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
       await phoneAuthController.sendOtp(phoneNumber);
     } catch (e) {
       print('Send OTP error: $e');
+      final l10n = AppLocalizations.of(context);
       CustomSnackBar.showError(
         context,
-        'Failed to send OTP: ${e.toString()}',
+        '${l10n.otpFailed}: ${e.toString()}',
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
 
@@ -133,18 +137,18 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Enter Your Phone Number',
-                        style: TextStyle(
+                      Text(
+                        l10n.enterYourPhoneNumber,
+                        style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'We\'ll send you a verification code via SMS',
-                        style: TextStyle(
+                      Text(
+                        l10n.sendVerificationCodeViaSMS,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white70,
                         ),
@@ -172,9 +176,9 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Phone Number',
-                          style: TextStyle(
+                        Text(
+                          l10n.phoneNumber,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -184,9 +188,9 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
 
                         const SizedBox(height: 8),
 
-                        const Text(
-                          'Enter your Sri Lankan mobile number',
-                          style: TextStyle(
+                        Text(
+                          l10n.enterSriLankanMobile,
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.textSecondary,
                           ),
@@ -212,7 +216,7 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
                               fontWeight: FontWeight.w600,
                               color: AppColors.textPrimary,
                             ),
-                            hintText: '77 123 4567',
+                            hintText: l10n.phoneHint,
                             hintStyle: TextStyle(
                               fontSize: 18,
                               color: Colors.grey[400],
@@ -263,7 +267,7 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
 
                         // Send OTP Button
                         CustomButton(
-                          text: 'Send Verification Code',
+                          text: l10n.sendVerificationCode,
                           onPressed: _sendOtp,
                           isLoading: isLoading,
                         ),
@@ -272,7 +276,7 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
 
                         // Info Text
                         Text(
-                          'By continuing, you agree to receive SMS messages from SafeDriver for verification purposes. Message and data rates may apply.',
+                          l10n.smsAgreement,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
@@ -295,9 +299,9 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          'Or continue with',
-                          style: TextStyle(
+                        Text(
+                          l10n.orContinueWith,
+                          style: const TextStyle(
                             color: Colors.white70,
                             fontSize: 14,
                           ),
@@ -307,9 +311,9 @@ class _PhoneInputPageState extends ConsumerState<PhoneInputPage> {
                           onPressed: () {
                             Navigator.of(context).pushNamed('/login');
                           },
-                          child: const Text(
-                            'Email & Password',
-                            style: TextStyle(
+                          child: Text(
+                            l10n.emailAndPassword,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
