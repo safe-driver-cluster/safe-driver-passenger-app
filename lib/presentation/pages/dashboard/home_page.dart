@@ -169,7 +169,7 @@ class HomePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Recent Activity',
                           style: TextStyle(
                             fontSize: 18,
@@ -177,7 +177,7 @@ class HomePage extends StatelessWidget {
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Center(
                           child: Column(
                             children: [
@@ -194,8 +194,8 @@ class HomePage extends StatelessWidget {
                                   color: th.textSecondary,
                                 ),
                               ),
-                              SizedBox(height: 8),
-                              Text(
+                              const SizedBox(height: 8),
+                              const Text(
                                 'Start your first journey with SafeDriver',
                                 style: TextStyle(
                                   fontSize: 14,
