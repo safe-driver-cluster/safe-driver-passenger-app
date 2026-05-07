@@ -164,7 +164,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: th.isDark ? AppColors.darkBackground : AppColors.scaffoldBackground,
+        color:
+            th.isDark ? AppColors.darkBackground : AppColors.scaffoldBackground,
         child: Column(
           children: [
             const Spacer(flex: 2),
@@ -181,7 +182,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                       child: Container(
                         width: 120,
                         height: 120,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: AppColors.primaryColor,
                         ),
@@ -249,7 +250,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
             // Loading indicator
             Column(
               children: [
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   color: AppColors.primaryColor,
                   strokeWidth: 2.5,
                 ),
