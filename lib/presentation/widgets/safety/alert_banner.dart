@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../data/models/safety_alert_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Alert banner widget for displaying safety alerts
 class AlertBanner extends StatefulWidget {
@@ -65,6 +66,7 @@ class _AlertBannerState extends State<AlertBanner>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {

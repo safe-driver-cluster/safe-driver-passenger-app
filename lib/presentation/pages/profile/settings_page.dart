@@ -4,8 +4,10 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../providers/app_providers.dart';
 import '../../../providers/biometric_settings_provider.dart';
 import '../../../providers/language_provider.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -19,14 +21,42 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool locationServices = true;
   bool autoRefresh = true;
   bool hapticFeedback = true;
-  String selectedTheme = 'System';
-
   List<String> themes = ['System', 'Light', 'Dark'];
+
+  String _themeLabel(ThemeMode themeMode) {
+    switch (themeMode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System';
+    }
+  }
+
+  ThemeMode _themeModeFromLabel(String? label) {
+    switch (label) {
+      case 'Light':
+        return ThemeMode.light;
+      case 'Dark':
+        return ThemeMode.dark;
+      case 'System':
+      default:
+        return ThemeMode.system;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final selectedTheme = _themeLabel(ref.watch(themeModeProvider));
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -73,11 +103,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color:
+                            colorScheme.shadow.withOpacity(isDark ? 0.28 : 0.1),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -97,16 +128,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.primaryColor.withOpacity(0.1),
-                                    AppColors.secondaryColor.withOpacity(0.1),
+                                    colorScheme.primary.withOpacity(0.14),
+                                    colorScheme.secondary.withOpacity(0.14),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.settings,
                                 size: 30,
-                                color: AppColors.primaryColor,
+                                color: colorScheme.primary,
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -116,18 +147,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 children: [
                                   Text(
                                     AppLocalizations.of(context).settings,
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    style: textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  const Text(
+                                  Text(
                                     'Customize your experience', // TODO: Add to localizations
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: colorScheme.onSurface
+                                          .withOpacity(0.7),
                                     ),
                                   ),
                                 ],
@@ -144,10 +174,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               // Appearance Section
                               Text(
                                 AppLocalizations.of(context).general,
-                                style: const TextStyle(
-                                  fontSize: 18,
+                                style: textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -158,8 +186,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 'Choose app theme', // TODO: Add to localizations
                                 selectedTheme,
                                 themes,
-                                (value) =>
-                                    setState(() => selectedTheme = value!),
+                                (value) {
+                                  ref
+                                      .read(themeModeProvider.notifier)
+                                      .changeThemeMode(
+                                        _themeModeFromLabel(value),
+                                      );
+                                },
                               ),
 
                               _buildLanguageSetting(),
@@ -167,12 +200,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               const SizedBox(height: 24),
 
                               // App Behavior Section
-                              const Text(
+                              Text(
                                 'App Behavior', // TODO: Add to localizations
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -206,12 +237,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               const SizedBox(height: 24),
 
                               // Privacy & Security Section
-                              const Text(
+                              Text(
                                 'Privacy & Security',
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
@@ -248,10 +277,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: AppColors.scaffoldBackground,
+                                  color: colorScheme.surfaceContainerHighest
+                                      .withOpacity(isDark ? 0.28 : 1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   children: [
                                     Row(
                                       mainAxisAlignment:
@@ -261,7 +291,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                           'App Version',
                                           style: TextStyle(
                                             fontSize: 16,
-                                            color: AppColors.textPrimary,
+                                            color: colorScheme.onSurface,
                                           ),
                                         ),
                                         Text(
@@ -269,7 +299,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.primaryColor,
+                                            color: colorScheme.primary,
                                           ),
                                         ),
                                       ],
@@ -283,14 +313,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                           'Build Number',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: AppColors.textSecondary,
+                                            color: colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                         Text(
                                           '100',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: AppColors.textSecondary,
+                                            color: colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -320,11 +350,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     bool value,
     Function(bool) onChanged,
   ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final tileColor = colorScheme.surfaceContainerHighest.withOpacity(
+      theme.brightness == Brightness.dark ? 0.28 : 1,
+    );
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground,
+        color: tileColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -333,7 +369,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -347,18 +383,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -368,7 +404,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryColor,
+            activeColor: colorScheme.primary,
           ),
         ],
       ),
@@ -377,12 +413,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   Widget _buildLanguageSetting() {
     final currentLanguage = ref.watch(languageControllerProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final tileColor = colorScheme.surfaceContainerHighest.withOpacity(
+      theme.brightness == Brightness.dark ? 0.28 : 1,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground,
+        color: tileColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -391,7 +432,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Center(
@@ -405,18 +446,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               children: [
                 Text(
                   AppLocalizations.of(context).language,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   AppLocalizations.of(context).selectLanguage,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -426,20 +467,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.greyLight),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.4)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<AppLanguage>(
                 value: currentLanguage,
                 isDense: true,
+                dropdownColor: colorScheme.surface,
                 items: AppLanguage.values.map((AppLanguage language) {
                   return DropdownMenuItem<AppLanguage>(
                     value: language,
                     child: Text(
                       language.englishName,
-                      style: const TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   );
                 }).toList(),
@@ -493,11 +538,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     List<String> options,
     Function(String?) onChanged,
   ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final tileColor = colorScheme.surfaceContainerHighest.withOpacity(
+      theme.brightness == Brightness.dark ? 0.28 : 1,
+    );
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground,
+        color: tileColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -506,7 +557,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -520,18 +571,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -541,20 +592,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.greyLight),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.4)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: value,
                 isDense: true,
+                dropdownColor: colorScheme.surface,
                 items: options.map((option) {
                   return DropdownMenuItem(
                     value: option,
                     child: Text(
                       option,
-                      style: const TextStyle(fontSize: 14),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   );
                 }).toList(),
@@ -573,13 +628,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     String description,
     VoidCallback onTap,
   ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final tileColor = colorScheme.surfaceContainerHighest.withOpacity(
+      theme.brightness == Brightness.dark ? 0.28 : 1,
+    );
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.scaffoldBackground,
+          color: tileColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -588,7 +649,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -602,27 +663,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary,
+              color: colorScheme.onSurfaceVariant,
             ),
           ],
         ),
@@ -686,12 +747,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return Consumer(
       builder: (context, watch, _) {
         final biometricSettings = ref.watch(biometricSettingsProvider);
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final tileColor = colorScheme.surfaceContainerHighest.withOpacity(
+          theme.brightness == Brightness.dark ? 0.28 : 1,
+        );
 
         if (!biometricSettings.isBiometricSupported) {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.scaffoldBackground,
+              color: tileColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -700,7 +766,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(
@@ -708,7 +774,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -717,15 +783,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Not supported on this device',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],

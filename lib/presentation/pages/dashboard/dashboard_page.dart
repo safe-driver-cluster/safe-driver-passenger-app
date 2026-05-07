@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/greeting_util.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
@@ -78,9 +81,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               child: FloatingActionButton(
                 heroTag: "dashboard_qr_fab", // Unique hero tag
                 onPressed: () {
-                  setState(() {
-                    _selectedIndex = 2; // Navigate to QR scanner
-                  });
+                  Navigator.pushNamed(context, '/qr-scanner');
                 },
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -112,21 +113,23 @@ class DashboardHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final dashboardState = ref.watch(dashboardControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -137,7 +140,7 @@ class DashboardHome extends ConsumerWidget {
                   .loadDashboardData();
             },
             color: AppColors.primaryColor,
-            backgroundColor: Colors.white,
+            backgroundColor: th.cardBackground,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -161,7 +164,8 @@ class DashboardHome extends ConsumerWidget {
 
                         // Active Journey Section
                         _buildProfessionalSection(
-                          title: 'Current Journey',
+                          context: context,
+                          title: l10n.activeJourney,
                           icon: Icons.directions_bus_rounded,
                           gradient: AppColors.primaryGradient,
                           child: const ActiveJourneyWidget(),
@@ -170,7 +174,8 @@ class DashboardHome extends ConsumerWidget {
 
                         // Recent Activity Section
                         _buildProfessionalSection(
-                          title: 'Recent Activity',
+                          context: context,
+                          title: l10n.recentActivity,
                           icon: Icons.history_rounded,
                           gradient: AppColors.accentGradient,
                           child: const RecentActivityWidget(),
@@ -192,11 +197,12 @@ class DashboardHome extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) {
         final passengerAsyncValue = ref.watch(currentPassengerProvider);
-        final greeting = _getGreeting();
+        final l10n = AppLocalizations.of(context);
 
         return passengerAsyncValue.when(
           data: (passenger) {
-            final firstName = passenger?.firstName ?? 'Traveler';
+            final firstName = passenger?.firstName ?? '';
+            final greeting = GreetingUtil.getFullGreeting(firstName, l10n);
             return Container(
               padding: const EdgeInsets.fromLTRB(
                 AppDesign.spaceLG,
@@ -216,7 +222,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting, $firstName 👋',
+                              greeting,
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -226,7 +232,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -288,7 +294,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting 👋',
+                              '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -298,7 +304,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -342,7 +348,6 @@ class DashboardHome extends ConsumerWidget {
             );
           },
           error: (error, stack) {
-            final greeting = _getGreeting();
             return Container(
               padding: const EdgeInsets.fromLTRB(
                 AppDesign.spaceLG,
@@ -361,7 +366,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting 👋',
+                              '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -371,7 +376,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -420,13 +425,15 @@ class DashboardHome extends ConsumerWidget {
   }
 
   Widget _buildProfessionalQuickActions(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowLG,
         border: Border.all(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: th.border,
           width: 1,
         ),
       ),
@@ -452,9 +459,9 @@ class DashboardHome extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Quick Actions',
+                  l10n.quickActions,
                   style: AppTextStyles.headline6.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -466,8 +473,8 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'View Buses',
-                    subtitle: 'Available',
+                    title: l10n.busInformation,
+                    subtitle: l10n.busStatus,
                     icon: Icons.directions_bus_rounded,
                     gradient: AppColors.primaryGradient,
                     onTap: () => Navigator.push(
@@ -481,8 +488,8 @@ class DashboardHome extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Our Drivers',
-                    subtitle: 'Details',
+                    title: l10n.driverInformation,
+                    subtitle: l10n.details,
                     icon: Icons.person_rounded,
                     gradient: AppColors.accentGradient,
                     onTap: () => Navigator.push(
@@ -500,8 +507,8 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Emergency',
-                    subtitle: 'Get help',
+                    title: l10n.emergency,
+                    subtitle: l10n.callForHelp,
                     icon: Icons.warning_rounded,
                     gradient: AppColors.dangerGradient,
                     onTap: () => Navigator.pushNamed(context, '/emergency'),
@@ -510,8 +517,8 @@ class DashboardHome extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Feedback',
-                    subtitle: 'Share',
+                    title: l10n.feedback,
+                    subtitle: l10n.share,
                     icon: Icons.feedback_rounded,
                     gradient: AppColors.successGradient,
                     onTap: () =>
@@ -600,14 +607,16 @@ class DashboardHome extends ConsumerWidget {
     required IconData icon,
     required LinearGradient gradient,
     required Widget child,
+    required BuildContext context,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -647,18 +656,5 @@ class DashboardHome extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Morning';
-    } else if (hour < 17) {
-      return 'Afternoon';
-    } else if (hour < 20) {
-      return 'Evening';
-    } else {
-      return 'Night';
-    }
   }
 }

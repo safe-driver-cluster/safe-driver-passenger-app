@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class MapsPage extends ConsumerStatefulWidget {
   const MapsPage({super.key});
@@ -93,6 +94,7 @@ class _MapsPageState extends ConsumerState<MapsPage> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(

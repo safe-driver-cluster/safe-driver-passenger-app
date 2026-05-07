@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class CountryCodePicker extends StatelessWidget {
   final String selectedCountryCode;
@@ -30,6 +31,7 @@ class CountryCodePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -92,6 +94,7 @@ class PhoneNumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Row(
       children: [
         // Country Code Picker

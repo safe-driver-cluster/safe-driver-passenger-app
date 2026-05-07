@@ -6,6 +6,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../data/models/driver_model.dart';
 import '../../../data/repositories/driver_repository.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class DriverInfoPage extends ConsumerStatefulWidget {
   final String driverId;
@@ -69,6 +70,7 @@ class _DriverInfoPageState extends ConsumerState<DriverInfoPage>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Column(

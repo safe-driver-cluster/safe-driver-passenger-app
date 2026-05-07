@@ -10,6 +10,46 @@
   },
 
   "login": "Login",
+  "signIn": "Sign In",
+  "viewBus": "View Bus",
+  "availableBuses": "Available buses",
+  "viewDriverDetails": "View Driver Details",
+  "driverInformation": "Driver Information",
+  "myTrips": "My Trips",
+  "viewHistory": "View history",
+  "emergencyHelp": "Emergency help",
+  "noRecentTrips": "No recent trips",
+  "startFirstJourney": "Start your first journey with SafeDriver",
+  "verifyYourAccount": "Verify Your Account",
+  "verificationCodeSent": "We sent a verification code to\n{phoneNumber}",
+  "@verificationCodeSent": {
+    "description": "Message when verification code is sent",
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String",
+        "example": "+94771234567"
+      }
+    }
+  },
+  "verifyAndCreateAccount": "Verify & Create Account",
+  "didntReceiveCode": "Didn't receive the code? ",
+  "resend": "Resend",
+  "resendIn": "Resend in {seconds} s",
+  "@resendIn": {
+    "description": "Timer for resending OTP",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "60"
+      }
+    }
+  },
+  "changePhoneNumber": "Change phone number",
+  "accountCreatedSuccessfully": "Account created successfully!",
+  "accountCreatedAndVerified": "Account created and verified successfully! Please login with your credentials.",
+  "pleaseEnterCompleteOtp": "Please enter the complete OTP",
+  "verificationIdNotFound": "Verification ID not found. Please try again.",
+  "otpSentSuccessfully": "OTP sent successfully",
   "register": "Register",
   "logout": "Logout",
   "email": "Email",
@@ -28,6 +68,11 @@
   "otpVerification": "OTP Verification",
   "enterOTP": "Enter OTP",
   "otpSent": "OTP sent to",
+  "otpFailed": "Failed to send OTP",
+  "verificationFailed": "Verification failed",
+  "emailValidationFailed": "Email validation failed. Please check your email address.",
+  "passwordValidationFailed": "Password validation failed. Please try again.",
+  "accountAlreadyExists": "An account with this email already exists.",
   "resendOTP": "Resend OTP",
   "otpExpired": "OTP expired",
   "invalidOTP": "Invalid OTP",
@@ -120,8 +165,50 @@
   "save": "Save",
   "cancel": "Cancel",
   "ok": "OK",
+  "or": "OR",
   "yes": "Yes",
   "no": "No",
+  "noAccountFoundPhone": "No account found with this phone number.",
+  "enterPhoneResetPassword": "Enter your phone number and we will send you\na code to reset your password",
+  "sendOTP": "Send OTP",
+  "backToLogin": "Back to Login",
+  "pleaseEnterComplete6DigitOtp": "Please enter the complete 6-digit OTP",
+  "invalidOtpTryAgain": "Invalid OTP. Please try again.",
+  "sending": "Sending...",
+  "passwordResetSuccessful": "Password Reset Successful",
+  "passwordResetSuccessMessage": "Your password has been reset successfully. You can now sign in with your new password.",
+  "goToSignIn": "Go to Sign In",
+  "passwordResetSuccessLoginMessage": "Password reset successful. Please sign in with your new password.",
+  "newPassword": "New Password",
+  "passwordRequirements": "Password Requirements:",
+  "passwordReq1": "• At least 8 characters long",
+  "passwordReq2": "• Contains uppercase and lowercase letters",
+  "passwordReq3": "• Contains at least one number",
+  "backToSignIn": "Back to Sign In",
+  "verifyYourPhone": "Verify Your Phone",
+  "enterVerificationCode": "Enter Verification Code",
+  "type6DigitCode": "Type the 6-digit code we sent you",
+  "verifyCode": "Verify Code",
+  "otpSentTo": "OTP sent successfully to {phoneNumber}",
+  "@otpSentTo": {
+    "description": "Message when OTP is sent successfully to a phone number",
+    "placeholders": {
+      "phoneNumber": {
+        "type": "String",
+        "example": "+94771234567"
+      }
+    }
+  },
+  "createStrongNewPassword": "Create a strong new password\nfor your account",
+  "enterYourPhoneNumber": "Enter Your Phone Number",
+  "sendVerificationCodeViaSMS": "We'll send you a verification code via SMS",
+  "enterSriLankanMobile": "Enter your Sri Lankan mobile number",
+  "sendVerificationCode": "Send Verification Code",
+  "smsAgreement": "By continuing, you agree to receive SMS messages from SafeDriver for verification purposes. Message and data rates may apply.",
+  "phoneHint": "77 123 4567",
+  "orContinueWith": "Or continue with",
+  "emailAndPassword": "Email & Password",
+  "invalidSriLankanPhone": "Please enter a valid Sri Lankan phone number",
   "done": "Done",
   "next": "Next",
   "previous": "Previous",
@@ -132,6 +219,42 @@
   "updating": "Updating...",
   "searching": "Searching...",
   "processing": "Processing...",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "preferNotToSay": "Prefer not to say",
+  "manageSosContacts": "Manage SOS contacts for emergency alerts",
+  "manage": "Manage",
+  "errorSelectingImage": "Error selecting image: {error}",
+  "@errorSelectingImage": {
+    "description": "Error message when image selection fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Permission denied"
+      }
+    }
+  },
+  "errorSavingProfile": "Error saving profile: {error}",
+  "@errorSavingProfile": {
+    "description": "Error message when profile saving fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "errorLoadingProfile": "Error loading profile: {error}",
+  "@errorLoadingProfile": {
+    "description": "Error message when profile loading fails",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
 
   "error": "Error",
   "errorOccurred": "An error occurred",
@@ -180,14 +303,21 @@
   "phoneRequired": "Phone number is required",
   "invalidPhone": "Invalid phone number",
   "nameRequired": "Name is required",
+  "firstNameRequired": "First name is required",
+  "lastNameRequired": "Last name is required",
+  "firstNameMinLength": "First name must be at least 2 characters",
+  "lastNameMinLength": "Last name must be at least 2 characters",
+  "passwordComplexity": "Password must contain uppercase, lowercase, and number",
+  "confirmPasswordRequired": "Please confirm your password",
+  "acceptTerms": "Please accept the terms and conditions",
 
   "welcomeTitle": "Welcome to SafeDriver",
-  "onboarding1Title": "Track Buses in Real-time",
-  "onboarding1Description": "Monitor your bus location and get accurate arrival times",
-  "onboarding2Title": "Driver Safety Monitoring",
-  "onboarding2Description": "Real-time alerts for driver drowsiness and distraction",
-  "onboarding3Title": "Emergency Response",
-  "onboarding3Description": "Quick access to emergency services and safety features",
+  "onboarding1Title": "Safe & Reliable Transport",
+  "onboarding1Description": "Experience the most secure and dependable transportation service. Your safety is our top priority with professionally trained drivers.",
+  "onboarding2Title": "Real-Time Tracking",
+  "onboarding2Description": "Track your ride in real-time and stay connected with live location updates. Know exactly where your ride is at every moment.",
+  "onboarding3Title": "Smart Feedback System",
+  "onboarding3Description": "Share your experience and help us maintain the highest service standards. Your feedback makes every journey better.",
   "getStarted": "Get Started",
 
   "about": "About",
@@ -439,6 +569,7 @@
   "selectYourPreferredLanguage": "Select your preferred language to continue",
   "availableLanguages": "Available Languages",
   "continueButton": "Continue",
+  "continueWithGoogle": "Continue with Google",
   "profilePageComingSoon": "Profile Page - Coming Soon",
   "editProfile": "Edit Profile",
   "loadingProfile": "Loading profile...",
@@ -539,6 +670,8 @@
   "safetyTip4": "• Report any suspicious activity immediately",
   "safetyTip5": "• Follow bus safety protocols and driver instructions",
   "giveFeedback": "Give Feedback",
+  "iAgreeTo": "I agree to the ",
+  "and": " and ",
   "qrCodeDetected": "QR Code detected: {code}",
   "@qrCodeDetected": {
     "description": "Message when QR code is detected",
@@ -558,5 +691,393 @@
         "example": "Something went wrong"
       }
     }
-  }
+  },
+  "goodMorning": "Good Morning",
+  "goodAfternoon": "Good Afternoon",
+  "goodEvening": "Good Evening",
+  "goodNight": "Good Night",
+  "traveler": "Traveler",
+  "rememberMe": "Remember me",
+  "dismiss": "Dismiss",
+  "activeBuses": "Active Buses",
+  "activeBusesCount": "{count} Active Buses",
+  "safetyScoreLabel": "Safety Score: {score}%",
+  "driversCount": "{count} Drivers",
+  "hazardZonesCount": "{count} Hazard Zones",
+  "busQrScanned": "Bus QR code scanned",
+  "safetyAlertAcknowledged": "Safety alert acknowledged",
+  "newHazardZoneReported": "New hazard zone reported",
+  "timeAgo": "{time} ago",
+  "poweredBy": "Powered by SafeDriver Technologies",
+  "addSosContact": "Add SOS Contact",
+  "editSosContact": "Edit SOS Contact",
+  "removeSosContact": "Remove SOS Contact",
+  "areYouSureRemoveContact": "Are you sure you want to remove {name} from your SOS contacts?",
+  "contactNameLabel": "Contact Name",
+  "contactNameHint": "e.g., Mom, Dad, Spouse",
+  "relationshipLabel": "Relationship",
+  "relationshipHint": "e.g., Parent, Friend",
+  "alertMethods": "Alert Methods",
+  "autoSendSos": "Auto-Send SOS",
+  "autoSendSosDescription": "Automatically send alerts to all contacts",
+  "sosContactsDescription": "Add trusted contacts who will receive your SOS alerts via SMS and WhatsApp with your live location.",
+  "noSosContactsYet": "No SOS Contacts Yet",
+  "addYourFirstContact": "Add Your First Contact",
+  "mySosContacts": "My SOS Contacts",
+  "sosContactsCount": "{count} contacts",
+  "sms": "SMS",
+  "whatsapp": "WhatsApp",
+  "onDuty": "On Duty",
+  "offDuty": "Off Duty",
+  "onBreak": "On Break",
+  "unknown": "Unknown",
+  "experienceYears": "{years} years",
+  "joined": "Joined",
+  "license": "License",
+  "model": "Model",
+  "searchBusesHint": "Search by bus number, route, driver...",
+  "searchDriversHint": "Search by name, license, route...",
+  "searchPlacesHint": "Search for places, bus stops...",
+  "noBusesAvailable": "No buses available",
+  "checkBackLaterBuses": "Check back later for available buses",
+  "noMatchingDrivers": "No matching drivers",
+  "tryDifferentSearch": "Try a different search term",
+  "locationServicesDisabled": "Location services are disabled. Please enable location services.",
+  "locationPermissionDenied": "Location permission denied. Please grant location access.",
+  "locationPermissionPermanentlyDenied": "Location permissions are permanently denied. Please enable them in settings.",
+  "noMatchingLocations": "No matching locations found",
+  "destination": "Destination",
+  "boardBus": "Board bus",
+  "leaveBus": "Leave bus",
+  "googleBusDirectionsUnavailable": "Google bus directions unavailable. Showing estimated road route.",
+  "distance": "Distance",
+  "duration": "Duration",
+  "avgSpeed": "Avg speed",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out",
+  "toggleMapType": "Toggle Map Type",
+  "toggleTraffic": "Toggle Traffic",
+  "centerOnLocation": "Center on Location",
+  "stopsCount": "{count} stops",
+  "excellent": "Excellent",
+  "good": "Good",
+  "fair": "Fair",
+  "poor": "Poor",
+  "critical": "Critical",
+  "healthRecord": "Health Record",
+  "lastMedicalCheck": "Last Medical Check",
+  "medicalStatus": "Medical Status",
+  "healthy": "Healthy",
+  "healthIssues": "Health Issues",
+  "medicalExamDue": "Medical Exam Due",
+  "medicalConditions": "Medical Conditions",
+  "none": "None",
+  "performanceOverview": "Performance Overview",
+  "totalTrips": "Total Trips",
+  "totalDistance": "Total Distance",
+  "punctuality": "Punctuality",
+  "fuelEfficiency": "Fuel Efficiency",
+  "routeSpecializations": "Route Specializations",
+  "trainingHistory": "Training History",
+  "noTrainingRecords": "No training records available",
+  "passed": "Passed",
+  "failed": "Failed",
+  "expires": "Expires",
+  "active": "Active",
+  "expired": "Expired",
+  "personalInformation": "Personal Information",
+  "currentStatus": "Current Status",
+  "currentBus": "Current Bus",
+  "currentRoute": "Current Route",
+  "alertness": "Alertness",
+  "mainFeatures": "Main Features",
+  "qrScannerDescription": "Scan bus QR codes to get instant information",
+  "liveTrackingDescription": "Real-time bus location tracking with maps",
+  "driverInfoDescription": "Detailed driver information and performance",
+  "hazardZonesDescription": "Monitor dangerous areas and safety alerts",
+  "quickStats": "Quick Stats",
+  "appDescription": "Your comprehensive bus safety monitoring platform",
+  "driverInfo": "Driver Info",
+  "drivers": "Drivers",
+  "verifiedMember": "Verified Member",
+  "updateInfo": "Update info",
+  "viewTrips": "View trips",
+  "yourFeedback": "Your feedback",
+  "getHelp": "Get help",
+  "accountAndSettings": "Account & Settings",
+  "notProvided": "Not provided",
+  "appSettings": "App Settings",
+  "aboutApp": "About App",
+  "unableToLoadProfile": "Unable to load profile",
+  "shareFeedback": "Share Feedback",
+  "feedbackSubtitle": "Help us improve your experience",
+  "tripInformation": "Trip Information",
+  "busIdTitle": "Bus ID",
+  "tripIdTitle": "Trip ID",
+  "rateExperience": "Rate Your Experience",
+  "noFeedbackYet": "No Feedback Yet",
+  "noFeedbackSubtitle": "Share your feedback about buses and drivers to get started",
+  "busLabel": "Bus {busNumber}",
+  "@busLabel": {
+    "description": "Label for bus with number",
+    "placeholders": {
+      "busNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "statusSubmitted": "Submitted",
+  "statusReviewed": "Reviewed",
+  "statusResolved": "Resolved",
+  "statusRejected": "Rejected",
+  "statusPending": "Pending",
+  "commentLabel": "Comment",
+  "submittedDateLabel": "Submitted: {date}",
+  "@submittedDateLabel": {
+    "description": "Label for submission date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackHistory": "Feedback History",
+  "feedbackHistorySubtitle": "Track all your feedback submissions",
+  "typePositive": "Positive",
+  "typeNegative": "Negative",
+  "typeNeutral": "Neutral",
+  "typeSuggestion": "Suggestion",
+  "typeInquiry": "Inquiry",
+  "typeUrgent": "Urgent",
+  "typeGeneral": "General",
+  "categoryComfort": "Comfort",
+  "categoryVehicle": "Vehicle",
+  "feedbackSuccessWithId": "Feedback submitted successfully! ID: {id}",
+  "@feedbackSuccessWithId": {
+    "description": "Success message after submitting feedback",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackFailed": "Failed to submit feedback: {error}",
+  "@feedbackFailed": {
+    "description": "Error message when feedback submission fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToLoadPassenger": "Failed to load passenger data",
+  "pleaseTryAgainLater": "Please try again later",
+  "noPassengerProfile": "No passenger profile found",
+  "passengerInformation": "Passenger Information",
+  "submitFeedbackSubtitle": "Share your experience and help us improve",
+  "nameLabel": "Name: {name}",
+  "@nameLabel": {
+    "description": "Label for passenger name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "emailLabel": "Email: {email}",
+  "@emailLabel": {
+    "description": "Label for passenger email",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneLabel": "Phone: {phone}",
+  "@phoneLabel": {
+    "description": "Label for passenger phone",
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "totalTripsLabel": "Total Trips: {count}",
+  "@totalTripsLabel": {
+    "description": "Label for total trips count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "feedbackDetails": "Feedback Details",
+  "feedbackType": "Feedback Type",
+  "categoryLabel": "Category",
+  "ratings": "Ratings",
+  "comfort": "Comfort",
+  "cleanliness": "Cleanliness",
+  "punctuality": "Punctuality",
+  "driverBehavior": "Driver Behavior",
+  "vehicleCondition": "Vehicle Condition",
+  "feedbackContent": "Feedback Content",
+  "title": "Title",
+  "description": "Description",
+  "titleRequired": "Title is required",
+  "descriptionRequired": "Description is required",
+  "options": "Options",
+  "priority": "Priority",
+  "priorityLow": "Low",
+  "priorityMedium": "Medium",
+  "priorityHigh": "High",
+  "priorityUrgent": "Urgent",
+  "anonymousFeedback": "Anonymous Feedback",
+  "anonymousFeedbackSubtitle": "Your identity will not be shared",
+  "busFeedback": "Bus Feedback",
+  "driverFeedback": "Driver Feedback",
+  "shareExperience": "Share your experience",
+  "addPhotosVideos": "Add Photos or Videos (Optional)",
+  "uploadMediaSubtitle": "Upload images or videos to better explain your feedback (Max 10MB)",
+  "tapToSelectMedia": "Tap to select photos or videos",
+  "mediaFormatNote": "PNG, JPG, MP4 (Max 10MB)",
+  "cleanAndComfortable": "Clean and comfortable",
+  "goodCondition": "Good condition",
+  "acWorksWell": "Air conditioning works well",
+  "seatsComfortable": "Seats are comfortable",
+  "needsCleaning": "Bus needs cleaning",
+  "maintenanceRequired": "Maintenance required",
+  "uncomfortableSeats": "Uncomfortable seats",
+  "poorVentilation": "Poor ventilation",
+  "excellentDriving": "Excellent driving",
+  "courteousAndHelpful": "Courteous and helpful",
+  "safeDriving": "Safe driving",
+  "professionalBehavior": "Professional behavior",
+  "recklessDriving": "Reckless driving",
+  "unprofessionalBehavior": "Unprofessional behavior",
+  "poorCustomerService": "Poor customer service",
+  "safetyConcerns": "Safety concerns",
+  "locationInformation": "Location Information",
+  "locationSubtitle": "Your location helps us understand the context of your feedback",
+  "gettingLocation": "Getting your location...",
+  "locationCaptured": "Location captured successfully",
+  "locationNotAvailable": "Location not available",
+  "needMoreHelp": "Need More Help?",
+  "contactDirectlySubtitle": "For large files or detailed discussions, contact us directly",
+  "whatsApp": "WhatsApp",
+  "email": "Email",
+  "overallExperience": "How was your overall experience?",
+  "veryPoor": "Very Poor",
+  "poor": "Poor",
+  "average": "Average",
+  "good": "Good",
+  "excellent": "Excellent",
+  "feedbackCategory": "Feedback Category",
+  "categoryGeneral": "General",
+  "categoryDriver": "Driver",
+  "categoryBusCondition": "Bus Condition",
+  "categorySafety": "Safety",
+  "categoryRoute": "Route",
+  "categoryService": "Service",
+  "yourFeedback": "Your Feedback",
+  "feedbackHint": "Tell us about your experience...",
+  "submitFeedback": "Submit Feedback",
+  "feedbackRewardNote": "Your feedback helps us improve our service\n✨ Earn +1 Reward Point!",
+  "userNotAuthenticated": "User not authenticated",
+  "feedbackSuccess": "✅ Thank you for your feedback! +1 Reward Point",
+  "feedbackError": "Failed to submit feedback: {error}",
+  "@feedbackError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "feedbackHistory": "Feedback History",
+  "feedbackHistorySubtitle": "Track all your feedback submissions",
+  "noFeedbackYet": "No Feedback Yet",
+  "noFeedbackSubtitle": "Share your feedback about buses and drivers to get started",
+  "busNumberLabel": "Bus {number}",
+  "@busNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "statusSubmitted": "Submitted",
+  "statusReviewed": "Reviewed",
+  "statusResolved": "Resolved",
+  "statusRejected": "Rejected",
+  "statusPending": "Pending",
+  "commentLabel": "Comment",
+  "submittedOn": "Submitted: {date}",
+  "@submittedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rateYourExperience": "Rate your experience",
+  "additionalComments": "Additional Comments",
+  "shareMoreDetails": "Share more details about your experience (optional)",
+  "typeFeedbackHint": "Type your feedback here...",
+  "feedbackSubmittedTitle": "Feedback Submitted!",
+  "feedbackSubmittedSubtitle": "Thank you for your feedback. It helps us improve our service.",
+  "submissionFailedTitle": "Submission Failed",
+  "submissionFailedSubtitle": "Failed to submit feedback. Please try again.",
+  "uploadingMedia": "Uploading media files...",
+  "filesSelected": "{count} file(s) selected for upload",
+  "@filesSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "maxFilesReached": "Maximum 10 files allowed",
+  "fileExceedsLimit": "File {fileName} exceeds 10MB limit",
+  "@fileExceedsLimit": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaUploadFailed": "Media upload failed: {error}",
+  "@mediaUploadFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pickMediaFailed": "Failed to pick media files: {error}",
+  "@pickMediaFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotLaunchUrl": "Could not launch {url}",
+  "@couldNotLaunchUrl": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLaunchingUrl": "Error launching URL: {error}",
+  "@errorLaunchingUrl": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "busFeedbackLabel": "Bus Feedback",
+  "driverFeedbackLabel": "Driver Feedback",
+  "rateBusExperience": "How would you rate the overall condition and comfort of the bus?",
+  "rateDriverExperience": "How would you rate the driver's performance and professionalism?"
 }

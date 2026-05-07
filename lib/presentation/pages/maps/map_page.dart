@@ -7,9 +7,11 @@ import 'package:geolocator/geolocator.dart' as geo show LocationAccuracy;
 import 'package:geolocator/geolocator.dart' hide LocationAccuracy;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../services/google_places_service.dart' as places_service;
 
 class MapPage extends ConsumerStatefulWidget {
@@ -20,26 +22,35 @@ class MapPage extends ConsumerStatefulWidget {
 }
 
 class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
-  GoogleMapController? _mapController;
-  Position? _currentPosition;
-  final Set<Marker> _markers = {};
-  final Set<Polyline> _polylines = {};
   final TextEditingController _searchController = TextEditingController();
   final places_service.GooglePlacesService _placesService =
       places_service.GooglePlacesService();
-  List<places_service.Prediction> _suggestions = [];
-  bool _showSuggestions = false;
+  final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
+
+  GoogleMapController? _mapController;
+  Position? _currentPosition;
   Timer? _debounce;
+  List<places_service.Prediction> _suggestions = [];
+  places_service.DirectionsResult? _currentDirections;
+  LatLng? _selectedDestination;
+  String? _selectedDestinationName;
+
   bool _isLoading = true;
   bool _isSearching = false;
-  String? _errorMessage;
+  bool _showSuggestions = false;
   bool _showingBusStops = false;
   bool _showingBusRoute = false;
-  String? _searchedDestination;
+  String? _errorMessage;
 
-  // Map types
   MapType _currentMapType = MapType.normal;
   bool _trafficEnabled = false;
+
+  LatLng? get _currentLatLng {
+    final position = _currentPosition;
+    if (position == null) return null;
+    return LatLng(position.latitude, position.longitude);
+  }
 
   @override
   void initState() {
@@ -57,87 +68,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  void _onSearchChanged(String input) {
-    _debounce?.cancel();
-    if (input.trim().length < 2) {
-      setState(() {
-        _suggestions = [];
-        _showSuggestions = false;
-      });
-      return;
-    }
-
-    _debounce = Timer(const Duration(milliseconds: 300), () async {
-      try {
-        final results = await _placesService.autocomplete(input);
-        if (mounted) {
-          setState(() {
-            _suggestions = results.cast<places_service.Prediction>();
-            _showSuggestions = _suggestions.isNotEmpty;
-          });
-        }
-      } catch (e) {
-        // ignore errors silently for now
-      }
-    });
-  }
-
-  Future<void> _selectSuggestion(places_service.Prediction p) async {
-    setState(() {
-      _isSearching = true;
-      _showSuggestions = false;
-      _searchController.text = p.description;
-    });
-
-    try {
-      final latLng = await _placesService.getPlaceLatLng(p.placeId);
-
-      _markers.removeWhere((m) => m.markerId.value == 'search_destination');
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('search_destination'),
-          position: latLng,
-          infoWindow: InfoWindow(title: p.description),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-        ),
-      );
-
-      // animate camera to selection
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLngZoom(latLng, 16.0),
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Selected: ${p.description}'),
-            backgroundColor: AppColors.primaryColor,
-            action: SnackBarAction(
-              label: 'Navigate',
-              textColor: Colors.white,
-              onPressed: _navigateToDestination,
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Place lookup failed: ${e.toString()}'),
-            backgroundColor: AppColors.dangerColor,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isSearching = false);
-    }
-  }
-
   Future<void> _initializeMap() async {
     await _getCurrentLocation();
-    _addSampleBusStops();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -147,8 +79,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         _errorMessage = null;
       });
 
-      // Check if location services are enabled
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() {
           _errorMessage =
@@ -158,57 +89,55 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         return;
       }
 
-      // Check location permissions
-      LocationPermission permission = await Geolocator.checkPermission();
+      var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          setState(() {
-            _errorMessage =
-                'Location permission denied. Please grant location access.';
-            _isLoading = false;
-          });
-          return;
-        }
       }
 
-      if (permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied) {
         setState(() {
           _errorMessage =
-              'Location permissions are permanently denied. Please enable in settings.';
+              'Location permission denied. Please grant location access.';
           _isLoading = false;
         });
         return;
       }
 
-      // Get current position
-      Position position = await Geolocator.getCurrentPosition(
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _errorMessage =
+              'Location permissions are permanently denied. Please enable them in settings.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: geo.LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
 
-      if (mounted) {
-        setState(() {
-          _currentPosition = position;
-          _isLoading = false;
-        });
+      if (!mounted) return;
+      setState(() {
+        _currentPosition = position;
+        _isLoading = false;
+      });
 
-        _updateCurrentLocationMarker(position);
-        _animateToPosition(position);
-      }
+      _updateCurrentLocationMarker(position);
+      _animateToPosition(position);
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = 'Error getting location: ${e.toString()}';
-          _isLoading = false;
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = 'Error getting location: $e';
+        _isLoading = false;
+      });
     }
   }
 
   void _updateCurrentLocationMarker(Position position) {
-    _markers
-        .removeWhere((marker) => marker.markerId.value == 'current_location');
+    _markers.removeWhere(
+      (marker) => marker.markerId.value == 'current_location',
+    );
     _markers.add(
       Marker(
         markerId: const MarkerId('current_location'),
@@ -224,180 +153,111 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   void _animateToPosition(Position position) {
-    if (_mapController != null) {
-      _mapController!.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(position.latitude, position.longitude),
-          16.0,
-        ),
-      );
-    }
-  }
-
-  void _addSampleBusStops() {
-    // This is now called when user clicks "Bus Stop" button
-    // Will be implemented in _showBusStops method
-  }
-
-  void _showBusStops() async {
-    if (_currentPosition == null) {
-      await _getCurrentLocation();
-      if (_currentPosition == null) return;
-    }
-
-    setState(() => _showingBusStops = true);
-
-    // Clear existing bus stop markers
-    _markers
-        .removeWhere((marker) => marker.markerId.value.contains('bus_stop'));
-
-    // Sample bus stops around current location (within ~2km radius)
-    final busStops = _getBusStopsAroundLocation(_currentPosition!);
-
-    for (var stop in busStops) {
-      _markers.add(
-        Marker(
-          markerId: MarkerId('bus_stop_${stop['name']}'),
-          position: LatLng(stop['lat'] as double, stop['lng'] as double),
-          infoWindow: InfoWindow(
-            title: stop['name'] as String,
-            snippet: 'Bus Stop • ${stop['routes']}',
-          ),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-        ),
-      );
-    }
-
-    setState(() => _showingBusStops = false);
-
-    // Show success message
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Found ${busStops.length} bus stops nearby'),
-          backgroundColor: AppColors.successColor,
-        ),
-      );
-    }
-  }
-
-  List<Map<String, dynamic>> _getBusStopsAroundLocation(Position position) {
-    // Generate bus stops within 2km of current location
-    const baseLatOffset = 0.01; // ~1km
-    const baseLngOffset = 0.01; // ~1km
-
-    return [
-      {
-        'name': 'Main Bus Terminal',
-        'lat': position.latitude + (baseLatOffset * 0.5),
-        'lng': position.longitude + (baseLngOffset * 0.3),
-        'routes': 'Routes 101, 105, 138'
-      },
-      {
-        'name': 'Shopping Complex Stop',
-        'lat': position.latitude - (baseLatOffset * 0.7),
-        'lng': position.longitude + (baseLngOffset * 0.8),
-        'routes': 'Routes 205, 220'
-      },
-      {
-        'name': 'Hospital Junction',
-        'lat': position.latitude + (baseLatOffset * 0.9),
-        'lng': position.longitude - (baseLngOffset * 0.4),
-        'routes': 'Routes 150, 176, 185'
-      },
-      {
-        'name': 'University Gate',
-        'lat': position.latitude - (baseLatOffset * 0.3),
-        'lng': position.longitude - (baseLngOffset * 0.9),
-        'routes': 'Routes 301, 307'
-      },
-      {
-        'name': 'City Center Plaza',
-        'lat': position.latitude + (baseLatOffset * 0.2),
-        'lng': position.longitude + (baseLngOffset * 0.6),
-        'routes': 'Routes 110, 125, 240'
-      },
-      {
-        'name': 'Railway Station Stop',
-        'lat': position.latitude - (baseLatOffset * 0.5),
-        'lng': position.longitude + (baseLngOffset * 0.2),
-        'routes': 'Routes 101, 138, 205'
-      },
-    ];
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(position.latitude, position.longitude),
+        16,
+      ),
+    );
   }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-    if (_currentPosition != null) {
-      _animateToPosition(_currentPosition!);
-    }
+    final position = _currentPosition;
+    if (position != null) _animateToPosition(position);
   }
 
-  void _searchPlaces() async {
+  void _onSearchChanged(String input) {
+    _debounce?.cancel();
+    if (input.trim().length < 2) {
+      setState(() {
+        _suggestions = [];
+        _showSuggestions = false;
+      });
+      return;
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      try {
+        final results = await _placesService.autocomplete(
+          input,
+          locationBias: _currentLatLng,
+          radiusMeters: 50000,
+        );
+        if (!mounted) return;
+        setState(() {
+          _suggestions = results;
+          _showSuggestions = results.isNotEmpty;
+        });
+      } catch (_) {
+        if (!mounted) return;
+        setState(() {
+          _suggestions = [];
+          _showSuggestions = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _searchPlaces() async {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
 
     setState(() => _isSearching = true);
-
     try {
-      // Store the searched destination for navigation
-      _searchedDestination = query;
-
-      // Simulate place search - in real app, use Google Places API
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Add a sample marker for searched location
-      final searchLat = _currentPosition?.latitude ?? 6.9271;
-      final searchLng = _currentPosition?.longitude ?? 79.8612;
-
-      // Offset slightly to simulate different location
-      final destinationLat = searchLat + 0.02;
-      final destinationLng = searchLng + 0.015;
-
-      _markers.removeWhere(
-          (marker) => marker.markerId.value == 'search_destination');
-      _markers.add(
-        Marker(
-          markerId: const MarkerId('search_destination'),
-          position: LatLng(destinationLat, destinationLng),
-          infoWindow: InfoWindow(
-            title: query,
-            snippet: 'Searched destination',
-          ),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-        ),
-      );
-
-      // Animate to show both current location and destination
-      if (_mapController != null) {
-        _mapController!.animateCamera(
-          CameraUpdate.newLatLngBounds(
-            LatLngBounds(
-              southwest: LatLng(
-                math.min(searchLat, destinationLat) - 0.005,
-                math.min(searchLng, destinationLng) - 0.005,
-              ),
-              northeast: LatLng(
-                math.max(searchLat, destinationLat) + 0.005,
-                math.max(searchLng, destinationLng) + 0.005,
-              ),
-            ),
-            100.0, // padding
-          ),
+      var results = _suggestions;
+      if (results.isEmpty || results.first.description != query) {
+        results = await _placesService.autocomplete(
+          query,
+          locationBias: _currentLatLng,
+          radiusMeters: 50000,
         );
       }
 
-      setState(() {});
+      if (results.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No matching locations found'),
+              backgroundColor: AppColors.warningColor,
+            ),
+          );
+        }
+        return;
+      }
+
+      await _selectSuggestion(results.first);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Search failed: $e'),
+          backgroundColor: AppColors.dangerColor,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSearching = false);
+    }
+  }
+
+  Future<void> _selectSuggestion(places_service.Prediction prediction) async {
+    setState(() {
+      _isSearching = true;
+      _showSuggestions = false;
+      _searchController.text = prediction.description;
+    });
+
+    try {
+      final latLng = await _placesService.getPlaceLatLng(prediction.placeId);
+      _setDestination(prediction.description, latLng);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Found "$query". Tap Navigate to see bus route!'),
+            content: Text('Selected: ${prediction.description}'),
             backgroundColor: AppColors.primaryColor,
             action: SnackBarAction(
-              label: 'Navigate',
+              label: 'Bus',
               textColor: Colors.white,
               onPressed: _navigateToDestination,
             ),
@@ -405,289 +265,292 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         );
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Search failed: ${e.toString()}'),
-            backgroundColor: AppColors.dangerColor,
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Place lookup failed: $e'),
+          backgroundColor: AppColors.dangerColor,
+        ),
+      );
     } finally {
-      if (mounted) {
-        setState(() => _isSearching = false);
-      }
+      if (mounted) setState(() => _isSearching = false);
     }
   }
 
-  void _showBusRoutes() {
-    _showBusStops();
+  void _setDestination(String name, LatLng latLng) {
+    _clearRouteOverlays();
+    _markers.removeWhere(
+      (marker) => marker.markerId.value == 'search_destination',
+    );
+    _markers.add(
+      Marker(
+        markerId: const MarkerId('search_destination'),
+        position: latLng,
+        infoWindow: InfoWindow(title: name, snippet: 'Destination'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+      ),
+    );
+
+    setState(() {
+      _selectedDestination = latLng;
+      _selectedDestinationName = name;
+      _currentDirections = null;
+    });
+
+    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 16));
   }
 
-  void _navigateToDestination() async {
+  Future<void> _showBusStops() async {
     if (_currentPosition == null) {
       await _getCurrentLocation();
-      if (_currentPosition == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Unable to get current location'),
-              backgroundColor: AppColors.dangerColor,
-            ),
-          );
-        }
-        return;
-      }
+      if (_currentPosition == null) return;
     }
 
-    if (_searchedDestination == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please search for a destination first'),
-            backgroundColor: AppColors.warningColor,
+    setState(() => _showingBusStops = true);
+    try {
+      _markers.removeWhere(
+        (marker) => marker.markerId.value.startsWith('bus_stop_'),
+      );
+
+      final stops = await _placesService.nearbyBusStops(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        radiusMeters: 1500,
+      );
+
+      for (final stop in stops) {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('bus_stop_${stop.placeId}'),
+            position: LatLng(stop.lat, stop.lng),
+            infoWindow: InfoWindow(
+              title: stop.name,
+              snippet: stop.vicinity.isEmpty ? 'Bus stop' : stop.vicinity,
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueOrange,
+            ),
           ),
         );
       }
+
+      if (!mounted) return;
+      setState(() => _showingBusStops = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Found ${stops.length} nearby bus stops'),
+          backgroundColor:
+              stops.isEmpty ? AppColors.warningColor : AppColors.successColor,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _showingBusStops = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Unable to load nearby bus stops: $e'),
+          backgroundColor: AppColors.dangerColor,
+        ),
+      );
+    }
+  }
+
+  Future<void> _navigateToDestination() async {
+    if (_currentPosition == null) {
+      await _getCurrentLocation();
+      if (_currentPosition == null) return;
+    }
+
+    final origin = _currentLatLng;
+    final destination = _selectedDestination;
+    if (origin == null || destination == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Search and select a destination first'),
+          backgroundColor: AppColors.warningColor,
+        ),
+      );
       return;
     }
 
     setState(() => _showingBusRoute = true);
+    try {
+      final directions = await _placesService.getDirections(
+        origin,
+        destination,
+      );
 
-    // Clear existing route
-    _polylines.removeWhere(
-        (polyline) => polyline.polylineId.value.contains('bus_route'));
+      if (directions == null) {
+        if (!mounted) return;
+        setState(() => _showingBusRoute = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No bus route found for this destination'),
+            backgroundColor: AppColors.warningColor,
+          ),
+        );
+        return;
+      }
 
-    // Get destination coordinates (from search marker)
-    final destinationMarker = _markers.firstWhere(
-      (marker) => marker.markerId.value == 'search_destination',
-      orElse: () => throw StateError('Destination not found'),
+      _drawBusRoute(directions);
+      if (!mounted) return;
+      setState(() {
+        _currentDirections = directions;
+        _showingBusRoute = false;
+      });
+
+      final routePoints = places_service.GooglePlacesService.decodePolyline(
+        directions.overviewPolyline,
+      );
+      _fitPoints(routePoints);
+      _showRouteInfoBottomSheet(directions);
+      if (directions.isFallback && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Google bus directions unavailable. Showing estimated road route.',
+            ),
+            backgroundColor: AppColors.warningColor,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _showingBusRoute = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Bus navigation failed: $e'),
+          backgroundColor: AppColors.dangerColor,
+        ),
+      );
+    }
+  }
+
+  void _drawBusRoute(places_service.DirectionsResult directions) {
+    _clearRouteOverlays();
+
+    final routePoints = places_service.GooglePlacesService.decodePolyline(
+      directions.overviewPolyline,
     );
 
-    final currentLatLng =
-        LatLng(_currentPosition!.latitude, _currentPosition!.longitude);
-    final destinationLatLng = destinationMarker.position;
-
-    // Create bus route with intermediate stops
-    final busRoutePoints = _generateBusRoute(currentLatLng, destinationLatLng);
-
-    // Add bus route polyline
     _polylines.add(
       Polyline(
         polylineId: const PolylineId('bus_route_main'),
-        points: busRoutePoints,
+        points: routePoints,
         color: AppColors.primaryColor,
-        width: 5,
-        patterns: [PatternItem.dot, PatternItem.gap(10)],
+        width: 6,
       ),
     );
 
-    // Add bus stops along the route
-    final routeStops = _getBusStopsAlongRoute(busRoutePoints);
-    for (int i = 0; i < routeStops.length; i++) {
-      final stop = routeStops[i];
-      _markers.add(
+    for (var i = 0; i < directions.steps.length; i++) {
+      final step = directions.steps[i];
+      if (step.travelMode != 'TRANSIT') continue;
+
+      _markers.addAll([
         Marker(
-          markerId: MarkerId('route_stop_$i'),
-          position: LatLng(stop['lat'], stop['lng']),
+          markerId: MarkerId('route_stop_${i}_depart'),
+          position: step.startLocation,
           infoWindow: InfoWindow(
-            title: stop['name'],
-            snippet: 'Bus Stop • ${stop['busNumber']}',
+            title: step.departureStop ?? 'Board bus',
+            snippet: _busLineLabel(step),
           ),
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         ),
-      );
-    }
-
-    setState(() => _showingBusRoute = false);
-
-    // Show route info
-    if (mounted) {
-      _showRouteInfoBottomSheet(routeStops);
+        Marker(
+          markerId: MarkerId('route_stop_${i}_arrive'),
+          position: step.endLocation,
+          infoWindow: InfoWindow(
+            title: step.arrivalStop ?? 'Leave bus',
+            snippet: _busLineLabel(step),
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+      ]);
     }
   }
 
-  void _showRouteInfoBottomSheet(List<Map<String, dynamic>> stops) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.4,
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  void _clearRouteOverlays() {
+    _polylines.removeWhere(
+      (polyline) => polyline.polylineId.value.contains('bus_route'),
+    );
+    _markers.removeWhere(
+      (marker) => marker.markerId.value.startsWith('route_stop_'),
+    );
+  }
+
+  void _fitPoints(List<LatLng> points) {
+    if (points.isEmpty || _mapController == null) return;
+
+    var minLat = points.first.latitude;
+    var maxLat = points.first.latitude;
+    var minLng = points.first.longitude;
+    var maxLng = points.first.longitude;
+
+    for (final point in points) {
+      minLat = math.min(minLat, point.latitude);
+      maxLat = math.max(maxLat, point.latitude);
+      minLng = math.min(minLng, point.longitude);
+      maxLng = math.max(maxLng, point.longitude);
+    }
+
+    _mapController!.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(minLat, minLng),
+          northeast: LatLng(maxLat, maxLng),
         ),
-        child: Column(
-          children: [
-            // Handle
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.greyLight,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.directions_bus,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context).busRouteToDestination,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Text(
-                          'Total journey: ~25 mins',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Bus stops list
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: stops.length,
-                itemBuilder: (context, index) {
-                  final stop = stops[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.greyExtraLight,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.greyLight),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                stop['name'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                stop['busNumber'],
-                                style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          stop['arrivalTime'],
-                          style: const TextStyle(
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+        72,
       ),
     );
   }
 
-  List<LatLng> _generateBusRoute(LatLng start, LatLng end) {
-    // Generate a realistic bus route with turns and intermediate points
-    final points = <LatLng>[];
-    points.add(start);
+  Future<void> _openGoogleMapsBusNavigation() async {
+    final origin = _currentLatLng;
+    final destination = _selectedDestination;
+    if (origin == null || destination == null) return;
 
-    // Add intermediate waypoints to simulate bus route
-    final latDiff = end.latitude - start.latitude;
-    final lngDiff = end.longitude - start.longitude;
+    final uri = Uri.https('www.google.com', '/maps/dir/', {
+      'api': '1',
+      'origin': '${origin.latitude},${origin.longitude}',
+      'destination': '${destination.latitude},${destination.longitude}',
+      'travelmode': 'transit',
+      'dir_action': 'navigate',
+    });
 
-    // Add waypoints with some realistic bus route deviations
-    for (double i = 0.2; i < 1.0; i += 0.2) {
-      final waypoint = LatLng(
-        start.latitude +
-            (latDiff * i) +
-            (i * 0.002 * (i < 0.5 ? 1 : -1)), // slight curve
-        start.longitude +
-            (lngDiff * i) +
-            (i * 0.001 * (i > 0.6 ? 1 : -1)), // another curve
-      );
-      points.add(waypoint);
-    }
-
-    points.add(end);
-    return points;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
-  List<Map<String, dynamic>> _getBusStopsAlongRoute(List<LatLng> routePoints) {
-    // Generate bus stops along the route
-    return [
-      {
-        'name': 'Starting Point Stop',
-        'lat': routePoints[1].latitude,
-        'lng': routePoints[1].longitude,
-        'busNumber': 'Bus 138',
-        'arrivalTime': '5 mins',
-      },
-      {
-        'name': 'Midway Terminal',
-        'lat': routePoints[routePoints.length ~/ 2].latitude,
-        'lng': routePoints[routePoints.length ~/ 2].longitude,
-        'busNumber': 'Bus 205',
-        'arrivalTime': '12 mins',
-      },
-      {
-        'name': 'Junction Stop',
-        'lat': routePoints[routePoints.length - 2].latitude,
-        'lng': routePoints[routePoints.length - 2].longitude,
-        'busNumber': 'Bus 101',
-        'arrivalTime': '18 mins',
-      },
-    ];
+  void _clearSearchAndRoute() {
+    _debounce?.cancel();
+    _searchController.clear();
+    _markers.removeWhere(
+      (marker) => marker.markerId.value == 'search_destination',
+    );
+    _clearRouteOverlays();
+    setState(() {
+      _selectedDestination = null;
+      _selectedDestinationName = null;
+      _currentDirections = null;
+      _suggestions = [];
+      _showSuggestions = false;
+    });
+  }
+
+  String _busLineLabel(places_service.TransitStep step) {
+    final line = step.lineShortName ?? step.lineName;
+    if (line == null || line.isEmpty) return 'Bus';
+    return 'Bus $line';
+  }
+
+  String _averageSpeed(places_service.DirectionsResult directions) {
+    if (directions.totalDistanceMeters <= 0 ||
+        directions.totalDurationSeconds <= 0) {
+      return '--';
+    }
+    final km = directions.totalDistanceMeters / 1000;
+    final hours = directions.totalDurationSeconds / 3600;
+    return '${(km / hours).toStringAsFixed(1)} km/h';
   }
 
   void _toggleMapType() {
@@ -699,39 +562,34 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   void _toggleTraffic() {
-    setState(() {
-      _trafficEnabled = !_trafficEnabled;
-    });
+    setState(() => _trafficEnabled = !_trafficEnabled);
   }
 
   void _centerOnLocation() {
-    if (_currentPosition != null) {
-      _animateToPosition(_currentPosition!);
+    final position = _currentPosition;
+    if (position != null) {
+      _animateToPosition(position);
     } else {
       _getCurrentLocation();
     }
   }
 
-  void _zoomIn() {
-    _mapController?.animateCamera(CameraUpdate.zoomIn());
-  }
+  void _zoomIn() => _mapController?.animateCamera(CameraUpdate.zoomIn());
 
-  void _zoomOut() {
-    _mapController?.animateCamera(CameraUpdate.zoomOut());
-  }
+  void _zoomOut() => _mapController?.animateCamera(CameraUpdate.zoomOut());
 
   Widget _buildHeader() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title and back button
           Row(
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.white.withOpacity(0.2),
+                  color: th.glassBackground,
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
                 child: IconButton(
@@ -748,141 +606,168 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              Text(
-                AppLocalizations.of(context).mapsNavigation,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.white,
-                  letterSpacing: -0.5,
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context).mapsNavigation,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.white,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
-
-          // Search Bar
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                _onSearchChanged(value);
-                setState(() {});
-              },
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).searchDestination,
-                hintStyle: const TextStyle(
-                  color: AppColors.textHint,
-                  fontSize: 16,
-                ),
-                prefixIcon: const Icon(
-                  Icons.search_rounded,
-                  color: AppColors.primaryColor,
-                  size: 24,
-                ),
-                suffixIcon: _isSearching
-                    ? const Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                      )
-                    : _searchController.text.isNotEmpty
-                        ? IconButton(
-                            onPressed: () {
-                              _searchController.clear();
-                              _searchedDestination = null;
-                              _markers.removeWhere((marker) =>
-                                  marker.markerId.value ==
-                                  'search_destination');
-                              _polylines.removeWhere((polyline) => polyline
-                                  .polylineId.value
-                                  .contains('bus_route'));
-                              _suggestions = [];
-                              _showSuggestions = false;
-                              setState(() {});
-                            },
-                            icon: const Icon(
-                              Icons.clear_rounded,
-                              color: AppColors.textHint,
-                            ),
-                          )
-                        : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppDesign.spaceLG,
-                  vertical: AppDesign.spaceMD,
-                ),
-              ),
-              onSubmitted: (_) => _searchPlaces(),
-            ),
-          ),
-
-          // Suggestions list (autocomplete)
+          _buildSearchBox(),
           if (_showSuggestions && _suggestions.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.25,
-              ),
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: _suggestions.length.clamp(0, 6),
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (context, index) {
-                  final p = _suggestions[index];
-                  return ListTile(
-                    title: Text(p.description),
-                    onTap: () => _selectSuggestion(p),
-                  );
-                },
-              ),
-            ),
-
+            _buildSuggestionsList(),
           const SizedBox(height: AppDesign.spaceLG),
-
-          // Action buttons
           _buildActionCards(),
         ],
       ),
     );
   }
 
+  Widget _buildSearchBox() {
+    final th = ThemeHelper.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) {
+          _onSearchChanged(value);
+          setState(() {});
+        },
+        onSubmitted: (_) => _searchPlaces(),
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          hintText: 'Search destination or bus stop',
+          hintStyle: TextStyle(
+            color: th.textHint,
+            fontSize: 16,
+          ),
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: AppColors.primaryColor,
+            size: 24,
+          ),
+          suffixIcon: _isSearching
+              ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                )
+              : _searchController.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: _clearSearchAndRoute,
+                      icon: Icon(
+                        Icons.clear_rounded,
+                        color: th.textHint,
+                      ),
+                    )
+                  : null,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceLG,
+            vertical: AppDesign.spaceMD,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestionsList() {
+    final th = ThemeHelper.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.28,
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: math.min(_suggestions.length, 6),
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final prediction = _suggestions[index];
+          return ListTile(
+            leading: const Icon(
+              Icons.place_outlined,
+              color: AppColors.primaryColor,
+            ),
+            title: Text(prediction.mainText ?? prediction.description),
+            subtitle: prediction.secondaryText == null
+                ? null
+                : Text(prediction.secondaryText!),
+            onTap: () => _selectSuggestion(prediction),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildActionCards() {
+    return Row(
+      children: [
+        Expanded(
+          child: _SmallActionButton(
+            icon: Icons.bus_alert_rounded,
+            title: AppLocalizations.of(context).busStop,
+            color: AppColors.secondaryColor,
+            isLoading: _showingBusStops,
+            onTap: _showBusStops,
+          ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: _SmallActionButton(
+            icon: Icons.directions_bus_rounded,
+            title: AppLocalizations.of(context).navigate,
+            color: AppColors.accentColor,
+            isLoading: _showingBusRoute,
+            onTap: _navigateToDestination,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildMapContainer() {
+    final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withOpacity(0.1),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -900,11 +785,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               GoogleMap(
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: CameraPosition(
-                  target: _currentPosition != null
-                      ? LatLng(_currentPosition!.latitude,
-                          _currentPosition!.longitude)
-                      : const LatLng(6.9271, 79.8612), // Colombo default
-                  zoom: 14.0,
+                  target: _currentLatLng ?? const LatLng(6.9271, 79.8612),
+                  zoom: 14,
                 ),
                 markers: _markers,
                 polylines: _polylines,
@@ -918,35 +800,80 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                 mapToolbarEnabled: false,
               ),
             if (!_isLoading && _errorMessage == null) _buildMapControls(),
+            if (_currentDirections != null)
+              Positioned(
+                left: AppDesign.spaceMD,
+                right: AppDesign.spaceMD,
+                bottom: AppDesign.spaceMD,
+                child: _buildRouteSummaryCard(_currentDirections!),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionCards() {
-    return Row(
-      children: [
-        Expanded(
-          child: _SmallActionButton(
-            icon: Icons.bus_alert_rounded,
-            title: AppLocalizations.of(context).busStop,
-            color: AppColors.secondaryColor,
-            isLoading: _showingBusStops,
-            onTap: _showBusRoutes,
+  Widget _buildRouteSummaryCard(places_service.DirectionsResult directions) {
+    final th = ThemeHelper.of(context);
+    return Material(
+      color: th.cardBackground,
+      elevation: 6,
+      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        onTap: () => _showRouteInfoBottomSheet(directions),
+        child: Padding(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.directions_bus_rounded,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      _selectedDestinationName ?? 'Bus route',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: th.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceXS),
+                    Text(
+                      '${directions.totalDistance} - ${directions.totalDuration} - ${_averageSpeed(directions)}${directions.isFallback ? ' - estimated' : ''}',
+                      style: TextStyle(
+                        color: th.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: _openGoogleMapsBusNavigation,
+                icon: const Icon(
+                  Icons.open_in_new_rounded,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(width: AppDesign.spaceMD),
-        Expanded(
-          child: _SmallActionButton(
-            icon: Icons.navigation_rounded,
-            title: AppLocalizations.of(context).navigate,
-            color: AppColors.accentColor,
-            isLoading: _showingBusRoute,
-            onTap: _navigateToDestination,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -992,44 +919,176 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     );
   }
 
+  void _showRouteInfoBottomSheet(places_service.DirectionsResult directions) {
+    final transitSteps =
+        directions.steps.where((step) => step.travelMode == 'TRANSIT').toList();
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) {
+          final th = ThemeHelper.of(context);
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.55,
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: th.borderLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.directions_bus,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _selectedDestinationName ??
+                                  AppLocalizations.of(context)
+                                      .busRouteToDestination,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: th.textPrimary,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: _openGoogleMapsBusNavigation,
+                            icon: const Icon(Icons.open_in_new_rounded),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppDesign.spaceMD),
+                      Row(
+                        children: [
+                          _RouteMetric(
+                            label: 'Distance',
+                            value: directions.totalDistance,
+                            icon: Icons.straighten_rounded,
+                          ),
+                          const SizedBox(width: AppDesign.spaceSM),
+                          _RouteMetric(
+                            label: 'Duration',
+                            value: directions.totalDuration,
+                            icon: Icons.schedule_rounded,
+                          ),
+                          const SizedBox(width: AppDesign.spaceSM),
+                          _RouteMetric(
+                            label: 'Avg speed',
+                            value: _averageSpeed(directions),
+                            icon: Icons.speed_rounded,
+                          ),
+                        ],
+                      ),
+                      if (directions.isFallback) ...[
+                        const SizedBox(height: AppDesign.spaceSM),
+                        const Text(
+                          'Estimated road route because Google bus directions are unavailable.',
+                          style: TextStyle(
+                            color: AppColors.warningColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: directions.steps.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final step = directions.steps[index];
+                      return _TransitStepTile(
+                        step: step,
+                        title: step.travelMode == 'TRANSIT'
+                            ? _busLineLabel(step)
+                            : step.instructions,
+                      );
+                    },
+                  ),
+                ),
+                if (transitSteps.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: Text(
+                      'Google did not return a bus segment for this route.',
+                      style: TextStyle(color: th.textSecondary),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        });
+  }
+
   Widget _buildErrorState() {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppDesign.space2XL),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.location_off,
               size: 64,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
             const SizedBox(height: AppDesign.spaceLG),
             Text(
               AppLocalizations.of(context).unableToLoadMap,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceMD),
             Text(
               _errorMessage ?? 'Unknown error occurred',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
             ),
             const SizedBox(height: AppDesign.spaceLG),
             ElevatedButton(
-              onPressed: () {
-                _getCurrentLocation();
-              },
+              onPressed: _getCurrentLocation,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
@@ -1043,6 +1102,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Widget _buildLoadingState() {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1051,8 +1111,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
           const SizedBox(height: AppDesign.spaceLG),
           Text(
             AppLocalizations.of(context).loadingMap,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
+            style: TextStyle(
+              color: th.textSecondary,
               fontSize: 16,
             ),
           ),
@@ -1063,31 +1123,178 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 1.0],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
               _buildHeader(),
-              Expanded(
-                child: _buildMapContainer(),
-              ),
+              Expanded(child: _buildMapContainer()),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _RouteMetric extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _RouteMetric({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceSM),
+        decoration: BoxDecoration(
+          color: th.inputFill,
+          borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+          border: Border.all(color: th.borderLight),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: AppColors.primaryColor, size: 18),
+            const SizedBox(height: AppDesign.spaceXS),
+            Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: th.textPrimary,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: th.textSecondary,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TransitStepTile extends StatelessWidget {
+  final places_service.TransitStep step;
+  final String title;
+
+  const _TransitStepTile({
+    required this.step,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final isBus = step.travelMode == 'TRANSIT';
+    final subtitle = isBus
+        ? [
+            if (step.departureStop != null) step.departureStop,
+            if (step.arrivalStop != null) step.arrivalStop,
+          ].join(' to ')
+        : step.instructions;
+
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      decoration: BoxDecoration(
+        color: th.inputFill,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        border: Border.all(color: th.borderLight),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: (isBus ? AppColors.primaryColor : th.textDisabled)
+                  .withOpacity(0.12),
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+            ),
+            child: Icon(
+              isBus ? Icons.directions_bus_rounded : Icons.directions_walk,
+              color: isBus ? AppColors.primaryColor : th.textDisabled,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppDesign.spaceMD),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: th.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (subtitle.isNotEmpty) ...[
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: th.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: AppDesign.spaceXS),
+                Text(
+                  '${step.distance} - ${step.duration}',
+                  style: const TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (isBus && step.numStops != null)
+            Text(
+              '${step.numStops} stops',
+              style: TextStyle(
+                color: th.textSecondary,
+                fontSize: 12,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -1110,17 +1317,18 @@ class _SmallActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: th.surface,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withOpacity(0.1),
+              color: th.shadowMedium,
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -1139,19 +1347,18 @@ class _SmallActionButton extends StatelessWidget {
                 ),
               )
             else
-              Icon(
-                icon,
-                color: color,
-                size: 22,
-              ),
+              Icon(icon, color: color, size: 22),
             const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color:
-                    isLoading ? AppColors.textSecondary : AppColors.textPrimary,
+            Flexible(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isLoading ? th.textSecondary : th.textPrimary,
+                ),
               ),
             ),
           ],
@@ -1176,6 +1383,7 @@ class _MapControlButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Tooltip(
       message: tooltip,
       child: GestureDetector(
@@ -1184,11 +1392,11 @@ class _MapControlButton extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryColor : AppColors.white,
+            color: isActive ? AppColors.primaryColor : th.surface,
             borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withOpacity(0.1),
+                color: th.shadowMedium,
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -1196,7 +1404,7 @@ class _MapControlButton extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: isActive ? AppColors.white : AppColors.primaryColor,
+            color: isActive ? Colors.white : AppColors.primaryColor,
             size: 24,
           ),
         ),

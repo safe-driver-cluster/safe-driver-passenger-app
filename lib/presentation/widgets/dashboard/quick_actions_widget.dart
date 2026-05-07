@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../common/professional_widgets.dart';
 
 class QuickActionsWidget extends StatelessWidget {
@@ -24,6 +25,7 @@ class QuickActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return ProfessionalCard(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       gradient: AppColors.cardGradient,
@@ -37,6 +39,7 @@ class QuickActionsWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.qr_code_scanner_rounded,
                   label: 'Scan QR',
                   subtitle: 'Quick boarding',
@@ -47,6 +50,7 @@ class QuickActionsWidget extends StatelessWidget {
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.search_rounded,
                   label: 'Search Bus',
                   subtitle: 'Find routes',
@@ -65,6 +69,7 @@ class QuickActionsWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.emergency_rounded,
                   label: 'Emergency',
                   subtitle: 'Get help now',
@@ -75,6 +80,7 @@ class QuickActionsWidget extends StatelessWidget {
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.feedback_rounded,
                   label: 'Feedback',
                   subtitle: 'Share thoughts',
@@ -91,6 +97,7 @@ class QuickActionsWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.route_rounded,
                   label: 'Routes',
                   subtitle: 'View all routes',
@@ -101,6 +108,7 @@ class QuickActionsWidget extends StatelessWidget {
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
                 child: _buildProfessionalActionButton(
+                  th: th,
                   icon: Icons.security_rounded,
                   label: 'Safety Info',
                   subtitle: 'Learn more',
@@ -118,6 +126,7 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   Widget _buildProfessionalActionButton({
+    required ThemeHelper th,
     required IconData icon,
     required String label,
     required String subtitle,
@@ -133,7 +142,9 @@ class QuickActionsWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: th.isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.black.withOpacity(0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

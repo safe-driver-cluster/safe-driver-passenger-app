@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
@@ -109,7 +111,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       } else {
         // Error feedback
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Login failed');
+        _showErrorSnackBar(
+            result.message ?? AppLocalizations.of(context).loginFailed);
       }
     }
   }
@@ -126,7 +129,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Google Sign-In failed');
+        _showErrorSnackBar(
+            result.message ?? AppLocalizations.of(context).loginFailed);
       }
     }
   }
@@ -144,20 +148,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
-            SizedBox(width: 12),
-            Text('Verify Email'),
+            const Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
+            const SizedBox(width: 12),
+            Text(AppLocalizations.of(context).otpVerification),
           ],
         ),
-        content: const Text(
-          'Please verify your email address before continuing. Check your inbox and click the verification link.',
+        content: Text(
+          AppLocalizations.of(context).comingSoonFeature,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context).ok),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -166,11 +170,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   .read(authStateProvider.notifier)
                   .sendEmailVerification();
               if (mounted) {
-                _showSuccessSnackBar(
-                    result.message ?? 'Verification email sent');
+                _showSuccessSnackBar(result.message ??
+                    AppLocalizations.of(context).operationSuccessful);
               }
             },
-            child: const Text('Resend'),
+            child: Text(AppLocalizations.of(context).resendOTP),
           ),
         ],
       ),
@@ -191,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: AppLocalizations.of(context).dismiss,
           textColor: Colors.white,
           onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
@@ -218,6 +222,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
 
     // Listen for auth state changes and navigate accordingly
@@ -304,9 +310,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 ),
                               ),
                               const SizedBox(height: 32),
-                              const Text(
-                                'Welcome Back',
-                                style: TextStyle(
+                              Text(
+                                l10n.welcomeTitle,
+                                style: const TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -314,7 +320,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Sign in to continue your safe journey',
+                                l10n.appTagline,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white.withOpacity(0.8),
@@ -326,9 +332,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         // Form Section
                         Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: th.cardBackground,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(32),
                               topRight: Radius.circular(32),
                             ),
@@ -357,13 +363,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             _selectedCountryCode = code;
                                           });
                                         },
-                                        labelText: 'Phone Number',
+                                        labelText: l10n.phoneNumber,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please enter your phone number';
+                                            return l10n.phoneRequired;
                                           }
                                           if (value.length < 9) {
-                                            return 'Please enter a valid phone number';
+                                            return l10n.invalidPhone;
                                           }
                                           return null;
                                         },
@@ -374,22 +380,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       // Password Field with modern design
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.grey[50],
+                                          color: th.inputFill,
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: Colors.grey[200]!,
+                                            color: th.borderLight,
                                             width: 1,
                                           ),
                                         ),
                                         child: TextFormField(
                                           controller: _passwordController,
                                           obscureText: _obscurePassword,
+                                          style: TextStyle(
+                                            color: th.textPrimary,
+                                          ),
                                           decoration: InputDecoration(
-                                            labelText: 'Password',
+                                            labelText: l10n.password,
                                             prefixIcon: Icon(
                                               Icons.lock_outlined,
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                             ),
                                             suffixIcon: IconButton(
                                               icon: Icon(
@@ -397,7 +406,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                     ? Icons.visibility_outlined
                                                     : Icons
                                                         .visibility_off_outlined,
-                                                color: Colors.grey[600],
+                                                color: th.textSecondary,
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -413,17 +422,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               vertical: 20,
                                             ),
                                             labelStyle: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
+                                            ),
+                                            hintStyle: TextStyle(
+                                              color: th.textHint,
                                             ),
                                           ),
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Please enter your password';
+                                              return l10n.passwordRequired;
                                             }
                                             if (value.length < 6) {
-                                              return 'Password must be at least 6 characters';
+                                              return l10n.passwordTooShort;
                                             }
                                             return null;
                                           },
@@ -449,9 +461,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                   BorderRadius.circular(4),
                                             ),
                                           ),
-                                          const Text(
-                                            'Remember me',
-                                            style: TextStyle(
+                                          Text(
+                                            l10n.rememberMe,
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -459,9 +471,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           const Spacer(),
                                           TextButton(
                                             onPressed: _forgotPassword,
-                                            child: const Text(
-                                              'Forgot Password?',
-                                              style: TextStyle(
+                                            child: Text(
+                                              l10n.forgotPassword,
+                                              style: const TextStyle(
                                                 color: Color(0xFF2563EB),
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
@@ -517,9 +529,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                             Colors.white),
                                                   ),
                                                 )
-                                              : const Text(
-                                                  'Sign In',
-                                                  style: TextStyle(
+                                              : Text(
+                                                  l10n.login,
+                                                  style: const TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
@@ -536,16 +548,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           Expanded(
                                             child: Container(
                                               height: 1,
-                                              color: Colors.grey[300],
+                                              color: th.divider,
                                             ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 20),
                                             child: Text(
-                                              'OR',
+                                              l10n.or,
                                               style: TextStyle(
-                                                color: Colors.grey[500],
+                                                color: th.textSecondary,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
                                               ),
@@ -554,7 +566,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           Expanded(
                                             child: Container(
                                               height: 1,
-                                              color: Colors.grey[300],
+                                              color: th.divider,
                                             ),
                                           ),
                                         ],
@@ -566,17 +578,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       Container(
                                         height: 56,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: th.cardBackground,
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: Colors.grey[300]!,
+                                            color: th.border,
                                             width: 1,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
+                                              color: th.shadowMedium,
                                               blurRadius: 8,
                                               offset: const Offset(0, 2),
                                             ),
@@ -586,12 +597,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           onPressed:
                                               isLoading ? null : _googleSignIn,
                                           icon: const GoogleIcon(size: 24),
-                                          label: const Text(
-                                            'Continue with Google',
+                                          label: Text(
+                                            l10n.continueWithGoogle,
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
+                                              color: th.textPrimary,
                                             ),
                                           ),
                                           style: OutlinedButton.styleFrom(
@@ -613,9 +624,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            'Don\'t have an account? ',
+                                            l10n.dontHaveAccount,
                                             style: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
                                             ),
                                           ),
@@ -627,10 +638,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                         const RegisterPage()),
                                               );
                                             },
-                                            child: const Text(
-                                              'Sign Up',
+                                            child: Text(
+                                              l10n.register,
                                               style: TextStyle(
-                                                color: Color(0xFF2563EB),
+                                                color: th.primary,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
                                               ),

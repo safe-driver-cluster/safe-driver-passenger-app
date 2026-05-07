@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class QrTicketPage extends StatelessWidget {
   const QrTicketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(

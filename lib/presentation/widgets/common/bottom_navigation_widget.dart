@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class BottomNavigationWidget extends StatelessWidget {
   final int currentIndex;
@@ -15,16 +16,17 @@ class BottomNavigationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.surface,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(AppDesign.space2XL),
           topRight: Radius.circular(AppDesign.space2XL),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: th.shadowMedium,
             blurRadius: 20,
             offset: const Offset(0, -8),
           ),
@@ -39,9 +41,9 @@ class BottomNavigationWidget extends StatelessWidget {
           currentIndex: currentIndex,
           onTap: onTap,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: th.surface,
           selectedItemColor: AppColors.primaryColor,
-          unselectedItemColor: AppColors.textSecondary,
+          unselectedItemColor: th.textSecondary,
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 12,

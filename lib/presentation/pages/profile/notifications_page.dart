@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/color_constants.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+
+import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -19,8 +21,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -67,7 +70,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -104,7 +107,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -113,15 +116,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: th.textPrimary,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     'Customize your notification preferences',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -136,17 +139,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           child: ListView(
                             children: [
                               // General Notifications
-                              const Text(
+                              Text(
                                 'General',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: th.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
 
                               _buildNotificationTile(
+                                th,
                                 '📱',
                                 'Push Notifications',
                                 'Receive notifications on your device',
@@ -156,6 +160,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               ),
 
                               _buildNotificationTile(
+                                th,
                                 '📧',
                                 'Email Notifications',
                                 'Get updates via email',
@@ -165,6 +170,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               ),
 
                               _buildNotificationTile(
+                                th,
                                 '💬',
                                 'SMS Notifications',
                                 'Receive SMS updates',
@@ -176,17 +182,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               const SizedBox(height: 24),
 
                               // Trip & Safety
-                              const Text(
+                              Text(
                                 'Trip & Safety',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: th.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
 
                               _buildNotificationTile(
+                                th,
                                 '🚨',
                                 'Safety Alerts',
                                 'Important safety notifications',
@@ -196,6 +203,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               ),
 
                               _buildNotificationTile(
+                                th,
                                 '🚌',
                                 'Trip Updates',
                                 'Bus arrival times and delays',
@@ -206,17 +214,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               const SizedBox(height: 24),
 
                               // Marketing
-                              const Text(
+                              Text(
                                 'Marketing',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: th.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
 
                               _buildNotificationTile(
+                                th,
                                 '🎉',
                                 'Promotional Offers',
                                 'Special deals and discounts',
@@ -237,20 +246,20 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                     color: AppColors.infoColor.withOpacity(0.3),
                                   ),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.info_outline,
                                       color: AppColors.infoColor,
                                       size: 20,
                                     ),
-                                    SizedBox(width: 12),
+                                    const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
                                         'You can change these settings anytime. Safety alerts are recommended for your security.',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: AppColors.textPrimary,
+                                          color: th.textPrimary,
                                         ),
                                       ),
                                     ),
@@ -272,8 +281,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
-  Widget _buildNotificationTile(String emoji, String title, String description,
-      bool value, Function(bool) onChanged,
+  Widget _buildNotificationTile(ThemeHelper th, String emoji, String title,
+      String description, bool value, Function(bool) onChanged,
       {bool isImportant = false}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -281,7 +290,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       decoration: BoxDecoration(
         color: isImportant
             ? AppColors.safeColor.withOpacity(0.05)
-            : AppColors.scaffoldBackground,
+            : th.subtleBackground,
         borderRadius: BorderRadius.circular(12),
         border: isImportant
             ? Border.all(color: AppColors.safeColor.withOpacity(0.2))
@@ -293,7 +302,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: th.cardBackground,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -310,10 +319,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: th.textPrimary,
                         ),
                       ),
                     ),
@@ -339,9 +348,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],

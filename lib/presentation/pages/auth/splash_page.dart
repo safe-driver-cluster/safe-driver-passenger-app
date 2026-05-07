@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/storage_service.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -34,18 +36,18 @@ class _SplashPageState extends ConsumerState<SplashPage>
   }
 
   void _initializeAnimations() {
-    // Logo animations
+    // Simple fade animation for logo
     _logoController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
     _logoScaleAnimation = Tween<double>(
-      begin: 0.5,
+      begin: 0.8,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: Curves.elasticOut,
+      curve: Curves.easeOut,
     ));
 
     _logoOpacityAnimation = Tween<double>(
@@ -53,12 +55,12 @@ class _SplashPageState extends ConsumerState<SplashPage>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _logoController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
+      curve: Curves.easeIn,
     ));
 
-    // Text animations
+    // Simple fade animation for text
     _textController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
@@ -71,11 +73,11 @@ class _SplashPageState extends ConsumerState<SplashPage>
     ));
 
     _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.5),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _textController,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeOut,
     ));
   }
 
@@ -155,321 +157,137 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryDark,
-              AppColors.scaffoldBackground,
-            ],
-            stops: [0.0, 0.3, 0.7],
-          ),
-        ),
-        child: Stack(
+        color:
+            th.isDark ? AppColors.darkBackground : AppColors.scaffoldBackground,
+        child: Column(
           children: [
-            // Background decorative elements
-            Positioned(
-              top: -100,
-              right: -100,
-              child: Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      Colors.white.withOpacity(0.1),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -150,
-              left: -150,
-              child: Container(
-                width: 400,
-                height: 400,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.primaryLight.withOpacity(0.1),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            const Spacer(flex: 2),
 
-            // Main content
+            // Logo section
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Animated Logo - Larger and more prominent
-                  AnimatedBuilder(
-                    animation: _logoController,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _logoScaleAnimation.value,
-                        child: Opacity(
-                          opacity: _logoOpacityAnimation.value,
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              gradient: AppColors.glassGradient,
-                              borderRadius:
-                                  BorderRadius.circular(AppDesign.radiusFull),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.4),
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 60,
-                                  offset: const Offset(0, 30),
-                                ),
-                                BoxShadow(
-                                  color:
-                                      AppColors.primaryColor.withOpacity(0.3),
-                                  blurRadius: 100,
-                                  offset: const Offset(0, 50),
-                                ),
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.1),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, -10),
-                                ),
-                              ],
-                            ),
-                            child: Container(
-                              margin: const EdgeInsets.all(30),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.circular(AppDesign.radiusFull),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        AppColors.primaryColor.withOpacity(0.2),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
-                                  ),
-                                ],
-                              ),
-                              child: const Icon(
-                                Icons.directions_bus_rounded,
-                                size: 80,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
+              child: AnimatedBuilder(
+                animation: _logoController,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: _logoScaleAnimation.value,
+                    child: Opacity(
+                      opacity: _logoOpacityAnimation.value,
+                      child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primaryColor.withOpacity(0.1),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.contain,
                           ),
                         ),
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: AppDesign.space3XL),
-
-                  // Animated Text - Larger and more prominent
-                  AnimatedBuilder(
-                    animation: _textController,
-                    builder: (context, child) {
-                      return SlideTransition(
-                        position: _textSlideAnimation,
-                        child: FadeTransition(
-                          opacity: _textOpacityAnimation,
-                          child: Column(
-                            children: [
-                              const Text(
-                                'SafeDriver',
-                                style: TextStyle(
-                                  fontSize: 56,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                  letterSpacing: -2.0,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      offset: Offset(0, 4),
-                                      blurRadius: 8,
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: AppDesign.spaceLG),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppDesign.space2XL,
-                                ),
-                                child: const Text(
-                                  'Your Safety, Our Priority',
-                                  style: TextStyle(
-                                    fontSize: AppDesign.textXL,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 1.0,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(0, 2),
-                                        blurRadius: 4,
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              const SizedBox(height: AppDesign.space2XL),
-                              Container(
-                                width: 150,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.white.withOpacity(0.9),
-                                      Colors.white.withOpacity(0.3),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.circular(AppDesign.radiusLG),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
 
-            // Bottom loading section - positioned at bottom
-            Positioned(
-              bottom: AppDesign.space3XL,
-              left: 0,
-              right: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Modern Loading indicator - centered and larger
-                  Container(
-                    width: 60,
-                    height: 60,
-                    padding: const EdgeInsets.all(AppDesign.spaceMD),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryColor.withOpacity(0.8),
-                          AppColors.primaryDark.withOpacity(0.6),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                      border: Border.all(
-                        color: AppColors.primaryColor.withOpacity(0.6),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                        BoxShadow(
-                          color: AppColors.primaryColor.withOpacity(0.3),
-                          blurRadius: 30,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
+            const SizedBox(height: AppDesign.space3XL),
 
-                  const SizedBox(height: AppDesign.spaceLG),
-
-                  // Loading text
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDesign.spaceLG,
-                      vertical: AppDesign.spaceSM,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                    ),
-                    child: const Text(
-                      'Loading...',
-                      style: TextStyle(
-                        fontSize: AppDesign.textMD,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.0,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
+            // Text section
+            AnimatedBuilder(
+              animation: _textController,
+              builder: (context, child) {
+                return SlideTransition(
+                  position: _textSlideAnimation,
+                  child: FadeTransition(
+                    opacity: _textOpacityAnimation,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDesign.spaceLG,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            l10n.appName,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.w800,
+                              color: th.isDark
+                                  ? Colors.white
+                                  : AppColors.primaryDark,
+                            ),
+                          ),
+                          const SizedBox(height: AppDesign.spaceMD),
+                          Text(
+                            l10n.appTagline,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: th.isDark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
+                );
+              },
+            ),
 
-                  const SizedBox(height: AppDesign.spaceLG),
+            const Spacer(flex: 2),
 
-                  // Version and powered by
-                  Column(
-                    children: [
-                      Text(
-                        'Version 1.0.0',
-                        style: TextStyle(
-                          fontSize: AppDesign.textXS,
-                          color: AppColors.textPrimary.withOpacity(0.8),
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withOpacity(0.5),
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppDesign.spaceXS),
-                      Text(
-                        'Powered by SafeDriver Technologies',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: AppColors.textSecondary.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.3,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withOpacity(0.5),
-                              offset: const Offset(0, 1),
-                              blurRadius: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+            // Loading indicator
+            Column(
+              children: [
+                const CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                  strokeWidth: 2.5,
+                ),
+                const SizedBox(height: AppDesign.spaceLG),
+                Text(
+                  l10n.loading,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: th.isDark ? Colors.grey[300] : Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+
+            const Spacer(),
+
+            // Footer
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppDesign.spaceLG),
+              child: Column(
+                children: [
+                  Text(
+                    '${l10n.version} 1.0.0',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: th.isDark ? Colors.grey[500] : Colors.grey[500],
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    l10n.poweredBy,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: th.isDark ? Colors.grey[600] : Colors.grey[400],
+                    ),
                   ),
                 ],
               ),

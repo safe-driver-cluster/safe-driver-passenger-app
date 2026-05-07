@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/data/models/faq_model.dart';
 import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
@@ -82,10 +83,11 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final contactInfo = _supportService.getContactInfo();
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -132,7 +134,7 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -146,8 +148,8 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                     controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Search issues...',
-                      hintStyle: const TextStyle(
-                        color: AppColors.textSecondary,
+                      hintStyle: TextStyle(
+                        color: th.textHint,
                       ),
                       border: InputBorder.none,
                       prefixIcon: const Icon(
@@ -181,7 +183,7 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -199,16 +201,15 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                               Icon(
                                 Icons.help_outline,
                                 size: 64,
-                                color: AppColors.textSecondary
-                                    .withOpacity(0.5),
+                                color: th.textSecondary.withOpacity(0.5),
                               ),
                               const SizedBox(height: 16),
-                              const Text(
+                              Text(
                                 'No issues found',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textSecondary,
+                                  color: th.textSecondary,
                                 ),
                               ),
                             ],
@@ -323,10 +324,11 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
   }
 
   Widget _buildIssueCard(SupportIssue issue) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground,
+        color: th.subtleBackground,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -342,10 +344,10 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
           // Title
           Text(
             issue.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -353,21 +355,21 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
           // Description
           Text(
             issue.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               height: 1.5,
             ),
           ),
           const SizedBox(height: 16),
 
           // Solutions
-          const Text(
+          Text(
             'Solutions:',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -401,9 +403,9 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                   Expanded(
                     child: Text(
                       issue.solutions[index],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.textSecondary,
+                        color: th.textSecondary,
                         height: 1.4,
                       ),
                     ),
@@ -429,12 +431,12 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'If problem persists, contact:',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: th.textPrimary,
                         ),
                       ),
                       if (issue.contactEmail != null)

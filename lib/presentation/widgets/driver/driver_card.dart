@@ -3,6 +3,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/driver_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Driver card widget for displaying driver information
 class DriverCard extends StatelessWidget {
@@ -25,6 +26,7 @@ class DriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -403,6 +405,7 @@ class CompactDriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return DriverCard(
       driver: driver,
       onTap: onTap,

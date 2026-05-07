@@ -10,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:safedriver_passenger_app/providers/app_providers.dart';
 import 'package:safedriver_passenger_app/providers/language_provider.dart';
 
 import 'app/routes.dart';
@@ -167,6 +168,7 @@ class SafeDriverApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(currentLocaleProvider);
+    final themeMode = ref.watch(themeModeProvider);
     debugPrint(
         '🌐 MaterialApp building with locale: ${currentLocale.languageCode}');
 
@@ -176,7 +178,7 @@ class SafeDriverApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       locale: currentLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

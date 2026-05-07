@@ -1,9 +1,11 @@
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
 
 class DriverListPage extends StatefulWidget {
@@ -25,6 +27,8 @@ class _DriverListPageState extends State<DriverListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -44,11 +48,11 @@ class _DriverListPageState extends State<DriverListPage> {
           child: Column(
             children: [
               // Header with search
-              _buildHeader(),
+              _buildHeader(l10n),
 
               // Driver list
               Expanded(
-                child: _buildDriverList(),
+                child: _buildDriverList(l10n),
               ),
             ],
           ),
@@ -75,7 +79,7 @@ class _DriverListPageState extends State<DriverListPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
@@ -94,12 +98,14 @@ class _DriverListPageState extends State<DriverListPage> {
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
-                child: const CustomBackButton(color: Colors.white, ),
+                child: const CustomBackButton(
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Our Drivers',
-                style: TextStyle(
+              Text(
+                l10n.drivers,
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -125,7 +131,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by name, license, route...',
+                hintText: l10n.searchDriversHint,
                 hintStyle: const TextStyle(
                   color: AppColors.textHint,
                   fontSize: 16,
@@ -162,7 +168,7 @@ class _DriverListPageState extends State<DriverListPage> {
     );
   }
 
-  Widget _buildDriverList() {
+  Widget _buildDriverList(AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: StreamBuilder<QuerySnapshot>(
@@ -180,14 +186,14 @@ class _DriverListPageState extends State<DriverListPage> {
                   ),
                   const SizedBox(height: AppDesign.spaceMD),
                   Text(
-                    'Error loading drivers',
+                    l10n.noDrivers,
                     style: AppTextStyles.headline6.copyWith(
                       color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceSM),
                   Text(
-                    'Please try again later',
+                    l10n.tryAgainLater,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -237,8 +243,8 @@ class _DriverListPageState extends State<DriverListPage> {
                   const SizedBox(height: AppDesign.spaceMD),
                   Text(
                     _searchQuery.isEmpty
-                        ? 'No drivers found'
-                        : 'No matching drivers',
+                        ? l10n.noDrivers
+                        : l10n.noMatchingDrivers,
                     style: AppTextStyles.headline6.copyWith(
                       color: AppColors.textPrimary,
                     ),
@@ -246,8 +252,8 @@ class _DriverListPageState extends State<DriverListPage> {
                   const SizedBox(height: AppDesign.spaceSM),
                   Text(
                     _searchQuery.isEmpty
-                        ? 'Driver data is being updated'
-                        : 'Try a different search term',
+                        ? l10n.noData
+                        : l10n.tryDifferentSearch,
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -271,7 +277,7 @@ class _DriverListPageState extends State<DriverListPage> {
               itemBuilder: (context, index) {
                 final driverData =
                     filteredDrivers[index].data() as Map<String, dynamic>;
-                return _buildDriverCard(driverData);
+                return _buildDriverCard(l10n, driverData);
               },
             ),
           );
@@ -280,10 +286,11 @@ class _DriverListPageState extends State<DriverListPage> {
     );
   }
 
-  Widget _buildDriverCard(Map<String, dynamic> driverData) {
-    final name = driverData['name'] ?? 'Unknown Driver';
+  Widget _buildDriverCard(
+      AppLocalizations l10n, Map<String, dynamic> driverData) {
+    final name = driverData['name'] ?? l10n.unknown;
     final licenseNumber = driverData['licenseNumber'] ?? 'N/A';
-    final route = driverData['route'] ?? 'No Route Assigned';
+    final route = driverData['route'] ?? l10n.unknown;
     final busNumber = driverData['busNumber'] ?? 'N/A';
     final experience = driverData['experience'] ?? 'N/A';
     final phone = driverData['phone'] ?? 'N/A';
@@ -349,7 +356,7 @@ class _DriverListPageState extends State<DriverListPage> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'License: $licenseNumber',
+                              '${l10n.license}: $licenseNumber',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
@@ -386,7 +393,7 @@ class _DriverListPageState extends State<DriverListPage> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _getStatusText(status),
+                        _getStatusText(status, l10n),
                         style: TextStyle(
                           color: _getStatusColor(status),
                           fontSize: 12,
@@ -455,7 +462,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 Expanded(
                   child: _buildInfoRow(
                     icon: Icons.work_rounded,
-                    label: 'Experience',
+                    label: l10n.driverExperience,
                     value: experience,
                   ),
                 ),
@@ -463,7 +470,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 Expanded(
                   child: _buildInfoRow(
                     icon: Icons.security_rounded,
-                    label: 'Safety Score',
+                    label: l10n.safetyScore,
                     value: '$safetyScore%',
                     valueColor: _getSafetyColor(safetyScore),
                   ),
@@ -479,7 +486,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 Expanded(
                   child: _buildInfoRow(
                     icon: Icons.phone_rounded,
-                    label: 'Phone',
+                    label: l10n.phoneNumber,
                     value: phone,
                   ),
                 ),
@@ -487,7 +494,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 Expanded(
                   child: _buildInfoRow(
                     icon: Icons.email_rounded,
-                    label: 'Email',
+                    label: l10n.email,
                     value: email,
                   ),
                 ),
@@ -498,7 +505,7 @@ class _DriverListPageState extends State<DriverListPage> {
               const SizedBox(height: AppDesign.spaceSM),
               _buildInfoRow(
                 icon: Icons.calendar_today_rounded,
-                label: 'Joined',
+                label: l10n.joined,
                 value: joinDate,
               ),
             ],
@@ -561,16 +568,16 @@ class _DriverListPageState extends State<DriverListPage> {
     }
   }
 
-  String _getStatusText(String status) {
+  String _getStatusText(String status, AppLocalizations l10n) {
     switch (status.toLowerCase()) {
       case 'on_duty':
-        return 'On Duty';
+        return l10n.onDuty;
       case 'off_duty':
-        return 'Off Duty';
+        return l10n.offDuty;
       case 'break':
-        return 'On Break';
+        return l10n.onBreak;
       default:
-        return 'Unknown';
+        return l10n.unknown;
     }
   }
 

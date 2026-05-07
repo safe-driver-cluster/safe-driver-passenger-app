@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 
 class BusListPage extends StatefulWidget {
   const BusListPage({super.key});
@@ -23,27 +25,29 @@ class _BusListPageState extends State<BusListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 1.0],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(),
+              _buildHeader(th, l10n),
               Expanded(
-                child: _buildBusList(),
+                child: _buildBusList(th, l10n),
               ),
             ],
           ),
@@ -52,7 +56,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeHelper th, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -80,9 +84,9 @@ class _BusListPageState extends State<BusListPage> {
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Available Buses',
-                style: TextStyle(
+              Text(
+                l10n.availableBuses,
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -96,7 +100,7 @@ class _BusListPageState extends State<BusListPage> {
           // Simple Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: th.cardBackground,
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               boxShadow: [
                 BoxShadow(
@@ -108,15 +112,16 @@ class _BusListPageState extends State<BusListPage> {
             ),
             child: TextField(
               controller: _searchController,
+              style: TextStyle(color: th.textPrimary),
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value.toLowerCase();
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Search by bus number, route, driver...',
-                hintStyle: const TextStyle(
-                  color: AppColors.textHint,
+                hintText: l10n.searchBusesHint,
+                hintStyle: TextStyle(
+                  color: th.textHint,
                   fontSize: 16,
                 ),
                 prefixIcon: const Icon(
@@ -132,9 +137,9 @@ class _BusListPageState extends State<BusListPage> {
                             _searchQuery = '';
                           });
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.clear_rounded,
-                          color: AppColors.textHint,
+                          color: th.textHint,
                         ),
                       )
                     : null,
@@ -151,7 +156,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusList() {
+  Widget _buildBusList(ThemeHelper th, AppLocalizations l10n) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('vehicles')
@@ -159,29 +164,29 @@ class _BusListPageState extends State<BusListPage> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline_rounded,
                   size: 64,
                   color: AppColors.errorColor,
                 ),
-                SizedBox(height: AppDesign.spaceMD),
+                const SizedBox(height: AppDesign.spaceMD),
                 Text(
-                  'Error loading buses',
+                  l10n.noBuses,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
-                SizedBox(height: AppDesign.spaceSM),
+                const SizedBox(height: AppDesign.spaceSM),
                 Text(
-                  'Please try again later',
+                  l10n.tryAgainLater,
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -223,29 +228,27 @@ class _BusListPageState extends State<BusListPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.directions_bus_rounded,
                   size: 64,
-                  color: AppColors.textHint,
+                  color: th.textHint,
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
                 Text(
-                  _searchQuery.isEmpty
-                      ? 'No buses available'
-                      : 'No buses found',
-                  style: const TextStyle(
+                  _searchQuery.isEmpty ? l10n.noBusesAvailable : l10n.noResults,
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceSM),
                 Text(
                   _searchQuery.isEmpty
-                      ? 'Check back later for available buses'
-                      : 'Try adjusting your search terms',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                      ? l10n.checkBackLaterBuses
+                      : l10n.tryDifferentSearch,
+                  style: TextStyle(
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -260,14 +263,15 @@ class _BusListPageState extends State<BusListPage> {
             await Future.delayed(const Duration(seconds: 1));
           },
           color: AppColors.primaryColor,
-          backgroundColor: Colors.white,
+          backgroundColor: th.cardBackground,
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(AppDesign.spaceLG),
             itemCount: filteredBuses.length,
             itemBuilder: (context, index) {
-              final busData = filteredBuses[index].data() as Map<String, dynamic>;
-              return _buildBusCard(busData);
+              final busData =
+                  filteredBuses[index].data() as Map<String, dynamic>;
+              return _buildBusCard(th, l10n, busData);
             },
           ),
         );
@@ -275,23 +279,24 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusCard(Map<String, dynamic> busData) {
-    final route = busData['route'] ?? 'Unknown Route';
+  Widget _buildBusCard(
+      ThemeHelper th, AppLocalizations l10n, Map<String, dynamic> busData) {
+    final route = busData['route'] ?? l10n.unknown;
     final busNumber = busData['busNumberPlate'] ?? 'N/A';
-    final driverName = busData['driverName'] ?? 'Unknown Driver';
+    final driverName = busData['driverName'] ?? l10n.unknown;
     final model = busData['model'] ?? 'N/A';
     final safetyScore = busData['safetyScore'] ?? 0;
     final location = busData['location'] as Map<String, dynamic>?;
-    final address = location?['address'] ?? 'Location unavailable';
+    final address = location?['address'] ?? l10n.noData;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -370,10 +375,10 @@ class _BusListPageState extends State<BusListPage> {
                 Expanded(
                   child: Text(
                     route,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                 ),
@@ -385,32 +390,32 @@ class _BusListPageState extends State<BusListPage> {
             // Driver and location
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.person_rounded,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Text(
                   driverName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceLG),
-                const Icon(
+                Icon(
                   Icons.location_on_rounded,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Expanded(
                   child: Text(
                     address,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -425,7 +430,7 @@ class _BusListPageState extends State<BusListPage> {
               children: [
                 Expanded(
                   child: _buildStatusIndicator(
-                    'Model',
+                    l10n.model,
                     model,
                     Icons.directions_bus_rounded,
                     AppColors.primaryColor,

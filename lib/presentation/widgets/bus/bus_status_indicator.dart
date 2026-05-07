@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/bus_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Bus status indicator widget
 class BusStatusIndicator extends StatelessWidget {
@@ -20,6 +21,7 @@ class BusStatusIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final color = _getStatusColor();
     final icon = _getStatusIcon();
     final label = _getStatusLabel();
@@ -216,6 +218,7 @@ class _AnimatedBusStatusIndicatorState extends State<AnimatedBusStatusIndicator>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final color = _getStatusColor();
     final icon = _getStatusIcon();
     final label = _getStatusLabel();
@@ -347,6 +350,7 @@ class BusStatusLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),

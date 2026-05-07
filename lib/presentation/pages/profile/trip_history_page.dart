@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class TripHistoryPage extends StatefulWidget {
   const TripHistoryPage({super.key});
@@ -60,8 +61,9 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: th.background,
       appBar: AppBar(
         title: Text(AppLocalizations.of(context).tripHistory),
         backgroundColor: AppColors.primaryColor,
@@ -120,29 +122,29 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
           // Trip List
           Expanded(
             child: _trips.isEmpty
-                ? const Center(
+                ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.history,
                           size: 80,
-                          color: AppColors.textSecondary,
+                          color: th.textSecondary,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
                           'No trips yet',
                           style: TextStyle(
                             fontSize: 18,
-                            color: AppColors.textSecondary,
+                            color: th.textSecondary,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Your trip history will appear here',
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.textSecondary,
+                            color: th.textSecondary,
                           ),
                         ),
                       ],
@@ -156,6 +158,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                       return Card(
                         margin: const EdgeInsets.only(bottom: 12),
                         elevation: 2,
+                        color: th.cardBackground,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -208,40 +211,40 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                               const SizedBox(height: 8),
                               Text(
                                 trip['route'],
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: th.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.calendar_today,
                                     size: 16,
-                                    color: AppColors.textSecondary,
+                                    color: th.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     trip['date'],
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  const Icon(
+                                  Icon(
                                     Icons.access_time,
                                     size: 16,
-                                    color: AppColors.textSecondary,
+                                    color: th.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     trip['time'],
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -249,17 +252,17 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                               const SizedBox(height: 8),
                               Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.route,
                                     size: 16,
-                                    color: AppColors.textSecondary,
+                                    color: th.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     trip['distance'],
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                   const SizedBox(width: 16),

@@ -4,6 +4,7 @@ import 'package:safedriver_passenger_app/data/models/notification_model.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../providers/notification_provider.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
 import '../buses/bus_list_page.dart';
@@ -43,8 +44,9 @@ class _ReceivedNotificationsPageState
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Consumer(
         builder: (context, ref, _) {
           final notificationsAsyncValue = ref.watch(userNotificationsProvider);
@@ -62,7 +64,7 @@ class _ReceivedNotificationsPageState
           ];
 
           return Scaffold(
-            backgroundColor: AppColors.scaffoldBackground,
+            backgroundColor: th.background,
             body: IndexedStack(
               index: _selectedIndex,
               children: pages,

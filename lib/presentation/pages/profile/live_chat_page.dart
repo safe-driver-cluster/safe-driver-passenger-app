@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class LiveChatPage extends StatefulWidget {
@@ -21,7 +22,8 @@ class _LiveChatPageState extends State<LiveChatPage> {
       text:
           'How can we assist you today? Please describe your issue and we\'ll help you resolve it.',
       isUser: false,
-      timestamp: DateTime.now().subtract(const Duration(minutes: 1, seconds: 50)),
+      timestamp:
+          DateTime.now().subtract(const Duration(minutes: 1, seconds: 50)),
     ),
   ];
   final bool _isOnline = true;
@@ -77,13 +79,15 @@ class _LiveChatPageState extends State<LiveChatPage> {
     } else if (lowerMessage.contains('app crash') ||
         lowerMessage.contains('not working')) {
       return 'Sorry to hear you\'re experiencing issues. Have you tried clearing the app cache and restarting your device?';
-    } else if (lowerMessage.contains('location') || lowerMessage.contains('gps')) {
+    } else if (lowerMessage.contains('location') ||
+        lowerMessage.contains('gps')) {
       return 'Please ensure Location Services are enabled in your device settings. Also check if the app has permission to access your location.';
     } else if (lowerMessage.contains('hello') ||
         lowerMessage.contains('hi') ||
         lowerMessage.contains('hey')) {
       return 'Hello! How can I help you with SafeDriver today?';
-    } else if (lowerMessage.contains('thanks') || lowerMessage.contains('thank')) {
+    } else if (lowerMessage.contains('thanks') ||
+        lowerMessage.contains('thank')) {
       return 'You\'re welcome! Is there anything else I can help you with?';
     }
 
@@ -92,8 +96,9 @@ class _LiveChatPageState extends State<LiveChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -139,9 +144,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                                 width: 8,
                                 height: 8,
                                 decoration: BoxDecoration(
-                                  color: _isOnline
-                                      ? Colors.green
-                                      : Colors.grey,
+                                  color: _isOnline ? Colors.green : Colors.grey,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -169,7 +172,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
@@ -200,10 +203,10 @@ class _LiveChatPageState extends State<LiveChatPage> {
                       // Input Field
                       Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
                             top: BorderSide(
-                              color: AppColors.scaffoldBackground,
+                              color: th.border,
                               width: 1,
                             ),
                           ),
@@ -213,21 +216,20 @@ class _LiveChatPageState extends State<LiveChatPage> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppColors.scaffoldBackground,
+                                  color: th.subtleBackground,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: TextField(
                                   controller: _messageController,
                                   enabled: !_isSending,
                                   maxLines: null,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: 'Type your message...',
                                     hintStyle: TextStyle(
-                                      color: AppColors.textSecondary,
+                                      color: th.textHint,
                                     ),
                                     border: InputBorder.none,
-                                    contentPadding:
-                                        EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,
                                     ),
@@ -237,8 +239,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                             ),
                             const SizedBox(width: 12),
                             GestureDetector(
-                              onTap:
-                                  _isSending ? null : _sendMessage,
+                              onTap: _isSending ? null : _sendMessage,
                               child: Container(
                                 width: 44,
                                 height: 44,
@@ -284,6 +285,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
   }
 
   Widget _buildMessage(ChatMessage message) {
+    final th = ThemeHelper.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -317,7 +319,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
               decoration: BoxDecoration(
                 color: message.isUser
                     ? AppColors.primaryColor
-                    : AppColors.scaffoldBackground,
+                    : th.subtleBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -328,9 +330,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                   Text(
                     message.text,
                     style: TextStyle(
-                      color: message.isUser
-                          ? Colors.white
-                          : AppColors.textPrimary,
+                      color: message.isUser ? Colors.white : th.textPrimary,
                       fontSize: 14,
                     ),
                   ),
@@ -338,9 +338,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
                   Text(
                     '${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}',
                     style: TextStyle(
-                      color: message.isUser
-                          ? Colors.white70
-                          : AppColors.textSecondary,
+                      color: message.isUser ? Colors.white70 : th.textSecondary,
                       fontSize: 11,
                     ),
                   ),

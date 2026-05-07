@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/faq_page.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/live_chat_page.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/support_category_page.dart';
-import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class HelpSupportPage extends StatelessWidget {
   const HelpSupportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final supportService = SupportDataService();
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -62,7 +64,7 @@ class HelpSupportPage extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -99,7 +101,7 @@ class HelpSupportPage extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -108,15 +110,15 @@ class HelpSupportPage extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: th.textPrimary,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Text(
                                     'Get support and find answers',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -127,12 +129,12 @@ class HelpSupportPage extends StatelessWidget {
                         const SizedBox(height: 32),
 
                         // Quick Actions
-                        const Text(
+                        Text(
                           'Quick Actions',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: th.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -171,12 +173,12 @@ class HelpSupportPage extends StatelessWidget {
                         const SizedBox(height: 24),
 
                         // Support Categories
-                        const Text(
+                        Text(
                           'Support Categories',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: th.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -185,6 +187,7 @@ class HelpSupportPage extends StatelessWidget {
                           child: ListView(
                             children: [
                               _buildSupportCategory(
+                                context,
                                 '📱',
                                 'App Issues',
                                 'Technical problems and app bugs',
@@ -193,13 +196,14 @@ class HelpSupportPage extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const SupportCategoryPage(
-                                          categoryName: 'App Issues',
-                                        ),
+                                      categoryName: 'App Issues',
+                                    ),
                                   ),
                                 ),
                               ),
 
                               _buildSupportCategory(
+                                context,
                                 '🚌',
                                 'Bus Services',
                                 'Questions about routes and schedules',
@@ -208,13 +212,14 @@ class HelpSupportPage extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const SupportCategoryPage(
-                                          categoryName: 'Bus Services',
-                                        ),
+                                      categoryName: 'Bus Services',
+                                    ),
                                   ),
                                 ),
                               ),
 
                               _buildSupportCategory(
+                                context,
                                 '🔒',
                                 'Account & Security',
                                 'Login issues and account security',
@@ -223,8 +228,8 @@ class HelpSupportPage extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const SupportCategoryPage(
-                                          categoryName: 'Account & Security',
-                                        ),
+                                      categoryName: 'Account & Security',
+                                    ),
                                   ),
                                 ),
                               ),
@@ -233,29 +238,29 @@ class HelpSupportPage extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: AppColors.scaffoldBackground,
+                                  color: th.subtleBackground,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Contact Information',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textPrimary,
+                                        color: th.textPrimary,
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    _buildContactInfo(
-                                        '📞', 'Phone', '+1-800-SAFEDRIVER'),
-                                    _buildContactInfo('📧', 'Email',
+                                    _buildContactInfo(context, '📞', 'Phone',
+                                        '+1-800-SAFEDRIVER'),
+                                    _buildContactInfo(context, '📧', 'Email',
                                         'support@safedriver.com'),
-                                    _buildContactInfo(
-                                        '🌐', 'Website', 'www.safedriver.com'),
-                                    _buildContactInfo(
-                                        '⏰', 'Hours', '24/7 Support Available'),
+                                    _buildContactInfo(context, '🌐', 'Website',
+                                        'www.safedriver.com'),
+                                    _buildContactInfo(context, '⏰', 'Hours',
+                                        '24/7 Support Available'),
                                   ],
                                 ),
                               ),
@@ -275,30 +280,30 @@ class HelpSupportPage extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Row(
+                                    Row(
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.quiz,
                                           color: AppColors.infoColor,
                                           size: 20,
                                         ),
-                                        SizedBox(width: 8),
+                                        const SizedBox(width: 8),
                                         Text(
                                           'Frequently Asked Questions',
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: th.textPrimary,
                                           ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    const Text(
+                                    Text(
                                       'Find answers to common questions in our comprehensive FAQ section.',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: AppColors.textSecondary,
+                                        color: th.textSecondary,
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -385,18 +390,20 @@ class HelpSupportPage extends StatelessWidget {
   }
 
   Widget _buildSupportCategory(
+    BuildContext context,
     String emoji,
     String title,
     String description,
     VoidCallback onTap,
   ) {
+    final th = ThemeHelper.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.scaffoldBackground,
+          color: th.subtleBackground,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -412,7 +419,7 @@ class HelpSupportPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: th.cardBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -426,27 +433,27 @@ class HelpSupportPage extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
           ],
         ),
@@ -454,7 +461,9 @@ class HelpSupportPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactInfo(String emoji, String label, String value) {
+  Widget _buildContactInfo(
+      BuildContext context, String emoji, String label, String value) {
+    final th = ThemeHelper.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -466,19 +475,19 @@ class HelpSupportPage extends StatelessWidget {
               children: [
                 Text(
                   '$label: ',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
                 Expanded(
                   child: Text(
                     value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                 ),

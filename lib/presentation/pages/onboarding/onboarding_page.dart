@@ -4,7 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../data/models/onboarding_model.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../auth/login_page.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -22,7 +23,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
   late Animation<Offset> _slideAnimation;
 
   int _currentPage = 0;
-  final List<OnboardingModel> _onboardingData = OnboardingModel.onboardingData;
 
   @override
   void initState() {
@@ -69,8 +69,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     }
   }
 
-  void _nextPage() {
-    if (_currentPage < _onboardingData.length - 1) {
+  void _nextPage(int totalPages) {
+    if (_currentPage < totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -86,6 +86,27 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    final onboardingData = [
+      {
+        'title': l10n.onboarding1Title,
+        'description': l10n.onboarding1Description,
+        'imagePath': 'assets/images/onboard-01.png',
+      },
+      {
+        'title': l10n.onboarding2Title,
+        'description': l10n.onboarding2Description,
+        'imagePath': 'assets/images/onboard-02.png',
+      },
+      {
+        'title': l10n.onboarding3Title,
+        'description': l10n.onboarding3Description,
+        'imagePath': 'assets/images/onboard-03.png',
+      },
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -106,9 +127,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         vertical: AppDesign.spaceSM,
                       ),
                     ),
-                    child: const Text(
-                      'Skip',
-                      style: TextStyle(
+                    child: Text(
+                      l10n.skip,
+                      style: const TextStyle(
                         fontSize: AppDesign.textMD,
                         fontWeight: FontWeight.w500,
                       ),
@@ -129,9 +150,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   _animationController.reset();
                   _animationController.forward();
                 },
-                itemCount: _onboardingData.length,
+                itemCount: onboardingData.length,
                 itemBuilder: (context, index) {
-                  return _buildOnboardingPage(_onboardingData[index]);
+                  return _buildOnboardingPage(
+                    onboardingData[index]['title']!,
+                    onboardingData[index]['description']!,
+                    onboardingData[index]['imagePath']!,
+                  );
                 },
               ),
             ),
@@ -145,7 +170,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      _onboardingData.length,
+                      onboardingData.length,
                       (index) => _buildPageIndicator(index),
                     ),
                   ),
@@ -157,7 +182,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: _nextPage,
+                      onPressed: () => _nextPage(onboardingData.length),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
@@ -169,9 +194,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                         shadowColor: AppColors.primaryColor.withOpacity(0.3),
                       ),
                       child: Text(
-                        _currentPage == _onboardingData.length - 1
-                            ? 'Get Started'
-                            : 'Next',
+                        _currentPage == onboardingData.length - 1
+                            ? l10n.getStarted
+                            : l10n.next,
                         style: const TextStyle(
                           fontSize: AppDesign.textLG,
                           fontWeight: FontWeight.w600,
@@ -189,7 +214,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
     );
   }
 
-  Widget _buildOnboardingPage(OnboardingModel data) {
+  Widget _buildOnboardingPage(String title, String description, String image) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -217,7 +242,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppDesign.radiusXL),
                   child: Image.asset(
-                    data.imagePath,
+                    image,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -241,7 +266,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
               // Title
               Text(
-                data.title,
+                title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: AppDesign.text3XL,
@@ -255,7 +280,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage>
 
               // Description
               Text(
-                data.description,
+                description,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: AppDesign.textLG,

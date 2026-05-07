@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class ProfessionalCard extends StatelessWidget {
   final Widget child;
@@ -37,13 +38,14 @@ class ProfessionalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     Widget card = Container(
       width: width,
       height: height,
       padding: padding ?? const EdgeInsets.all(AppDesign.spaceLG),
       margin: margin,
       decoration: BoxDecoration(
-        color: isGlass ? null : (backgroundColor ?? AppColors.cardColor),
+        color: isGlass ? null : (backgroundColor ?? th.cardBackground),
         gradient: isGlass ? AppColors.glassGradient : gradient,
         borderRadius: BorderRadius.circular(borderRadius ?? AppDesign.radiusXL),
         boxShadow:
@@ -282,6 +284,7 @@ class ProfessionalTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -294,7 +297,7 @@ class ProfessionalTextField extends StatelessWidget {
       minLines: minLines,
       focusNode: focusNode,
       style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
+        color: th.textPrimary,
       ),
       decoration: InputDecoration(
         labelText: labelText,
@@ -302,12 +305,12 @@ class ProfessionalTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
         filled: filled,
-        fillColor: fillColor ?? AppColors.greyExtraLight,
+        fillColor: fillColor ?? th.inputFill,
         labelStyle: AppTextStyles.labelLarge.copyWith(
-          color: AppColors.textSecondary,
+          color: th.textSecondary,
         ),
         hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textHint,
+          color: th.textHint,
         ),
         border: OutlineInputBorder(
           borderRadius:

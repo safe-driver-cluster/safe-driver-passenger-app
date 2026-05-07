@@ -1,14 +1,15 @@
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:safedriver_passenger_app/core/services/sos_service.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/sos/sos_contacts_dialog.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:safedriver_passenger_app/core/services/sos_service.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/sos/sos_contacts_dialog.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class EmergencyPage extends StatefulWidget {
   const EmergencyPage({super.key});
@@ -23,21 +24,22 @@ class _EmergencyPageState extends State<EmergencyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: _isSendingSos
           ? _buildSosSendingOverlay(context)
           : Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
                     AppColors.dangerColor,
                     AppColors.criticalColor,
-                    AppColors.scaffoldBackground,
+                    th.background,
                   ],
-                  stops: [0.0, 0.3, 1.0],
+                  stops: const [0.0, 0.3, 1.0],
                 ),
               ),
               child: SafeArea(
@@ -55,6 +57,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -597,19 +600,58 @@ class _EmergencyPageState extends State<EmergencyPage> {
     setState(() => _isSendingSos = true);
 
     try {
+      debugPrint('Emergency Page: Starting SOS alert...');
       final result = await _sosService.sendSosAlert();
+
+      debugPrint('Emergency Page: SOS alert completed');
+      debugPrint(
+          'Emergency Page: Result - SMS: ${result.smsSent}/${result.totalContacts}, WhatsApp: ${result.whatsappLaunched}/${result.totalContacts}');
 
       if (mounted) {
         setState(() => _isSendingSos = false);
+
+        // Show result dialog with detailed feedback
         _showSosResultDialog(result);
+
+        // Also log the result for debugging
+        if (result.isCompleteSuccess) {
+          debugPrint('Emergency Page: SOS alert was completely successful');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✓ SOS Alert sent to all contacts'),
+              backgroundColor: AppColors.successColor,
+              duration: Duration(seconds: 3),
+            ),
+          );
+        } else if (result.isPartialSuccess) {
+          debugPrint('Emergency Page: SOS alert had partial success');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⚠ SOS Alert partially sent: ${result.summary}'),
+              backgroundColor: AppColors.warningColor,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        } else {
+          debugPrint('Emergency Page: SOS alert failed completely');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✗ SOS Alert failed: ${result.summary}'),
+              backgroundColor: AppColors.dangerColor,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
     } catch (e) {
+      debugPrint('Emergency Page: Unexpected error during SOS: $e');
       if (mounted) {
         setState(() => _isSendingSos = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('SOS Error: ${e.toString()}'),
             backgroundColor: AppColors.dangerColor,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -711,6 +753,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
 
   void _showSosResultDialog(SosAlertResult result) {
     final isSuccess = result.isPartialSuccess;
+    final isCompleteSuccess = result.isCompleteSuccess;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -723,75 +767,268 @@ class _EmergencyPageState extends State<EmergencyPage> {
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceSM),
               decoration: BoxDecoration(
-                color: isSuccess
+                color: isCompleteSuccess
                     ? AppColors.successColor.withOpacity(0.1)
-                    : AppColors.dangerColor.withOpacity(0.1),
+                    : isSuccess
+                        ? AppColors.warningColor.withOpacity(0.1)
+                        : AppColors.dangerColor.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: Icon(
-                isSuccess ? Icons.check_circle_rounded : Icons.error_rounded,
-                color:
-                    isSuccess ? AppColors.successColor : AppColors.dangerColor,
+                isCompleteSuccess
+                    ? Icons.check_circle_rounded
+                    : isSuccess
+                        ? Icons.warning_amber_rounded
+                        : Icons.error_rounded,
+                color: isCompleteSuccess
+                    ? AppColors.successColor
+                    : isSuccess
+                        ? AppColors.warningColor
+                        : AppColors.dangerColor,
                 size: 20,
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            Text(
-              isSuccess ? 'SOS Alert Sent!' : 'SOS Alert Failed',
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              result.summary,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 15,
-              ),
-            ),
-            if (result.errors.isNotEmpty) ...[
-              const SizedBox(height: AppDesign.spaceMD),
-              const Text(
-                'Errors:',
-                style: TextStyle(
-                  color: AppColors.dangerColor,
-                  fontSize: 14,
+            Expanded(
+              child: Text(
+                isCompleteSuccess
+                    ? 'SOS Alert Sent Successfully!'
+                    : isSuccess
+                        ? 'SOS Partially Sent'
+                        : 'SOS Alert Failed',
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              ...result.errors.map((e) => Padding(
-                    padding: const EdgeInsets.only(top: AppDesign.spaceXS),
-                    child: Text(
-                      '• $e',
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 13,
-                      ),
-                    ),
-                  )),
-            ],
+            ),
           ],
         ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Main status message
+              Text(
+                result.summary,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: AppDesign.spaceMD),
+
+              // Detailed breakdown
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceMD),
+                decoration: BoxDecoration(
+                  color: AppColors.scaffoldBackground,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                  border: Border.all(
+                    color: AppColors.textSecondary.withOpacity(0.1),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildStatusRow('SMS Sent', result.smsSent,
+                        result.totalContacts, AppColors.successColor),
+                    if (result.smsFailed > 0)
+                      _buildStatusRow('SMS Failed', result.smsFailed,
+                          result.totalContacts, AppColors.dangerColor),
+                    if (result.whatsappLaunched > 0)
+                      _buildStatusRow('WhatsApp Sent', result.whatsappLaunched,
+                          result.totalContacts, AppColors.successColor),
+                    if (result.whatsappFailed > 0)
+                      _buildStatusRow('WhatsApp Failed', result.whatsappFailed,
+                          result.totalContacts, AppColors.dangerColor),
+                  ],
+                ),
+              ),
+
+              // Errors section if any
+              if (result.errors.isNotEmpty) ...[
+                const SizedBox(height: AppDesign.spaceMD),
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  decoration: BoxDecoration(
+                    color: AppColors.dangerColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                    border: Border.all(
+                      color: AppColors.dangerColor.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: AppColors.dangerColor,
+                            size: 18,
+                          ),
+                          SizedBox(width: AppDesign.spaceSM),
+                          Text(
+                            'Issues Encountered:',
+                            style: TextStyle(
+                              color: AppColors.dangerColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppDesign.spaceSM),
+                      ...result.errors.map((e) => Padding(
+                            padding: const EdgeInsets.only(
+                                bottom: AppDesign.spaceXS),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '• ',
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    e,
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+
+              // Recommendation
+              if (!isCompleteSuccess) ...[
+                const SizedBox(height: AppDesign.spaceMD),
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                    border: Border.all(
+                      color: AppColors.accentColor.withOpacity(0.2),
+                    ),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline_rounded,
+                            color: AppColors.accentColor,
+                            size: 18,
+                          ),
+                          SizedBox(width: AppDesign.spaceSM),
+                          Text(
+                            'What to do next:',
+                            style: TextStyle(
+                              color: AppColors.accentColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: AppDesign.spaceSM),
+                      Text(
+                        '1. Manually call your emergency contacts\n2. Call police emergency: 119\n3. Check SMS settings if SMS failed\n4. Verify contact numbers are correct',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                          height: 1.6,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
         actions: [
+          if (isSuccess)
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close',
+                  style: TextStyle(color: AppColors.textSecondary)),
+            ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  isSuccess ? AppColors.successColor : AppColors.dangerColor,
+              backgroundColor: isCompleteSuccess
+                  ? AppColors.successColor
+                  : isSuccess
+                      ? AppColors.warningColor
+                      : AppColors.dangerColor,
               foregroundColor: AppColors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
             ),
-            child: const Text('OK'),
+            child: Text(isSuccess ? '✓ OK' : 'Dismiss'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusRow(String label, int count, int total, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppDesign.spaceSM),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                count > 0 ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                color: color,
+                size: 16,
+              ),
+              const SizedBox(width: AppDesign.spaceXS),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDesign.spaceMD,
+              vertical: AppDesign.spaceXS,
+            ),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(
+                color: color,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),

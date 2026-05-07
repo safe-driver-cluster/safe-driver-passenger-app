@@ -7,6 +7,7 @@ import 'package:safedriver_passenger_app/data/models/passenger_model.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class RewardPointsWidget extends StatefulWidget {
   final int currentPoints;
@@ -84,6 +85,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final currentProgress =
         (widget.currentPoints / widget.goalPoints).clamp(0.0, 1.0);
 
@@ -97,11 +99,11 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: th.cardBackground,
             borderRadius: BorderRadius.circular(AppDesign.radiusXL),
             boxShadow: AppDesign.shadowMD,
             border: Border.all(
-              color: AppColors.greyLight,
+              color: th.borderLight,
               width: 1,
             ),
           ),
@@ -179,7 +181,9 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                             // Background static circle
                             CustomPaint(
                               size: const Size(160, 160),
-                              painter: BackgroundCirclePainter(),
+                              painter: BackgroundCirclePainter(
+                                trackColor: th.border,
+                              ),
                             ),
                             // Animated progress circle with better visual fill
                             CustomPaint(
@@ -187,6 +191,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                               painter: ProgressCirclePainter(
                                 progress: displayProgress,
                                 isComplete: displayProgress >= 1.0,
+                                glowColor: th.shadowLight,
                               ),
                             ),
                             // Progress checkpoint dots
@@ -194,6 +199,9 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                               size: const Size(160, 160),
                               painter: CheckpointDotsPainter(
                                 progress: displayProgress,
+                                activeDotColor: AppColors.primaryColor,
+                                inactiveDotColor: th.textHint,
+                                innerDotColor: th.cardBackground,
                               ),
                             ),
                             // Points text in center
@@ -226,7 +234,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                                   child: Text(
                                     '/${widget.goalPoints}',
                                     style: AppTextStyles.bodySmall.copyWith(
-                                      color: AppColors.textSecondary,
+                                      color: th.textSecondary,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
                                     ),
@@ -311,6 +319,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        final th = ThemeHelper.of(context);
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -326,8 +335,8 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white,
-                  Colors.grey[50]!,
+                  th.cardBackground,
+                  th.surface,
                 ],
               ),
             ),
@@ -384,6 +393,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                       children: [
                         // Method 1: Submit Feedback
                         _buildEarnMethod(
+                          context: context,
                           icon: Icons.edit_outlined,
                           iconColor: const Color(0xFF2563EB),
                           title: 'Submit Feedback',
@@ -396,6 +406,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
 
                         // Method 2: Feedback Approved
                         _buildEarnMethod(
+                          context: context,
                           icon: Icons.check_circle_outline,
                           iconColor: const Color(0xFF059669),
                           title: 'Feedback Approved',
@@ -408,6 +419,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
 
                         // Method 3: Avoid Fake Feedback
                         _buildEarnMethod(
+                          context: context,
                           icon: Icons.warning_outlined,
                           iconColor: const Color(0xFFDC2626),
                           title: 'Keep Feedback Genuine',
@@ -502,6 +514,7 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
   }
 
   Widget _buildEarnMethod({
+    required BuildContext context,
     required IconData icon,
     required Color iconColor,
     required String title,
@@ -509,17 +522,18 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
     required String points,
     required Color pointsColor,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: Colors.grey[200]!,
+          color: th.borderLight,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -551,14 +565,14 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                       title,
                       style: AppTextStyles.bodySmall.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: th.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       description,
                       style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.textSecondary,
+                        color: th.textSecondary,
                         height: 1.4,
                       ),
                     ),
@@ -596,10 +610,14 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
 
 // Custom Painter for Background Circle
 class BackgroundCirclePainter extends CustomPainter {
+  final Color trackColor;
+
+  BackgroundCirclePainter({required this.trackColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.15)
+      ..color = trackColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10;
 
@@ -617,10 +635,12 @@ class BackgroundCirclePainter extends CustomPainter {
 class ProgressCirclePainter extends CustomPainter {
   final double progress;
   final bool isComplete;
+  final Color glowColor;
 
   ProgressCirclePainter({
     required this.progress,
     required this.isComplete,
+    required this.glowColor,
   });
 
   @override
@@ -661,7 +681,7 @@ class ProgressCirclePainter extends CustomPainter {
     // Draw glow effect at the end of progress
     if (progress > 0 && progress < 1.0) {
       final glowPaint = Paint()
-        ..color = AppColors.primaryColor.withOpacity(0.5)
+        ..color = glowColor
         ..style = PaintingStyle.fill;
 
       final angle = -3.14159 / 2 + (2 * 3.14159) * progress;
@@ -682,8 +702,16 @@ class ProgressCirclePainter extends CustomPainter {
 // Custom Painter for Checkpoint Dots
 class CheckpointDotsPainter extends CustomPainter {
   final double progress;
+  final Color activeDotColor;
+  final Color inactiveDotColor;
+  final Color innerDotColor;
 
-  CheckpointDotsPainter({required this.progress});
+  CheckpointDotsPainter({
+    required this.progress,
+    required this.activeDotColor,
+    required this.inactiveDotColor,
+    required this.innerDotColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -702,21 +730,21 @@ class CheckpointDotsPainter extends CustomPainter {
       if (dotProgress <= progress) {
         // Active dot (reached)
         final activePaint = Paint()
-          ..color = AppColors.primaryColor
+          ..color = activeDotColor
           ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 2.0);
 
         canvas.drawCircle(Offset(dotX, dotY), 4.5, activePaint);
 
         // Inner white dot
         final innerPaint = Paint()
-          ..color = Colors.white
+          ..color = innerDotColor
           ..style = PaintingStyle.fill;
 
         canvas.drawCircle(Offset(dotX, dotY), 2.5, innerPaint);
       } else {
         // Inactive dot (not yet reached)
         final inactivePaint = Paint()
-          ..color = Colors.grey.withOpacity(0.3)
+          ..color = inactiveDotColor
           ..style = PaintingStyle.fill;
 
         canvas.drawCircle(Offset(dotX, dotY), 3, inactivePaint);
