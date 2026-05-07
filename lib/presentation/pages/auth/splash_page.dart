@@ -179,11 +179,19 @@ class _SplashPageState extends ConsumerState<SplashPage>
                     scale: _logoScaleAnimation.value,
                     child: Opacity(
                       opacity: _logoOpacityAnimation.value,
-                      child: Image.asset(
-                        'assets/images/logo.png',
+                      child: Container(
                         width: 150,
                         height: 150,
-                        fit: BoxFit.contain,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primaryColor.withOpacity(0.1),
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
                     ),
                   );
