@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/data/models/faq_model.dart';
 import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
@@ -68,8 +69,9 @@ class _FAQPageState extends State<FAQPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -116,7 +118,7 @@ class _FAQPageState extends State<FAQPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -128,10 +130,11 @@ class _FAQPageState extends State<FAQPage> {
                   ),
                   child: TextField(
                     controller: _searchController,
+                    style: TextStyle(color: th.textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Search FAQs...',
-                      hintStyle: const TextStyle(
-                        color: AppColors.textSecondary,
+                      hintStyle: TextStyle(
+                        color: th.textSecondary,
                       ),
                       border: InputBorder.none,
                       prefixIcon: const Icon(
@@ -165,7 +168,7 @@ class _FAQPageState extends State<FAQPage> {
                 child: Container(
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: th.cardBackground,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
@@ -186,12 +189,12 @@ class _FAQPageState extends State<FAQPage> {
                             // Popular Toggle
                             Row(
                               children: [
-                                const Text(
+                                Text(
                                   'Show Popular Questions',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
+                                    color: th.textPrimary,
                                   ),
                                 ),
                                 const Spacer(),
@@ -227,18 +230,18 @@ class _FAQPageState extends State<FAQPage> {
                                         });
                                         _filterFAQs();
                                       },
-                                      backgroundColor: AppColors.scaffoldBackground,
+                                      backgroundColor: th.subtleBackground,
                                       selectedColor: AppColors.primaryColor,
                                       labelStyle: TextStyle(
                                         color: isSelected
                                             ? Colors.white
-                                            : AppColors.textPrimary,
+                                            : th.textPrimary,
                                         fontWeight: FontWeight.w600,
                                       ),
                                       side: BorderSide(
                                         color: isSelected
                                             ? AppColors.primaryColor
-                                            : AppColors.scaffoldBackground,
+                                            : th.border,
                                       ),
                                     ),
                                   );
@@ -273,7 +276,8 @@ class _FAQPageState extends State<FAQPage> {
                                     ),
                                     const SizedBox(height: 8),
                                     const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 32),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 32),
                                       child: Text(
                                         'Try different search terms or select another category',
                                         textAlign: TextAlign.center,
@@ -308,6 +312,7 @@ class _FAQPageState extends State<FAQPage> {
   }
 
   Widget _buildFAQItem(FAQItem faq) {
+    final th = ThemeHelper.of(context);
     return Theme(
       data: Theme.of(context).copyWith(
         dividerColor: Colors.transparent,
@@ -318,10 +323,10 @@ class _FAQPageState extends State<FAQPage> {
             Expanded(
               child: Text(
                 faq.question,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -330,8 +335,7 @@ class _FAQPageState extends State<FAQPage> {
             if (faq.isPopular)
               Container(
                 margin: const EdgeInsets.only(left: 8),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.successColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
@@ -347,19 +351,15 @@ class _FAQPageState extends State<FAQPage> {
               ),
           ],
         ),
-        collapsedBackgroundColor: AppColors.scaffoldBackground,
-        backgroundColor: AppColors.scaffoldBackground.withOpacity(0.5),
+        collapsedBackgroundColor: th.subtleBackground,
+        backgroundColor: th.subtleBackground.withOpacity(0.5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: AppColors.scaffoldBackground,
-          ),
+          side: BorderSide(color: th.border),
         ),
         collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: AppColors.scaffoldBackground,
-          ),
+          side: BorderSide(color: th.border),
         ),
         children: [
           Container(
@@ -369,9 +369,9 @@ class _FAQPageState extends State<FAQPage> {
               children: [
                 Text(
                   faq.answer,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                     height: 1.6,
                   ),
                 ),

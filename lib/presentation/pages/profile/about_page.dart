@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -23,19 +24,20 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.accentColor,
               AppColors.primaryColor,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.32, 0.72],
+            stops: const [0.0, 0.32, 0.72],
           ),
         ),
         child: SafeArea(
@@ -207,7 +209,7 @@ class _AboutPageState extends State<AboutPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionTitle(
+          const _SectionTitle(
             icon: Icons.verified_user_rounded,
             title: 'Built For Safer Journeys',
             color: AppColors.primaryColor,
@@ -227,25 +229,25 @@ class _AboutPageState extends State<AboutPage> {
 
   Widget _buildFeatureGrid() {
     final features = [
-      _FeatureData(
+      const _FeatureData(
         'Bus Navigation',
         'Search destinations and view bus-focused route guidance.',
         Icons.map_rounded,
         AppColors.primaryColor,
       ),
-      _FeatureData(
+      const _FeatureData(
         'SOS Contacts',
         'Alert trusted contacts quickly during emergencies.',
         Icons.sos_rounded,
         AppColors.dangerColor,
       ),
-      _FeatureData(
+      const _FeatureData(
         'Safety Hub',
         'Access emergency actions and safety information.',
         Icons.health_and_safety_rounded,
         AppColors.successColor,
       ),
-      _FeatureData(
+      const _FeatureData(
         'Feedback',
         'Report journey, driver, and bus service experiences.',
         Icons.rate_review_rounded,
@@ -274,17 +276,17 @@ class _AboutPageState extends State<AboutPage> {
 
   Widget _buildSafetySection() {
     final items = [
-      _InfoRowData(
+      const _InfoRowData(
         'Emergency first',
         'SOS and emergency contact tools are designed to stay easy to reach.',
         Icons.emergency_share_rounded,
       ),
-      _InfoRowData(
+      const _InfoRowData(
         'Location aware',
         'Map and safety features use location only when permission is granted.',
         Icons.location_on_rounded,
       ),
-      _InfoRowData(
+      const _InfoRowData(
         'Passenger control',
         'You can update profile, preferences, notifications, and contacts anytime.',
         Icons.tune_rounded,
@@ -358,32 +360,35 @@ class _AboutPageState extends State<AboutPage> {
         ? ''
         : 'Version ${packageInfo.version} build ${packageInfo.buildNumber}';
 
-    return Column(
-      children: [
-        Text(
-          'SafeDriver Passenger App',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+    return Builder(builder: (context) {
+      final th = ThemeHelper.of(context);
+      return Column(
+        children: [
+          Text(
+            'SafeDriver Passenger App',
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDesign.spaceXS),
-        Text(
-          version,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.textSecondary,
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            version,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: th.textSecondary,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDesign.spaceXS),
-        Text(
-          'Copyright 2026 SafeDriver. All rights reserved.',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.textHint,
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            'Copyright 2026 SafeDriver. All rights reserved.',
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: th.textHint,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Future<void> _sendSupportEmail() async {
@@ -407,7 +412,7 @@ class _AboutPageState extends State<AboutPage> {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppDesign.radiusXL),
@@ -425,7 +430,6 @@ class _AboutPageState extends State<AboutPage> {
                   child: Text(
                     title,
                     style: AppTextStyles.headline5.copyWith(
-                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -440,7 +444,7 @@ class _AboutPageState extends State<AboutPage> {
             Text(
               body,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 height: 1.55,
               ),
             ),
@@ -459,13 +463,14 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: th.border),
       ),
       child: child,
     );
@@ -500,7 +505,6 @@ class _SectionTitle extends StatelessWidget {
           child: Text(
             title,
             style: AppTextStyles.headline6.copyWith(
-              color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -517,14 +521,15 @@ class _FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       constraints: const BoxConstraints(minHeight: 154),
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowSM,
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: th.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,7 +548,7 @@ class _FeatureCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -553,7 +558,7 @@ class _FeatureCard extends StatelessWidget {
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               height: 1.35,
             ),
           ),
@@ -570,6 +575,7 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       child: Row(
@@ -584,7 +590,7 @@ class _InfoRow extends StatelessWidget {
                 Text(
                   data.title,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -592,7 +598,7 @@ class _InfoRow extends StatelessWidget {
                 Text(
                   data.description,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -619,6 +625,7 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Container(
@@ -632,19 +639,19 @@ class _ActionTile extends StatelessWidget {
       title: Text(
         title,
         style: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textPrimary,
+          color: th.textPrimary,
           fontWeight: FontWeight.w700,
         ),
       ),
       subtitle: Text(
         subtitle,
         style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.textSecondary,
+          color: th.textSecondary,
         ),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right_rounded,
-        color: AppColors.textHint,
+        color: th.textHint,
       ),
       onTap: onTap,
     );

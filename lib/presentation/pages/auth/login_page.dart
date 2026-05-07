@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
@@ -218,6 +220,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final authState = ref.watch(authStateProvider);
 
     // Listen for auth state changes and navigate accordingly
@@ -326,9 +329,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         // Form Section
                         Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: th.cardBackground,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(32),
                               topRight: Radius.circular(32),
                             ),
@@ -374,22 +377,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       // Password Field with modern design
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.grey[50],
+                                          color: th.inputFill,
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: Colors.grey[200]!,
+                                            color: th.borderLight,
                                             width: 1,
                                           ),
                                         ),
                                         child: TextFormField(
                                           controller: _passwordController,
                                           obscureText: _obscurePassword,
+                                          style: TextStyle(
+                                            color: th.textPrimary,
+                                          ),
                                           decoration: InputDecoration(
                                             labelText: 'Password',
                                             prefixIcon: Icon(
                                               Icons.lock_outlined,
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                             ),
                                             suffixIcon: IconButton(
                                               icon: Icon(
@@ -397,7 +403,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                     ? Icons.visibility_outlined
                                                     : Icons
                                                         .visibility_off_outlined,
-                                                color: Colors.grey[600],
+                                                color: th.textSecondary,
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -413,8 +419,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               vertical: 20,
                                             ),
                                             labelStyle: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
+                                            ),
+                                            hintStyle: TextStyle(
+                                              color: th.textHint,
                                             ),
                                           ),
                                           validator: (value) {
@@ -536,7 +545,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           Expanded(
                                             child: Container(
                                               height: 1,
-                                              color: Colors.grey[300],
+                                              color: th.divider,
                                             ),
                                           ),
                                           Padding(
@@ -545,7 +554,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             child: Text(
                                               'OR',
                                               style: TextStyle(
-                                                color: Colors.grey[500],
+                                                color: th.textSecondary,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
                                               ),
@@ -554,7 +563,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           Expanded(
                                             child: Container(
                                               height: 1,
-                                              color: Colors.grey[300],
+                                              color: th.divider,
                                             ),
                                           ),
                                         ],
@@ -566,17 +575,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       Container(
                                         height: 56,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: th.cardBackground,
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: Colors.grey[300]!,
+                                            color: th.border,
                                             width: 1,
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
+                                              color: th.shadowMedium,
                                               blurRadius: 8,
                                               offset: const Offset(0, 2),
                                             ),
@@ -586,12 +594,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           onPressed:
                                               isLoading ? null : _googleSignIn,
                                           icon: const GoogleIcon(size: 24),
-                                          label: const Text(
+                                          label: Text(
                                             'Continue with Google',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
+                                              color: th.textPrimary,
                                             ),
                                           ),
                                           style: OutlinedButton.styleFrom(
@@ -615,7 +623,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           Text(
                                             'Don\'t have an account? ',
                                             style: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
                                             ),
                                           ),
@@ -627,10 +635,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                         const RegisterPage()),
                                               );
                                             },
-                                            child: const Text(
+                                            child: Text(
                                               'Sign Up',
                                               style: TextStyle(
-                                                color: Color(0xFF2563EB),
+                                                color: th.primary,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
                                               ),

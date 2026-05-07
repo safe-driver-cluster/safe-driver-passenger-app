@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants/color_constants.dart';
 
 /// Helper class to get theme-aware colors throughout the app.
 /// Instead of using hardcoded colors like `Colors.white` or `AppColors.textPrimary`,
@@ -24,6 +25,7 @@ class ThemeHelper {
   }
 
   bool get isDark => _isDark;
+  Brightness get brightness => _isDark ? Brightness.dark : Brightness.light;
 
   // ─── Background Colors ──────────────────────────────────────
   /// Scaffold background (light grey in light mode, dark blue-grey in dark)
@@ -37,12 +39,12 @@ class ThemeHelper {
 
   /// Input field fill color
   Color get inputFill => _isDark
-      ? const Color(0xFF1E293B)
+      ? AppColors.darkInputBackground
       : const Color(0xFFFAFAFA);
 
   /// Subtle background for dividers, separators
   Color get subtleBackground => _isDark
-      ? const Color(0xFF334155)
+      ? AppColors.darkCardHover
       : const Color(0xFFF3F4F6);
 
   // ─── Text Colors ────────────────────────────────────────────

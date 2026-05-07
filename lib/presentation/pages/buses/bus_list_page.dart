@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class BusListPage extends StatefulWidget {
   const BusListPage({super.key});
@@ -23,27 +24,28 @@ class _BusListPageState extends State<BusListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 1.0],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(),
+              _buildHeader(th),
               Expanded(
-                child: _buildBusList(),
+                child: _buildBusList(th),
               ),
             ],
           ),
@@ -52,7 +54,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(ThemeHelper th) {
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -96,7 +98,7 @@ class _BusListPageState extends State<BusListPage> {
           // Simple Search Bar
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: th.cardBackground,
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               boxShadow: [
                 BoxShadow(
@@ -108,6 +110,7 @@ class _BusListPageState extends State<BusListPage> {
             ),
             child: TextField(
               controller: _searchController,
+              style: TextStyle(color: th.textPrimary),
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value.toLowerCase();
@@ -115,8 +118,8 @@ class _BusListPageState extends State<BusListPage> {
               },
               decoration: InputDecoration(
                 hintText: 'Search by bus number, route, driver...',
-                hintStyle: const TextStyle(
-                  color: AppColors.textHint,
+                hintStyle: TextStyle(
+                  color: th.textHint,
                   fontSize: 16,
                 ),
                 prefixIcon: const Icon(
@@ -132,9 +135,9 @@ class _BusListPageState extends State<BusListPage> {
                             _searchQuery = '';
                           });
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.clear_rounded,
-                          color: AppColors.textHint,
+                          color: th.textHint,
                         ),
                       )
                     : null,
@@ -151,7 +154,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusList() {
+  Widget _buildBusList(ThemeHelper th) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('vehicles')
@@ -159,29 +162,29 @@ class _BusListPageState extends State<BusListPage> {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline_rounded,
                   size: 64,
                   color: AppColors.errorColor,
                 ),
-                SizedBox(height: AppDesign.spaceMD),
+                const SizedBox(height: AppDesign.spaceMD),
                 Text(
                   'Error loading buses',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
-                SizedBox(height: AppDesign.spaceSM),
+                const SizedBox(height: AppDesign.spaceSM),
                 Text(
                   'Please try again later',
                   style: TextStyle(
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -223,20 +226,20 @@ class _BusListPageState extends State<BusListPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.directions_bus_rounded,
                   size: 64,
-                  color: AppColors.textHint,
+                  color: th.textHint,
                 ),
                 const SizedBox(height: AppDesign.spaceMD),
                 Text(
                   _searchQuery.isEmpty
                       ? 'No buses available'
                       : 'No buses found',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceSM),
@@ -244,8 +247,8 @@ class _BusListPageState extends State<BusListPage> {
                   _searchQuery.isEmpty
                       ? 'Check back later for available buses'
                       : 'Try adjusting your search terms',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  style: TextStyle(
+                    color: th.textSecondary,
                   ),
                 ),
               ],
@@ -260,14 +263,15 @@ class _BusListPageState extends State<BusListPage> {
             await Future.delayed(const Duration(seconds: 1));
           },
           color: AppColors.primaryColor,
-          backgroundColor: Colors.white,
+          backgroundColor: th.cardBackground,
           child: ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(AppDesign.spaceLG),
             itemCount: filteredBuses.length,
             itemBuilder: (context, index) {
-              final busData = filteredBuses[index].data() as Map<String, dynamic>;
-              return _buildBusCard(busData);
+              final busData =
+                  filteredBuses[index].data() as Map<String, dynamic>;
+              return _buildBusCard(th, busData);
             },
           ),
         );
@@ -275,7 +279,7 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildBusCard(Map<String, dynamic> busData) {
+  Widget _buildBusCard(ThemeHelper th, Map<String, dynamic> busData) {
     final route = busData['route'] ?? 'Unknown Route';
     final busNumber = busData['busNumberPlate'] ?? 'N/A';
     final driverName = busData['driverName'] ?? 'Unknown Driver';
@@ -287,11 +291,11 @@ class _BusListPageState extends State<BusListPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: th.shadowLight,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -370,10 +374,10 @@ class _BusListPageState extends State<BusListPage> {
                 Expanded(
                   child: Text(
                     route,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                 ),
@@ -385,32 +389,32 @@ class _BusListPageState extends State<BusListPage> {
             // Driver and location
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.person_rounded,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Text(
                   driverName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: th.textSecondary,
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceLG),
-                const Icon(
+                Icon(
                   Icons.location_on_rounded,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                   size: 18,
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Expanded(
                   child: Text(
                     address,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

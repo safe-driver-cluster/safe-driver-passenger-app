@@ -253,7 +253,8 @@ class AppTheme {
         onSecondary: AppColors.darkTextPrimary,
         onSurface: AppColors.darkTextPrimary,
         onError: AppColors.darkTextPrimary,
-        outline: AppColors.darkTextSecondary,
+        outline: AppColors.darkBorder,
+        outlineVariant: AppColors.darkDivider,
         shadow: AppColors.shadowDark,
       ),
 
@@ -379,12 +380,12 @@ class AppTheme {
       // Dark InputDecoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.darkSurface,
+        fillColor: AppColors.darkInputBackground,
         labelStyle: AppTextStyles.labelLarge.copyWith(
           color: AppColors.darkTextSecondary,
         ),
         hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.darkTextSecondary,
+          color: AppColors.darkTextHint,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),

@@ -126,7 +126,7 @@ class QuickActionsWidget extends StatelessWidget {
   }
 
   Widget _buildProfessionalActionButton({
-    required ThemeData th,
+    required ThemeHelper th,
     required IconData icon,
     required String label,
     required String subtitle,
@@ -142,7 +142,7 @@ class QuickActionsWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: th.brightness == Brightness.dark
+              color: th.isDark
                   ? Colors.white.withOpacity(0.05)
                   : Colors.black.withOpacity(0.08),
               blurRadius: 8,

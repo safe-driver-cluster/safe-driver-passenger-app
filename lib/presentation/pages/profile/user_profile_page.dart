@@ -6,6 +6,7 @@ import 'package:safedriver_passenger_app/presentation/pages/feedback/feedback_hi
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/passenger_provider.dart';
@@ -26,19 +27,20 @@ class UserProfilePage extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
     final passengerAsync = ref.watch(currentPassengerProvider);
 
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.accentColor,
               AppColors.primaryColor,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -56,7 +58,7 @@ class UserProfilePage extends ConsumerWidget {
               await Future.delayed(const Duration(milliseconds: 800));
             },
             color: AppColors.primaryColor,
-            backgroundColor: Colors.white,
+            backgroundColor: th.cardBackground,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -318,9 +320,10 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildProfessionalQuickActions(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowLG,
         border: Border.all(
@@ -352,7 +355,7 @@ class UserProfilePage extends ConsumerWidget {
                 Text(
                   'Quick Actions',
                   style: AppTextStyles.headline6.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -524,29 +527,33 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildLoadingStats() {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowMD,
-      ),
-      child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
+    return Builder(builder: (context) {
+      final th = ThemeHelper.of(context);
+      return Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: th.cardBackground,
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+          boxShadow: AppDesign.shadowMD,
         ),
-      ),
-    );
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryColor,
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildProfessionalMenuSection(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -638,7 +645,7 @@ class UserProfilePage extends ConsumerWidget {
 
     final actionMenuItems = [
       MenuItemData('Sign Out', Icons.logout_rounded, () {
-        _showSignOutDialog(context, ref);
+        showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
 
@@ -689,21 +696,19 @@ class UserProfilePage extends ConsumerWidget {
       title: Text(
         item.title,
         style: AppTextStyles.bodyMedium.copyWith(
-          color:
-              item.isDestructive ? AppColors.errorColor : AppColors.textPrimary,
+          color: item.isDestructive ? AppColors.errorColor : null,
           fontWeight: FontWeight.w500,
         ),
       ),
       trailing: const Icon(
         Icons.chevron_right_rounded,
-        color: AppColors.textHint,
         size: AppDesign.iconSM,
       ),
       onTap: item.onTap,
     );
   }
 
-  void _showSignOutDialog(BuildContext context, WidgetRef ref) {
+  void showSignOutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

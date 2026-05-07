@@ -9,6 +9,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/sos_service.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../data/services/passenger_service.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -171,19 +172,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.accentColor,
               AppColors.primaryColor,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -688,16 +690,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     );
   }
 
-
-
   Widget _buildReadOnlyField(String label, String value, IconData icon) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: th.subtleBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -777,7 +778,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           borderSide: const BorderSide(color: AppColors.errorColor),
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: ThemeHelper.of(context).cardBackground,
         contentPadding: const EdgeInsets.all(AppDesign.spaceMD),
       ),
     );
@@ -809,7 +810,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: ThemeHelper.of(context).cardBackground,
         contentPadding: const EdgeInsets.all(AppDesign.spaceMD),
       ),
       items: items.map((String item) {
@@ -916,14 +917,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         language: _mapDisplayNameToLanguageCode(_preferredLanguage),
         theme: _currentProfile?.preferences.theme ?? 'system',
         notifications: PassengerNotificationSettings(
-          safetyAlerts: _currentProfile?.preferences.notifications.safetyAlerts ?? true,
+          safetyAlerts:
+              _currentProfile?.preferences.notifications.safetyAlerts ?? true,
           journeyUpdates: _notificationsEnabled,
-          emergencyAlerts: _currentProfile?.preferences.notifications.emergencyAlerts ?? true,
-          systemAnnouncements: _currentProfile?.preferences.notifications.systemAnnouncements ?? true,
+          emergencyAlerts:
+              _currentProfile?.preferences.notifications.emergencyAlerts ??
+                  true,
+          systemAnnouncements:
+              _currentProfile?.preferences.notifications.systemAnnouncements ??
+                  true,
         ),
         privacy: PassengerPrivacySettings(
           shareLocation: _locationSharingEnabled,
-          shareJourneyData: _currentProfile?.preferences.privacy.shareJourneyData ?? true,
+          shareJourneyData:
+              _currentProfile?.preferences.privacy.shareJourneyData ?? true,
         ),
       );
 
