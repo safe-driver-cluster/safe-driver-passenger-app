@@ -286,157 +286,165 @@ class _BusListPageState extends State<BusListPage> {
     final driverName = busData['driverName'] ?? l10n.unknown;
     final model = busData['model'] ?? 'N/A';
     final safetyScore = busData['safetyScore'] ?? 0;
+    final status = (busData['status'] ?? 'active').toString();
     final location = busData['location'] as Map<String, dynamic>?;
     final address = location?['address'] ?? l10n.noData;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
+      margin: const EdgeInsets.only(bottom: AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: th.cardBackground,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        border: Border.all(
+          color: AppColors.primaryColor.withOpacity(0.08),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: th.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppDesign.spaceMD),
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with bus number and safety score
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
+                  width: 54,
+                  height: 54,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryColor.withOpacity(0.22),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    busNumber,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
+                  child: const Icon(
+                    Icons.directions_bus_rounded,
+                    color: Colors.white,
+                    size: 28,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceXS,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _getSafetyScoreColor(safetyScore).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.security_rounded,
-                        size: 16,
-                        color: _getSafetyScoreColor(safetyScore),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              busNumber,
+                              style: TextStyle(
+                                color: th.textPrimary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: AppDesign.spaceSM),
+                          _buildStatusPill(status),
+                        ],
                       ),
-                      const SizedBox(width: AppDesign.spaceXS),
+                      const SizedBox(height: AppDesign.spaceXS),
                       Text(
-                        '$safetyScore%',
+                        route,
                         style: TextStyle(
-                          color: _getSafetyScoreColor(safetyScore),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: th.textPrimary,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: AppDesign.spaceSM),
+                _buildSafetyPill(safetyScore),
               ],
             ),
-
-            const SizedBox(height: AppDesign.spaceMD),
-
-            // Route information
+            const SizedBox(height: AppDesign.spaceLG),
             Row(
               children: [
-                const Icon(
-                  Icons.route_rounded,
-                  color: AppColors.primaryColor,
-                  size: 20,
+                Expanded(
+                  child: _buildBusInfoTile(
+                    icon: Icons.person_rounded,
+                    label: 'Driver',
+                    value: driverName,
+                    th: th,
+                  ),
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
                 Expanded(
-                  child: Text(
-                    route,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: th.textPrimary,
-                    ),
+                  child: _buildBusInfoTile(
+                    icon: Icons.location_on_rounded,
+                    label: 'Depot',
+                    value: address,
+                    th: th,
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: AppDesign.spaceSM),
-
-            // Driver and location
-            Row(
-              children: [
-                Icon(
-                  Icons.person_rounded,
-                  color: th.textSecondary,
-                  size: 18,
-                ),
-                const SizedBox(width: AppDesign.spaceSM),
-                Text(
-                  driverName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: th.textSecondary,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceLG),
-                Icon(
-                  Icons.location_on_rounded,
-                  color: th.textSecondary,
-                  size: 18,
-                ),
-                const SizedBox(width: AppDesign.spaceSM),
-                Expanded(
-                  child: Text(
-                    address,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: th.textSecondary,
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceMD),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppDesign.spaceSM),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                     ),
-                    overflow: TextOverflow.ellipsis,
+                    child: const Icon(
+                      Icons.confirmation_number_rounded,
+                      color: AppColors.primaryColor,
+                      size: 18,
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: AppDesign.spaceMD),
-
-            // Bus model
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatusIndicator(
-                    l10n.model,
-                    model,
-                    Icons.directions_bus_rounded,
-                    AppColors.primaryColor,
+                  const SizedBox(width: AppDesign.spaceMD),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.model,
+                          style: TextStyle(
+                            color: th.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          model,
+                          style: TextStyle(
+                            color: th.textPrimary,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -444,36 +452,101 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildStatusIndicator(
-      String label, String value, IconData icon, Color color) {
+  Widget _buildSafetyPill(int score) {
+    final color = _getSafetyScoreColor(score);
     return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceSM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDesign.spaceSM,
+        vertical: AppDesign.spaceXS,
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
       ),
-      child: Column(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            icon,
+            Icons.shield_rounded,
             color: color,
             size: 16,
           ),
-          const SizedBox(height: AppDesign.spaceXS),
+          const SizedBox(width: AppDesign.spaceXS),
           Text(
-            label,
+            '$score%',
             style: TextStyle(
-              fontSize: 11,
               color: color,
-              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              color: color,
-              fontWeight: FontWeight.w600,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusPill(String status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDesign.spaceSM,
+        vertical: 3,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.successColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+      ),
+      child: Text(
+        status,
+        style: const TextStyle(
+          color: AppColors.successColor,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBusInfoTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required ThemeHelper th,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceSM),
+      decoration: BoxDecoration(
+        color: th.subtleBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: AppColors.textSecondary,
+            size: 17,
+          ),
+          const SizedBox(width: AppDesign.spaceXS),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: th.textPrimary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
