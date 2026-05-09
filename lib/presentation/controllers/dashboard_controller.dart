@@ -11,6 +11,8 @@ import '../../core/services/firebase_service.dart';
 
 // Dashboard State
 class DashboardState {
+  static const Object _unset = Object();
+
   final bool isLoading;
   final double fleetSafetyScore;
   final int activeIncidents;
@@ -43,7 +45,7 @@ class DashboardState {
     int? activeBuses,
     List<SafetyAlertModel>? recentAlerts,
     List<BusModel>? nearbyBuses,
-    BusModel? activeJourney,
+    Object? activeJourney = _unset,
     List<String>? recentActivity,
     String? error,
   }) {
@@ -55,7 +57,9 @@ class DashboardState {
       activeBuses: activeBuses ?? this.activeBuses,
       recentAlerts: recentAlerts ?? this.recentAlerts,
       nearbyBuses: nearbyBuses ?? this.nearbyBuses,
-      activeJourney: activeJourney ?? this.activeJourney,
+      activeJourney: activeJourney == _unset
+          ? this.activeJourney
+          : activeJourney as BusModel?,
       recentActivity: recentActivity ?? this.recentActivity,
       error: error,
     );
@@ -201,10 +205,21 @@ class DashboardController extends StateNotifier<DashboardState> {
     state = state.copyWith(activeJourney: journey);
   }
 
+  Future<void> endActiveJourney(BusModel journey) async {
+    await _busRepository.endActiveJourney(busId: journey.id);
+    state = state.copyWith(
+      activeJourney: null,
+      recentActivity: [
+        'Ended journey on Bus ${journey.busNumber}',
+        ...state.recentActivity,
+      ].take(10).toList(),
+    );
+  }
+
   void addRecentActivity(String activity) {
     final updatedActivity = [activity, ...state.recentActivity];
     state = state.copyWith(
-      recentActivity: updatedActivity.take(10).toList(),
+      recentActivity: updatedActivity.take(5).toList(),
     );
   }
 }
