@@ -107,12 +107,9 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const CustomBackButton(color: Colors.white),
+                    const CustomBackButton(
+                      color: Colors.white,
+                      backgroundColor: Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     Expanded(

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/utils/theme_helper.dart';
 import '../../../data/services/sms_gateway_service.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../widgets/common/custom_back_button.dart';
@@ -239,7 +238,6 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
@@ -272,14 +270,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       // Back Button
                       Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const CustomBackButton(
-                              color: Colors.white,
-                            ),
+                          const CustomBackButton(
+                            color: Colors.white,
+                            backgroundColor: Color(0x33FFFFFF),
                           )
                         ],
                       ),

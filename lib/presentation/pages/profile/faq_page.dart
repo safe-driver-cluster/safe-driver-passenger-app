@@ -91,13 +91,9 @@ class _FAQPageState extends State<FAQPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: CustomBackButton(
-                          color: th.isDark ? th.textPrimary : Colors.white),
+                    CustomBackButton(
+                      color: th.isDark ? th.textPrimary : Colors.white,
+                      backgroundColor: const Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(

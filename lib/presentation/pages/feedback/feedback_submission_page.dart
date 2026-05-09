@@ -227,14 +227,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           padding: const EdgeInsets.all(AppDesign.spaceLG),
           child: Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(

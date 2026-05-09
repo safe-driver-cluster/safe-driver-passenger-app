@@ -57,7 +57,6 @@ class _EmergencyPageState extends State<EmergencyPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Column(
@@ -66,14 +65,9 @@ class _EmergencyPageState extends State<EmergencyPage> {
           // Title and back button
           Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const CustomBackButton(
-                  color: AppColors.white,
-                ),
+              const CustomBackButton(
+                color: AppColors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               const SizedBox(width: AppDesign.spaceMD),
               const Text(

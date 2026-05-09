@@ -464,18 +464,9 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               // Right corner refresh process icon
               Container(

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/color_constants.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class QrTicketPage extends StatelessWidget {
   const QrTicketPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       body: Container(
@@ -31,12 +29,9 @@ class QrTicketPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const CustomBackButton(color: Colors.white),
+                    const CustomBackButton(
+                      color: Colors.white,
+                      backgroundColor: Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
