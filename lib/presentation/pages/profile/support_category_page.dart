@@ -107,21 +107,21 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const CustomBackButton(color: Colors.white),
+                    const CustomBackButton(
+                      color: Colors.white,
+                      backgroundColor: Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         widget.categoryName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

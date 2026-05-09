@@ -4,7 +4,6 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../../data/repositories/feedback_repository.dart';
 import '../../../l10n/arb/app_localizations.dart';
@@ -58,7 +57,6 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -135,18 +133,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               Expanded(
                 child: Padding(

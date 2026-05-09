@@ -92,14 +92,9 @@ class _DriverListPageState extends State<DriverListPage> {
           // Title and back button
           Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               const SizedBox(width: AppDesign.spaceMD),
               Text(

@@ -9,17 +9,27 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).profile),
+        title: Text(
+          AppLocalizations.of(context).profile,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Center(
         child: Text(
           AppLocalizations.of(context).profilePageComingSoon,
-          style: const TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, color: th.textPrimary),
         ),
       ),
     );

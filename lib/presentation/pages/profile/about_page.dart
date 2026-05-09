@@ -111,10 +111,13 @@ class _AboutPageState extends State<AboutPage> {
               const Expanded(
                 child: Text(
                   'About App',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
                   ),
                 ),
               ),

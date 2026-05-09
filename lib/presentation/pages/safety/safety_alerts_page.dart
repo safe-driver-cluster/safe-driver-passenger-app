@@ -8,17 +8,27 @@ class SafetyAlertsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).safetyAlertsTitle),
+        title: Text(
+          AppLocalizations.of(context).safetyAlertsTitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: const Center(
+      body: Center(
         child: Text(
           'Safety Alerts Page - Coming Soon',
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, color: th.textPrimary),
         ),
       ),
     );

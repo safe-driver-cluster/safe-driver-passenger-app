@@ -94,18 +94,21 @@ class _MapsPageState extends ConsumerState<MapsPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: th.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: AppColors.primaryColor,
         title: const Text(
           'Maps & Navigation',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
@@ -136,9 +139,10 @@ class _MapsPageState extends ConsumerState<MapsPage> {
               ),
               child: TextField(
                 controller: _searchController,
+                style: TextStyle(color: th.textPrimary),
                 decoration: InputDecoration(
                   hintText: 'Search for places, bus stops...',
-                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  hintStyle: TextStyle(color: th.textHint),
                   prefixIcon:
                       const Icon(Icons.search, color: AppColors.primaryColor),
                   suffixIcon: IconButton(

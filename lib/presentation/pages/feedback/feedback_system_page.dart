@@ -115,18 +115,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               Row(
                 children: [
@@ -184,9 +175,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   children: [
                     Text(
                       headerTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: AppDesign.text2XL,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),

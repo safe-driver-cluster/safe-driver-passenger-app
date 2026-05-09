@@ -7,7 +7,6 @@ import '../../../core/constants/color_constants.dart';
 import '../../../providers/app_providers.dart';
 import '../../../providers/biometric_settings_provider.dart';
 import '../../../providers/language_provider.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -48,7 +47,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
@@ -76,21 +74,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const CustomBackButton(color: Colors.white),
+                    const CustomBackButton(
+                      color: Colors.white,
+                      backgroundColor: Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
                       child: Text(
                         'Settings',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

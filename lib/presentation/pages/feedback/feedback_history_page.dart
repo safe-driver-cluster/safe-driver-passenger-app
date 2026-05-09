@@ -6,10 +6,10 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/models/feedback_model.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../controllers/feedback_controller.dart';
-import '../../widgets/common/professional_widgets.dart';
 
 class FeedbackHistoryPage extends ConsumerStatefulWidget {
   const FeedbackHistoryPage({super.key});
@@ -19,79 +19,35 @@ class FeedbackHistoryPage extends ConsumerStatefulWidget {
       _FeedbackHistoryPageState();
 }
 
-class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
-    with TickerProviderStateMixin {
-  late AnimationController _rotationController;
+class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
+  final TextEditingController _searchController = TextEditingController();
   bool _isLoading = true;
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-
-    // Setup rotation animation for refresh icon
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-
-    // Load user's feedback when page initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authState = ref.read(authStateProvider);
-      debugPrint('📜 FeedbackHistoryPage: User UID: ${authState.user?.uid}');
-
-      if (authState.user?.uid != null) {
-        debugPrint(
-            '🔄 FeedbackHistoryPage: Loading feedback for user ${authState.user!.uid}');
-        _startLoading();
-        ref
-            .read(feedbackControllerProvider.notifier)
-            .loadUserFeedback(authState.user!.uid)
-            .then((_) {
-          _stopLoading();
-        });
-      } else {
-        debugPrint('⚠️ FeedbackHistoryPage: No user UID available');
-        _stopLoading();
-      }
-    });
-  }
-
-  void _startLoading() {
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-      _rotationController.repeat();
-    }
-  }
-
-  void _stopLoading() {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-      _rotationController.stop();
-      _rotationController.reset();
-    }
-  }
-
-  void _refreshFeedback() {
-    final authState = ref.read(authStateProvider);
-    if (authState.user?.uid != null) {
-      _startLoading();
-      ref
-          .read(feedbackControllerProvider.notifier)
-          .loadUserFeedback(authState.user!.uid)
-          .then((_) {
-        _stopLoading();
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadFeedback());
   }
 
   @override
   void dispose() {
-    _rotationController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadFeedback() async {
+    final user = ref.read(authStateProvider).user;
+    if (user?.uid == null) {
+      if (mounted) setState(() => _isLoading = false);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    await ref
+        .read(feedbackControllerProvider.notifier)
+        .loadUserFeedback(user!.uid);
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override
@@ -112,25 +68,68 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
               AppColors.primaryDark,
               th.background,
             ],
-            stops: const [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Modern Header
-              _buildModernHeader(context, l10n),
-
-              // Content Area
+              _buildHeader(th, l10n),
               Expanded(
-                child: ValueListenableBuilder(
+                child: ValueListenableBuilder<List<FeedbackModel>>(
                   valueListenable: feedbackController.feedbacksNotifier,
                   builder: (context, feedbacks, _) {
-                    debugPrint(
-                        '📋 FeedbackHistoryPage: Feedbacks updated: ${feedbacks.length} items');
-                    return feedbacks.isEmpty
-                        ? _buildEmptyState(l10n)
-                        : _buildFeedbackList(feedbacks, l10n);
+                    final sortedFeedbacks = feedbacks.toList()
+                      ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
+                    final filteredFeedbacks =
+                        sortedFeedbacks.where(_matchesSearch).toList();
+
+                    if (_isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primaryColor,
+                          ),
+                        ),
+                      );
+                    }
+
+                    if (feedbacks.isEmpty) {
+                      return _buildMessageState(
+                        th,
+                        Icons.rate_review_outlined,
+                        l10n.noFeedbackYet,
+                        l10n.noFeedbackSubtitle,
+                      );
+                    }
+
+                    if (filteredFeedbacks.isEmpty) {
+                      return _buildMessageState(
+                        th,
+                        Icons.search_off_rounded,
+                        'No feedback found',
+                        'Try another bus, category, or status.',
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: _loadFeedback,
+                      child: ListView(
+                        padding: const EdgeInsets.all(AppDesign.spaceLG),
+                        children: [
+                          _buildSummary(th, sortedFeedbacks),
+                          const SizedBox(height: AppDesign.spaceMD),
+                          ...filteredFeedbacks.map(
+                            (feedback) => Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: AppDesign.spaceMD,
+                              ),
+                              child: _buildFeedbackCard(th, feedback, l10n),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
@@ -141,400 +140,438 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage>
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations l10n) {
-    final th = ThemeHelper.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: AppDesign.spaceXL),
-          ProfessionalCard(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.history_rounded,
-                  size: 64,
-                  color: th.textSecondary,
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-                Text(
-                  l10n.noFeedbackYet,
-                  style: TextStyle(
-                    fontSize: AppDesign.text2XL,
-                    fontWeight: FontWeight.bold,
-                    color: th.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceSM),
-                Text(
-                  l10n.noFeedbackSubtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: AppDesign.textMD,
-                    color: th.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeedbackList(feedbacks, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppDesign.spaceMD),
-      child: Column(
-        children: [
-          const SizedBox(height: AppDesign.spaceLG),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: feedbacks.length,
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: AppDesign.spaceMD),
-            itemBuilder: (context, index) {
-              final feedback = feedbacks[index];
-              return _buildFeedbackCard(feedback, l10n);
-            },
-          ),
-          const SizedBox(height: AppDesign.spaceLG),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeedbackCard(feedback, AppLocalizations l10n) {
-    final th = ThemeHelper.of(context);
-    final dateFormatter = DateFormat('MMM dd, yyyy • hh:mm a');
-    final submittedDate = dateFormatter.format(feedback.submittedAt);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: th.cardBackground,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: [
-          BoxShadow(
-            color: th.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with bus number and status
-          Container(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: _getStatusGradient(feedback.status),
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppDesign.radiusLG),
-                topRight: Radius.circular(AppDesign.radiusLG),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (feedback.busNumber != null)
-                        Text(
-                          l10n.busLabel(feedback.busNumber!),
-                          style: const TextStyle(
-                            fontSize: AppDesign.textLG,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      const SizedBox(height: AppDesign.spaceXS),
-                      Text(
-                        feedback.title,
-                        style: TextStyle(
-                          fontSize: AppDesign.textMD,
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceSM,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Text(
-                    _getStatusText(feedback.status, l10n),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: AppDesign.textSM,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Rating and Category
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        for (int i = 0; i < 5; i++)
-                          Icon(
-                            i < feedback.rating.overall
-                                ? Icons.star_rounded
-                                : Icons.star_border_rounded,
-                            color: AppColors.primaryColor,
-                            size: 18,
-                          ),
-                        const SizedBox(width: AppDesign.spaceSM),
-                        Text(
-                          '${feedback.rating.overall}/5',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: th.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDesign.spaceMD,
-                        vertical: AppDesign.spaceSM,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                      ),
-                      child: const Text(
-                        '',
-                        style: TextStyle(
-                          fontSize: AppDesign.textSM,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-
-                // Category chip
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceMD,
-                    vertical: AppDesign.spaceSM,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                  ),
-                  child: Text(
-                    _getCategoryText(feedback.category, l10n),
-                    style: const TextStyle(
-                      fontSize: AppDesign.textSM,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-
-                // Comment
-                if (feedback.comment.isNotEmpty)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.commentLabel,
-                        style: TextStyle(
-                          fontSize: AppDesign.textSM,
-                          fontWeight: FontWeight.w600,
-                          color: th.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: AppDesign.spaceSM),
-                      Text(
-                        feedback.comment,
-                        style: TextStyle(
-                          fontSize: AppDesign.textMD,
-                          color: th.textPrimary,
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: AppDesign.spaceMD),
-                    ],
-                  ),
-
-                // Date
-                Text(
-                  l10n.submittedDateLabel(submittedDate),
-                  style: TextStyle(
-                    fontSize: AppDesign.textSM,
-                    color: th.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<Color> _getStatusGradient(status) {
-    switch (status.toString()) {
-      case 'FeedbackStatus.submitted':
-        return [AppColors.primaryColor, AppColors.primaryDark];
-      case 'FeedbackStatus.reviewed':
-        return [const Color(0xFF4CAF50), const Color(0xFF2E7D32)];
-      case 'FeedbackStatus.resolved':
-        return [const Color(0xFF2196F3), const Color(0xFF1565C0)];
-      case 'FeedbackStatus.rejected':
-        return [const Color(0xFFF44336), const Color(0xFFC62828)];
-      default:
-        return [AppColors.primaryColor, AppColors.primaryDark];
-    }
-  }
-
-  String _getStatusText(status, AppLocalizations l10n) {
-    switch (status.toString()) {
-      case 'FeedbackStatus.submitted':
-        return l10n.statusSubmitted;
-      case 'FeedbackStatus.reviewed':
-        return l10n.statusReviewed;
-      case 'FeedbackStatus.resolved':
-        return l10n.statusResolved;
-      case 'FeedbackStatus.rejected':
-        return l10n.statusRejected;
-      default:
-        return l10n.statusPending;
-    }
-  }
-
-  String _getCategoryText(category, AppLocalizations l10n) {
-    switch (category.toString()) {
-      case 'FeedbackCategory.general':
-        return l10n.categoryGeneral;
-      case 'FeedbackCategory.safety':
-        return l10n.categorySafety;
-      case 'FeedbackCategory.service':
-        return l10n.categoryService;
-      case 'FeedbackCategory.driver':
-        return l10n.categoryDriver;
-      case 'FeedbackCategory.busCondition':
-        return l10n.categoryBusCondition;
-      default:
-        return l10n.categoryGeneral; // Default to general if unknown
-    }
-  }
-
-  Widget _buildModernHeader(BuildContext context, AppLocalizations l10n) {
+  Widget _buildHeader(ThemeHelper th, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
         AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.spaceLG,
+        AppDesign.spaceMD,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: Text(
+                  l10n.feedbackHistory,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: -0.5,
                   ),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
                 ),
               ),
-              // Right corner refresh process icon
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: RotationTransition(
-                  turns: _rotationController,
-                  child: IconButton(
-                    onPressed: _isLoading ? null : _refreshFeedback,
-                    icon: Icon(
-                      Icons.refresh_rounded,
-                      color: _isLoading
-                          ? Colors.white.withOpacity(0.6)
-                          : Colors.white,
-                      size: AppDesign.iconLG,
-                    ),
-                  ),
+              IconButton(
+                onPressed: _isLoading ? null : _loadFeedback,
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  color: _isLoading ? Colors.white54 : Colors.white,
                 ),
               ),
             ],
           ),
           const SizedBox(height: AppDesign.spaceLG),
+          Container(
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _searchController,
+              style: TextStyle(color: th.textPrimary),
+              onChanged: (value) {
+                setState(() => _searchQuery = value.toLowerCase());
+              },
+              decoration: InputDecoration(
+                hintText: 'Search by bus, category, status...',
+                hintStyle: TextStyle(
+                  color: th.textHint,
+                  fontSize: 16,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primaryColor,
+                  size: 24,
+                ),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          color: th.textHint,
+                        ),
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppDesign.spaceLG,
+                  vertical: AppDesign.spaceMD,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummary(ThemeHelper th, List<FeedbackModel> feedbacks) {
+    final resolvedCount = feedbacks.where((item) => item.isResolved).length;
+    final averageRating = feedbacks.isEmpty
+        ? 0.0
+        : feedbacks.fold<int>(0, (sum, item) => sum + item.rating.overall) /
+            feedbacks.length;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryColor.withOpacity(0.25),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildSummaryTile(
+            feedbacks.length.toString(),
+            'Total',
+            Icons.rate_review_rounded,
+          ),
+          const SizedBox(width: 10),
+          _buildSummaryTile(
+            resolvedCount.toString(),
+            'Resolved',
+            Icons.check_circle_rounded,
+          ),
+          const SizedBox(width: 10),
+          _buildSummaryTile(
+            averageRating.toStringAsFixed(1),
+            'Avg Rating',
+            Icons.star_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryTile(String value, String label, IconData icon) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.14),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.16)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.white, size: 20),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeedbackCard(
+    ThemeHelper th,
+    FeedbackModel feedback,
+    AppLocalizations l10n,
+  ) {
+    final submittedDate =
+        DateFormat('MMM dd, yyyy, hh:mm a').format(feedback.submittedAt);
+    final busText = feedback.busNumber?.trim().isNotEmpty == true
+        ? l10n.busLabel(feedback.busNumber!)
+        : 'General Feedback';
+    final bodyText = feedback.comment.trim().isNotEmpty
+        ? feedback.comment
+        : feedback.description;
+    final statusColor = _getStatusColor(feedback.status);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: th.border),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Row(
             children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.feedback_rounded,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.feedbackHistory,
-                      style: const TextStyle(
-                        fontSize: AppDesign.text2XL,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
+                      busText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: th.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    const SizedBox(height: AppDesign.spaceXS),
+                    const SizedBox(height: 2),
                     Text(
-                      l10n.feedbackHistorySubtitle,
+                      feedback.title.isEmpty
+                          ? feedback.categoryDisplay
+                          : feedback.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: AppDesign.textMD,
-                        color: Colors.white.withOpacity(0.8),
-                        fontWeight: FontWeight.w500,
+                        color: th.textSecondary,
+                        fontSize: 13,
                       ),
                     ),
                   ],
                 ),
               ),
+              _buildStatusBadge(statusColor, feedback.statusDisplay),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              _buildRatingStars(feedback.rating.overall),
+              const SizedBox(width: 8),
+              Text(
+                '${feedback.rating.overall}/5',
+                style: TextStyle(
+                  color: th.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Spacer(),
+              _buildChip(feedback.categoryDisplay),
+            ],
+          ),
+          if (bodyText.trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              bodyText,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: th.textPrimary,
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.schedule_rounded, size: 16, color: th.textSecondary),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  submittedDate,
+                  style: TextStyle(
+                    color: th.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              if (feedback.hasResponse)
+                const Icon(
+                  Icons.mark_chat_read_rounded,
+                  color: AppColors.primaryColor,
+                  size: 18,
+                ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildStatusBadge(Color color, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChip(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRatingStars(int rating) {
+    return Row(
+      children: List.generate(
+        5,
+        (index) => Icon(
+          index < rating ? Icons.star_rounded : Icons.star_border_rounded,
+          color: AppColors.primaryColor,
+          size: 18,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageState(
+    ThemeHelper th,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 72, color: th.textSecondary),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: th.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: th.textSecondary,
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _matchesSearch(FeedbackModel feedback) {
+    if (_searchQuery.isEmpty) return true;
+
+    final values = [
+      feedback.busNumber,
+      feedback.driverName,
+      feedback.title,
+      feedback.comment,
+      feedback.description,
+      feedback.categoryDisplay,
+      feedback.statusDisplay,
+      feedback.typeDisplay,
+    ].map((value) => (value ?? '').toLowerCase());
+
+    return values.any((value) => value.contains(_searchQuery));
+  }
+
+  Color _getStatusColor(FeedbackStatus status) {
+    switch (status) {
+      case FeedbackStatus.submitted:
+      case FeedbackStatus.received:
+        return AppColors.primaryColor;
+      case FeedbackStatus.inReview:
+      case FeedbackStatus.responded:
+        return Colors.orange.shade700;
+      case FeedbackStatus.resolved:
+      case FeedbackStatus.closed:
+        return Colors.green.shade700;
+      case FeedbackStatus.escalated:
+        return Colors.red.shade700;
+    }
   }
 }

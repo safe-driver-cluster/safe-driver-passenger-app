@@ -430,6 +430,110 @@ class BusRepository {
     }
   }
 
+  Future<List<Map<String, dynamic>>> getJourneyHistory(
+    String userId, {
+    int limit = 50,
+  }) async {
+    try {
+      final journeys = await _getUserJourneyDocs(userId);
+
+      return journeys
+          .where((journey) => journey['status'] == 'completed')
+          .take(limit)
+          .toList();
+    } catch (e) {
+      throw BusRepositoryException('Failed to get journey history: $e');
+    }
+  }
+
+  Future<List<String>> getRecentJourneyActivity(
+    String userId, {
+    int limit = 5,
+  }) async {
+    try {
+      final journeys = await _getUserJourneyDocs(userId);
+      final events = <Map<String, dynamic>>[];
+
+      for (final journey in journeys) {
+        final busNumber = (journey['busNumber'] ?? 'Bus').toString();
+        final startedAt = _parseFirestoreDate(
+          journey['startedAt'] ?? journey['createdAt'],
+        );
+        if (startedAt != null) {
+          events.add({
+            'time': startedAt,
+            'label': 'Started journey on Bus $busNumber',
+          });
+        }
+
+        final status = (journey['status'] ?? '').toString();
+        final endedAt = _parseFirestoreDate(journey['endedAt']);
+        if (status == 'completed' && endedAt != null) {
+          events.add({
+            'time': endedAt,
+            'label': 'Ended journey on Bus $busNumber',
+          });
+        }
+      }
+
+      events.sort(
+        (a, b) => (b['time'] as DateTime).compareTo(a['time'] as DateTime),
+      );
+
+      return events
+          .take(limit)
+          .map((event) => event['label'].toString())
+          .toList();
+    } catch (e) {
+      throw BusRepositoryException('Failed to get journey activity: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _getUserJourneyDocs(String userId) async {
+    final query = await _firebaseService.firestore
+        .collection('journeys')
+        .where('userId', isEqualTo: userId)
+        .limit(100)
+        .get();
+
+    final journeys = query.docs
+        .map((doc) => {
+              ...doc.data(),
+              'id': doc.id,
+            })
+        .toList();
+
+    journeys.sort((a, b) {
+      final aTime = _journeySortTime(a);
+      final bTime = _journeySortTime(b);
+      return bTime.compareTo(aTime);
+    });
+
+    return journeys;
+  }
+
+  DateTime _journeySortTime(Map<String, dynamic> journey) {
+    return _parseFirestoreDate(
+          journey['endedAt'] ?? journey['startedAt'] ?? journey['createdAt'],
+        ) ??
+        DateTime.fromMillisecondsSinceEpoch(0);
+  }
+
+  DateTime? _parseFirestoreDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is Timestamp) return value.toDate();
+
+    try {
+      final toDate = value.toDate;
+      if (toDate is Function) return toDate() as DateTime;
+    } catch (_) {
+      // Fall through to string parsing.
+    }
+
+    return DateTime.tryParse(value.toString());
+  }
+
   /// Get bus by QR code
   Future<BusModel?> getBusByQrCode(String qrCode) async {
     try {

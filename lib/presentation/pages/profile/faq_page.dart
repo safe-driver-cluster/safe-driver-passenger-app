@@ -91,22 +91,21 @@ class _FAQPageState extends State<FAQPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: CustomBackButton(
-                          color: th.isDark ? th.textPrimary : Colors.white),
+                    CustomBackButton(
+                      color: th.isDark ? th.textPrimary : Colors.white,
+                      backgroundColor: const Color(0x33FFFFFF),
                     ),
                     const SizedBox(width: 16),
                     const Expanded(
                       child: Text(
                         'Frequently Asked Questions',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

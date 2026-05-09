@@ -227,14 +227,9 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           padding: const EdgeInsets.all(AppDesign.spaceLG),
           child: Row(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-                ),
-                child: const CustomBackButton(
-                  color: Colors.white,
-                ),
+              const CustomBackButton(
+                color: Colors.white,
+                backgroundColor: Color(0x33FFFFFF),
               ),
               const SizedBox(width: AppDesign.spaceLG),
               Expanded(
@@ -245,10 +240,13 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                       widget.feedbackTarget == FeedbackTarget.bus
                           ? l10n.busFeedbackLabel
                           : l10n.driverFeedbackLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: AppDesign.textXL,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
                         shadows: [
                           Shadow(
                             color: Colors.black26,

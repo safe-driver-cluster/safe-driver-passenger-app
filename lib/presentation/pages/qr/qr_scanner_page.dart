@@ -397,17 +397,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         ),
         child: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
-                ),
-              ),
-              child: const CustomBackButton(
-                color: Colors.white,
-              ),
+            const CustomBackButton(
+              color: Colors.white,
+              backgroundColor: Color(0x1AFFFFFF),
             ),
             const SizedBox(width: AppDesign.spaceLG),
             Expanded(
@@ -416,9 +408,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 children: [
                   Text(
                     AppLocalizations.of(context).qrScanner,
-                    style: AppTextStyles.headline5.copyWith(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceXS),

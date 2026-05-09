@@ -9,11 +9,20 @@ class SafetyHubPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: th.background,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context).safetyHub),
+        title: Text(
+          AppLocalizations.of(context).safetyHub,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,

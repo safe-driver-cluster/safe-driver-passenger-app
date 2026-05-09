@@ -19,12 +19,14 @@ class SafeDriverDashboard extends ConsumerWidget {
     final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
         title: Text(
           l10n.appName,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            fontSize: 26,
+            letterSpacing: -0.5,
           ),
         ),
         backgroundColor: AppColors.primaryColor,
