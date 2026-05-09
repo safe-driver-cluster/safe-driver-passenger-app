@@ -91,7 +91,7 @@ class _LiveChatPageState extends State<LiveChatPage> {
       return 'You\'re welcome! Is there anything else I can help you with?';
     }
 
-    return 'Thank you for contacting SafeDriver Support. A specialist will assist you shortly. For urgent matters, please call us at +1-800-SAFEDRIVER.';
+    return 'Thank you for contacting SafeDriver Support. A specialist will assist you shortly. For urgent matters, please call us at 0112123123.';
   }
 
   @override
