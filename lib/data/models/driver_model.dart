@@ -56,11 +56,11 @@ class DriverModel {
     this.rating = 0.0, // Default rating
   });
 
-  String get fullName => '$firstName $lastName';
+  String get fullName => '$firstName $lastName'.trim();
 
   String get name => fullName; // Alias for compatibility
 
-  String get displayName => firstName.isNotEmpty ? firstName : 'Driver';
+  String get displayName => fullName.isNotEmpty ? fullName : 'Driver';
 
   bool get isOnDuty =>
       status == DriverStatus.active || status == DriverStatus.driving;
@@ -102,47 +102,96 @@ class DriverModel {
 
   bool get isHighPerformer => safetyScore >= 85.0;
 
+  static Map<String, dynamic> _asMap(Object? value) {
+    if (value is Map) {
+      return value.map((key, value) => MapEntry(key.toString(), value));
+    }
+    return {};
+  }
+
+  static List<dynamic> _asList(Object? value) {
+    return value is List ? value : [];
+  }
+
+  static List<String> _asStringList(Object? value) {
+    return _asList(value).map((item) => item.toString()).toList();
+  }
+
+  static DateTime _asDate(Object? value) {
+    if (value is DateTime) return value;
+    if (value != null) {
+      try {
+        final dynamic dynamicValue = value;
+        final converted = dynamicValue.toDate();
+        if (converted is DateTime) return converted;
+      } catch (_) {
+        // Fall through to string parsing.
+      }
+      final parsed = DateTime.tryParse(value.toString());
+      if (parsed != null) return parsed;
+    }
+    return DateTime.now();
+  }
+
+  static Map<String, dynamic> _asExperienceMap(Object? value) {
+    final map = _asMap(value);
+    if (map.isNotEmpty) return map;
+
+    final years = int.tryParse((value ?? '').toString().trim());
+    return years == null ? {} : {'totalYears': years};
+  }
+
   factory DriverModel.fromJson(Map<String, dynamic> json) {
+    final rawName =
+        (json['name'] ?? json['driverName'] ?? '').toString().trim();
+    final nameParts =
+        rawName.isEmpty ? <String>[] : rawName.split(RegExp(r'\s+'));
+    final firstName = (json['firstName'] ?? '').toString().trim();
+    final lastName = (json['lastName'] ?? '').toString().trim();
+
     return DriverModel(
       id: json['id'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
+      firstName: firstName.isNotEmpty
+          ? firstName
+          : nameParts.isNotEmpty
+              ? nameParts.first
+              : '',
+      lastName: lastName.isNotEmpty
+          ? lastName
+          : nameParts.length > 1
+              ? nameParts.skip(1).join(' ')
+              : '',
       email: json['email'] ?? '',
-      phoneNumber: json['phoneNumber'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? json['phone'] ?? '',
       profileImageUrl: json['profileImageUrl'],
-      dateOfBirth: DateTime.parse(
-          json['dateOfBirth'] ?? DateTime.now().toIso8601String()),
+      dateOfBirth: _asDate(json['dateOfBirth']),
       licenseNumber: json['licenseNumber'] ?? '',
       licenseType: json['licenseType'] ?? 'Standard',
-      licenseExpiryDate: DateTime.parse(
-          json['licenseExpiryDate'] ?? DateTime.now().toIso8601String()),
-      certifications: (json['certifications'] as List<dynamic>?)
-              ?.map((e) => Certification.fromJson(e))
-              .toList() ??
-          [],
-      experience: DriverExperience.fromJson(json['experience'] ?? {}),
+      licenseExpiryDate: _asDate(json['licenseExpiryDate']),
+      certifications: _asList(json['certifications'])
+          .map((e) => Certification.fromJson(_asMap(e)))
+          .toList(),
+      experience:
+          DriverExperience.fromJson(_asExperienceMap(json['experience'])),
       status: DriverStatus.values.firstWhere(
         (e) => e.toString().split('.').last == json['status'],
         orElse: () => DriverStatus.offDuty,
       ),
       safetyScore: json['safetyScore']?.toDouble() ?? 0.0,
       alertnessLevel: json['alertnessLevel']?.toDouble() ?? 1.0,
-      specializations: List<String>.from(json['specializations'] ?? []),
+      specializations: _asStringList(json['specializations']),
       emergencyContact:
-          EmergencyContact.fromJson(json['emergencyContact'] ?? {}),
-      performance: DriverPerformance.fromJson(json['performance'] ?? {}),
-      trainingHistory: (json['trainingHistory'] as List<dynamic>?)
-              ?.map((e) => TrainingRecord.fromJson(e))
-              .toList() ??
-          [],
-      healthRecord: HealthRecord.fromJson(json['healthRecord'] ?? {}),
-      createdAt:
-          DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt:
-          DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
+          EmergencyContact.fromJson(_asMap(json['emergencyContact'])),
+      performance: DriverPerformance.fromJson(_asMap(json['performance'])),
+      trainingHistory: _asList(json['trainingHistory'])
+          .map((e) => TrainingRecord.fromJson(_asMap(e)))
+          .toList(),
+      healthRecord: HealthRecord.fromJson(_asMap(json['healthRecord'])),
+      createdAt: _asDate(json['createdAt']),
+      updatedAt: _asDate(json['updatedAt']),
       isActive: json['isActive'] ?? true,
       currentBusId: json['currentBusId'],
-      currentRoute: json['currentRoute'],
+      currentRoute: json['currentRoute'] ?? json['route'],
       rating: json['rating']?.toDouble() ?? 0.0,
     );
   }
