@@ -651,7 +651,11 @@ class _DriverListPageState extends State<DriverListPage> {
                 vertical: AppDesign.spaceXL,
               ),
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 420),
+                width: double.infinity,
+                constraints: const BoxConstraints(
+                  maxWidth: 420,
+                  minHeight: 232,
+                ),
                 decoration: BoxDecoration(
                   color: th.cardBackground,
                   borderRadius: BorderRadius.circular(AppDesign.radiusXL),
@@ -714,33 +718,32 @@ class _DriverListPageState extends State<DriverListPage> {
     String busNumber,
     Map<String, dynamic>? busData,
   ) {
+    final displayBusNumber =
+        (busData?['busNumberPlate'] ?? busData?['busNumber'] ?? busNumber)
+            .toString();
+
     if (busData == null) {
-      return SizedBox(
-        height: 190,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.directions_bus_filled_outlined,
-              color: th.textHint,
-              size: 42,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildBusDialogHeader(th, displayBusNumber),
+          const SizedBox(height: AppDesign.spaceXL),
+          Icon(
+            Icons.directions_bus_filled_outlined,
+            color: th.textHint,
+            size: 44,
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          Text(
+            'No details found for $busNumber',
+            style: TextStyle(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
             ),
-            const SizedBox(height: AppDesign.spaceSM),
-            Text(
-              'No details found for $busNumber',
-              style: TextStyle(
-                color: th.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppDesign.spaceMD),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       );
     }
 
@@ -762,39 +765,7 @@ class _DriverListPageState extends State<DriverListPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppDesign.spaceMD),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-              ),
-              child: const Icon(
-                Icons.directions_bus_rounded,
-                color: AppColors.primaryColor,
-              ),
-            ),
-            const SizedBox(width: AppDesign.spaceMD),
-            Expanded(
-              child: Text(
-                (busData['busNumberPlate'] ?? busData['busNumber'] ?? busNumber)
-                    .toString(),
-                style: TextStyle(
-                  color: th.textPrimary,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close_rounded),
-              color: AppColors.textSecondary,
-              tooltip: 'Close',
-            ),
-          ],
-        ),
+        _buildBusDialogHeader(th, displayBusNumber),
         const SizedBox(height: AppDesign.spaceLG),
         ...details.map(
           (item) => Padding(
@@ -824,6 +795,41 @@ class _DriverListPageState extends State<DriverListPage> {
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBusDialogHeader(ThemeHelper th, String busNumber) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+          ),
+          child: const Icon(
+            Icons.directions_bus_rounded,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: Text(
+            busNumber,
+            style: TextStyle(
+              color: th.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close_rounded),
+          color: AppColors.errorColor,
+          tooltip: 'Close',
         ),
       ],
     );
