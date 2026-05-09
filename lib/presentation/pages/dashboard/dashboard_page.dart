@@ -12,7 +12,6 @@ import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/common/web_responsive_layout.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
-import '../../widgets/nfc/nfc_tap_sheet.dart';
 import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
 import '../maps/map_page.dart';
