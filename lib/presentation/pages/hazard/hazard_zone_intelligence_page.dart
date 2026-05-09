@@ -7,7 +7,6 @@ import '../../../core/constants/color_constants.dart';
 import '../../../data/models/hazard_zone_model.dart';
 import '../../../data/repositories/hazard_zone_repository.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class HazardZoneIntelligencePage extends ConsumerStatefulWidget {
   final String? currentBusId;
@@ -317,10 +316,18 @@ class _HazardZoneIntelligencePageState
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hazard Zone Intelligence'),
+        title: const Text(
+          'Hazard Zone Intelligence',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         bottom: TabBar(

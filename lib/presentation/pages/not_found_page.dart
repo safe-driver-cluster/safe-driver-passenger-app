@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/color_constants.dart';
-import '../../../core/utils/theme_helper.dart';
+import '../../core/utils/theme_helper.dart';
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
-        title: const Text('Page Not Found'),
+        title: const Text(
+          'Page Not Found',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -26,30 +36,30 @@ class NotFoundPage extends StatelessWidget {
                 color: AppColors.errorColor,
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 '404',
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Page Not Found',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'The page you are looking for doesn\'t exist.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),

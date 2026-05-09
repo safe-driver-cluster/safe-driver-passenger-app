@@ -99,10 +99,13 @@ class _FAQPageState extends State<FAQPage> {
                     const Expanded(
                       child: Text(
                         'Frequently Asked Questions',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

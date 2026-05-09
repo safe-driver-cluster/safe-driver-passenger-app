@@ -337,9 +337,11 @@ class _FeedbackFormScreenState extends ConsumerState<FeedbackFormScreen> {
                   children: [
                     Text(
                       l10n.submitFeedback,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: AppDesign.text2XL,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),

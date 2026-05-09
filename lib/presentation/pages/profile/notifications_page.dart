@@ -51,10 +51,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     const Expanded(
                       child: Text(
                         'Notifications',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

@@ -82,10 +82,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     const Expanded(
                       child: Text(
                         'Settings',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

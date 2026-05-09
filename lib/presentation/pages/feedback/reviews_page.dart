@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../controllers/feedback_controller.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class ReviewsPage extends ConsumerStatefulWidget {
   const ReviewsPage({super.key});
@@ -25,7 +24,6 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     final feedbackController = ref.read(feedbackControllerProvider.notifier);
     final statistics = feedbackController.statistics;
     final feedbacks = feedbackController.feedbacks;
@@ -33,7 +31,17 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('Feedback Analytics'),
+        title: const Text(
+          'Feedback Analytics',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,

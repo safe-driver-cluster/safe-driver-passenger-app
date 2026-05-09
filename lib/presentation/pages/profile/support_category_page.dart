@@ -115,10 +115,13 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
                     Expanded(
                       child: Text(
                         widget.categoryName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w800,
                           color: Colors.white,
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ),

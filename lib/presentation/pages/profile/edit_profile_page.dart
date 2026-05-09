@@ -248,9 +248,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           Expanded(
             child: Text(
               AppLocalizations.of(context).editProfile,
-              style: AppTextStyles.headline5.copyWith(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w700,
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
               ),
             ),
           ),
@@ -317,8 +321,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Widget _buildFormContent() {
-    final th = ThemeHelper.of(context);
-    final l10n = AppLocalizations.of(context);
     return Form(
       key: _formKey,
       child: SingleChildScrollView(

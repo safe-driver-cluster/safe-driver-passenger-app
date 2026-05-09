@@ -175,9 +175,11 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                   children: [
                     Text(
                       headerTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: AppDesign.text2XL,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
                         letterSpacing: -0.5,
                       ),

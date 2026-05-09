@@ -5,7 +5,6 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../controllers/feedback_controller.dart';
-import '../../../core/utils/theme_helper.dart';
 
 class FeedbackTestPage extends ConsumerStatefulWidget {
   const FeedbackTestPage({super.key});
@@ -58,7 +57,6 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -66,10 +64,13 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
         elevation: 0,
         title: const Text(
           'Firebase Test',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             color: AppColors.textPrimary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
           ),
         ),
       ),

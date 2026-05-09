@@ -408,9 +408,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 children: [
                   Text(
                     AppLocalizations.of(context).qrScanner,
-                    style: AppTextStyles.headline5.copyWith(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
