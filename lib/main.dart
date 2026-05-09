@@ -23,6 +23,7 @@ import 'core/themes/app_theme.dart';
 import 'data/services/auth_service.dart';
 import 'data/services/biometric_service.dart';
 import 'firebase_options.dart';
+import 'presentation/widgets/common/web_responsive_layout.dart';
 
 // Top-level function to handle background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -189,6 +190,10 @@ class SafeDriverApp extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       initialRoute: AppRoutes.splash,
       onGenerateRoute: AppRoutes.generateRoute,
+      builder: (context, child) => WebPageFrame(
+        maxWidth: 1440,
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

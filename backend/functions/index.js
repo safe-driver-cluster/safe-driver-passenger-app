@@ -97,6 +97,52 @@ function validateSriLankanPhoneNumber(phoneNumber) {
     return regex.test(formatted);
 }
 
+exports.lookupPassengerByPhone = functions
+    .region('asia-south1')
+    .https.onCall(async (data) => {
+        const { phoneNumber } = data;
+
+        if (!phoneNumber) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Phone number is required'
+            );
+        }
+
+        const formattedPhone = formatPhoneNumber(phoneNumber);
+        if (!validateSriLankanPhoneNumber(formattedPhone)) {
+            throw new functions.https.HttpsError(
+                'invalid-argument',
+                'Invalid Sri Lankan phone number format'
+            );
+        }
+
+        const passengerQuery = await db.collection('passenger_details')
+            .where('phoneNumber', '==', formattedPhone)
+            .limit(1)
+            .get();
+
+        if (passengerQuery.empty) {
+            throw new functions.https.HttpsError(
+                'not-found',
+                'No account found with this phone number'
+            );
+        }
+
+        const passenger = passengerQuery.docs[0].data();
+        if (!passenger.email) {
+            throw new functions.https.HttpsError(
+                'failed-precondition',
+                'Account found but email is missing'
+            );
+        }
+
+        return {
+            success: true,
+            email: passenger.email,
+        };
+    });
+
 async function sendSMS(phoneNumber, message) {
     try {
         if (config.debug) {

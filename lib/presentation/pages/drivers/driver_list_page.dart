@@ -7,6 +7,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 
 class DriverListPage extends StatefulWidget {
   const DriverListPage({super.key});
@@ -57,24 +58,29 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationWidget(
-        currentIndex: 1, // Search tab is selected for drivers
-        onTap: (index) {
-          switch (index) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-              // Navigate back to dashboard with correct tab
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                '/dashboard',
-                (route) => false,
-                arguments: {'initialTab': index},
-              );
-              break;
-          }
-        },
-      ),
+      bottomNavigationBar: WebResponsive.isWideWeb(
+        context,
+        minWidth: WebResponsive.desktopBreakpoint,
+      )
+          ? null
+          : BottomNavigationWidget(
+              currentIndex: 1, // Search tab is selected for drivers
+              onTap: (index) {
+                switch (index) {
+                  case 0:
+                  case 1:
+                  case 2:
+                  case 3:
+                    // Navigate back to dashboard with correct tab
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/dashboard',
+                      (route) => false,
+                      arguments: {'initialTab': index},
+                    );
+                    break;
+                }
+              },
+            ),
     );
   }
 
@@ -258,6 +264,11 @@ class _DriverListPageState extends State<DriverListPage> {
             );
           }
 
+          final isWideWeb = WebResponsive.isWideWeb(
+            context,
+            minWidth: WebResponsive.desktopBreakpoint,
+          );
+
           return RefreshIndicator(
             onRefresh: () async {
               // Since this uses StreamBuilder, it's already real-time.
@@ -266,13 +277,35 @@ class _DriverListPageState extends State<DriverListPage> {
             },
             color: AppColors.primaryColor,
             backgroundColor: Colors.white,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: filteredDrivers.length,
-              itemBuilder: (context, index) {
-                final driverData =
-                    filteredDrivers[index].data() as Map<String, dynamic>;
-                return _buildDriverCard(l10n, driverData);
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                if (!isWideWeb) {
+                  return ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: filteredDrivers.length,
+                    itemBuilder: (context, index) {
+                      final driverData =
+                          filteredDrivers[index].data() as Map<String, dynamic>;
+                      return _buildDriverCard(l10n, driverData);
+                    },
+                  );
+                }
+
+                return GridView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 520,
+                    mainAxisExtent: 360,
+                    crossAxisSpacing: AppDesign.spaceLG,
+                    mainAxisSpacing: AppDesign.spaceLG,
+                  ),
+                  itemCount: filteredDrivers.length,
+                  itemBuilder: (context, index) {
+                    final driverData =
+                        filteredDrivers[index].data() as Map<String, dynamic>;
+                    return _buildDriverCard(l10n, driverData);
+                  },
+                );
               },
             ),
           );

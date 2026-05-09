@@ -8,7 +8,7 @@ import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
 import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import 'register_page.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -240,6 +240,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     final isLoading = authState.isLoading;
 
+    if (WebResponsive.isWideWeb(
+      context,
+      minWidth: WebResponsive.desktopBreakpoint,
+    )) {
+      return LoadingWidget(
+        isLoading: isLoading,
+        child: Scaffold(
+          body: WebAuthSplitShell(
+            title: l10n.welcomeTitle,
+            subtitle: l10n.appTagline,
+            icon: Icons.login_rounded,
+            child: _buildWebLoginForm(th, l10n, isLoading),
+          ),
+        ),
+      );
+    }
+
     return LoadingWidget(
       isLoading: isLoading,
       child: Scaffold(
@@ -259,7 +276,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
+                final content = SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints:
                         BoxConstraints(minHeight: constraints.maxHeight),
@@ -633,10 +650,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const RegisterPage()),
+                                              Navigator.pushNamed(
+                                                context,
+                                                '/register',
                                               );
                                             },
                                             child: Text(
@@ -663,9 +679,196 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ),
                 );
+                if (WebResponsive.isWideWeb(
+                  context,
+                  minWidth: WebResponsive.desktopBreakpoint,
+                )) {
+                  return WebAuthSplitShell(
+                    title: l10n.welcomeTitle,
+                    subtitle: l10n.appTagline,
+                    icon: Icons.login_rounded,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: content,
+                    ),
+                  );
+                }
+                return content;
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebLoginForm(
+    ThemeHelper th,
+    AppLocalizations l10n,
+    bool isLoading,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: th.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.login,
+              style: TextStyle(
+                color: th.textPrimary,
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.appTagline,
+              style: TextStyle(color: th.textSecondary, fontSize: 15),
+            ),
+            const SizedBox(height: 28),
+            PhoneNumberField(
+              controller: _phoneController,
+              selectedCountryCode: _selectedCountryCode,
+              onCountryCodeChanged: (code) {
+                setState(() {
+                  _selectedCountryCode = code;
+                });
+              },
+              labelText: l10n.phoneNumber,
+              validator: (value) {
+                if (value == null || value.isEmpty) return l10n.phoneRequired;
+                if (value.length < 9) return l10n.invalidPhone;
+                return null;
+              },
+            ),
+            const SizedBox(height: 18),
+            Container(
+              decoration: BoxDecoration(
+                color: th.inputFill,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: th.borderLight),
+              ),
+              child: TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                style: TextStyle(color: th.textPrimary),
+                decoration: InputDecoration(
+                  labelText: l10n.password,
+                  prefixIcon:
+                      Icon(Icons.lock_outlined, color: th.textSecondary),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: th.textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return l10n.passwordRequired;
+                  }
+                  if (value.length < 6) return l10n.passwordTooShort;
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Checkbox(
+                  value: _rememberMe,
+                  onChanged: (value) {
+                    setState(() {
+                      _rememberMe = value ?? false;
+                    });
+                  },
+                  activeColor: const Color(0xFF2563EB),
+                ),
+                Text(l10n.rememberMe),
+                const Spacer(),
+                TextButton(
+                  onPressed: _forgotPassword,
+                  child: Text(l10n.forgotPassword),
+                ),
+              ],
+            ),
+            const SizedBox(height: 22),
+            SizedBox(
+              height: 54,
+              child: ElevatedButton(
+                onPressed: isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  l10n.login,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(child: Divider(color: th.divider)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(l10n.or),
+                ),
+                Expanded(child: Divider(color: th.divider)),
+              ],
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              height: 54,
+              child: OutlinedButton.icon(
+                onPressed: isLoading ? null : _googleSignIn,
+                icon: const GoogleIcon(size: 22),
+                label: Text(l10n.continueWithGoogle),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(l10n.dontHaveAccount),
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/register'),
+                  child: Text(l10n.register),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

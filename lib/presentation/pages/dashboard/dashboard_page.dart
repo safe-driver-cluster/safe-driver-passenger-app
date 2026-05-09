@@ -9,12 +9,11 @@ import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
-import '../../widgets/nfc/nfc_tap_sheet.dart';
 import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
-import '../drivers/driver_list_page.dart';
 import '../maps/map_page.dart';
 import '../profile/user_profile_page.dart';
 
@@ -52,6 +51,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final pages = [
       DashboardHome(
         onNavigateToTab: _onNavigateToTab,
@@ -60,6 +60,13 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       const MapPage(),
       const UserProfilePage(),
     ];
+
+    if (WebResponsive.isWideWeb(
+      context,
+      minWidth: WebResponsive.desktopBreakpoint,
+    )) {
+      return _buildWebDashboard(context, pages, l10n);
+    }
 
     return Scaffold(
       body: IndexedStack(
@@ -105,6 +112,222 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
       ),
     );
   }
+
+  Widget _buildWebDashboard(
+    BuildContext context,
+    List<Widget> pages,
+    AppLocalizations l10n,
+  ) {
+    final th = ThemeHelper.of(context);
+    final navItems = [
+      const _DashboardNavItem(
+        label: 'Dashboard',
+        icon: Icons.dashboard_outlined,
+        selectedIcon: Icons.dashboard_rounded,
+      ),
+      _DashboardNavItem(
+        label: l10n.availableBuses,
+        icon: Icons.directions_bus_outlined,
+        selectedIcon: Icons.directions_bus_rounded,
+      ),
+      const _DashboardNavItem(
+        label: 'Maps',
+        icon: Icons.map_outlined,
+        selectedIcon: Icons.map_rounded,
+      ),
+      const _DashboardNavItem(
+        label: 'Profile',
+        icon: Icons.person_outline_rounded,
+        selectedIcon: Icons.person_rounded,
+      ),
+    ];
+
+    return Scaffold(
+      backgroundColor: th.background,
+      body: Row(
+        children: [
+          Container(
+            width: 264,
+            decoration: BoxDecoration(
+              color: th.surface,
+              border: Border(
+                right: BorderSide(color: th.border, width: 1),
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDesign.spaceLG),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.circular(AppDesign.radiusMD),
+                            boxShadow: AppDesign.shadowSM,
+                          ),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(AppDesign.radiusMD),
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.directions_bus_rounded,
+                                  color: AppColors.primaryColor,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppDesign.spaceMD),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'SafeDriver',
+                                style: TextStyle(
+                                  color: th.textPrimary,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                l10n.appTagline,
+                                style: TextStyle(
+                                  color: th.textSecondary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDesign.space2XL),
+                    ...navItems.asMap().entries.map((entry) {
+                      return Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: AppDesign.spaceSM),
+                        child: _buildWebNavButton(entry.key, entry.value, th),
+                      );
+                    }),
+                    const Spacer(),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                AppColors.primaryColor.withValues(alpha: 0.22),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          '/qr-scanner',
+                        ),
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: const Text('Scan QR'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppDesign.radiusLG),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ClipRect(
+              child: IndexedStack(
+                index: _selectedIndex,
+                children: pages,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWebNavButton(
+    int index,
+    _DashboardNavItem item,
+    ThemeHelper th,
+  ) {
+    final selected = _selectedIndex == index;
+    return Material(
+      color: selected
+          ? AppColors.primaryColor.withValues(alpha: 0.1)
+          : Colors.transparent,
+      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+      child: InkWell(
+        onTap: () => setState(() => _selectedIndex = index),
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceMD,
+            vertical: AppDesign.spaceMD,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                selected ? item.selectedIcon : item.icon,
+                color: selected ? AppColors.primaryColor : th.textSecondary,
+                size: AppDesign.iconMD,
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: TextStyle(
+                    color: selected ? AppColors.primaryColor : th.textPrimary,
+                    fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DashboardNavItem {
+  final String label;
+  final IconData icon;
+  final IconData selectedIcon;
+
+  const _DashboardNavItem({
+    required this.label,
+    required this.icon,
+    required this.selectedIcon,
+  });
 }
 
 class DashboardHome extends ConsumerWidget {
@@ -474,40 +697,11 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Scan QR',
-                    subtitle: 'Board by code',
-                    icon: Icons.qr_code_scanner_rounded,
-                    gradient: AppColors.primaryGradient,
-                    onTap: () => Navigator.pushNamed(context, '/qr-scanner'),
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildProfessionalActionCard(
-                    title: 'Tap NFC',
-                    subtitle: 'Start journey',
-                    icon: Icons.nfc_rounded,
-                    gradient: AppColors.accentGradient,
-                    onTap: () => showNfcTapSheet(context),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDesign.spaceMD),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildProfessionalActionCard(
                     title: l10n.busInformation,
                     subtitle: l10n.busStatus,
                     icon: Icons.directions_bus_rounded,
                     gradient: AppColors.primaryGradient,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BusListPage(),
-                      ),
-                    ),
+                    onTap: () => Navigator.pushNamed(context, '/buses'),
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
@@ -517,12 +711,7 @@ class DashboardHome extends ConsumerWidget {
                     subtitle: l10n.details,
                     icon: Icons.person_rounded,
                     gradient: AppColors.accentGradient,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DriverListPage(),
-                      ),
-                    ),
+                    onTap: () => Navigator.pushNamed(context, '/drivers'),
                   ),
                 ),
               ],

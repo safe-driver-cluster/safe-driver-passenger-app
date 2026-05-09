@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +43,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   void initState() {
     super.initState();
     _initializeAnimations();
-    _checkPermissions();
+    if (!kIsWeb) {
+      _checkPermissions();
+    }
   }
 
   void _initializeAnimations() {
@@ -94,6 +97,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return _buildWebManualScanner();
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -112,6 +119,114 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
           if (_isProcessing) _buildProcessingOverlay(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWebManualScanner() {
+    final l10n = AppLocalizations.of(context);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F8FC),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Padding(
+              padding: const EdgeInsets.all(AppDesign.spaceXL),
+              child: Container(
+                padding: const EdgeInsets.all(AppDesign.space2XL),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppDesign.radius2XL),
+                  boxShadow: AppDesign.shadowLG,
+                  border: Border.all(
+                    color: AppColors.primaryColor.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        const CustomBackButton(
+                          color: AppColors.primaryColor,
+                          backgroundColor: Color(0x142563EB),
+                        ),
+                        const SizedBox(width: AppDesign.spaceMD),
+                        Expanded(
+                          child: Text(
+                            l10n.enterCodeManually,
+                            style: AppTextStyles.headline4.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(
+                          AppDesign.radiusXL,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.qr_code_scanner_rounded,
+                        color: Colors.white,
+                        size: 56,
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    TextField(
+                      controller: _manualCodeController,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.characters,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: _processQrCode,
+                      decoration: InputDecoration(
+                        hintText: 'NB-9999',
+                        prefixIcon: const Icon(Icons.directions_bus_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radiusLG,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radiusLG,
+                          ),
+                          borderSide: const BorderSide(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceLG),
+                    ProfessionalButton(
+                      text: l10n.submit,
+                      onPressed: () => _processQrCode(
+                        _manualCodeController.text,
+                      ),
+                    ),
+                    if (_isProcessing) ...[
+                      const SizedBox(height: AppDesign.spaceLG),
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
