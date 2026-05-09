@@ -172,23 +172,13 @@ class DashboardController extends StateNotifier<DashboardState> {
 
   Future<void> _loadRecentActivity() async {
     try {
-      final activities = <String>[];
-
-      // Get recent safety alerts to show as activity
-      try {
-        final alerts = await _safetyRepository.getRecentAlerts(limit: 5);
-        for (var alert in alerts) {
-          activities.add('Safety Alert: ${alert.title}');
-        }
-      } catch (e) {
-        print('Error loading safety alerts: $e');
-      }
-
-      // Return only real activities - empty list if no data
-      state = state.copyWith(recentActivity: activities.take(5).toList());
+      final userId =
+          FirebaseService.instance.currentUser?.uid ?? 'current_user_id';
+      final activities =
+          await _busRepository.getRecentJourneyActivity(userId, limit: 5);
+      state = state.copyWith(recentActivity: activities);
     } catch (e) {
       print('Error loading recent activity: $e');
-      // Return empty list instead of fallback hardcoded messages
       state = state.copyWith(recentActivity: []);
     }
   }
