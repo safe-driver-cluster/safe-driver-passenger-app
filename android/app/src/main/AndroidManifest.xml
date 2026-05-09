@@ -5,6 +5,12 @@
     
     <!-- Internet permission -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- NFC permission for bus tap-to-start journey -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="false" />
     
     <!-- SMS permission for SOS alerts -->
     <uses-permission android:name="android.permission.SEND_SMS" />
