@@ -286,7 +286,8 @@ class _BusListPageState extends State<BusListPage> {
   Widget _buildBusCard(
       ThemeHelper th, AppLocalizations l10n, Map<String, dynamic> busData) {
     final route = busData['route'] ?? l10n.unknown;
-    final busNumber = busData['busNumberPlate'] ?? busData['busNumber'] ?? 'N/A';
+    final busNumber =
+        busData['busNumberPlate'] ?? busData['busNumber'] ?? 'N/A';
     final busId = busData['id']?.toString();
     final driverName = busData['driverName'] ?? l10n.unknown;
     final model = busData['model'] ?? 'N/A';
@@ -610,8 +611,7 @@ class _BusListPageState extends State<BusListPage> {
                   style: TextStyle(
                     color: th.textPrimary,
                     fontSize: 13,
-                    fontWeight:
-                        isImportant ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isImportant ? FontWeight.w700 : FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
