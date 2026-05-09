@@ -5,6 +5,7 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/bus_qr_utils.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/bus_model.dart';
 import '../../../data/models/driver_model.dart';
@@ -1117,21 +1118,21 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   void _onQRCodeDetected(BarcodeCapture capture) {
+    if (!isQRScanMode) return;
+
     final List<Barcode> barcodes = capture.barcodes;
     if (barcodes.isNotEmpty) {
       final busNumber = _extractBusNumberFromQR(barcodes.first.rawValue ?? '');
       if (busNumber != null) {
+        setState(() => isQRScanMode = false);
         _selectBusByNumber(busNumber);
       }
     }
   }
 
   String? _extractBusNumberFromQR(String qrData) {
-    // Extract bus number from QR code data
-    // This should be implemented based on your QR code format
-    final regex = RegExp(r'bus[_-]?(\d+)', caseSensitive: false);
-    final match = regex.firstMatch(qrData);
-    return match?.group(1);
+    final payload = BusQrUtils.parse(qrData);
+    return payload?.busNumber ?? payload?.busId;
   }
 
   void _selectBus(BusModel bus) {

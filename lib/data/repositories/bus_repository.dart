@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../core/utils/bus_qr_utils.dart';
 import '../../core/services/firebase_service.dart';
 import '../models/bus_model.dart';
 
@@ -124,16 +125,56 @@ class BusRepository {
   /// Search buses by number
   Future<List<BusModel>> searchBusesByNumber(String busNumber) async {
     try {
-      final query = await _firebaseService.firestore
-          .collection(_collection)
-          .where('busNumber', isGreaterThanOrEqualTo: busNumber)
-          .where('busNumber', isLessThanOrEqualTo: '$busNumber\uf8ff')
-          .limit(20)
-          .get();
+      final busesById = <String, BusModel>{};
+      final queryText = BusQrUtils.stripPrefix(busNumber.trim());
+      final candidates = <String>{
+        queryText,
+        queryText.toUpperCase(),
+        busNumber.trim(),
+        busNumber.trim().toUpperCase(),
+      }..removeWhere((value) => value.isEmpty);
 
-      return query.docs
-          .map((doc) => BusModel.fromJson({...doc.data(), 'id': doc.id}))
-          .toList();
+      for (final candidate in candidates) {
+        final byId = await getBusById(candidate);
+        if (byId != null) {
+          busesById[byId.id] = byId;
+        }
+      }
+
+      Future<void> addExactQuery(String field, String value) async {
+        final query = await _firebaseService.firestore
+            .collection(_collection)
+            .where(field, isEqualTo: value)
+            .limit(20)
+            .get();
+
+        for (final doc in query.docs) {
+          busesById[doc.id] = BusModel.fromJson({...doc.data(), 'id': doc.id});
+        }
+      }
+
+      Future<void> addPrefixQuery(String field, String value) async {
+        final query = await _firebaseService.firestore
+            .collection(_collection)
+            .where(field, isGreaterThanOrEqualTo: value)
+            .where(field, isLessThanOrEqualTo: '$value\uf8ff')
+            .limit(20)
+            .get();
+
+        for (final doc in query.docs) {
+          busesById[doc.id] = BusModel.fromJson({...doc.data(), 'id': doc.id});
+        }
+      }
+
+      for (final candidate in candidates) {
+        await addExactQuery('busNumber', candidate);
+        await addExactQuery('busNumberPlate', candidate);
+        await addPrefixQuery('busNumber', candidate);
+        await addPrefixQuery('busNumberPlate', candidate);
+      }
+
+      return busesById.values.toList()
+        ..sort((a, b) => a.busNumber.compareTo(b.busNumber));
     } catch (e) {
       throw BusRepositoryException('Failed to search buses: $e');
     }
@@ -310,23 +351,90 @@ class BusRepository {
     }
   }
 
+  /// Start or replace the active journey for the current passenger.
+  Future<void> startActiveJourney(BusModel bus, {String? userId}) async {
+    try {
+      final resolvedUserId =
+          userId ?? _firebaseService.currentUser?.uid ?? 'current_user_id';
+
+      final activeJourneys = await _firebaseService.firestore
+          .collection('journeys')
+          .where('userId', isEqualTo: resolvedUserId)
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      final batch = _firebaseService.firestore.batch();
+      for (final doc in activeJourneys.docs) {
+        batch.update(doc.reference, {
+          'status': 'completed',
+          'endedAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      final journeyRef =
+          _firebaseService.firestore.collection('journeys').doc();
+      batch.set(journeyRef, {
+        'userId': resolvedUserId,
+        'busId': bus.id,
+        'busNumber': bus.busNumber,
+        'routeNumber': bus.routeNumber,
+        'status': 'active',
+        'startedAt': FieldValue.serverTimestamp(),
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      await batch.commit();
+    } catch (e) {
+      throw BusRepositoryException('Failed to start active journey: $e');
+    }
+  }
+
   /// Get bus by QR code
   Future<BusModel?> getBusByQrCode(String qrCode) async {
     try {
-      final query = await _firebaseService.firestore
-          .collection(_collection)
-          .where('qrCode', isEqualTo: qrCode)
-          .limit(1)
-          .get();
+      final payload = BusQrUtils.parse(qrCode);
+      if (payload == null) return null;
 
-      if (query.docs.isNotEmpty) {
-        final doc = query.docs.first;
-        return BusModel.fromJson({...doc.data(), 'id': doc.id});
+      for (final candidate in payload.primaryLookupCandidates) {
+        final byId = await getBusById(candidate);
+        if (byId != null) return byId;
       }
+
+      final exactMatches = await Future.wait([
+        for (final candidate in payload.primaryLookupCandidates) ...[
+          _getFirstBusByField('busNumberPlate', candidate),
+          _getFirstBusByField('busNumber', candidate),
+        ],
+        _getFirstBusByField('qrCode', qrCode.trim()),
+        _getFirstBusByField(
+          'qrCode',
+          BusQrUtils.qrCodeForBusId(payload.lookupKey ?? ''),
+        ),
+      ]);
+
+      for (final bus in exactMatches) {
+        if (bus != null) return bus;
+      }
+
       return null;
     } catch (e) {
       throw BusRepositoryException('Failed to get bus by QR code: $e');
     }
+  }
+
+  Future<BusModel?> _getFirstBusByField(String field, String value) async {
+    final query = await _firebaseService.firestore
+        .collection(_collection)
+        .where(field, isEqualTo: value)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) return null;
+
+    final doc = query.docs.first;
+    return BusModel.fromJson({...doc.data(), 'id': doc.id});
   }
 
   /// Get bus location stream for real-time tracking

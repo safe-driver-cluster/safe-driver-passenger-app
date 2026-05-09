@@ -4,6 +4,7 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/models/bus_model.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class ActiveJourneyWidget extends ConsumerWidget {
@@ -37,8 +38,15 @@ class ActiveJourneyWidget extends ConsumerWidget {
   }
 
   Widget _buildActiveJourneyContent(
-      BuildContext context, dynamic activeJourney) {
+      BuildContext context, BusModel activeJourney) {
     final th = ThemeHelper.of(context);
+    final routeText = activeJourney.routeNumber.trim().isEmpty
+        ? 'Route details unavailable'
+        : 'Route ${activeJourney.routeNumber}';
+    final speedText = activeJourney.currentSpeed == null
+        ? '-- km/h'
+        : '${activeJourney.currentSpeed!.toStringAsFixed(0)} km/h';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,7 +70,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Route ${activeJourney.routeNumber}',
+                    'Bus ${activeJourney.busNumber}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -70,7 +78,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    activeJourney.routeName,
+                    routeText,
                     style: TextStyle(
                       fontSize: 14,
                       color: th.textSecondary,
@@ -115,7 +123,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Near Central Station',
+          activeJourney.currentLocation?.address ?? activeJourney.statusDisplay,
           style: TextStyle(
             fontSize: 14,
             color: th.textSecondary,
@@ -167,7 +175,7 @@ class ActiveJourneyWidget extends ConsumerWidget {
               child: _buildJourneyDetail(
                 context,
                 'Speed',
-                '45 km/h',
+                speedText,
                 Icons.speed,
                 Colors.orange,
               ),
