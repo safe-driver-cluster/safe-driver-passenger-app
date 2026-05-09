@@ -367,6 +367,7 @@ class BusRepository {
       for (final doc in activeJourneys.docs) {
         batch.update(doc.reference, {
           'status': 'completed',
+          'endedReason': 'replaced_by_new_scan',
           'endedAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -379,6 +380,10 @@ class BusRepository {
         'busId': bus.id,
         'busNumber': bus.busNumber,
         'routeNumber': bus.routeNumber,
+        'driverId': bus.driverId,
+        'driverName': bus.driverName,
+        'currentLocation': bus.currentLocation?.toJson(),
+        'source': 'qr_scan',
         'status': 'active',
         'startedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
@@ -388,6 +393,40 @@ class BusRepository {
       await batch.commit();
     } catch (e) {
       throw BusRepositoryException('Failed to start active journey: $e');
+    }
+  }
+
+  /// End the current active journey for the passenger.
+  Future<void> endActiveJourney({String? busId, String? userId}) async {
+    try {
+      final resolvedUserId =
+          userId ?? _firebaseService.currentUser?.uid ?? 'current_user_id';
+
+      Query query = _firebaseService.firestore
+          .collection('journeys')
+          .where('userId', isEqualTo: resolvedUserId)
+          .where('status', isEqualTo: 'active');
+
+      if (busId != null && busId.trim().isNotEmpty) {
+        query = query.where('busId', isEqualTo: busId.trim());
+      }
+
+      final activeJourneys = await query.get();
+      if (activeJourneys.docs.isEmpty) return;
+
+      final batch = _firebaseService.firestore.batch();
+      for (final doc in activeJourneys.docs) {
+        batch.update(doc.reference, {
+          'status': 'completed',
+          'endedReason': 'passenger_ended',
+          'endedAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      await batch.commit();
+    } catch (e) {
+      throw BusRepositoryException('Failed to end active journey: $e');
     }
   }
 
