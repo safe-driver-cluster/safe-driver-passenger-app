@@ -5,6 +5,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 
 class BusListPage extends StatefulWidget {
   const BusListPage({super.key});
@@ -263,6 +264,11 @@ class _BusListPageState extends State<BusListPage> {
           );
         }
 
+        final isWideWeb = WebResponsive.isWideWeb(
+          context,
+          minWidth: WebResponsive.desktopBreakpoint,
+        );
+
         return RefreshIndicator(
           onRefresh: () async {
             // Since this uses StreamBuilder, it's already real-time.
@@ -271,17 +277,43 @@ class _BusListPageState extends State<BusListPage> {
           },
           color: AppColors.primaryColor,
           backgroundColor: th.cardBackground,
-          child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            itemCount: filteredBuses.length,
-            itemBuilder: (context, index) {
-              final busData =
-                  filteredBuses[index].data() as Map<String, dynamic>;
-              return _buildBusCard(th, l10n, {
-                'id': filteredBuses[index].id,
-                ...busData,
-              });
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (!isWideWeb) {
+                return ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(AppDesign.spaceLG),
+                  itemCount: filteredBuses.length,
+                  itemBuilder: (context, index) {
+                    final busData =
+                        filteredBuses[index].data() as Map<String, dynamic>;
+                    return _buildBusCard(th, l10n, {
+                      'id': filteredBuses[index].id,
+                      ...busData,
+                    });
+                  },
+                );
+              }
+
+              return GridView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppDesign.spaceXL),
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 560,
+                  mainAxisExtent: 340,
+                  crossAxisSpacing: AppDesign.spaceLG,
+                  mainAxisSpacing: AppDesign.spaceLG,
+                ),
+                itemCount: filteredBuses.length,
+                itemBuilder: (context, index) {
+                  final busData =
+                      filteredBuses[index].data() as Map<String, dynamic>;
+                  return _buildBusCard(th, l10n, {
+                    'id': filteredBuses[index].id,
+                    ...busData,
+                  });
+                },
+              );
             },
           ),
         );
