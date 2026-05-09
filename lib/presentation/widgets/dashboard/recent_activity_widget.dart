@@ -18,11 +18,17 @@ class RecentActivityWidget extends ConsumerWidget {
       return _buildEmptyState(th);
     }
 
-    return Column(
-      children: recentActivity
-          .take(5)
-          .map((activity) => _buildActivityItem(th, activity))
-          .toList(),
+    final latestActivities = recentActivity.take(5).toList();
+
+    return ListView.separated(
+      itemCount: latestActivities.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      separatorBuilder: (_, __) => const SizedBox(height: 2),
+      itemBuilder: (context, index) {
+        return _buildActivityTile(th, latestActivities[index]);
+      },
     );
   }
 
@@ -83,62 +89,69 @@ class RecentActivityWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildActivityItem(ThemeHelper th, String activity) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.only(top: 6, right: 12),
-            decoration: BoxDecoration(
-              color: _getActivityColor(activity),
-              shape: BoxShape.circle,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              activity,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: th.textPrimary,
-              ),
-            ),
-          ),
-          Icon(
-            _getActivityIcon(activity),
-            size: 16,
-            color: th.textSecondary,
-          ),
-        ],
+  Widget _buildActivityTile(ThemeHelper th, String activity) {
+    return ListTile(
+      dense: true,
+      minLeadingWidth: 14,
+      horizontalTitleGap: 8,
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          color: _getActivityColor(activity),
+          shape: BoxShape.circle,
+        ),
+      ),
+      title: Text(
+        activity,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: th.textPrimary,
+        ),
+      ),
+      trailing: Icon(
+        _getActivityIcon(activity),
+        size: 16,
+        color: th.textSecondary,
+      ),
+      visualDensity: const VisualDensity(
+        horizontal: -4,
+        vertical: -3,
       ),
     );
   }
 
   Color _getActivityColor(String activity) {
-    if (activity.toLowerCase().contains('boarded')) {
+    final lower = activity.toLowerCase();
+    if (lower.contains('started') || lower.contains('boarded')) {
       return Colors.green;
-    } else if (activity.toLowerCase().contains('feedback')) {
+    } else if (lower.contains('ended')) {
+      return Colors.redAccent;
+    } else if (lower.contains('feedback')) {
       return Colors.blue;
-    } else if (activity.toLowerCase().contains('alert')) {
+    } else if (lower.contains('alert')) {
       return Colors.orange;
-    } else if (activity.toLowerCase().contains('notification')) {
+    } else if (lower.contains('notification')) {
       return Colors.purple;
     }
     return AppColors.primaryColor;
   }
 
   IconData _getActivityIcon(String activity) {
-    if (activity.toLowerCase().contains('boarded')) {
+    final lower = activity.toLowerCase();
+    if (lower.contains('started') || lower.contains('boarded')) {
       return Icons.directions_bus;
-    } else if (activity.toLowerCase().contains('feedback')) {
+    } else if (lower.contains('ended')) {
+      return Icons.check_circle;
+    } else if (lower.contains('feedback')) {
       return Icons.feedback;
-    } else if (activity.toLowerCase().contains('alert')) {
+    } else if (lower.contains('alert')) {
       return Icons.warning;
-    } else if (activity.toLowerCase().contains('notification')) {
+    } else if (lower.contains('notification')) {
       return Icons.notifications;
     }
     return Icons.info;
