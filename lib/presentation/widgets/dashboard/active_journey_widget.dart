@@ -8,6 +8,7 @@ import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/bus_model.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../pages/maps/map_page.dart';
+import '../nfc/nfc_tap_sheet.dart';
 
 class ActiveJourneyWidget extends ConsumerWidget {
   const ActiveJourneyWidget({super.key});
@@ -332,6 +333,28 @@ Status: ${bus.statusDisplay}
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              showNfcTapSheet(context);
+            },
+            icon: const Icon(Icons.nfc_rounded, size: 20),
+            label: const Text('Tap NFC to Start'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: const BorderSide(
+                color: AppColors.primaryColor,
+                width: 2,
+              ),
+            ),
+          ),
         ),
       ],
     );
