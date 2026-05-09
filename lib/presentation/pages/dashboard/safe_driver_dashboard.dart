@@ -4,6 +4,7 @@ import 'package:safedriver_passenger_app/presentation/pages/buses/bus_list_page.
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/utils/greeting_util.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/passenger_provider.dart';
 import '../driver/driver_info_page.dart';
@@ -15,8 +16,10 @@ class SafeDriverDashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
         title: Text(
           l10n.appName,

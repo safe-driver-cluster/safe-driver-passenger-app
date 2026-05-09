@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/feedback_model.dart';
 import '../../controllers/feedback_controller.dart';
 
@@ -57,17 +58,18 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
+      backgroundColor: th.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surfaceColor,
+        backgroundColor: th.surface,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Firebase Test',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: th.textPrimary,
             fontSize: 26,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.5,
@@ -82,38 +84,38 @@ class _FeedbackTestPageState extends ConsumerState<FeedbackTestPage> {
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
-                color: AppColors.surfaceColor,
+                color: th.cardBackground,
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: AppColors.shadowLight,
+                    color: th.shadowLight,
                     blurRadius: 10,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.cloud_upload,
                     size: 64,
                     color: AppColors.primaryColor,
                   ),
-                  SizedBox(height: AppDesign.spaceMD),
+                  const SizedBox(height: AppDesign.spaceMD),
                   Text(
                     'Firebase Integration Test',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
-                  SizedBox(height: AppDesign.spaceSM),
+                  const SizedBox(height: AppDesign.spaceSM),
                   Text(
                     'Test the Firebase connection by submitting a test feedback entry.',
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                     ),
                     textAlign: TextAlign.center,
                   ),

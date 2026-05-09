@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class IncidentReportPage extends StatelessWidget {
   final String? busId;
@@ -11,7 +12,9 @@ class IncidentReportPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).reportIncidentTitle,
@@ -30,21 +33,25 @@ class IncidentReportPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Incident Report Page - Coming Soon',
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18, color: th.textPrimary),
             ),
             if (busId != null) ...[
               const SizedBox(height: 8),
-              Text('Bus ID: $busId'),
+              Text('Bus ID: $busId', style: TextStyle(color: th.textSecondary)),
             ],
             if (driverId != null) ...[
               const SizedBox(height: 8),
-              Text('Driver ID: $driverId'),
+              Text(
+                'Driver ID: $driverId',
+                style: TextStyle(color: th.textSecondary),
+              ),
             ],
             if (tripId != null) ...[
               const SizedBox(height: 8),
-              Text('Trip ID: $tripId'),
+              Text('Trip ID: $tripId',
+                  style: TextStyle(color: th.textSecondary)),
             ],
           ],
         ),
