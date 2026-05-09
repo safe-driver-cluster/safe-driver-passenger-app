@@ -11,6 +11,7 @@ import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
+import '../../widgets/nfc/nfc_tap_sheet.dart';
 import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
 import '../drivers/driver_list_page.dart';
@@ -469,6 +470,30 @@ class DashboardHome extends ConsumerWidget {
             ),
             const SizedBox(height: AppDesign.spaceLG),
             // Action buttons grid with same sizes
+            Row(
+              children: [
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Scan QR',
+                    subtitle: 'Board by code',
+                    icon: Icons.qr_code_scanner_rounded,
+                    gradient: AppColors.primaryGradient,
+                    onTap: () => Navigator.pushNamed(context, '/qr-scanner'),
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildProfessionalActionCard(
+                    title: 'Tap NFC',
+                    subtitle: 'Start journey',
+                    icon: Icons.nfc_rounded,
+                    gradient: AppColors.accentGradient,
+                    onTap: () => showNfcTapSheet(context),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDesign.spaceMD),
             Row(
               children: [
                 Expanded(
