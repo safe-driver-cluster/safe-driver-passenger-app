@@ -89,11 +89,13 @@ class SosAlertResult {
 
   String get summary {
     final parts = <String>[];
-    if (smsSent > 0)
+    if (smsSent > 0) {
       parts.add('SMS sent to $smsSent contact${smsSent > 1 ? 's' : ''}');
-    if (whatsappLaunched > 0)
+    }
+    if (whatsappLaunched > 0) {
       parts.add(
           'WhatsApp sent to $whatsappLaunched contact${whatsappLaunched > 1 ? 's' : ''}');
+    }
     if (smsFailed > 0) parts.add('$smsFailed SMS failed');
     if (whatsappFailed > 0) parts.add('$whatsappFailed WhatsApp failed');
     return parts.isEmpty ? 'No actions taken' : parts.join(', ');
@@ -107,10 +109,29 @@ class SosService {
   SosService._internal();
 
   static const String _contactsKey = 'sos_contacts';
+  static const String _eventsKey = 'sos_events';
+  static const String _sosCollection = 'SOS';
   static const String _sosEnabledKey = 'sos_auto_enabled';
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  DocumentReference<Map<String, dynamic>> _sosUserDoc(String userId) {
+    return _firestore.collection(_sosCollection).doc(userId);
+  }
+
+  CollectionReference<Map<String, dynamic>> _sosContactsRef(String userId) {
+    return _sosUserDoc(userId).collection(_contactsKey);
+  }
+
+  CollectionReference<Map<String, dynamic>> _sosEventsRef(String userId) {
+    return _sosUserDoc(userId).collection(_eventsKey);
+  }
+
+  CollectionReference<Map<String, dynamic>> _legacySosContactsRef(
+      String userId) {
+    return _firestore.collection('users').doc(userId).collection(_contactsKey);
+  }
 
   // ─── Contact Management ────────────────────────────────────────────────
 
@@ -120,17 +141,22 @@ class SosService {
       // Try Firestore first (if user is authenticated)
       final user = _auth.currentUser;
       if (user != null) {
-        final doc = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_contacts')
-            .get();
+        final doc = await _sosContactsRef(user.uid).get();
 
         if (doc.docs.isNotEmpty) {
           final contacts =
               doc.docs.map((d) => SosContact.fromJson(d.data())).toList();
           // Cache locally
           await _saveContactsLocal(contacts);
+          return contacts;
+        }
+
+        final legacyDoc = await _legacySosContactsRef(user.uid).get();
+        if (legacyDoc.docs.isNotEmpty) {
+          final contacts =
+              legacyDoc.docs.map((d) => SosContact.fromJson(d.data())).toList();
+          await _saveContactsLocal(contacts);
+          await saveContacts(contacts);
           return contacts;
         }
       }
@@ -153,16 +179,22 @@ class SosService {
       final user = _auth.currentUser;
       if (user != null) {
         final batch = _firestore.batch();
-        final collectionRef = _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_contacts');
+        final sosUserRef = _sosUserDoc(user.uid);
+        final collectionRef = _sosContactsRef(user.uid);
 
         // Delete existing
         final existing = await collectionRef.get();
         for (var doc in existing.docs) {
           batch.delete(doc.reference);
         }
+
+        batch.set(
+            sosUserRef,
+            {
+              'userId': user.uid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
 
         // Add new
         for (var contact in contacts) {
@@ -469,17 +501,28 @@ class SosService {
     try {
       final user = _auth.currentUser;
       if (user != null) {
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_events')
-            .add({
+        final sosUserRef = _sosUserDoc(user.uid);
+        final eventRef = _sosEventsRef(user.uid).doc();
+        final batch = _firestore.batch();
+
+        batch.set(
+            sosUserRef,
+            {
+              'userId': user.uid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
+
+        batch.set(eventRef, {
           'timestamp': FieldValue.serverTimestamp(),
+          'userId': user.uid,
           'message': message,
           'locationUrl': locationUrl,
           'contactsNotified': contacts.map((c) => c.toJson()).toList(),
           'platform': 'mobile_app',
         });
+
+        await batch.commit();
       }
     } catch (e) {
       debugPrint('Error logging SOS event: $e');

@@ -117,6 +117,20 @@ service cloud.firestore {
     match /emergency_contacts/{userId} {
       allow read, write: if isOwner(userId);
     }
+
+    // SOS data - contacts and event logs are stored outside the users collection
+    match /SOS/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /sos_contacts/{contactId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /sos_events/{eventId} {
+        allow read, create: if isOwner(userId);
+        allow update, delete: if false;
+      }
+    }
     
     // Journeys - users can only access their own journeys
     match /journeys/{journeyId} {
