@@ -815,7 +815,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     final message = _buildShareMessage(l10n);
     final subject = 'SafeDriver Feedback - ${l10n.busLabel(widget.busNumber)}';
     final emailUrl =
-        'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
+        'mailto:info@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
     _launchUrl(emailUrl);
   }
 
