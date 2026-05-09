@@ -432,7 +432,7 @@ class _BusListPageState extends State<BusListPage> {
               builder: (context, snapshot) {
                 return _buildAssignedDriverChips(
                   th,
-                  snapshot.data?.assignedDriverNames ?? const [],
+                  snapshot.data?.assignedDrivers ?? const [],
                 );
               },
             ),
@@ -480,9 +480,9 @@ class _BusListPageState extends State<BusListPage> {
 
   Widget _buildAssignedDriverChips(
     ThemeHelper th,
-    List<String> driverNames,
+    List<Map<String, dynamic>> drivers,
   ) {
-    if (driverNames.isEmpty) {
+    if (drivers.isEmpty) {
       return Text(
         'Assigned drivers: 0',
         style: AppTextStyles.bodySmall.copyWith(
@@ -495,14 +495,18 @@ class _BusListPageState extends State<BusListPage> {
     return Wrap(
       spacing: AppDesign.spaceSM,
       runSpacing: AppDesign.spaceSM,
-      children: driverNames.map((driverName) {
-        return Chip(
+      children: drivers.map((driverData) {
+        final driverName = _driverNameFromData(driverData);
+        final label = driverName.isEmpty
+            ? (driverData['id'] ?? 'Driver').toString()
+            : driverName;
+        return ActionChip(
           avatar: const Icon(
             Icons.person_rounded,
             size: 15,
             color: AppColors.primaryColor,
           ),
-          label: Text(driverName),
+          label: Text(label),
           labelStyle: const TextStyle(
             color: AppColors.primaryColor,
             fontSize: 12,
@@ -515,6 +519,7 @@ class _BusListPageState extends State<BusListPage> {
           ),
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           visualDensity: VisualDensity.compact,
+          onPressed: () => _showDriverDetails(driverData),
         );
       }).toList(),
     );
@@ -678,12 +683,6 @@ class _BusListPageState extends State<BusListPage> {
     }
 
     final driverDocs = driversById.values.toList();
-    final assignedNames = driverDocs
-        .map(_driverNameFromData)
-        .where((name) => name.isNotEmpty)
-        .toSet()
-        .toList();
-
     final activeDriver = driverDocs.cast<Map<String, dynamic>?>().firstWhere(
           (driver) => driver != null && _isOnDutyStatus(driver['status']),
           orElse: () => driverDocs.isNotEmpty ? driverDocs.first : null,
@@ -698,7 +697,7 @@ class _BusListPageState extends State<BusListPage> {
 
     return _BusDriverAssignment(
       activeDriverName: activeName.isEmpty ? 'No active driver' : activeName,
-      assignedDriverNames: assignedNames,
+      assignedDrivers: driverDocs,
     );
   }
 
@@ -715,14 +714,219 @@ class _BusListPageState extends State<BusListPage> {
     final value = (status ?? '').toString().toLowerCase().replaceAll('_', '');
     return value == 'onduty' || value == 'active' || value == 'driving';
   }
+
+  Future<void> _showDriverDetails(Map<String, dynamic> driverData) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final th = ThemeHelper.of(context);
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceXL,
+            vertical: AppDesign.spaceXL,
+          ),
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(
+              maxWidth: 420,
+              minHeight: 260,
+            ),
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.18),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: _buildDriverDetailsContent(th, driverData),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDriverDetailsContent(
+    ThemeHelper th,
+    Map<String, dynamic> driverData,
+  ) {
+    final name = _driverNameFromData(driverData);
+    final details = <_DriverDetailItem>[
+      _DriverDetailItem(
+        'Status',
+        _driverStatusText(driverData['status']),
+        Icons.circle_rounded,
+      ),
+      _DriverDetailItem(
+        'License',
+        (driverData['licenseNumber'] ?? 'N/A').toString(),
+        Icons.badge_rounded,
+      ),
+      _DriverDetailItem(
+        'Route',
+        (driverData['route'] ?? driverData['currentRoute'] ?? 'N/A').toString(),
+        Icons.route_rounded,
+      ),
+      _DriverDetailItem(
+        'Experience',
+        _experienceText(driverData['experience']),
+        Icons.work_rounded,
+      ),
+      _DriverDetailItem(
+        'Phone',
+        _maskPhone((driverData['phone'] ?? driverData['phoneNumber'] ?? '')
+            .toString()),
+        Icons.phone_rounded,
+      ),
+      _DriverDetailItem(
+        'Email',
+        _maskEmail((driverData['email'] ?? '').toString()),
+        Icons.email_rounded,
+      ),
+    ];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildDriverDialogHeader(th, name),
+        const SizedBox(height: AppDesign.spaceLG),
+        ...details.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: AppDesign.spaceSM),
+            child: Row(
+              children: [
+                Icon(item.icon, size: 18, color: AppColors.textSecondary),
+                const SizedBox(width: AppDesign.spaceSM),
+                SizedBox(
+                  width: 86,
+                  child: Text(
+                    item.label,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    item.value,
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontWeight: item.label == 'License'
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDriverDialogHeader(ThemeHelper th, String driverName) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+          ),
+          child: const Icon(
+            Icons.person_rounded,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: Text(
+            driverName.isEmpty ? 'Driver details' : driverName,
+            style: TextStyle(
+              color: th.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close_rounded),
+          color: AppColors.errorColor,
+          tooltip: 'Close',
+        ),
+      ],
+    );
+  }
+
+  String _driverStatusText(Object? status) {
+    final value = (status ?? 'N/A').toString().trim();
+    if (value.isEmpty) return 'N/A';
+    return value
+        .replaceAll('_', ' ')
+        .split(' ')
+        .where((part) => part.isNotEmpty)
+        .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
+        .join(' ');
+  }
+
+  String _experienceText(Object? experience) {
+    if (experience is Map) {
+      final years = experience['totalYears'] ?? experience['years'];
+      if (years != null) return '$years years';
+    }
+    final value = (experience ?? 'N/A').toString().trim();
+    if (value.isEmpty) return 'N/A';
+    return RegExp(r'^\d+$').hasMatch(value) ? '$value years' : value;
+  }
+
+  String _maskPhone(String phone) {
+    final value = phone.trim();
+    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
+    if (value.length <= 4) return '***';
+
+    final visibleStart = value.length >= 7 ? 3 : 1;
+    final visibleEnd = value.length >= 7 ? 2 : 1;
+    return '${value.substring(0, visibleStart)}***${value.substring(value.length - visibleEnd)}';
+  }
+
+  String _maskEmail(String email) {
+    final value = email.trim();
+    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
+
+    final atIndex = value.indexOf('@');
+    if (atIndex <= 0) return '***';
+
+    final local = value.substring(0, atIndex);
+    final domain = value.substring(atIndex);
+    final visible = local.length <= 2 ? local[0] : local.substring(0, 3);
+    return '$visible***$domain';
+  }
 }
 
 class _BusDriverAssignment {
   final String activeDriverName;
-  final List<String> assignedDriverNames;
+  final List<Map<String, dynamic>> assignedDrivers;
 
   const _BusDriverAssignment({
     required this.activeDriverName,
-    required this.assignedDriverNames,
+    required this.assignedDrivers,
   });
+}
+
+class _DriverDetailItem {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _DriverDetailItem(this.label, this.value, this.icon);
 }
