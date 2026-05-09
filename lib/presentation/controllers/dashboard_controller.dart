@@ -212,7 +212,7 @@ class DashboardController extends StateNotifier<DashboardState> {
       recentActivity: [
         'Ended journey on Bus ${journey.busNumber}',
         ...state.recentActivity,
-      ].take(10).toList(),
+      ].take(5).toList(),
     );
   }
 

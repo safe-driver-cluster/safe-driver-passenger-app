@@ -372,10 +372,11 @@ class _EndJourneySliderState extends State<_EndJourneySlider> {
     return LayoutBuilder(
       builder: (context, constraints) {
         const knobSize = 52.0;
-        final maxDrag = constraints.maxWidth > knobSize
-            ? constraints.maxWidth - knobSize
+        const edgePadding = 3.0;
+        final maxDrag = constraints.maxWidth > knobSize + edgePadding * 2
+            ? constraints.maxWidth - knobSize - edgePadding * 2
             : 1.0;
-        final knobLeft = _dragValue * maxDrag;
+        final knobLeft = edgePadding + (_dragValue * maxDrag);
 
         return GestureDetector(
           onHorizontalDragUpdate: _isEnding

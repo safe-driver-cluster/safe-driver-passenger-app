@@ -25,7 +25,7 @@ class RecentActivityWidget extends ConsumerWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
-      separatorBuilder: (_, __) => const SizedBox(height: 2),
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         return _buildActivityTile(th, latestActivities[index]);
       },
@@ -90,37 +90,60 @@ class RecentActivityWidget extends ConsumerWidget {
   }
 
   Widget _buildActivityTile(ThemeHelper th, String activity) {
-    return ListTile(
-      dense: true,
-      minLeadingWidth: 14,
-      horizontalTitleGap: 8,
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          color: _getActivityColor(activity),
-          shape: BoxShape.circle,
-        ),
+    final color = _getActivityColor(activity);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: th.divider.withOpacity(0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      title: Text(
-        activity,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: th.textPrimary,
-        ),
-      ),
-      trailing: Icon(
-        _getActivityIcon(activity),
-        size: 16,
-        color: th.textSecondary,
-      ),
-      visualDensity: const VisualDensity(
-        horizontal: -4,
-        vertical: -3,
+      child: Row(
+        children: [
+          Container(
+            width: 9,
+            height: 9,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              activity,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: th.textPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _getActivityIcon(activity),
+              size: 15,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }
