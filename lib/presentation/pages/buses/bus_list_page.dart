@@ -25,6 +25,12 @@ class _BusListPageState extends State<BusListPage> {
   }
 
   @override
+  void reassemble() {
+    _driverAssignmentFutures.clear();
+    super.reassemble();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
@@ -915,12 +921,15 @@ class _BusListPageState extends State<BusListPage> {
 
 class _BusDriverAssignment {
   final String activeDriverName;
-  final List<Map<String, dynamic>> assignedDrivers;
+  final List<Map<String, dynamic>>? _assignedDrivers;
+
+  List<Map<String, dynamic>> get assignedDrivers =>
+      _assignedDrivers ?? const [];
 
   const _BusDriverAssignment({
     required this.activeDriverName,
-    required this.assignedDrivers,
-  });
+    List<Map<String, dynamic>>? assignedDrivers,
+  }) : _assignedDrivers = assignedDrivers;
 }
 
 class _DriverDetailItem {
