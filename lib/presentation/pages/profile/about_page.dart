@@ -323,7 +323,7 @@ class _AboutPageState extends State<AboutPage> {
           _ActionTile(
             icon: Icons.email_outlined,
             title: 'Contact Support',
-            subtitle: 'support@safedriver.com',
+            subtitle: 'info@safedriver.com',
             onTap: _sendSupportEmail,
           ),
           const Divider(height: 1, color: AppColors.greyLight),
@@ -394,7 +394,7 @@ class _AboutPageState extends State<AboutPage> {
   Future<void> _sendSupportEmail() async {
     final uri = Uri(
       scheme: 'mailto',
-      path: 'support@safedriver.com',
+      path: 'info@safedriver.com',
       queryParameters: {
         'subject': 'SafeDriver App Support',
       },
