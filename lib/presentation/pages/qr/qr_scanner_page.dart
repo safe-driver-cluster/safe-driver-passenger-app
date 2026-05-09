@@ -9,7 +9,8 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
-import '../../../core/utils/theme_helper.dart';
+import '../../controllers/dashboard_controller.dart' hide busRepositoryProvider;
+import '../../controllers/qr_controller.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
   const QrScannerPage({super.key});
@@ -30,10 +31,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   late Animation<double> _scanLineAnimation;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  final TextEditingController _manualCodeController = TextEditingController();
 
   bool _isScanning = true;
   bool _hasPermission = false;
   bool _isTorchOn = false;
+  bool _isProcessing = false;
 
   @override
   void initState() {
@@ -91,7 +94,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -107,6 +109,8 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
           // Bottom Controls
           _buildBottomControls(),
+
+          if (_isProcessing) _buildProcessingOverlay(),
         ],
       ),
     );
@@ -149,6 +153,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildProcessingOverlay() {
+    return Container(
+      color: Colors.black.withOpacity(0.45),
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryColor,
+        ),
+      ),
     );
   }
 
@@ -390,7 +405,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   color: Colors.white.withOpacity(0.2),
                 ),
               ),
-              child: const CustomBackButton(color: Colors.white, ),
+              child: const CustomBackButton(
+                color: Colors.white,
+              ),
             ),
             const SizedBox(width: AppDesign.spaceLG),
             Expanded(
@@ -547,6 +564,8 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   void _showManualEntryDialog() {
+    _manualCodeController.clear();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -558,8 +577,16 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
+              controller: _manualCodeController,
+              autofocus: true,
+              textCapitalization: TextCapitalization.characters,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (value) {
+                Navigator.pop(context);
+                _processQrCode(value);
+              },
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).enterBusStopCode,
+                hintText: 'NB-9999',
                 prefixIcon: const Icon(Icons.qr_code_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -580,8 +607,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           ProfessionalButton(
             text: AppLocalizations.of(context).submit,
             onPressed: () {
+              final code = _manualCodeController.text;
               Navigator.pop(context);
-              // Handle manual code entry
+              _processQrCode(code);
             },
             height: 36,
           ),
@@ -590,21 +618,65 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     );
   }
 
-  void _processQrCode(String code) {
-    // Process QR code and navigate accordingly
+  Future<void> _processQrCode(String code) async {
+    final normalizedCode = code.trim();
+    if (normalizedCode.isEmpty) {
+      _showScanError('Please enter a bus ID, for example NB-9999.');
+      return;
+    }
+
+    setState(() {
+      _isScanning = false;
+      _isProcessing = true;
+    });
+
+    final bus = await ref
+        .read(qrControllerProvider.notifier)
+        .validateQrCode(normalizedCode);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isProcessing = false;
+    });
+
+    if (bus == null) {
+      final error = ref.read(qrControllerProvider).error ??
+          'Bus not found. Check the bus ID and try again.';
+      _showScanError(error);
+      setState(() => _isScanning = true);
+      return;
+    }
+
+    ref.read(dashboardControllerProvider.notifier)
+      ..updateActiveJourney(bus)
+      ..addRecentActivity('Started journey on Bus ${bus.busNumber}');
+
+    HapticFeedback.mediumImpact();
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).qrCodeDetected(code)),
+        content: Text('Bus ${bus.busNumber} selected'),
         backgroundColor: AppColors.successColor,
       ),
     );
 
-    // Add navigation logic here based on the QR code content
-    Navigator.pop(context);
+    Navigator.pop(context, bus);
+  }
+
+  void _showScanError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.errorColor,
+      ),
+    );
   }
 
   @override
   void dispose() {
+    _manualCodeController.dispose();
     _animationController.dispose();
     _pulseController.dispose();
     controller.dispose();

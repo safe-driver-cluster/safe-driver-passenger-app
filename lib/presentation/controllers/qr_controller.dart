@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/utils/bus_qr_utils.dart';
 import '../../data/repositories/bus_repository.dart';
 import '../../data/models/bus_model.dart';
-import '../../../core/utils/theme_helper.dart';
 
 // QR Scanner State
 class QrState {
@@ -39,9 +42,9 @@ class QrController extends StateNotifier<QrState> {
 
     try {
       // Validate QR code format and decrypt if necessary
-      final busId = _extractBusIdFromQr(qrData);
+      final payload = BusQrUtils.parse(qrData);
 
-      if (busId == null) {
+      if (payload == null || payload.lookupKey == null) {
         state = state.copyWith(
           isLoading: false,
           error: 'Invalid QR code format',
@@ -67,8 +70,7 @@ class QrController extends StateNotifier<QrState> {
           scannedBus: bus,
         );
 
-        // Create trip session for feedback access
-        await _createTripSession(bus.id);
+        unawaited(_createTripSession(bus));
 
         return bus;
       } else {
@@ -87,19 +89,6 @@ class QrController extends StateNotifier<QrState> {
     }
   }
 
-  String? _extractBusIdFromQr(String qrData) {
-    try {
-      // In a real app, you would decrypt the QR code data
-      // For now, we'll assume the QR data is the bus ID
-      if (qrData.isNotEmpty && qrData.length > 3) {
-        return qrData;
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
-
   bool _isQrCodeValid(String qrData) {
     try {
       // In a real app, you would check the timestamp in the QR code
@@ -110,12 +99,9 @@ class QrController extends StateNotifier<QrState> {
     }
   }
 
-  Future<void> _createTripSession(String busId) async {
+  Future<void> _createTripSession(BusModel bus) async {
     try {
-      // Create a trip session that allows feedback submission
-      // This would typically involve creating a record in Firestore
-      // For now, we'll just simulate this
-      await Future.delayed(const Duration(milliseconds: 500));
+      await _busRepository.startActiveJourney(bus);
     } catch (e) {
       // Log error but don't throw as it's not critical
       print('Failed to create trip session: $e');

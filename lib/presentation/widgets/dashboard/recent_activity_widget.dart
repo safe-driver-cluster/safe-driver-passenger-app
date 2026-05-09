@@ -18,11 +18,17 @@ class RecentActivityWidget extends ConsumerWidget {
       return _buildEmptyState(th);
     }
 
-    return Column(
-      children: recentActivity
-          .take(5)
-          .map((activity) => _buildActivityItem(th, activity))
-          .toList(),
+    final latestActivities = recentActivity.take(5).toList();
+
+    return ListView.separated(
+      itemCount: latestActivities.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        return _buildActivityTile(th, latestActivities[index]);
+      },
     );
   }
 
@@ -83,35 +89,59 @@ class RecentActivityWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildActivityItem(ThemeHelper th, String activity) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+  Widget _buildActivityTile(ThemeHelper th, String activity) {
+    final color = _getActivityColor(activity);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: th.divider.withOpacity(0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.only(top: 6, right: 12),
+            width: 9,
+            height: 9,
             decoration: BoxDecoration(
-              color: _getActivityColor(activity),
+              color: color,
               shape: BoxShape.circle,
             ),
           ),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               activity,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: th.textPrimary,
               ),
             ),
           ),
-          Icon(
-            _getActivityIcon(activity),
-            size: 16,
-            color: th.textSecondary,
+          const SizedBox(width: 10),
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _getActivityIcon(activity),
+              size: 15,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -119,26 +149,32 @@ class RecentActivityWidget extends ConsumerWidget {
   }
 
   Color _getActivityColor(String activity) {
-    if (activity.toLowerCase().contains('boarded')) {
+    final lower = activity.toLowerCase();
+    if (lower.contains('started') || lower.contains('boarded')) {
       return Colors.green;
-    } else if (activity.toLowerCase().contains('feedback')) {
+    } else if (lower.contains('ended')) {
+      return Colors.redAccent;
+    } else if (lower.contains('feedback')) {
       return Colors.blue;
-    } else if (activity.toLowerCase().contains('alert')) {
+    } else if (lower.contains('alert')) {
       return Colors.orange;
-    } else if (activity.toLowerCase().contains('notification')) {
+    } else if (lower.contains('notification')) {
       return Colors.purple;
     }
     return AppColors.primaryColor;
   }
 
   IconData _getActivityIcon(String activity) {
-    if (activity.toLowerCase().contains('boarded')) {
+    final lower = activity.toLowerCase();
+    if (lower.contains('started') || lower.contains('boarded')) {
       return Icons.directions_bus;
-    } else if (activity.toLowerCase().contains('feedback')) {
+    } else if (lower.contains('ended')) {
+      return Icons.check_circle;
+    } else if (lower.contains('feedback')) {
       return Icons.feedback;
-    } else if (activity.toLowerCase().contains('alert')) {
+    } else if (lower.contains('alert')) {
       return Icons.warning;
-    } else if (activity.toLowerCase().contains('notification')) {
+    } else if (lower.contains('notification')) {
       return Icons.notifications;
     }
     return Icons.info;

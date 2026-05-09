@@ -7,10 +7,12 @@ import '../../data/models/safety_alert_model.dart';
 import '../../data/repositories/bus_repository.dart';
 import '../../data/repositories/driver_repository.dart';
 import '../../data/repositories/safety_repository.dart';
-import '../../../core/utils/theme_helper.dart';
+import '../../core/services/firebase_service.dart';
 
 // Dashboard State
 class DashboardState {
+  static const Object _unset = Object();
+
   final bool isLoading;
   final double fleetSafetyScore;
   final int activeIncidents;
@@ -43,7 +45,7 @@ class DashboardState {
     int? activeBuses,
     List<SafetyAlertModel>? recentAlerts,
     List<BusModel>? nearbyBuses,
-    BusModel? activeJourney,
+    Object? activeJourney = _unset,
     List<String>? recentActivity,
     String? error,
   }) {
@@ -55,7 +57,9 @@ class DashboardState {
       activeBuses: activeBuses ?? this.activeBuses,
       recentAlerts: recentAlerts ?? this.recentAlerts,
       nearbyBuses: nearbyBuses ?? this.nearbyBuses,
-      activeJourney: activeJourney ?? this.activeJourney,
+      activeJourney: activeJourney == _unset
+          ? this.activeJourney
+          : activeJourney as BusModel?,
       recentActivity: recentActivity ?? this.recentActivity,
       error: error,
     );
@@ -65,12 +69,10 @@ class DashboardState {
 // Dashboard Controller
 class DashboardController extends StateNotifier<DashboardState> {
   final BusRepository _busRepository;
-  final DriverRepository _driverRepository;
   final SafetyRepository _safetyRepository;
 
   DashboardController(
     this._busRepository,
-    this._driverRepository,
     this._safetyRepository,
   ) : super(const DashboardState());
 
@@ -79,7 +81,7 @@ class DashboardController extends StateNotifier<DashboardState> {
 
     try {
       // Load data in parallel
-      final results = await Future.wait([
+      await Future.wait([
         _loadFleetData(),
         _loadSafetyData(),
         _loadNearbyBuses(),
@@ -159,8 +161,9 @@ class DashboardController extends StateNotifier<DashboardState> {
   Future<void> _loadActiveJourney() async {
     try {
       // Check if user has an active journey
-      final activeJourney = await _busRepository
-          .getActiveJourney('current_user_id'); // Replace with actual user ID
+      final userId =
+          FirebaseService.instance.currentUser?.uid ?? 'current_user_id';
+      final activeJourney = await _busRepository.getActiveJourney(userId);
       state = state.copyWith(activeJourney: activeJourney);
     } catch (e) {
       print('Error loading active journey: $e');
@@ -202,10 +205,21 @@ class DashboardController extends StateNotifier<DashboardState> {
     state = state.copyWith(activeJourney: journey);
   }
 
+  Future<void> endActiveJourney(BusModel journey) async {
+    await _busRepository.endActiveJourney(busId: journey.id);
+    state = state.copyWith(
+      activeJourney: null,
+      recentActivity: [
+        'Ended journey on Bus ${journey.busNumber}',
+        ...state.recentActivity,
+      ].take(5).toList(),
+    );
+  }
+
   void addRecentActivity(String activity) {
     final updatedActivity = [activity, ...state.recentActivity];
     state = state.copyWith(
-      recentActivity: updatedActivity.take(10).toList(),
+      recentActivity: updatedActivity.take(5).toList(),
     );
   }
 }
@@ -226,12 +240,10 @@ final safetyRepositoryProvider = Provider<SafetyRepository>((ref) {
 final dashboardControllerProvider =
     StateNotifierProvider<DashboardController, DashboardState>((ref) {
   final busRepository = ref.read(busRepositoryProvider);
-  final driverRepository = ref.read(driverRepositoryProvider);
   final safetyRepository = ref.read(safetyRepositoryProvider);
 
   return DashboardController(
     busRepository,
-    driverRepository,
     safetyRepository,
   );
 });

@@ -140,10 +140,13 @@ class LocationModel {
 
   /// Create from JSON
   factory LocationModel.fromJson(Map<String, dynamic> json) {
+    final latitude = json['latitude'] ?? json['lat'] ?? 0;
+    final longitude = json['longitude'] ?? json['lng'] ?? 0;
+
     return LocationModel(
       id: json['id'],
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
+      latitude: (latitude as num).toDouble(),
+      longitude: (longitude as num).toDouble(),
       altitude: json['altitude']?.toDouble(),
       accuracy: json['accuracy']?.toDouble(),
       speed: json['speed']?.toDouble(),
@@ -151,9 +154,24 @@ class LocationModel {
       name: json['name'],
       address: json['address'],
       description: json['description'],
-      timestamp: DateTime.parse(json['timestamp']),
+      timestamp: _parseDateTime(json['timestamp']),
       metadata: json['metadata'],
     );
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value is DateTime) return value;
+    if (value != null) {
+      try {
+        final toDate = value.toDate;
+        if (toDate is Function) return toDate() as DateTime;
+      } catch (_) {
+        // Fall through to string parsing.
+      }
+      final parsed = DateTime.tryParse(value.toString());
+      if (parsed != null) return parsed;
+    }
+    return DateTime.now();
   }
 
   @override
