@@ -49,6 +49,8 @@
 	<string>SafeDriver needs your location to send SOS alerts with your position to emergency contacts.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>SafeDriver needs your location to send SOS alerts with your position to emergency contacts.</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>SafeDriver uses NFC to identify the bus and start your active journey when you tap a bus tag.</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>whatsapp</string>
