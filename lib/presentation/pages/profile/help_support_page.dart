@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/faq_page.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/live_chat_page.dart';
 import 'package:safedriver_passenger_app/presentation/pages/profile/support_category_page.dart';
@@ -15,7 +14,6 @@ class HelpSupportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
-    final supportService = SupportDataService();
     return Scaffold(
       backgroundColor: th.background,
       body: Container(
@@ -253,10 +251,10 @@ class HelpSupportPage extends StatelessWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 16),
-                                    _buildContactInfo(context, '📞', 'Phone',
-                                        '+1-800-SAFEDRIVER'),
+                                    _buildContactInfo(
+                                        context, '📞', 'Phone', '0112123123'),
                                     _buildContactInfo(context, '📧', 'Email',
-                                        'support@safedriver.com'),
+                                        'info@safedriver.com'),
                                     _buildContactInfo(context, '🌐', 'Website',
                                         'www.safedriver.com'),
                                     _buildContactInfo(context, '⏰', 'Hours',

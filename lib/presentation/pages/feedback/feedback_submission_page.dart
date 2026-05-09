@@ -19,12 +19,18 @@ import '../../controllers/feedback_controller.dart';
 import 'feedback_system_page.dart';
 
 class FeedbackSubmissionPage extends ConsumerStatefulWidget {
+  final String? busId;
   final String busNumber;
+  final String? driverId;
+  final String? driverName;
   final FeedbackTarget feedbackTarget;
 
   const FeedbackSubmissionPage({
     super.key,
+    this.busId,
     required this.busNumber,
+    this.driverId,
+    this.driverName,
     required this.feedbackTarget,
   });
 
@@ -809,7 +815,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     final message = _buildShareMessage(l10n);
     final subject = 'SafeDriver Feedback - ${l10n.busLabel(widget.busNumber)}';
     final emailUrl =
-        'mailto:support@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
+        'mailto:info@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
     _launchUrl(emailUrl);
   }
 
@@ -855,16 +861,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     }
   }
 
-  void _showFileSizeError(String fileName) {
-    final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.fileExceedsLimit(fileName)),
-        backgroundColor: AppColors.dangerColor,
-      ),
-    );
-  }
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -876,6 +872,16 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   Widget _buildBusInfoHeader(AppLocalizations l10n) {
     final th = ThemeHelper.of(context);
+    final isDriverFeedback = widget.feedbackTarget == FeedbackTarget.driver;
+    final title = isDriverFeedback
+        ? (widget.driverName?.trim().isNotEmpty == true
+            ? widget.driverName!.trim()
+            : 'Selected Driver')
+        : l10n.busLabel(widget.busNumber);
+    final subtitle = isDriverFeedback
+        ? 'Driver ID: ${widget.driverId ?? 'N/A'}'
+        : l10n.busFeedbackLabel;
+
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
@@ -897,16 +903,16 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: widget.feedbackTarget == FeedbackTarget.bus
-                    ? [AppColors.primaryColor, AppColors.primaryDark]
-                    : [AppColors.accentColor, AppColors.accentDark],
+                colors: isDriverFeedback
+                    ? [AppColors.accentColor, AppColors.accentDark]
+                    : [AppColors.primaryColor, AppColors.primaryDark],
               ),
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               boxShadow: [
                 BoxShadow(
-                  color: (widget.feedbackTarget == FeedbackTarget.bus
-                          ? AppColors.primaryColor
-                          : AppColors.accentColor)
+                  color: (isDriverFeedback
+                          ? AppColors.accentColor
+                          : AppColors.primaryColor)
                       .withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
@@ -914,9 +920,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               ],
             ),
             child: Icon(
-              widget.feedbackTarget == FeedbackTarget.bus
-                  ? Icons.directions_bus
-                  : Icons.person,
+              isDriverFeedback ? Icons.person : Icons.directions_bus,
               color: Colors.white,
               size: 32,
             ),
@@ -927,7 +931,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.busLabel(widget.busNumber),
+                  title,
                   style: TextStyle(
                     fontSize: AppDesign.text2XL,
                     fontWeight: FontWeight.bold,
@@ -945,9 +949,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                     borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                   ),
                   child: Text(
-                    widget.feedbackTarget == FeedbackTarget.bus
-                        ? l10n.busFeedbackLabel
-                        : l10n.driverFeedbackLabel,
+                    subtitle,
                     style: const TextStyle(
                       fontSize: AppDesign.textSM,
                       color: AppColors.primaryColor,
@@ -1474,8 +1476,14 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       await ref.read(feedbackControllerProvider.notifier).submitFeedback(
         userId: user['id']!,
         userName: user['name']!,
-        busId: widget.busNumber,
+        busId: widget.busId ?? widget.busNumber,
         busNumber: widget.busNumber,
+        driverId: widget.feedbackTarget == FeedbackTarget.driver
+            ? widget.driverId
+            : null,
+        driverName: widget.feedbackTarget == FeedbackTarget.driver
+            ? widget.driverName
+            : null,
         rating: selectedRating,
         comment: _commentController.text.trim().isEmpty
             ? selectedQuickActions.join(', ').isEmpty
@@ -1501,6 +1509,10 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             : null,
         metadata: {
           'feedbackTarget': widget.feedbackTarget.name,
+          'busId': widget.busId ?? widget.busNumber,
+          'busNumber': widget.busNumber,
+          'driverId': widget.driverId,
+          'driverName': widget.driverName,
           'quickActions': selectedQuickActions.toList(),
           'platform': 'mobile',
           'userEmail': user['email']!,
@@ -1526,30 +1538,6 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         });
       }
     }
-  }
-
-  List<String> _generateTags() {
-    final tags = <String>[];
-
-    tags.add(widget.feedbackTarget.name);
-    tags.add('bus-${widget.busNumber}');
-    tags.add('rating-$selectedRating');
-
-    for (String action in selectedQuickActions) {
-      if (_isPositiveAction(action)) {
-        tags.add('positive');
-      } else {
-        tags.add('negative');
-      }
-    }
-
-    return tags;
-  }
-
-  FeedbackPriority _getPriority() {
-    if (selectedRating <= 2) return FeedbackPriority.high;
-    if (selectedRating == 3) return FeedbackPriority.medium;
-    return FeedbackPriority.low;
   }
 
   void _showSuccessDialog(AppLocalizations l10n) {

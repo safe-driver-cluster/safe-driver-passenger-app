@@ -67,8 +67,8 @@ class AppConstants {
 
   // Emergency Configuration
   static const String emergencyNumber = '911';
-  static const String supportNumber = '+1-800-SAFEDRIVER';
-  static const String supportEmail = 'support@safedriver.com';
+  static const String supportNumber = '0112123123';
+  static const String supportEmail = 'info@safedriver.com';
 
   // Feedback Configuration
   static const int maxFeedbackPhotos = 5;

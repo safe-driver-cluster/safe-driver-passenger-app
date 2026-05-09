@@ -6,6 +6,9 @@ import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/models/bus_model.dart';
+import '../../../data/models/driver_model.dart';
+import '../../../data/repositories/driver_repository.dart';
 import '../../controllers/feedback_controller.dart';
 import 'feedback_submission_page.dart';
 
@@ -19,8 +22,11 @@ class FeedbackSystemPage extends ConsumerStatefulWidget {
 class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  final DriverRepository _driverRepository = DriverRepository();
   String? selectedBusNumber;
+  BusModel? selectedBus;
   bool isQRScanMode = false;
+  bool isLoadingDrivers = false;
 
   @override
   void initState() {
@@ -499,7 +505,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         color: th.textHint,
         size: 16,
       ),
-      onTap: () => _selectBus(bus.busNumber),
+      onTap: () => _selectBus(bus),
     );
   }
 
@@ -696,7 +702,10 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             ),
           ),
           IconButton(
-            onPressed: () => setState(() => selectedBusNumber = null),
+            onPressed: () => setState(() {
+              selectedBus = null;
+              selectedBusNumber = null;
+            }),
             icon: const Icon(
               Icons.edit,
               color: AppColors.primaryColor,
@@ -733,9 +742,13 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         _buildFeedbackOption(
           icon: Icons.person,
           title: 'Driver Behavior',
-          subtitle: 'Driving skills, courtesy, professionalism',
+          subtitle: isLoadingDrivers
+              ? 'Checking assigned drivers...'
+              : 'Driving skills, courtesy, professionalism',
           color: AppColors.accentColor,
-          onTap: () => _navigateToFeedbackForm(FeedbackTarget.driver),
+          onTap: isLoadingDrivers
+              ? () {}
+              : () => _navigateToFeedbackForm(FeedbackTarget.driver),
         ),
       ],
     );
@@ -900,7 +913,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
-        _selectBus(bus.busNumber);
+        _selectBus(bus);
       },
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
@@ -954,6 +967,151 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
+  void _showDriverSelectionBottomSheet(List<DriverModel> drivers) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => _buildDriverSelectionBottomSheet(drivers),
+    );
+  }
+
+  Widget _buildDriverSelectionBottomSheet(List<DriverModel> drivers) {
+    final th = ThemeHelper.of(context);
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.62,
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppDesign.radiusXL),
+          topRight: Radius.circular(AppDesign.radiusXL),
+        ),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: th.border,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceMD),
+                Text(
+                  'Select Driver',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: th.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceXS),
+                Text(
+                  'Choose the driver you want to give feedback about',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: th.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDesign.spaceLG,
+                vertical: AppDesign.spaceSM,
+              ),
+              itemCount: drivers.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: AppDesign.spaceSM),
+              itemBuilder: (context, index) {
+                return _buildDriverSelectionItem(drivers[index]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDriverSelectionItem(DriverModel driver) {
+    final th = ThemeHelper.of(context);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+        _openFeedbackForm(
+          FeedbackTarget.driver,
+          driverId: driver.id,
+          driverName: _driverDisplayName(driver),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        decoration: BoxDecoration(
+          color: th.cardBackground,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(
+            color: th.border,
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceSM),
+              decoration: BoxDecoration(
+                color: AppColors.accentColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              ),
+              child: const Icon(
+                Icons.person,
+                color: AppColors.accentColor,
+              ),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _driverDisplayName(driver),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: th.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceXS),
+                  Text(
+                    'ID: ${driver.id}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: th.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: th.textHint,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showQRScanner() {
     setState(() => isQRScanMode = true);
   }
@@ -963,7 +1121,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     if (barcodes.isNotEmpty) {
       final busNumber = _extractBusNumberFromQR(barcodes.first.rawValue ?? '');
       if (busNumber != null) {
-        _selectBus(busNumber);
+        _selectBusByNumber(busNumber);
       }
     }
   }
@@ -976,33 +1134,138 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     return match?.group(1);
   }
 
-  void _selectBus(String busNumber) {
+  void _selectBus(BusModel bus) {
     setState(() {
+      selectedBus = bus;
+      selectedBusNumber = bus.busNumber;
+      isQRScanMode = false;
+    });
+  }
+
+  Future<void> _selectBusByNumber(String busNumber) async {
+    final controller = ref.read(feedbackControllerProvider.notifier);
+    final bus = await controller.searchBusByNumber(busNumber);
+    if (!mounted) return;
+
+    if (bus != null) {
+      _selectBus(bus);
+      return;
+    }
+
+    setState(() {
+      selectedBus = null;
       selectedBusNumber = busNumber;
       isQRScanMode = false;
     });
   }
 
-  void _navigateToFeedbackForm(FeedbackTarget target) {
+  Future<void> _navigateToFeedbackForm(FeedbackTarget target) async {
+    final busNumber = selectedBusNumber;
+    if (busNumber == null) return;
+
+    if (target == FeedbackTarget.driver) {
+      await _handleDriverFeedbackSelection();
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FeedbackSubmissionPage(
-          busNumber: selectedBusNumber!,
+          busId: selectedBus?.id ?? busNumber,
+          busNumber: busNumber,
           feedbackTarget: target,
         ),
       ),
     );
   }
 
-  List<Map<String, String>> _getRecentBuses() {
-    // No longer used - using Firebase data from controller
-    return [];
+  Future<void> _handleDriverFeedbackSelection() async {
+    final busNumber = selectedBusNumber;
+    if (busNumber == null) return;
+
+    setState(() => isLoadingDrivers = true);
+
+    try {
+      final drivers = await _driverRepository.getAssignedDriversForBus(
+        busId: selectedBus?.id ?? busNumber,
+        busNumber: busNumber,
+        primaryDriverId: selectedBus?.driverId,
+      );
+
+      if (!mounted) return;
+
+      if (drivers.isEmpty) {
+        if (selectedBus?.driverId.trim().isNotEmpty == true) {
+          _openFeedbackForm(
+            FeedbackTarget.driver,
+            driverId: selectedBus!.driverId,
+            driverName: selectedBus!.driverName,
+          );
+          return;
+        }
+
+        _showMessage('No assigned driver found for this bus.');
+        return;
+      }
+
+      if (drivers.length == 1) {
+        final driver = drivers.first;
+        _openFeedbackForm(
+          FeedbackTarget.driver,
+          driverId: driver.id,
+          driverName: _driverDisplayName(driver),
+        );
+        return;
+      }
+
+      _showDriverSelectionBottomSheet(drivers);
+    } catch (e) {
+      if (mounted) {
+        _showMessage('Could not load assigned drivers: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isLoadingDrivers = false);
+      }
+    }
   }
 
-  List<Map<String, String>> _getAvailableBuses() {
-    // No longer used - using Firebase data from controller
-    return [];
+  void _openFeedbackForm(
+    FeedbackTarget target, {
+    String? driverId,
+    String? driverName,
+  }) {
+    final busNumber = selectedBusNumber;
+    if (busNumber == null) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FeedbackSubmissionPage(
+          busId: selectedBus?.id ?? busNumber,
+          busNumber: busNumber,
+          driverId: driverId,
+          driverName: driverName,
+          feedbackTarget: target,
+        ),
+      ),
+    );
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.dangerColor,
+      ),
+    );
+  }
+
+  String _driverDisplayName(DriverModel driver) {
+    final fullName = driver.fullName.trim();
+    if (fullName.isNotEmpty) return fullName;
+    return driver.displayName;
   }
 }
 

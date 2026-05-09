@@ -27,7 +27,6 @@ class _DriverListPageState extends State<DriverListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldBackground,
@@ -221,13 +220,14 @@ class _DriverListPageState extends State<DriverListPage> {
             final licenseNumber =
                 (data['licenseNumber'] ?? '').toString().toLowerCase();
             final route = (data['route'] ?? '').toString().toLowerCase();
-            final busNumber =
-                (data['busNumber'] ?? '').toString().toLowerCase();
+            final assignedBuses = _extractAssignedBuses(data)
+                .map((bus) => bus.toLowerCase())
+                .toList();
 
             return name.contains(_searchQuery) ||
                 licenseNumber.contains(_searchQuery) ||
                 route.contains(_searchQuery) ||
-                busNumber.contains(_searchQuery);
+                assignedBuses.any((bus) => bus.contains(_searchQuery));
           }).toList();
 
           if (filteredDrivers.isEmpty) {
@@ -291,11 +291,10 @@ class _DriverListPageState extends State<DriverListPage> {
     final name = driverData['name'] ?? l10n.unknown;
     final licenseNumber = driverData['licenseNumber'] ?? 'N/A';
     final route = driverData['route'] ?? l10n.unknown;
-    final busNumber = driverData['busNumber'] ?? 'N/A';
+    final assignedBuses = _extractAssignedBuses(driverData);
     final experience = driverData['experience'] ?? 'N/A';
     final phone = driverData['phone'] ?? 'N/A';
     final email = driverData['email'] ?? 'N/A';
-    final safetyScore = driverData['safetyScore'] ?? 0;
     final status = driverData['status'] ?? 'off_duty';
 
     final joinDate = driverData['joinDate'] ?? '';
@@ -433,49 +432,15 @@ class _DriverListPageState extends State<DriverListPage> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDesign.spaceSM,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.circular(AppDesign.radiusSM),
-                  ),
-                  child: Text(
-                    busNumber,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ],
             ),
 
             const SizedBox(height: AppDesign.spaceMD),
 
-            // Driver details
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoRow(
-                    icon: Icons.work_rounded,
-                    label: l10n.driverExperience,
-                    value: experience,
-                  ),
-                ),
-                const SizedBox(width: AppDesign.spaceMD),
-                Expanded(
-                  child: _buildInfoRow(
-                    icon: Icons.security_rounded,
-                    label: l10n.safetyScore,
-                    value: '$safetyScore%',
-                    valueColor: _getSafetyColor(safetyScore),
-                  ),
-                ),
-              ],
+            _buildInfoRow(
+              icon: Icons.work_rounded,
+              label: l10n.driverExperience,
+              value: experience.toString(),
             ),
 
             const SizedBox(height: AppDesign.spaceSM),
@@ -487,7 +452,7 @@ class _DriverListPageState extends State<DriverListPage> {
                   child: _buildInfoRow(
                     icon: Icons.phone_rounded,
                     label: l10n.phoneNumber,
-                    value: phone,
+                    value: _maskPhone(phone.toString()),
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
@@ -495,7 +460,7 @@ class _DriverListPageState extends State<DriverListPage> {
                   child: _buildInfoRow(
                     icon: Icons.email_rounded,
                     label: l10n.email,
-                    value: email,
+                    value: _maskEmail(email.toString()),
                   ),
                 ),
               ],
@@ -509,9 +474,50 @@ class _DriverListPageState extends State<DriverListPage> {
                 value: joinDate,
               ),
             ],
+
+            const SizedBox(height: AppDesign.spaceSM),
+            _buildAssignedBusChips(assignedBuses),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAssignedBusChips(List<String> busNumbers) {
+    if (busNumbers.isEmpty) {
+      return Text(
+        'Assigned buses: 0',
+        style: AppTextStyles.bodySmall.copyWith(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w500,
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: AppDesign.spaceSM,
+      runSpacing: AppDesign.spaceSM,
+      children: busNumbers.map((busNumber) {
+        return ActionChip(
+          avatar: const Icon(
+            Icons.directions_bus_rounded,
+            size: 16,
+            color: Colors.white,
+          ),
+          label: Text(busNumber),
+          labelStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+          backgroundColor: AppColors.primaryColor,
+          side: BorderSide.none,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusSM),
+          ),
+          onPressed: () => _showBusDetails(busNumber),
+        );
+      }).toList(),
     );
   }
 
@@ -581,9 +587,259 @@ class _DriverListPageState extends State<DriverListPage> {
     }
   }
 
-  Color _getSafetyColor(int score) {
-    if (score >= 90) return AppColors.successColor;
-    if (score >= 70) return AppColors.warningColor;
-    return AppColors.errorColor;
+  List<String> _extractAssignedBuses(Map<String, dynamic> driverData) {
+    final buses = <String>{};
+
+    void addValue(Object? value) {
+      if (value == null) return;
+      if (value is Iterable) {
+        for (final item in value) {
+          addValue(item);
+        }
+        return;
+      }
+
+      final text = value.toString().trim();
+      if (text.isEmpty || text.toUpperCase() == 'N/A') return;
+      buses.add(text);
+    }
+
+    addValue(driverData['busNumber']);
+    addValue(driverData['busNumberPlate']);
+    addValue(driverData['currentBusId']);
+    addValue(driverData['assignedBuses']);
+    addValue(driverData['assignedBusNumbers']);
+
+    return buses.toList();
   }
+
+  String _maskPhone(String phone) {
+    final value = phone.trim();
+    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
+    if (value.length <= 4) return '***';
+
+    final visibleStart = value.length >= 7 ? 3 : 1;
+    final visibleEnd = value.length >= 7 ? 2 : 1;
+    return '${value.substring(0, visibleStart)}***${value.substring(value.length - visibleEnd)}';
+  }
+
+  String _maskEmail(String email) {
+    final value = email.trim();
+    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
+
+    final atIndex = value.indexOf('@');
+    if (atIndex <= 0) return '***';
+
+    final local = value.substring(0, atIndex);
+    final domain = value.substring(atIndex);
+    final visible = local.length <= 2 ? local[0] : local.substring(0, 3);
+    return '$visible***$domain';
+  }
+
+  Future<void> _showBusDetails(String busNumber) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return FutureBuilder<Map<String, dynamic>?>(
+          future: _loadBusDetails(busNumber),
+          builder: (context, snapshot) {
+            final th = ThemeHelper.of(context);
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: AppDesign.spaceXL,
+                vertical: AppDesign.spaceXL,
+              ),
+              child: Container(
+                width: double.infinity,
+                constraints: const BoxConstraints(
+                  maxWidth: 420,
+                  minHeight: 232,
+                ),
+                decoration: BoxDecoration(
+                  color: th.cardBackground,
+                  borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.18),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(AppDesign.spaceLG),
+                child: snapshot.connectionState == ConnectionState.waiting
+                    ? const SizedBox(
+                        height: 180,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : _buildBusDetailsContent(
+                        th,
+                        busNumber,
+                        snapshot.data,
+                      ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>?> _loadBusDetails(String busNumber) async {
+    final vehicles = FirebaseFirestore.instance.collection('vehicles');
+
+    Future<Map<String, dynamic>?> queryByField(String field) async {
+      final snapshot =
+          await vehicles.where(field, isEqualTo: busNumber).limit(1).get();
+      if (snapshot.docs.isEmpty) return null;
+      return {
+        'id': snapshot.docs.first.id,
+        ...snapshot.docs.first.data(),
+      };
+    }
+
+    final byPlate = await queryByField('busNumberPlate');
+    if (byPlate != null) return byPlate;
+
+    final byNumber = await queryByField('busNumber');
+    if (byNumber != null) return byNumber;
+
+    final byId = await vehicles.doc(busNumber).get();
+    if (!byId.exists) return null;
+    return {
+      'id': byId.id,
+      ...byId.data()!,
+    };
+  }
+
+  Widget _buildBusDetailsContent(
+    ThemeHelper th,
+    String busNumber,
+    Map<String, dynamic>? busData,
+  ) {
+    final displayBusNumber =
+        (busData?['busNumberPlate'] ?? busData?['busNumber'] ?? busNumber)
+            .toString();
+
+    if (busData == null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildBusDialogHeader(th, displayBusNumber),
+          const SizedBox(height: AppDesign.spaceXL),
+          Icon(
+            Icons.directions_bus_filled_outlined,
+            color: th.textHint,
+            size: 44,
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          Text(
+            'No details found for $busNumber',
+            style: TextStyle(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    }
+
+    final location = busData['location'] as Map<String, dynamic>?;
+    final details = <_BusDetailItem>[
+      _BusDetailItem(
+          'Route', (busData['route'] ?? 'N/A').toString(), Icons.route_rounded),
+      _BusDetailItem('Model', (busData['model'] ?? 'N/A').toString(),
+          Icons.directions_bus_rounded),
+      _BusDetailItem('Status', (busData['status'] ?? 'N/A').toString(),
+          Icons.info_rounded),
+      _BusDetailItem('Driver', (busData['driverName'] ?? 'N/A').toString(),
+          Icons.person_rounded),
+      _BusDetailItem('Location', (location?['address'] ?? 'N/A').toString(),
+          Icons.location_on_rounded),
+    ];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildBusDialogHeader(th, displayBusNumber),
+        const SizedBox(height: AppDesign.spaceLG),
+        ...details.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: AppDesign.spaceSM),
+            child: Row(
+              children: [
+                Icon(item.icon, size: 18, color: AppColors.textSecondary),
+                const SizedBox(width: AppDesign.spaceSM),
+                SizedBox(
+                  width: 78,
+                  child: Text(
+                    item.label,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    item.value,
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBusDialogHeader(ThemeHelper th, String busNumber) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+          ),
+          child: const Icon(
+            Icons.directions_bus_rounded,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: Text(
+            busNumber,
+            style: TextStyle(
+              color: th.textPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close_rounded),
+          color: AppColors.errorColor,
+          tooltip: 'Close',
+        ),
+      ],
+    );
+  }
+}
+
+class _BusDetailItem {
+  final String label;
+  final String value;
+  final IconData icon;
+
+  const _BusDetailItem(this.label, this.value, this.icon);
 }

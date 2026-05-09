@@ -174,8 +174,8 @@ class SupportDataService {
         'Try reinstalling the app',
         'If issue persists, contact support with your device model and OS version'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_2',
@@ -193,8 +193,8 @@ class SupportDataService {
         'If 2FA is enabled, ensure you\'re entering the correct code',
         'Contact support if the issue persists'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_3',
@@ -211,8 +211,8 @@ class SupportDataService {
         'Restart your device',
         'Reinstall the app if issue persists'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_4',
@@ -230,14 +230,13 @@ class SupportDataService {
         'Restart your device if needed',
         'Check if other location apps work to diagnose system issue'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_5',
       title: 'Payment Failed or Pending',
-      description:
-          'Payment issues during booking or refund not received.',
+      description: 'Payment issues during booking or refund not received.',
       category: 'App Issues',
       solutions: [
         'Check your internet connection',
@@ -249,8 +248,8 @@ class SupportDataService {
         'Provide transaction ID to support for verification',
         'Contact support with order/booking number'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
 
     // Bus Services
@@ -270,8 +269,8 @@ class SupportDataService {
         'Update the app to latest version',
         'Contact support if no buses available in your area'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_7',
@@ -289,14 +288,13 @@ class SupportDataService {
         'Wait up to 10 minutes for email/SMS delivery',
         'Contact support with your booking ID'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_8',
       title: 'Cannot Cancel or Modify Booking',
-      description:
-          'Unable to cancel or modify an existing booking.',
+      description: 'Unable to cancel or modify an existing booking.',
       category: 'Bus Services',
       solutions: [
         'Go to "My Bookings" and find your booking',
@@ -308,14 +306,13 @@ class SupportDataService {
         'For emergency changes, contact support immediately',
         'Provide your booking ID to support'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_9',
       title: 'Real-Time Bus Tracking Not Working',
-      description:
-          'Cannot see bus location or tracking updates are not live.',
+      description: 'Cannot see bus location or tracking updates are not live.',
       category: 'Bus Services',
       solutions: [
         'Ensure you have active internet connection',
@@ -327,14 +324,13 @@ class SupportDataService {
         'Try refreshing the page',
         'Contact driver or support if still no tracking'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_10',
       title: 'Refund Not Received',
-      description:
-          'Refund processing delayed or refund amount incorrect.',
+      description: 'Refund processing delayed or refund amount incorrect.',
       category: 'Bus Services',
       solutions: [
         'Check "Transactions" section in app for refund status',
@@ -346,16 +342,15 @@ class SupportDataService {
         'Provide transaction/booking ID to support',
         'Contact support if refund shows as "failed"'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
 
     // Account & Security
     SupportIssue(
       id: 'issue_11',
       title: 'Account Hacked or Unauthorized Access',
-      description:
-          'Suspicious account activity or unauthorized bookings.',
+      description: 'Suspicious account activity or unauthorized bookings.',
       category: 'Account & Security',
       solutions: [
         'Immediately change your password',
@@ -367,8 +362,8 @@ class SupportDataService {
         'Review and update security settings',
         'Contact support with details of unauthorized activity'
       ],
-      contactEmail: 'security@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_12',
@@ -386,8 +381,8 @@ class SupportDataService {
         'Contact support to unlock fields if necessary',
         'Restart app and try again'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_13',
@@ -405,8 +400,8 @@ class SupportDataService {
         'For locked account, contact support with ID verification',
         'Support can temporarily disable 2FA for account recovery'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_14',
@@ -424,14 +419,13 @@ class SupportDataService {
         'You can delete your account and associated data',
         'Contact our Privacy Officer for detailed inquiries'
       ],
-      contactEmail: 'privacy@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
     SupportIssue(
       id: 'issue_15',
       title: 'Verification Code Not Received',
-      description:
-          'OTP or verification code not arriving via SMS or email.',
+      description: 'OTP or verification code not arriving via SMS or email.',
       category: 'Account & Security',
       solutions: [
         'Check spam/junk folder for email',
@@ -443,8 +437,8 @@ class SupportDataService {
         'Check internet connection',
         'Contact support if codes consistently not received'
       ],
-      contactEmail: 'support@safedriver.com',
-      contactPhone: '+1-800-SAFEDRIVER',
+      contactEmail: 'info@safedriver.com',
+      contactPhone: '0112123123',
     ),
   ];
 
@@ -486,9 +480,7 @@ class SupportDataService {
 
   // Get support issues by category
   List<SupportIssue> getSupportIssuesByCategory(String category) {
-    return _supportIssues
-        .where((issue) => issue.category == category)
-        .toList();
+    return _supportIssues.where((issue) => issue.category == category).toList();
   }
 
   // Search support issues
@@ -522,8 +514,8 @@ class SupportDataService {
   // Get contact information
   Map<String, String> getContactInfo() {
     return {
-      'phone': '+1-800-SAFEDRIVER',
-      'email': 'support@safedriver.com',
+      'phone': '0112123123',
+      'email': 'info@safedriver.com',
       'hours': '24/7 Support Available',
       'website': 'www.safedriver.com',
     };

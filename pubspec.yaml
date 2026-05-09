@@ -130,12 +130,6 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/icons/
-    - assets/animations/
-    - assets/fonts/
-    - assets/audio/
-    - assets/videos/
-    - assets/data/
     - .env
 
 # Configuration for flutter_launcher_icons
