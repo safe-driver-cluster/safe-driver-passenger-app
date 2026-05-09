@@ -1,0 +1,147 @@
+name: Automatic QA
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: automatic-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-qa:
+    name: Flutter QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter environment
+        run: flutter doctor -v
+
+      - name: Run QA checks and generate report
+        id: qa
+        shell: bash
+        run: |
+          set +e
+
+          mkdir -p qa-results
+          report="qa-results/qa-report.md"
+          failures=0
+
+          cat > "$report" <<-REPORT
+          # SafeDriver Passenger App QA Report
+
+          - Workflow: ${GITHUB_WORKFLOW}
+          - Run number: ${GITHUB_RUN_NUMBER}
+          - Commit: ${GITHUB_SHA}
+          - Generated UTC: $(date -u +"%Y-%m-%d %H:%M:%S")
+
+          ## Status Summary
+
+          | Step | Command | Status |
+          | --- | --- | --- |
+          REPORT
+
+          run_step() {
+            local name="$1"
+            local command="$2"
+            local slug
+            local log
+            local status
+            local result
+
+            slug="$(echo "$name" | tr '[:upper:]' '[:lower:]' | tr -cs '[:alnum:]' '-')"
+            log="qa-results/${slug}.log"
+
+            echo "::group::${name}"
+            echo "Running: ${command}"
+            bash -c "$command" > "$log" 2>&1
+            status=$?
+            cat "$log"
+            echo "::endgroup::"
+
+            if [ "$status" -eq 0 ]; then
+              result="PASS"
+            else
+              result="FAIL"
+              failures=1
+            fi
+
+            printf '| %s | `%s` | %s |\n' "$name" "$command" "$result" >> "$report"
+
+            {
+              echo
+              echo "### ${name}"
+              echo
+              echo "**Command:** \`${command}\`"
+              echo
+              echo "**Status:** ${result}"
+              echo
+              echo "<details><summary>Log</summary>"
+              echo
+              echo '```text'
+              tail -n 200 "$log"
+              echo '```'
+              echo
+              echo "</details>"
+            } >> "$report"
+          }
+
+          run_step "Prepare CI assets" "test -f .env || touch .env"
+          run_step "Resolve dependencies" "flutter pub get"
+          run_step "Formatting check" "dart format --output=none --set-exit-if-changed lib test tool"
+          run_step "Static analysis" "flutter analyze --no-pub"
+          run_step "Unit and widget tests" "flutter test --coverage --reporter expanded --no-pub"
+          run_step "Android debug build" "flutter build apk --debug --no-pub"
+
+          {
+            echo
+            if [ "$failures" -eq 0 ]; then
+              echo "## Final Result"
+              echo
+              echo "PASS"
+            else
+              echo "## Final Result"
+              echo
+              echo "FAIL"
+            fi
+          } >> "$report"
+
+          exit "$failures"
+
+      - name: Publish QA report to job summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f qa-results/qa-report.md ]; then
+            cat qa-results/qa-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "QA report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload QA report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: qa-results
+          retention-days: 14
