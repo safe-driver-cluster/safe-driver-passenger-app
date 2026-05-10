@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../widgets/common/profile_page_components.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -24,121 +25,69 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<PackageInfo>(
+      future: _packageInfoFuture,
+      builder: (context, snapshot) {
+        final packageInfo = snapshot.data;
+
+        return ProfilePageScaffold(
+          title: 'About App',
+          accentColor: AppColors.accentColor,
+          children: [
+            _buildBrandCard(context, packageInfo),
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildOverviewSection(context),
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildFeatureSection(context),
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildSafetySection(context),
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildSupportLegalSection(context),
+            const SizedBox(height: AppDesign.spaceLG),
+            _buildFooter(context, packageInfo),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildBrandCard(BuildContext context, PackageInfo? packageInfo) {
     final th = ThemeHelper.of(context);
-    return Scaffold(
-      backgroundColor: th.background,
-      body: Container(
+    final version = packageInfo?.version ?? 'Loading version';
+    final build = packageInfo?.buildNumber ?? '--';
+
+    return ProfileSectionCard(
+      padding: EdgeInsets.zero,
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.accentColor,
-              AppColors.primaryColor,
-              th.background,
-            ],
-            stops: const [0.0, 0.32, 0.72],
-          ),
-        ),
-        child: SafeArea(
-          child: FutureBuilder<PackageInfo>(
-            future: _packageInfoFuture,
-            builder: (context, snapshot) {
-              final packageInfo = snapshot.data;
-              return CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: _buildHeader(context, packageInfo),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppDesign.spaceLG,
-                      0,
-                      AppDesign.spaceLG,
-                      AppDesign.spaceXL,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          _buildMissionCard(),
-                          const SizedBox(height: AppDesign.spaceLG),
-                          _buildFeatureGrid(),
-                          const SizedBox(height: AppDesign.spaceLG),
-                          _buildSafetySection(),
-                          const SizedBox(height: AppDesign.spaceLG),
-                          _buildActionSection(context),
-                          const SizedBox(height: AppDesign.spaceLG),
-                          _buildFooter(packageInfo),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, PackageInfo? packageInfo) {
-    return Padding(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.glassGradient,
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                  ),
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              const Expanded(
-                child: Text(
-                  'About App',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ),
+              AppColors.primaryColor.withValues(alpha: 0.16),
+              AppColors.accentColor.withValues(alpha: 0.08),
             ],
           ),
-          const SizedBox(height: AppDesign.spaceXL),
-          Center(
-            child: Column(
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
                 Container(
-                  width: 96,
-                  height: 96,
+                  width: 68,
+                  height: 68,
                   padding: const EdgeInsets.all(AppDesign.spaceMD),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(AppDesign.radius2XL),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusXL),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.black.withOpacity(0.14),
-                        blurRadius: 22,
-                        offset: const Offset(0, 10),
+                        color: AppColors.black.withValues(alpha: 0.08),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
@@ -148,80 +97,81 @@ class _AboutPageState extends State<AboutPage> {
                     errorBuilder: (_, __, ___) => const Icon(
                       Icons.directions_bus_rounded,
                       color: AppColors.primaryColor,
-                      size: 48,
+                      size: 34,
                     ),
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceLG),
-                const Text(
-                  'SafeDriver',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w900,
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SafeDriver',
+                        style: AppTextStyles.headline5.copyWith(
+                          color: th.textPrimary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: AppDesign.spaceXS),
+                      Text(
+                        'Passenger safety and bus navigation companion',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: th.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceSM),
-                Text(
-                  'Passenger safety and bus navigation companion',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.92),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildVersionPill(packageInfo),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVersionPill(PackageInfo? packageInfo) {
-    final versionText = packageInfo == null
-        ? 'Version loading'
-        : 'Version ${packageInfo.version} (${packageInfo.buildNumber})';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDesign.spaceLG,
-        vertical: AppDesign.spaceSM,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.18),
-        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-        border: Border.all(color: Colors.white.withOpacity(0.26)),
-      ),
-      child: Text(
-        versionText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
+            const SizedBox(height: AppDesign.spaceLG),
+            Wrap(
+              spacing: AppDesign.spaceSM,
+              runSpacing: AppDesign.spaceSM,
+              children: [
+                _buildMetaPill(
+                  context,
+                  icon: Icons.verified_rounded,
+                  label: 'Version $version',
+                ),
+                _buildMetaPill(
+                  context,
+                  icon: Icons.layers_rounded,
+                  label: 'Build $build',
+                ),
+                _buildMetaPill(
+                  context,
+                  icon: Icons.people_alt_outlined,
+                  label: 'Passenger app',
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMissionCard() {
-    return _SectionCard(
+  Widget _buildOverviewSection(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
+    return ProfileSectionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
+          const ProfileSectionHeader(
             icon: Icons.verified_user_rounded,
-            title: 'Built For Safer Journeys',
+            title: 'About SafeDriver',
+            subtitle: 'Built to make daily bus travel safer and easier.',
             color: AppColors.primaryColor,
           ),
-          const SizedBox(height: AppDesign.spaceMD),
+          const SizedBox(height: AppDesign.spaceLG),
           Text(
-            'SafeDriver helps passengers plan bus journeys, access emergency tools, manage trusted contacts, and share feedback that improves public transport safety.',
+            'SafeDriver helps passengers navigate bus journeys, use emergency tools quickly, manage trusted contacts, and share feedback that improves transport safety.',
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               height: 1.55,
             ),
           ),
@@ -230,110 +180,138 @@ class _AboutPageState extends State<AboutPage> {
     );
   }
 
-  Widget _buildFeatureGrid() {
+  Widget _buildFeatureSection(BuildContext context) {
     final features = [
       const _FeatureData(
-        'Bus Navigation',
-        'Search destinations and view bus-focused route guidance.',
-        Icons.map_rounded,
-        AppColors.primaryColor,
+        title: 'Bus Navigation',
+        description:
+            'Search destinations and follow bus-focused route guidance.',
+        icon: Icons.map_rounded,
+        color: AppColors.primaryColor,
       ),
       const _FeatureData(
-        'SOS Contacts',
-        'Alert trusted contacts quickly during emergencies.',
-        Icons.sos_rounded,
-        AppColors.dangerColor,
+        title: 'SOS Contacts',
+        description: 'Reach trusted contacts quickly during urgent situations.',
+        icon: Icons.sos_rounded,
+        color: AppColors.dangerColor,
       ),
       const _FeatureData(
-        'Safety Hub',
-        'Access emergency actions and safety information.',
-        Icons.health_and_safety_rounded,
-        AppColors.successColor,
+        title: 'Safety Hub',
+        description:
+            'Keep emergency actions and safety tools within easy reach.',
+        icon: Icons.health_and_safety_rounded,
+        color: AppColors.successColor,
       ),
       const _FeatureData(
-        'Feedback',
-        'Report journey, driver, and bus service experiences.',
-        Icons.rate_review_rounded,
-        AppColors.warningColor,
+        title: 'Feedback',
+        description:
+            'Report bus and journey experiences to improve service quality.',
+        icon: Icons.rate_review_rounded,
+        color: AppColors.warningColor,
       ),
     ];
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final itemWidth = (constraints.maxWidth - AppDesign.spaceMD) / 2;
-        return Wrap(
-          spacing: AppDesign.spaceMD,
-          runSpacing: AppDesign.spaceMD,
-          children: features
-              .map(
-                (feature) => SizedBox(
-                  width: itemWidth,
-                  child: _FeatureCard(feature: feature),
-                ),
-              )
-              .toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildSafetySection() {
-    final items = [
-      const _InfoRowData(
-        'Emergency first',
-        'SOS and emergency contact tools are designed to stay easy to reach.',
-        Icons.emergency_share_rounded,
-      ),
-      const _InfoRowData(
-        'Location aware',
-        'Map and safety features use location only when permission is granted.',
-        Icons.location_on_rounded,
-      ),
-      const _InfoRowData(
-        'Passenger control',
-        'You can update profile, preferences, notifications, and contacts anytime.',
-        Icons.tune_rounded,
-      ),
-    ];
-
-    return _SectionCard(
+    return ProfileSectionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
-            icon: Icons.shield_rounded,
-            title: 'Safety & Privacy',
-            color: AppColors.successColor,
+          const ProfileSectionHeader(
+            icon: Icons.grid_view_rounded,
+            title: 'Core Features',
+            subtitle: 'The main tools passengers use across the app.',
+            color: AppColors.accentColor,
           ),
-          const SizedBox(height: AppDesign.spaceMD),
-          ...items.map(_InfoRow.new),
+          const SizedBox(height: AppDesign.spaceLG),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final itemWidth = (constraints.maxWidth - AppDesign.spaceMD) / 2;
+
+              return Wrap(
+                spacing: AppDesign.spaceMD,
+                runSpacing: AppDesign.spaceMD,
+                children: features
+                    .map(
+                      (feature) => SizedBox(
+                        width: itemWidth,
+                        child: _FeatureHighlightCard(feature: feature),
+                      ),
+                    )
+                    .toList(),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionSection(BuildContext context) {
-    return _SectionCard(
+  Widget _buildSafetySection(BuildContext context) {
+    final items = [
+      const _InfoRowData(
+        title: 'Emergency first',
+        description:
+            'SOS and emergency contact tools are designed to stay easy to reach.',
+        icon: Icons.emergency_share_rounded,
+        color: AppColors.dangerColor,
+      ),
+      const _InfoRowData(
+        title: 'Permission based',
+        description:
+            'Location-powered features work only when device permission is granted.',
+        icon: Icons.location_on_rounded,
+        color: AppColors.successColor,
+      ),
+      const _InfoRowData(
+        title: 'Passenger control',
+        description:
+            'Profile, notifications, contacts, and support preferences can be updated anytime.',
+        icon: Icons.tune_rounded,
+        color: AppColors.primaryColor,
+      ),
+    ];
+
+    return ProfileSectionCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionTitle(
-            icon: Icons.article_rounded,
-            title: 'Support & Legal',
-            color: AppColors.primaryColor,
+          const ProfileSectionHeader(
+            icon: Icons.shield_rounded,
+            title: 'Safety & Privacy',
+            subtitle: 'Core principles behind how the app behaves.',
+            color: AppColors.successColor,
           ),
-          const SizedBox(height: AppDesign.spaceMD),
-          _ActionTile(
+          const SizedBox(height: AppDesign.spaceLG),
+          ...items.map(_CompactInfoRow.new),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupportLegalSection(BuildContext context) {
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.article_outlined,
+            title: 'Support & Legal',
+            subtitle: 'Reach the team or read the key app policies.',
+            color: AppColors.infoColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          ProfileActionTile(
             icon: Icons.email_outlined,
             title: 'Contact Support',
             subtitle: 'info@safedriver.com',
+            color: AppColors.primaryColor,
             onTap: _sendSupportEmail,
           ),
-          const Divider(height: 1, color: AppColors.greyLight),
-          _ActionTile(
+          const Divider(height: 24),
+          ProfileActionTile(
             icon: Icons.privacy_tip_outlined,
             title: 'Privacy Policy',
-            subtitle: 'How passenger data is handled',
+            subtitle: 'How passenger data is handled inside the app',
+            color: AppColors.successColor,
             onTap: () => _showTextSheet(
               context,
               title: 'Privacy Policy',
@@ -341,11 +319,12 @@ class _AboutPageState extends State<AboutPage> {
                   'SafeDriver uses profile, contact, notification, feedback, and location data only to provide passenger safety, navigation, emergency, and support features. Location access is permission based and can be changed from device or app settings.',
             ),
           ),
-          const Divider(height: 1, color: AppColors.greyLight),
-          _ActionTile(
+          const Divider(height: 24),
+          ProfileActionTile(
             icon: Icons.description_outlined,
             title: 'Terms of Service',
             subtitle: 'Passenger app usage guidelines',
+            color: AppColors.warningColor,
             onTap: () => _showTextSheet(
               context,
               title: 'Terms of Service',
@@ -358,17 +337,22 @@ class _AboutPageState extends State<AboutPage> {
     );
   }
 
-  Widget _buildFooter(PackageInfo? packageInfo) {
-    final version = packageInfo == null
-        ? ''
+  Widget _buildFooter(BuildContext context, PackageInfo? packageInfo) {
+    final th = ThemeHelper.of(context);
+    final versionText = packageInfo == null
+        ? 'Version information is loading'
         : 'Version ${packageInfo.version} build ${packageInfo.buildNumber}';
 
-    return Builder(builder: (context) {
-      final th = ThemeHelper.of(context);
-      return Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDesign.spaceSM,
+        vertical: AppDesign.spaceXS,
+      ),
+      child: Column(
         children: [
           Text(
             'SafeDriver Passenger App',
+            textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium.copyWith(
               color: th.textPrimary,
               fontWeight: FontWeight.w700,
@@ -376,7 +360,8 @@ class _AboutPageState extends State<AboutPage> {
           ),
           const SizedBox(height: AppDesign.spaceXS),
           Text(
-            version,
+            versionText,
+            textAlign: TextAlign.center,
             style: AppTextStyles.bodySmall.copyWith(
               color: th.textSecondary,
             ),
@@ -390,8 +375,44 @@ class _AboutPageState extends State<AboutPage> {
             ),
           ),
         ],
-      );
-    });
+      ),
+    );
+  }
+
+  Widget _buildMetaPill(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+  }) {
+    final th = ThemeHelper.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDesign.spaceMD,
+        vertical: AppDesign.spaceSM,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.9),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: AppColors.primaryColor),
+          const SizedBox(width: AppDesign.spaceXS),
+          Text(
+            label,
+            style: AppTextStyles.labelLarge.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _sendSupportEmail() async {
@@ -447,7 +468,10 @@ class _AboutPageState extends State<AboutPage> {
             Text(
               body,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.7),
                 height: 1.55,
               ),
             ),
@@ -459,80 +483,24 @@ class _AboutPageState extends State<AboutPage> {
   }
 }
 
-class _SectionCard extends StatelessWidget {
-  final Widget child;
+class _FeatureHighlightCard extends StatelessWidget {
+  const _FeatureHighlightCard({required this.feature});
 
-  const _SectionCard({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
-    return Container(
-      padding: const EdgeInsets.all(AppDesign.spaceLG),
-      decoration: BoxDecoration(
-        color: th.cardBackground,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowMD,
-        border: Border.all(color: th.border),
-      ),
-      child: child,
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Color color;
-
-  const _SectionTitle({
-    required this.icon,
-    required this.title,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceSM),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        const SizedBox(width: AppDesign.spaceMD),
-        Expanded(
-          child: Text(
-            title,
-            style: AppTextStyles.headline6.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FeatureCard extends StatelessWidget {
   final _FeatureData feature;
 
-  const _FeatureCard({required this.feature});
-
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+
     return Container(
-      constraints: const BoxConstraints(minHeight: 154),
+      constraints: const BoxConstraints(minHeight: 156),
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: th.cardBackground,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowSM,
-        border: Border.all(color: th.border),
+        color: feature.color.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        border: Border.all(
+          color: feature.color.withValues(alpha: 0.14),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -540,10 +508,10 @@ class _FeatureCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: feature.color.withOpacity(0.12),
+              color: feature.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
             ),
-            child: Icon(feature.icon, color: feature.color, size: 24),
+            child: Icon(feature.icon, color: feature.color, size: 22),
           ),
           const SizedBox(height: AppDesign.spaceMD),
           Text(
@@ -571,92 +539,63 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
+class _CompactInfoRow extends StatelessWidget {
+  const _CompactInfoRow(this.data);
+
   final _InfoRowData data;
 
-  const _InfoRow(this.data);
-
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(data.icon, color: AppColors.primaryColor, size: 20),
-          const SizedBox(width: AppDesign.spaceMD),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: th.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  data.description,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: th.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _ActionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
+      child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceMD),
         decoration: BoxDecoration(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: data.color.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(
+            color: data.color.withValues(alpha: 0.12),
+          ),
         ),
-        child: Icon(icon, color: AppColors.primaryColor, size: 20),
-      ),
-      title: Text(
-        title,
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: th.textPrimary,
-          fontWeight: FontWeight.w700,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppDesign.spaceSM),
+              decoration: BoxDecoration(
+                color: data.color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              ),
+              child: Icon(data.icon, color: data.color, size: 18),
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data.title,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: th.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    data.description,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: th.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      subtitle: Text(
-        subtitle,
-        style: AppTextStyles.bodySmall.copyWith(
-          color: th.textSecondary,
-        ),
-      ),
-      trailing: Icon(
-        Icons.chevron_right_rounded,
-        color: th.textHint,
-      ),
-      onTap: onTap,
     );
   }
 }
@@ -667,22 +606,24 @@ class _FeatureData {
   final IconData icon;
   final Color color;
 
-  const _FeatureData(
-    this.title,
-    this.description,
-    this.icon,
-    this.color,
-  );
+  const _FeatureData({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+  });
 }
 
 class _InfoRowData {
   final String title;
   final String description;
   final IconData icon;
+  final Color color;
 
-  const _InfoRowData(
-    this.title,
-    this.description,
-    this.icon,
-  );
+  const _InfoRowData({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+  });
 }
