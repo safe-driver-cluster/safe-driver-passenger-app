@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.safedriver_passenger_app"
+    namespace = "com.codecrafters.safedriver"
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.safedriver_passenger_app"
+        applicationId = "com.codecrafters.safedriver"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdkVersion = flutter.minSdkVersion
@@ -35,11 +35,21 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            storeFile = file("G:\\safedriver.jks")
+            storePassword = "@Rensith2001"
+            keyAlias = "safedriver"
+            keyPassword = "@Rensith2001"
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
