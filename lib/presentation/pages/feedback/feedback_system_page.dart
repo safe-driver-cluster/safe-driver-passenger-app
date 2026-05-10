@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
-import '../../../core/utils/bus_qr_utils.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/bus_model.dart';
 import '../../../data/models/driver_model.dart';
 import '../../../data/repositories/driver_repository.dart';
 import '../../controllers/feedback_controller.dart';
+import '../qr/qr_scanner_page.dart';
 import 'feedback_submission_page.dart';
 
 class FeedbackSystemPage extends ConsumerStatefulWidget {
@@ -20,31 +19,21 @@ class FeedbackSystemPage extends ConsumerStatefulWidget {
   ConsumerState<FeedbackSystemPage> createState() => _FeedbackSystemPageState();
 }
 
-class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
+class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage> {
   final DriverRepository _driverRepository = DriverRepository();
   String? selectedBusNumber;
   BusModel? selectedBus;
-  bool isQRScanMode = false;
   bool isLoadingDrivers = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     // Load bus data from Firebase on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('🚀 FeedbackSystemPage: Calling loadBusData...');
       ref.read(feedbackControllerProvider.notifier).loadBusData();
       debugPrint('✅ FeedbackSystemPage: loadBusData called');
     });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -62,25 +51,20 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
-              AppColors.primaryDark,
+              const Color(0xFF2F63F6),
               th.background,
             ],
-            stops: const [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.28, 0.78],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Modern Header
               _buildModernHeader(),
-
-              // Content Area
               Expanded(
-                child: isQRScanMode
-                    ? _buildQRScannerView()
-                    : selectedBusNumber != null
-                        ? _buildFeedbackTypeSelection()
-                        : _buildBusSelectionView(),
+                child: selectedBusNumber != null
+                    ? _buildFeedbackTypeSelection()
+                    : _buildBusSelectionView(),
               ),
             ],
           ),
@@ -92,111 +76,64 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   Widget _buildModernHeader() {
     String headerTitle = selectedBusNumber != null
         ? 'Bus ${selectedBusNumber!} Feedback'
-        : isQRScanMode
-            ? 'Scan QR Code'
-            : 'Give Feedback';
+        : 'Give Feedback';
 
     String headerSubtitle = selectedBusNumber != null
         ? 'Share your travel experience'
-        : isQRScanMode
-            ? 'Scan the QR code on the bus'
-            : 'Choose your bus and share feedback';
+        : 'Choose your bus and share feedback';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
         AppDesign.spaceLG,
         AppDesign.spaceSM,
         AppDesign.spaceLG,
-        AppDesign.spaceLG,
+        AppDesign.spaceMD,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const CustomBackButton(
                 color: Colors.white,
                 backgroundColor: Color(0x33FFFFFF),
               ),
-              Row(
-                children: [
-                  if (!isQRScanMode)
-                    Container(
-                      margin: const EdgeInsets.only(right: AppDesign.spaceSM),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.glassGradient,
-                        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/feedback-test');
-                        },
-                        icon: const Icon(
-                          Icons.bug_report,
-                          color: Colors.white,
-                          size: AppDesign.iconLG,
-                        ),
-                      ),
-                    ),
-                  if (!isQRScanMode)
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: AppColors.glassGradient,
-                        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: IconButton(
-                        onPressed: _showQRScanner,
-                        icon: const Icon(
-                          Icons.qr_code_scanner,
-                          color: Colors.white,
-                          size: AppDesign.iconLG,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDesign.spaceLG),
-          Row(
-            children: [
+              const SizedBox(width: AppDesign.spaceMD),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      headerTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: AppDesign.spaceXS),
-                    Text(
-                      headerSubtitle,
-                      style: TextStyle(
-                        fontSize: AppDesign.textMD,
-                        color: Colors.white.withOpacity(0.8),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  headerTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: _showQRScanner,
+                icon: const Icon(
+                  Icons.qr_code_scanner_rounded,
+                  color: Colors.white,
+                ),
+                style: IconButton.styleFrom(
+                  backgroundColor: const Color(0x1FFFFFFF),
+                  side: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.18),
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            headerSubtitle,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: Colors.white.withValues(alpha: 0.86),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -205,14 +142,19 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildBusSelectionView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        0,
+        AppDesign.spaceLG,
+        AppDesign.spaceXL,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHistoryCard(),
-          const SizedBox(height: AppDesign.spaceXL),
+          const SizedBox(height: AppDesign.spaceLG),
           _buildSelectionMethods(),
-          const SizedBox(height: AppDesign.spaceXL),
+          const SizedBox(height: AppDesign.spaceLG),
           _buildRecentBuses(),
         ],
       ),
@@ -220,7 +162,6 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
   }
 
   Widget _buildHistoryCard() {
-    final th = ThemeHelper.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, '/feedback-history');
@@ -228,13 +169,13 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
-          color: th.cardBackground,
-          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
           boxShadow: [
             BoxShadow(
-              color: th.shadowLight,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+              color: AppColors.primaryColor.withValues(alpha: 0.22),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -243,12 +184,12 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                color: Colors.white.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: const Icon(
                 Icons.history_rounded,
-                color: AppColors.primaryColor,
+                color: Colors.white,
                 size: AppDesign.iconLG,
               ),
             ),
@@ -259,28 +200,26 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 children: [
                   Text(
                     'View Feedback History',
-                    style: TextStyle(
-                      fontSize: AppDesign.textLG,
-                      fontWeight: FontWeight.w700,
-                      color: th.textPrimary,
+                    style: AppTextStyles.headline6.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
                   Text(
                     'Check your previous feedback and status',
-                    style: TextStyle(
-                      fontSize: AppDesign.textMD,
-                      color: th.textSecondary,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: Colors.white.withValues(alpha: 0.84),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            Icon(
-              Icons.arrow_forward_rounded,
-              color: th.textSecondary,
-              size: 24,
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+              size: 18,
             ),
           ],
         ),
@@ -290,42 +229,59 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildSelectionMethods() {
     final th = ThemeHelper.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Select Bus',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: th.textPrimary,
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        border: Border.all(color: th.border),
+        boxShadow: AppDesign.shadowMD,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select Bus',
+            style: AppTextStyles.headline6.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDesign.spaceMD),
-        IntrinsicHeight(
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildSelectionCard(
-                  icon: Icons.directions_bus,
-                  title: 'Select Bus',
-                  subtitle: 'Choose from available buses',
-                  onTap: _showBusSelection,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              Expanded(
-                child: _buildSelectionCard(
-                  icon: Icons.qr_code_scanner,
-                  title: 'Scan QR',
-                  subtitle: 'Scan bus QR code',
-                  onTap: _showQRScanner,
-                ),
-              ),
-            ],
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            'Pick a bus manually or scan the QR code for faster access.',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: th.textSecondary,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(height: AppDesign.spaceMD),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildSelectionCard(
+                    icon: Icons.directions_bus,
+                    title: 'Select Bus',
+                    subtitle: 'Choose from available buses',
+                    accent: AppColors.primaryColor,
+                    onTap: _showBusSelection,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Expanded(
+                  child: _buildSelectionCard(
+                    icon: Icons.qr_code_scanner,
+                    title: 'Scan QR',
+                    subtitle: 'Open the scanner and scan the bus QR',
+                    accent: AppColors.infoColor,
+                    onTap: _showQRScanner,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -333,6 +289,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     required IconData icon,
     required String title,
     required String subtitle,
+    required Color accent,
     required VoidCallback onTap,
   }) {
     final th = ThemeHelper.of(context);
@@ -341,19 +298,12 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
-          color: th.cardBackground,
-          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          color: th.background,
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
           border: Border.all(
-            color: th.border,
+            color: accent.withValues(alpha: 0.18),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: th.shadowLight,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -361,29 +311,28 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                color: accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: Icon(
                 icon,
-                color: AppColors.primaryColor,
+                color: accent,
                 size: AppDesign.iconXL,
               ),
             ),
             const SizedBox(height: AppDesign.spaceMD),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.bodyLarge.copyWith(
                 color: th.textPrimary,
+                fontWeight: FontWeight.w800,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               subtitle,
-              style: TextStyle(
-                fontSize: 12,
+              style: AppTextStyles.bodySmall.copyWith(
                 color: th.textSecondary,
               ),
               textAlign: TextAlign.center,
@@ -398,31 +347,33 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     final th = ThemeHelper.of(context);
     final controller = ref.read(feedbackControllerProvider.notifier);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Recent Buses',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: th.textPrimary,
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        border: Border.all(color: th.border),
+        boxShadow: AppDesign.shadowMD,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Recent Buses',
+            style: AppTextStyles.headline6.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDesign.spaceMD),
-        Container(
-          decoration: BoxDecoration(
-            color: th.cardBackground,
-            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-            boxShadow: [
-              BoxShadow(
-                color: th.shadowLight,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            'Choose one of the buses you recently viewed or used.',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: th.textSecondary,
+            ),
           ),
-          child: ValueListenableBuilder(
+          const SizedBox(height: AppDesign.spaceMD),
+          ValueListenableBuilder(
             valueListenable: controller.recentBusesNotifier,
             builder: (context, buses, _) {
               debugPrint(
@@ -430,12 +381,13 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
               if (buses.isEmpty) {
                 return Padding(
-                  padding: const EdgeInsets.all(AppDesign.spaceMD),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppDesign.spaceMD,
+                  ),
                   child: Text(
                     'No recent buses available',
-                    style: TextStyle(
+                    style: AppTextStyles.bodySmall.copyWith(
                       color: th.textSecondary,
-                      fontSize: AppDesign.textMD,
                     ),
                   ),
                 );
@@ -456,8 +408,8 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               );
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -471,7 +423,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       leading: Container(
         padding: const EdgeInsets.all(AppDesign.spaceSM),
         decoration: BoxDecoration(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: AppColors.primaryColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppDesign.radiusMD),
         ),
         child: const Icon(
@@ -495,7 +447,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
         ),
       ),
       trailing: Icon(
-        Icons.arrow_forward_ios,
+        Icons.arrow_forward_ios_rounded,
         color: th.textHint,
         size: 16,
       ),
@@ -503,139 +455,19 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
-  Widget _buildQRScannerView() {
-    final th = ThemeHelper.of(context);
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceLG),
-          color: th.cardBackground,
-          child: Column(
-            children: [
-              Text(
-                'Point your camera at the bus QR code',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: th.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppDesign.spaceSM),
-              Text(
-                'The QR code is usually located inside the bus',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: th.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Stack(
-            children: [
-              MobileScanner(
-                onDetect: _onQRCodeDetected,
-              ),
-              Center(
-                child: Container(
-                  width: 250,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppColors.primaryColor,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Corner decorations
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        child: _buildCornerDecoration(),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Transform.rotate(
-                          angle: 1.5708,
-                          child: _buildCornerDecoration(),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        child: Transform.rotate(
-                          angle: -1.5708,
-                          child: _buildCornerDecoration(),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Transform.rotate(
-                          angle: 3.14159,
-                          child: _buildCornerDecoration(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceLG),
-          color: th.cardBackground,
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => setState(() => isQRScanMode = false),
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Back'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: th.border,
-                    foregroundColor: th.textPrimary,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppDesign.spaceMD,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCornerDecoration() {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: const BoxDecoration(
-        border: Border(
-          top: BorderSide(color: AppColors.primaryColor, width: 4),
-          left: BorderSide(color: AppColors.primaryColor, width: 4),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFeedbackTypeSelection() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppDesign.spaceMD),
+      padding: const EdgeInsets.fromLTRB(
+        AppDesign.spaceLG,
+        0,
+        AppDesign.spaceLG,
+        AppDesign.spaceXL,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildBusInfoCard(),
-          const SizedBox(height: AppDesign.spaceXL),
+          const SizedBox(height: AppDesign.spaceLG),
           _buildFeedbackTypeOptions(),
         ],
       ),
@@ -648,26 +480,21 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
         color: th.cardBackground,
-        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: [
-          BoxShadow(
-            color: th.shadowLight,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        border: Border.all(color: th.border),
+        boxShadow: AppDesign.shadowMD,
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(AppDesign.spaceMD),
             decoration: BoxDecoration(
-              color: AppColors.successColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+              color: AppColors.primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
             ),
             child: const Icon(
               Icons.directions_bus,
-              color: AppColors.successColor,
+              color: AppColors.primaryColor,
               size: AppDesign.iconLG,
             ),
           ),
@@ -678,18 +505,23 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               children: [
                 Text(
                   'Bus ${selectedBusNumber!}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                  style: AppTextStyles.headline5.copyWith(
                     color: th.textPrimary,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceXS),
                 Text(
                   'Selected for feedback',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: th.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceXS),
+                Text(
+                  'Change the selected bus anytime before submitting.',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: th.textHint,
                   ),
                 ),
               ],
@@ -713,38 +545,53 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
 
   Widget _buildFeedbackTypeOptions() {
     final th = ThemeHelper.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'What would you like to give feedback about?',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: th.textPrimary,
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        border: Border.all(color: th.border),
+        boxShadow: AppDesign.shadowMD,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'What would you like to give feedback about?',
+            style: AppTextStyles.headline6.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-        ),
-        const SizedBox(height: AppDesign.spaceLG),
-        _buildFeedbackOption(
-          icon: Icons.directions_bus,
-          title: 'Bus Behavior',
-          subtitle: 'Cleanliness, condition, comfort, facilities',
-          color: AppColors.primaryColor,
-          onTap: () => _navigateToFeedbackForm(FeedbackTarget.bus),
-        ),
-        const SizedBox(height: AppDesign.spaceMD),
-        _buildFeedbackOption(
-          icon: Icons.person,
-          title: 'Driver Behavior',
-          subtitle: isLoadingDrivers
-              ? 'Checking assigned drivers...'
-              : 'Driving skills, courtesy, professionalism',
-          color: AppColors.accentColor,
-          onTap: isLoadingDrivers
-              ? () {}
-              : () => _navigateToFeedbackForm(FeedbackTarget.driver),
-        ),
-      ],
+          const SizedBox(height: AppDesign.spaceXS),
+          Text(
+            'Choose the area that best matches your experience.',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: th.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          _buildFeedbackOption(
+            icon: Icons.directions_bus,
+            title: 'Bus Behavior',
+            subtitle: 'Cleanliness, condition, comfort, and facilities.',
+            color: AppColors.primaryColor,
+            onTap: () => _navigateToFeedbackForm(FeedbackTarget.bus),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          _buildFeedbackOption(
+            icon: Icons.person,
+            title: 'Driver Behavior',
+            subtitle: isLoadingDrivers
+                ? 'Checking assigned drivers...'
+                : 'Driving skills, courtesy, and professionalism.',
+            color: AppColors.accentColor,
+            onTap: isLoadingDrivers
+                ? () {}
+                : () => _navigateToFeedbackForm(FeedbackTarget.driver),
+          ),
+        ],
+      ),
     );
   }
 
@@ -761,27 +608,20 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
       child: Container(
         padding: const EdgeInsets.all(AppDesign.spaceLG),
         decoration: BoxDecoration(
-          color: th.cardBackground,
-          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          color: th.background,
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
           border: Border.all(
-            color: th.border,
+            color: color.withValues(alpha: 0.18),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: th.shadowLight,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceMD),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
               child: Icon(
                 icon,
@@ -796,10 +636,9 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                    style: AppTextStyles.bodyLarge.copyWith(
                       color: th.textPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
@@ -815,7 +654,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
               ),
             ),
             Icon(
-              Icons.arrow_forward_ios,
+              Icons.arrow_forward_ios_rounded,
               color: th.textHint,
               size: 16,
             ),
@@ -924,7 +763,7 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
             Container(
               padding: const EdgeInsets.all(AppDesign.spaceSM),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor.withOpacity(0.1),
+                color: AppColors.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppDesign.radiusMD),
               ),
               child: const Icon(
@@ -1106,50 +945,24 @@ class _FeedbackSystemPageState extends ConsumerState<FeedbackSystemPage>
     );
   }
 
-  void _showQRScanner() {
-    setState(() => isQRScanMode = true);
-  }
+  Future<void> _showQRScanner() async {
+    final bus = await Navigator.of(context).push<BusModel>(
+      MaterialPageRoute(
+        builder: (_) => const QrScannerPage(),
+      ),
+    );
 
-  void _onQRCodeDetected(BarcodeCapture capture) {
-    if (!isQRScanMode) return;
-
-    final List<Barcode> barcodes = capture.barcodes;
-    if (barcodes.isNotEmpty) {
-      final busNumber = _extractBusNumberFromQR(barcodes.first.rawValue ?? '');
-      if (busNumber != null) {
-        setState(() => isQRScanMode = false);
-        _selectBusByNumber(busNumber);
-      }
+    if (!mounted || bus == null) {
+      return;
     }
-  }
 
-  String? _extractBusNumberFromQR(String qrData) {
-    final payload = BusQrUtils.parse(qrData);
-    return payload?.busNumber ?? payload?.busId;
+    _selectBus(bus);
   }
 
   void _selectBus(BusModel bus) {
     setState(() {
       selectedBus = bus;
       selectedBusNumber = bus.busNumber;
-      isQRScanMode = false;
-    });
-  }
-
-  Future<void> _selectBusByNumber(String busNumber) async {
-    final controller = ref.read(feedbackControllerProvider.notifier);
-    final bus = await controller.searchBusByNumber(busNumber);
-    if (!mounted) return;
-
-    if (bus != null) {
-      _selectBus(bus);
-      return;
-    }
-
-    setState(() {
-      selectedBus = null;
-      selectedBusNumber = busNumber;
-      isQRScanMode = false;
     });
   }
 
