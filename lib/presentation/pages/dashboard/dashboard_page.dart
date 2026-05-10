@@ -13,9 +13,9 @@ import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/common/web_responsive_layout.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
-import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
 import '../maps/map_page.dart';
+import '../profile/received_notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -352,11 +352,11 @@ class _NotificationBellButton extends ConsumerWidget {
         children: [
           IconButton(
             onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const NotificationsBottomSheet(),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReceivedNotificationsPage(),
+                ),
               );
             },
             icon: const Icon(

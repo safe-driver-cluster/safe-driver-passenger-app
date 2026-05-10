@@ -10,6 +10,7 @@ import '../../widgets/common/bottom_navigation_widget.dart';
 import '../buses/bus_list_page.dart';
 import '../dashboard/dashboard_page.dart';
 import '../maps/map_page.dart';
+import '../profile/notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class ReceivedNotificationsPage extends ConsumerStatefulWidget {
@@ -146,16 +147,45 @@ class ReceivedNotificationsContent extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Notifications',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      letterSpacing: 0.5,
-                    ),
+                  Row(
+                    children: [
+                      _HeaderIconButton(
+                        icon: Icons.arrow_back_rounded,
+                        onTap: () => Navigator.of(context).pop(),
+                      ),
+                      const SizedBox(width: AppDesign.spaceMD),
+                      const Expanded(
+                        child: Text(
+                          'Notifications',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      _HeaderIconButton(
+                        icon: Icons.settings_outlined,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NotificationsPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
+                  Text(
+                    'Your latest alerts and updates in one place',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: Colors.white.withOpacity(0.82),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   unreadCount.when(
                     data: (count) => Container(
                       padding: const EdgeInsets.symmetric(
@@ -353,8 +383,8 @@ class ReceivedNotificationsContent extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  ref.refresh(userNotificationsProvider);
-                  ref.refresh(unreadNotificationCountProvider);
+                  ref.invalidate(userNotificationsProvider);
+                  ref.invalidate(unreadNotificationCountProvider);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -609,6 +639,37 @@ class ReceivedNotificationsContent extends ConsumerWidget {
     } else {
       return dateTime.toString().split(' ')[0];
     }
+  }
+}
+
+class _HeaderIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderIconButton({
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.12),
+      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+        child: SizedBox(
+          width: 42,
+          height: 42,
+          child: Icon(
+            icon,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      ),
+    );
   }
 }
 
