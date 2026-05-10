@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/auth_controller.dart';
 // import '../controllers/dashboard_controller.dart'; // Commented out - using simple_providers instead
+import '../core/services/device_permission_service.dart';
 import '../core/services/firebase_service.dart';
 import '../core/services/location_service.dart';
 import '../core/services/notification_service.dart';
@@ -20,6 +21,12 @@ final firebaseServiceProvider = Provider<FirebaseService>((ref) {
 // Storage Service Provider
 final storageServiceProvider = Provider<StorageService>((ref) {
   return StorageService.instance;
+});
+
+// Device Permission Service Provider
+final devicePermissionServiceProvider =
+    Provider<DevicePermissionService>((ref) {
+  return DevicePermissionService();
 });
 
 // Location Service Provider

@@ -63,6 +63,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719842751658:android:81da388fafd0180e514cd3",
+        "android_client_info": {
+          "package_name": "com.codecrafters.safedriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719842751658-chnurfvnifb5mcigjs1sgabvjhk8e3i6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcibaYhXUItkAhrUQuugWyDirmQ3-0VfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719842751658-chnurfvnifb5mcigjs1sgabvjhk8e3i6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

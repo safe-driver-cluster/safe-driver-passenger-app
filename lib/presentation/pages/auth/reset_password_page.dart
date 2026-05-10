@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/custom_back_button.dart';
@@ -25,6 +24,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
 
   String _phoneNumber = '';
   String _otpCode = '';
+  String _verificationId = '';
 
   @override
   void initState() {
@@ -35,6 +35,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       if (args != null) {
         _phoneNumber = args['phoneNumber'] ?? '';
         _otpCode = args['otpCode'] ?? '';
+        _verificationId = args['verificationId'] ?? '';
       }
     });
   }
@@ -64,6 +65,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         phoneNumber: _phoneNumber,
         newPassword: _passwordController.text.trim(),
         otpCode: _otpCode,
+        verificationId: _verificationId,
       );
 
       if (mounted) {
@@ -204,7 +206,6 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../widgets/common/profile_page_components.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -21,295 +22,238 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    return ProfilePageScaffold(
+      title: 'Notifications',
+      accentColor: AppColors.primaryGradientEnd,
+      children: [
+        _buildDeliverySection(context),
+        const SizedBox(height: AppDesign.spaceLG),
+        _buildTripSection(context),
+        const SizedBox(height: AppDesign.spaceLG),
+        _buildMarketingSection(context),
+        const SizedBox(height: AppDesign.spaceLG),
+        _buildInfoCard(context),
+      ],
+    );
+  }
+
+  Widget _buildDeliverySection(BuildContext context) {
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.send_outlined,
+            title: 'Delivery Channels',
+            subtitle: 'Decide where everyday notifications should reach you.',
+            color: AppColors.primaryColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.smartphone_rounded,
+            color: AppColors.primaryColor,
+            title: 'Push notifications',
+            description: 'Receive updates directly on your device.',
+            value: pushNotifications,
+            onChanged: (value) => setState(() => pushNotifications = value),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.email_outlined,
+            color: AppColors.infoColor,
+            title: 'Email notifications',
+            description: 'Get a written copy of important service updates.',
+            value: emailNotifications,
+            onChanged: (value) => setState(() => emailNotifications = value),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.sms_outlined,
+            color: AppColors.warningColor,
+            title: 'SMS notifications',
+            description: 'Receive quick text alerts when needed.',
+            value: smsNotifications,
+            onChanged: (value) => setState(() => smsNotifications = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripSection(BuildContext context) {
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.route_outlined,
+            title: 'Trip & Safety',
+            subtitle: 'Keep the high-value journey and protection updates on.',
+            color: AppColors.successColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.health_and_safety_outlined,
+            color: AppColors.successColor,
+            title: 'Safety alerts',
+            description:
+                'Critical safety notices and emergency-related updates.',
+            value: safetyAlerts,
+            badge: 'Recommended',
+            emphasized: true,
+            onChanged: (value) => setState(() => safetyAlerts = value),
+          ),
+          const SizedBox(height: AppDesign.spaceMD),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.directions_bus_outlined,
+            color: AppColors.primaryColor,
+            title: 'Trip updates',
+            description: 'Bus arrival times, delays, and route changes.',
+            value: tripUpdates,
+            onChanged: (value) => setState(() => tripUpdates = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMarketingSection(BuildContext context) {
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.local_offer_outlined,
+            title: 'Offers & Promotions',
+            subtitle: 'Opt into occasional discounts and rider campaigns.',
+            color: AppColors.accentColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          _buildToggleTile(
+            context: context,
+            icon: Icons.campaign_outlined,
+            color: AppColors.accentColor,
+            title: 'Promotional offers',
+            description: 'Special deals, new-feature launches, and campaigns.',
+            value: promotionalOffers,
+            onChanged: (value) => setState(() => promotionalOffers = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context) {
     final th = ThemeHelper.of(context);
-    return Scaffold(
-      backgroundColor: th.background,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryGradientEnd,
-            ],
+
+    return ProfileSectionCard(
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceLG),
+        decoration: BoxDecoration(
+          color: AppColors.infoColor.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(
+            color: AppColors.infoColor.withValues(alpha: 0.14),
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Custom App Bar
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    const CustomBackButton(
-                      color: Colors.white,
-                      backgroundColor: Color(0x33FFFFFF),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        'Notifications',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ),
-                  ],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.info_outline_rounded,
+              color: AppColors.infoColor,
+              size: AppDesign.iconSM,
+            ),
+            const SizedBox(width: AppDesign.spaceMD),
+            Expanded(
+              child: Text(
+                'Notification preferences can be updated any time. Keeping safety alerts enabled helps you receive urgent information as quickly as possible.',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: th.textPrimary,
                 ),
               ),
-
-              // Content
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: th.cardBackground,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header
-                        Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.infoColor.withOpacity(0.1),
-                                    AppColors.primaryColor.withOpacity(0.1),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: const Icon(
-                                Icons.notifications_active,
-                                size: 30,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Stay Updated',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: th.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Customize your notification preferences',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: th.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 32),
-
-                        // Notification Settings
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              // General Notifications
-                              Text(
-                                'General',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: th.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              _buildNotificationTile(
-                                th,
-                                '📱',
-                                'Push Notifications',
-                                'Receive notifications on your device',
-                                pushNotifications,
-                                (value) =>
-                                    setState(() => pushNotifications = value),
-                              ),
-
-                              _buildNotificationTile(
-                                th,
-                                '📧',
-                                'Email Notifications',
-                                'Get updates via email',
-                                emailNotifications,
-                                (value) =>
-                                    setState(() => emailNotifications = value),
-                              ),
-
-                              _buildNotificationTile(
-                                th,
-                                '💬',
-                                'SMS Notifications',
-                                'Receive SMS updates',
-                                smsNotifications,
-                                (value) =>
-                                    setState(() => smsNotifications = value),
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              // Trip & Safety
-                              Text(
-                                'Trip & Safety',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: th.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              _buildNotificationTile(
-                                th,
-                                '🚨',
-                                'Safety Alerts',
-                                'Important safety notifications',
-                                safetyAlerts,
-                                (value) => setState(() => safetyAlerts = value),
-                                isImportant: true,
-                              ),
-
-                              _buildNotificationTile(
-                                th,
-                                '🚌',
-                                'Trip Updates',
-                                'Bus arrival times and delays',
-                                tripUpdates,
-                                (value) => setState(() => tripUpdates = value),
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              // Marketing
-                              Text(
-                                'Marketing',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: th.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-
-                              _buildNotificationTile(
-                                th,
-                                '🎉',
-                                'Promotional Offers',
-                                'Special deals and discounts',
-                                promotionalOffers,
-                                (value) =>
-                                    setState(() => promotionalOffers = value),
-                              ),
-
-                              const SizedBox(height: 32),
-
-                              // Info Box
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: AppColors.infoColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: AppColors.infoColor.withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.info_outline,
-                                      color: AppColors.infoColor,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
-                                        'You can change these settings anytime. Safety alerts are recommended for your security.',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: th.textPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildNotificationTile(ThemeHelper th, String emoji, String title,
-      String description, bool value, Function(bool) onChanged,
-      {bool isImportant = false}) {
+  Widget _buildToggleTile({
+    required BuildContext context,
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String description,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    String? badge,
+    bool emphasized = false,
+  }) {
+    return _NotificationTile(
+      icon: icon,
+      color: color,
+      title: title,
+      description: description,
+      badge: badge,
+      value: value,
+      emphasized: emphasized,
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _NotificationTile extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String description;
+  final String? badge;
+  final bool value;
+  final bool emphasized;
+  final ValueChanged<bool> onChanged;
+
+  const _NotificationTile({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.description,
+    required this.value,
+    required this.onChanged,
+    this.badge,
+    this.emphasized = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: isImportant
-            ? AppColors.safeColor.withOpacity(0.05)
-            : th.subtleBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: isImportant
-            ? Border.all(color: AppColors.safeColor.withOpacity(0.2))
-            : null,
+        color: emphasized ? color.withValues(alpha: 0.07) : th.subtleBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        border: Border.all(
+          color: emphasized ? color.withValues(alpha: 0.18) : th.borderLight,
+        ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
+            padding: const EdgeInsets.all(AppDesign.spaceSM),
             decoration: BoxDecoration(
-              color: th.cardBackground,
-              borderRadius: BorderRadius.circular(10),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 20)),
-            ),
+            child: Icon(icon, size: AppDesign.iconSM, color: color),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: AppDesign.spaceMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,48 +263,50 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     Expanded(
                       child: Text(
                         title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: th.textPrimary,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    if (isImportant)
+                    if (badge != null) ...[
+                      const SizedBox(width: AppDesign.spaceSM),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.safeColor,
-                          borderRadius: BorderRadius.circular(8),
+                          horizontal: AppDesign.spaceSM,
+                          vertical: AppDesign.spaceXS,
                         ),
-                        child: const Text(
-                          'RECOMMENDED',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.14),
+                          borderRadius:
+                              BorderRadius.circular(AppDesign.radiusFull),
+                        ),
+                        child: Text(
+                          badge!,
+                          style: AppTextStyles.labelMedium.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                       ),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppDesign.spaceXS),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: th.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppDesign.spaceMD),
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primaryColor,
+            activeThumbColor: AppColors.primaryColor,
           ),
         ],
       ),

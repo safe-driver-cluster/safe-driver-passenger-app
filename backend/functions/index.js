@@ -18,6 +18,7 @@ try {
 admin.initializeApp();
 const db = admin.firestore();
 const auth = admin.auth();
+const emailModule = require('./email');
 
 // Environment configuration with fallbacks
 const config = {
@@ -72,7 +73,9 @@ function formatSMSMessage(otp) {
     return template
         .replace('{OTP}', otp)
         .replace('{MINUTES}', config.otp.expiryMinutes.toString());
-} function hashOTP(otp) {
+}
+
+function hashOTP(otp) {
     return crypto.createHash('sha256').update(otp).digest('hex');
 }
 
@@ -447,21 +450,72 @@ exports.cleanupExpiredOTPs = functions
 exports.resetPassword = functions
     .region('asia-south1')
     .https.onCall(async (data, context) => {
-        const { email, phoneNumber, newPassword, otpCode } = data;
+        const { email, phoneNumber, newPassword, otpCode, verificationId } = data;
 
         // Validate input
-        if (!email || !phoneNumber || !newPassword || !otpCode) {
+        if (!email || !phoneNumber || !newPassword || !otpCode || !verificationId) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'Missing required parameters: email, phoneNumber, newPassword, otpCode'
+                'Missing required parameters: email, phoneNumber, newPassword, otpCode, verificationId'
             );
         }
 
         try {
+            const formattedPhone = formatPhoneNumber(phoneNumber);
+
+            const verificationDoc = await db.collection('otp_verifications').doc(verificationId).get();
+            if (!verificationDoc.exists) {
+                throw new functions.https.HttpsError(
+                    'not-found',
+                    'Password reset verification has expired. Please request a new OTP.'
+                );
+            }
+
+            const verificationData = verificationDoc.data();
+            if (verificationData.phoneNumber !== formattedPhone) {
+                throw new functions.https.HttpsError(
+                    'permission-denied',
+                    'Verification record does not match this phone number'
+                );
+            }
+
+            if (verificationData.status !== 'verified') {
+                throw new functions.https.HttpsError(
+                    'failed-precondition',
+                    'OTP must be verified before resetting the password'
+                );
+            }
+
+            if (verificationData.expiresAt.toDate() < new Date()) {
+                await verificationDoc.ref.update({
+                    status: 'expired',
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                });
+
+                throw new functions.https.HttpsError(
+                    'deadline-exceeded',
+                    'OTP has expired. Please request a new one.'
+                );
+            }
+
+            if (verificationData.passwordResetConsumedAt) {
+                throw new functions.https.HttpsError(
+                    'already-exists',
+                    'This verification code has already been used for a password reset'
+                );
+            }
+
+            if (hashOTP(otpCode) !== verificationData.hashedOTP) {
+                throw new functions.https.HttpsError(
+                    'invalid-argument',
+                    'Invalid OTP code supplied for password reset'
+                );
+            }
+
             // Verify the user exists in passenger_details
             const passengerQuery = await db.collection('passenger_details')
                 .where('email', '==', email)
-                .where('phoneNumber', '==', phoneNumber)
+                .where('phoneNumber', '==', formattedPhone)
                 .limit(1)
                 .get();
 
@@ -497,6 +551,23 @@ exports.resetPassword = functions
                 passwordUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
             });
 
+            await verificationDoc.ref.update({
+                status: 'consumed',
+                passwordResetConsumedAt: admin.firestore.FieldValue.serverTimestamp(),
+                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            });
+
+            try {
+                await emailModule.sendPasswordChangedEmailInternal({
+                    userId: user.uid,
+                    email,
+                    source: 'otp_reset',
+                    changedAt: new Date(),
+                });
+            } catch (emailError) {
+                console.error('Password reset email failed:', emailError);
+            }
+
             console.log(`Password reset successful for user ${user.uid}`);
 
             return {
@@ -524,6 +595,7 @@ exports.resetPassword = functions
 // ============================================================================
 const notificationFunctions = require('./notifications');
 Object.assign(exports, notificationFunctions);
+Object.assign(exports, emailModule.emailExports);
 
 // Health check endpoint
 exports.healthCheck = functions

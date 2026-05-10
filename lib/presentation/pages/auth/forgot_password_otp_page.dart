@@ -113,6 +113,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
             arguments: {
               'phoneNumber': _phoneNumber,
               'otpCode': otpCode,
+              'verificationId': _verificationId,
               'userId': result.userId,
             },
           );
@@ -200,40 +201,6 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     if (_otpCode.length == 6) {
       _verifyOtp();
     }
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../core/services/email_service.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/services/storage_service.dart';
 
@@ -225,6 +227,20 @@ class AuthService {
     await _storage.saveString(_savedPasswordKey, password);
   }
 
+  /// Update only the saved password after a successful password change.
+  Future<void> updateSavedPassword(String password) async {
+    await initialize();
+    final savedEmail = _storage.getString(_savedEmailKey);
+    final rememberMe = _storage.getBool(_rememberMeKey) ?? false;
+    final autoLogin = _storage.getBool(_autoLoginKey) ?? false;
+
+    if (savedEmail != null &&
+        savedEmail.isNotEmpty &&
+        (rememberMe || autoLogin)) {
+      await _storage.saveString(_savedPasswordKey, password);
+    }
+  }
+
   /// Clear saved credentials
   Future<void> _clearSavedCredentials() async {
     await initialize(); // Ensure storage is initialized
@@ -265,6 +281,54 @@ class AuthService {
     }
   }
 
+  /// Change password for signed-in email/password users.
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        throw 'Please sign in again to change your password.';
+      }
+
+      final email = user.email;
+      final hasPasswordProvider = user.providerData
+          .any((provider) => provider.providerId == 'password');
+
+      if (!hasPasswordProvider || email == null || email.isEmpty) {
+        throw 'Password change is only available for email sign-in accounts.';
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      await user.updatePassword(newPassword);
+      await user.reload();
+      await updateSavedPassword(newPassword);
+
+      try {
+        await EmailService().sendPasswordChangedEmail(
+          source: 'in_app_change',
+        );
+      } on FirebaseFunctionsException catch (error) {
+        print(
+          'Warning: password changed but email notification failed: '
+          '${error.code} ${error.message}',
+        );
+      } catch (error) {
+        print(
+          'Warning: password changed but email notification failed: $error',
+        );
+      }
+    } catch (e) {
+      throw _handleAuthError(e);
+    }
+  }
+
   /// Handle authentication errors
   String _handleAuthError(dynamic error) {
     if (error is FirebaseAuthException) {
@@ -285,6 +349,8 @@ class AuthService {
           return 'Please enter a valid email address.';
         case 'network-request-failed':
           return 'Network error. Please check your connection.';
+        case 'requires-recent-login':
+          return 'Please sign in again before changing your password.';
         default:
           return error.message ?? 'An authentication error occurred.';
       }
