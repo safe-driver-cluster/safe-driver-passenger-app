@@ -272,17 +272,39 @@ class PassengerPreferences {
       'privacy': privacy.toJson(),
     };
   }
+
+  PassengerPreferences copyWith({
+    String? language,
+    String? theme,
+    PassengerNotificationSettings? notifications,
+    PassengerPrivacySettings? privacy,
+  }) {
+    return PassengerPreferences(
+      language: language ?? this.language,
+      theme: theme ?? this.theme,
+      notifications: notifications ?? this.notifications,
+      privacy: privacy ?? this.privacy,
+    );
+  }
 }
 
 class PassengerNotificationSettings {
   final bool safetyAlerts;
   final bool journeyUpdates;
+  final bool emailEnabled;
+  final bool feedbackEmails;
+  final bool journeyEmails;
+  final bool securityEmails;
   final bool emergencyAlerts;
   final bool systemAnnouncements;
 
   PassengerNotificationSettings({
     this.safetyAlerts = true,
     this.journeyUpdates = true,
+    this.emailEnabled = true,
+    this.feedbackEmails = true,
+    this.journeyEmails = true,
+    this.securityEmails = true,
     this.emergencyAlerts = true,
     this.systemAnnouncements = true,
   });
@@ -291,6 +313,10 @@ class PassengerNotificationSettings {
     return PassengerNotificationSettings(
       safetyAlerts: json['safetyAlerts'] ?? true,
       journeyUpdates: json['journeyUpdates'] ?? true,
+      emailEnabled: json['emailEnabled'] ?? true,
+      feedbackEmails: json['feedbackEmails'] ?? true,
+      journeyEmails: json['journeyEmails'] ?? true,
+      securityEmails: json['securityEmails'] ?? true,
       emergencyAlerts: json['emergencyAlerts'] ?? true,
       systemAnnouncements: json['systemAnnouncements'] ?? true,
     );
@@ -300,9 +326,35 @@ class PassengerNotificationSettings {
     return {
       'safetyAlerts': safetyAlerts,
       'journeyUpdates': journeyUpdates,
+      'emailEnabled': emailEnabled,
+      'feedbackEmails': feedbackEmails,
+      'journeyEmails': journeyEmails,
+      'securityEmails': securityEmails,
       'emergencyAlerts': emergencyAlerts,
       'systemAnnouncements': systemAnnouncements,
     };
+  }
+
+  PassengerNotificationSettings copyWith({
+    bool? safetyAlerts,
+    bool? journeyUpdates,
+    bool? emailEnabled,
+    bool? feedbackEmails,
+    bool? journeyEmails,
+    bool? securityEmails,
+    bool? emergencyAlerts,
+    bool? systemAnnouncements,
+  }) {
+    return PassengerNotificationSettings(
+      safetyAlerts: safetyAlerts ?? this.safetyAlerts,
+      journeyUpdates: journeyUpdates ?? this.journeyUpdates,
+      emailEnabled: emailEnabled ?? this.emailEnabled,
+      feedbackEmails: feedbackEmails ?? this.feedbackEmails,
+      journeyEmails: journeyEmails ?? this.journeyEmails,
+      securityEmails: securityEmails ?? this.securityEmails,
+      emergencyAlerts: emergencyAlerts ?? this.emergencyAlerts,
+      systemAnnouncements: systemAnnouncements ?? this.systemAnnouncements,
+    );
   }
 }
 
@@ -327,6 +379,16 @@ class PassengerPrivacySettings {
       'shareLocation': shareLocation,
       'shareJourneyData': shareJourneyData,
     };
+  }
+
+  PassengerPrivacySettings copyWith({
+    bool? shareLocation,
+    bool? shareJourneyData,
+  }) {
+    return PassengerPrivacySettings(
+      shareLocation: shareLocation ?? this.shareLocation,
+      shareJourneyData: shareJourneyData ?? this.shareJourneyData,
+    );
   }
 }
 
