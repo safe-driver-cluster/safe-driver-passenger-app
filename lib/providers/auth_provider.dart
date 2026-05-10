@@ -808,9 +808,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     required String phoneNumber,
     required String newPassword,
     required String otpCode,
+    required String verificationId,
   }) async {
     try {
-      // Find user by phone number
       final querySnapshot = await FirebaseFirestore.instance
           .collection('passenger_details')
           .where('phoneNumber', isEqualTo: phoneNumber)
@@ -829,17 +829,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         throw Exception('Account found but no email associated');
       }
 
-      // For forgot password flow, update password directly in Firestore
-      // Hash the new password (simple hash for demo - use proper hashing in production)
-      final hashedPassword = _hashPassword(newPassword);
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+          .httpsCallable('resetPassword');
 
-      // Update password in Firestore
-      await userDoc.reference.update({
-        'password':
-            hashedPassword, // Update the password field used during login
-        'passwordUpdatedAt': FieldValue.serverTimestamp(),
-        'resetViaOTP': true, // Flag to indicate password was reset via OTP
+      final result = await callable.call({
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'newPassword': newPassword,
+        'otpCode': otpCode,
+        'verificationId': verificationId,
       });
+
+      final data = Map<String, dynamic>.from(result.data as Map);
+      if (data['success'] != true) {
+        throw Exception(data['message'] ?? 'Failed to reset password');
+      }
 
       print('✅ Password reset successful for phone: $phoneNumber');
 
@@ -856,12 +860,5 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
             : 'Failed to reset password',
       );
     }
-  }
-
-  // Simple password hashing (for demo purposes - use proper hashing in production)
-  String _hashPassword(String password) {
-    // In production, use a proper password hashing library like bcrypt
-    // This is just a simple hash for demonstration
-    return password.hashCode.toString();
   }
 }
