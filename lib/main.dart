@@ -40,6 +40,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }
   }
   debugPrint('Handling a background message: ${message.messageId}');
+  await NotificationService.persistBackgroundMessage(message);
 }
 
 void main() async {

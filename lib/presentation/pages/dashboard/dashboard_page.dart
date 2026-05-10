@@ -6,6 +6,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/greeting_util.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
+import '../../../providers/notification_provider.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
@@ -330,6 +331,82 @@ class _DashboardNavItem {
   });
 }
 
+class _NotificationBellButton extends ConsumerWidget {
+  const _NotificationBellButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unreadCountAsync = ref.watch(unreadNotificationCountProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.glassGradient,
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const NotificationsBottomSheet(),
+              );
+            },
+            icon: const Icon(
+              Icons.notifications_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          unreadCountAsync.when(
+            data: (count) {
+              if (count <= 0) {
+                return const SizedBox.shrink();
+              }
+
+              final label = count > 9 ? '9+' : '$count';
+              return Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.warningColor,
+                    borderRadius: BorderRadius.circular(
+                      AppDesign.radiusFull,
+                    ),
+                    border: Border.all(color: Colors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              );
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class DashboardHome extends ConsumerWidget {
   final Function(int)? onNavigateToTab;
 
@@ -466,33 +543,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
@@ -538,33 +589,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
@@ -610,33 +635,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
