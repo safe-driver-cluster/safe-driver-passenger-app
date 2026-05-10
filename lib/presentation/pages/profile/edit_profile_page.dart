@@ -948,6 +948,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           safetyAlerts:
               _currentProfile?.preferences.notifications.safetyAlerts ?? true,
           journeyUpdates: _notificationsEnabled,
+          emailEnabled:
+              _currentProfile?.preferences.notifications.emailEnabled ?? true,
+          feedbackEmails:
+              _currentProfile?.preferences.notifications.feedbackEmails ?? true,
+          journeyEmails:
+              _currentProfile?.preferences.notifications.journeyEmails ?? true,
+          securityEmails:
+              _currentProfile?.preferences.notifications.securityEmails ?? true,
           emergencyAlerts:
               _currentProfile?.preferences.notifications.emergencyAlerts ??
                   true,
