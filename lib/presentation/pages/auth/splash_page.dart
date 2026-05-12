@@ -26,6 +26,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
   late Animation<double> _logoOpacityAnimation;
   late Animation<double> _textOpacityAnimation;
   late Animation<Offset> _textSlideAnimation;
+  Timer? _textAnimationTimer;
+  Timer? _navigationTimer;
 
   @override
   void initState() {
@@ -85,7 +87,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
     _logoController.forward();
 
     // Start text animation after logo animation begins
-    Timer(const Duration(milliseconds: 500), () {
+    _textAnimationTimer = Timer(const Duration(milliseconds: 500), () {
       if (mounted) {
         _textController.forward();
       }
@@ -93,7 +95,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
   }
 
   void _navigateToNextScreen() {
-    Timer(const Duration(seconds: 3), () {
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
       if (mounted) {
         _checkAuthenticationState();
       }
@@ -128,8 +130,13 @@ class _SplashPageState extends ConsumerState<SplashPage>
       return;
     }
 
-    // Check Firebase Auth directly for persistent user (most important!)
-    final currentUser = FirebaseAuth.instance.currentUser;
+    // Check Firebase Auth directly for persistent user when Firebase is ready.
+    User? currentUser;
+    try {
+      currentUser = FirebaseAuth.instance.currentUser;
+    } catch (error) {
+      debugPrint('Firebase Auth unavailable during splash: $error');
+    }
     print('🔐 Firebase Auth Current User: ${currentUser?.uid ?? "null"}');
     print('👤 Firebase Auth Email: ${currentUser?.email ?? "null"}');
 
@@ -150,6 +157,8 @@ class _SplashPageState extends ConsumerState<SplashPage>
 
   @override
   void dispose() {
+    _textAnimationTimer?.cancel();
+    _navigationTimer?.cancel();
     _logoController.dispose();
     _textController.dispose();
     super.dispose();
