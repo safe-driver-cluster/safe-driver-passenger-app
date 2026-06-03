@@ -41,6 +41,18 @@ class FeedbackSubmissionPage extends ConsumerStatefulWidget {
       _FeedbackSubmissionPageState();
 }
 
+class _FeedbackContactDetails {
+  final String name;
+  final String email;
+  final String phoneNumber;
+
+  const _FeedbackContactDetails({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+  });
+}
+
 class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     with TickerProviderStateMixin {
   int selectedRating = 0;
@@ -843,30 +855,73 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   void _shareViaWhatsApp() {
     final l10n = AppLocalizations.of(context);
-    // WhatsApp sharing logic
     final message = _buildShareMessage(l10n);
-    final whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
-    _launchUrl(whatsappUrl);
+    final encodedMessage = Uri.encodeComponent(message);
+    _launchUrlCandidates(
+      [
+        Uri.parse('whatsapp://send?text=$encodedMessage'),
+        Uri.parse('https://wa.me/?text=$encodedMessage'),
+      ],
+      l10n.couldNotLaunchUrl('WhatsApp'),
+    );
   }
 
   void _shareViaEmail() {
     final l10n = AppLocalizations.of(context);
-    // Email sharing logic
     final message = _buildShareMessage(l10n);
-    final subject = 'SafeDriver Feedback - ${l10n.busLabel(widget.busNumber)}';
-    final emailUrl =
-        'mailto:info@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
-    _launchUrl(emailUrl);
+    final feedbackType = _feedbackTypeLabel(l10n);
+    final subject = 'SafeDriver $feedbackType - Bus ${widget.busNumber}';
+    final emailUri = Uri(
+      scheme: 'mailto',
+      path: AppConstants.supportEmail,
+      queryParameters: {
+        'subject': subject,
+        'body': message,
+      },
+    );
+    final gmailComposeUri = Uri.https(
+      'mail.google.com',
+      '/mail/',
+      {
+        'view': 'cm',
+        'fs': '1',
+        'to': AppConstants.supportEmail,
+        'su': subject,
+        'body': message,
+      },
+    );
+    _launchUrlCandidates(
+      [emailUri, gmailComposeUri],
+      l10n.couldNotLaunchUrl('Email'),
+    );
   }
 
   String _buildShareMessage(AppLocalizations l10n) {
+    final userDetails = _currentUserDetails();
+    final feedbackType = _feedbackTypeLabel(l10n);
+    final formattedFeedbackDateTime =
+        DateFormat('yyyy-MM-dd hh:mm a').format(selectedFeedbackDateTime);
+    final formattedPreparedDateTime =
+        DateFormat('yyyy-MM-dd hh:mm a').format(DateTime.now());
     final buffer = StringBuffer();
     buffer.writeln('SafeDriver Feedback');
     buffer.writeln('');
-    buffer.writeln('${l10n.busNumber}: ${widget.busNumber}');
+    buffer.writeln('Passenger Details');
+    buffer.writeln('Name: ${userDetails.name}');
+    buffer.writeln('Email: ${userDetails.email}');
+    buffer.writeln('Phone: ${userDetails.phoneNumber}');
+    buffer.writeln('');
+    buffer.writeln('Feedback Details');
+    buffer.writeln('Bus Number: ${widget.busNumber}');
+    buffer.writeln('Category: $feedbackType');
+    if (widget.feedbackTarget == FeedbackTarget.driver) {
+      buffer.writeln('Driver ID: ${_displayValue(widget.driverId)}');
+      buffer.writeln('Driver Name: ${_displayValue(widget.driverName)}');
+    }
+    buffer.writeln('Feedback Date/Time: $formattedFeedbackDateTime');
+    buffer.writeln('Prepared Date/Time: $formattedPreparedDateTime');
     buffer.writeln(
-        '${l10n.feedbackType}: ${widget.feedbackTarget == FeedbackTarget.bus ? l10n.busFeedback : l10n.driverFeedback}');
-    buffer.writeln('${l10n.ratings}: $selectedRating/5 stars');
+        'Rating: ${selectedRating > 0 ? '$selectedRating/5 stars' : 'Not selected'}');
     buffer.writeln('');
     if (selectedQuickActions.isNotEmpty) {
       buffer.writeln('Quick Feedback:');
@@ -887,17 +942,64 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return buffer.toString();
   }
 
-  Future<void> _launchUrl(String url) async {
-    final l10n = AppLocalizations.of(context);
+  _FeedbackContactDetails _currentUserDetails() {
+    final authState = ref.read(authStateProvider);
+    final passenger = authState.passengerProfile;
+    final firebaseUser = authState.user;
+
+    final fullName =
+        '${passenger?.firstName ?? ''} ${passenger?.lastName ?? ''}'.trim();
+    final name = fullName.isNotEmpty
+        ? fullName
+        : (firebaseUser?.displayName?.trim().isNotEmpty == true
+            ? firebaseUser!.displayName!.trim()
+            : 'Not provided');
+    final email = passenger?.email.trim().isNotEmpty == true
+        ? passenger!.email.trim()
+        : (firebaseUser?.email?.trim().isNotEmpty == true
+            ? firebaseUser!.email!.trim()
+            : 'Not provided');
+    final phoneNumber = passenger?.phoneNumber.trim().isNotEmpty == true
+        ? passenger!.phoneNumber.trim()
+        : (firebaseUser?.phoneNumber?.trim().isNotEmpty == true
+            ? firebaseUser!.phoneNumber!.trim()
+            : 'Not provided');
+
+    return _FeedbackContactDetails(
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+    );
+  }
+
+  String _feedbackTypeLabel(AppLocalizations l10n) {
+    return widget.feedbackTarget == FeedbackTarget.bus
+        ? l10n.busFeedback
+        : l10n.driverFeedback;
+  }
+
+  String _displayValue(String? value) {
+    final trimmed = value?.trim();
+    return trimmed == null || trimmed.isEmpty ? 'Not provided' : trimmed;
+  }
+
+  Future<void> _launchUrlCandidates(
+    List<Uri> urls,
+    String failureMessage,
+  ) async {
     try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        _showError(l10n.couldNotLaunchUrl(url));
+      for (final uri in urls) {
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (launched) {
+          return;
+        }
       }
+      _showError(failureMessage);
     } catch (e) {
-      _showError(l10n.errorLaunchingUrl(e.toString()));
+      _showError(failureMessage);
     }
   }
 
