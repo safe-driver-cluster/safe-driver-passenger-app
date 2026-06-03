@@ -81,7 +81,11 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
                   valueListenable: feedbackController.feedbacksNotifier,
                   builder: (context, feedbacks, _) {
                     final sortedFeedbacks = feedbacks.toList()
-                      ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
+                      ..sort(
+                        (a, b) => _getDisplayDateTime(b).compareTo(
+                          _getDisplayDateTime(a),
+                        ),
+                      );
                     final filteredFeedbacks =
                         sortedFeedbacks.where(_matchesSearch).toList();
 
@@ -323,8 +327,8 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
     FeedbackModel feedback,
     AppLocalizations l10n,
   ) {
-    final submittedDate =
-        DateFormat('MMM dd, yyyy, hh:mm a').format(feedback.submittedAt);
+    final feedbackDate = DateFormat('MMM dd, yyyy, hh:mm a')
+        .format(_getDisplayDateTime(feedback));
     final busText = feedback.busNumber?.trim().isNotEmpty == true
         ? l10n.busLabel(feedback.busNumber!)
         : 'General Feedback';
@@ -438,7 +442,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  submittedDate,
+                  feedbackDate,
                   style: TextStyle(
                     color: th.textSecondary,
                     fontSize: 12,
@@ -746,6 +750,19 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
     ].map((value) => (value ?? '').toLowerCase());
 
     return values.any((value) => value.contains(_searchQuery));
+  }
+
+  DateTime _getDisplayDateTime(FeedbackModel feedback) {
+    if (feedback.feedbackDateTime != null) {
+      return feedback.feedbackDateTime!;
+    }
+
+    final metadataDate = feedback.metadata['feedbackDateTime'];
+    if (metadataDate is String) {
+      return DateTime.tryParse(metadataDate) ?? feedback.submittedAt;
+    }
+
+    return feedback.submittedAt;
   }
 
   Color _getStatusColor(FeedbackStatus status) {
