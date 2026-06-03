@@ -102,6 +102,16 @@ class NotificationController extends StateNotifier<AsyncValue<void>> {
     }
   }
 
+  /// Mark all notifications as read for the signed-in user
+  Future<void> markAllAsReadForCurrentUser() async {
+    final user = _ref.read(authStateProvider).user;
+    if (user == null) {
+      return;
+    }
+
+    await markAllAsRead(user.uid);
+  }
+
   /// Delete notification
   Future<void> deleteNotification(String notificationId) async {
     try {
@@ -122,6 +132,16 @@ class NotificationController extends StateNotifier<AsyncValue<void>> {
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
+  }
+
+  /// Delete all notifications for the signed-in user
+  Future<void> deleteAllNotificationsForCurrentUser() async {
+    final user = _ref.read(authStateProvider).user;
+    if (user == null) {
+      return;
+    }
+
+    await deleteAllNotifications(user.uid);
   }
 
   /// Send login welcome notification

@@ -4,9 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
@@ -39,12 +41,25 @@ class FeedbackSubmissionPage extends ConsumerStatefulWidget {
       _FeedbackSubmissionPageState();
 }
 
+class _FeedbackContactDetails {
+  final String name;
+  final String email;
+  final String phoneNumber;
+
+  const _FeedbackContactDetails({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+  });
+}
+
 class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     with TickerProviderStateMixin {
   int selectedRating = 0;
   final TextEditingController _commentController = TextEditingController();
   Set<String> selectedQuickActions = <String>{};
   List<File> selectedMediaFiles = [];
+  DateTime selectedFeedbackDateTime = DateTime.now();
   Position? currentLocation;
   bool isSubmitting = false;
   bool isLoadingLocation = false;
@@ -132,6 +147,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   children: [
                     _buildBusInfoHeader(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
+                    _buildDateTimeSection(),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildRatingSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
                     _buildQuickActionsSection(l10n),
@@ -199,6 +216,66 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         isLoadingLocation = false;
       });
     }
+  }
+
+  Future<void> _selectFeedbackDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedFeedbackDateTime,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.primaryColor,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate == null || !mounted) return;
+
+    setState(() {
+      selectedFeedbackDateTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        selectedFeedbackDateTime.hour,
+        selectedFeedbackDateTime.minute,
+      );
+    });
+  }
+
+  Future<void> _selectFeedbackTime() async {
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedFeedbackDateTime),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.primaryColor,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime == null || !mounted) return;
+
+    setState(() {
+      selectedFeedbackDateTime = DateTime(
+        selectedFeedbackDateTime.year,
+        selectedFeedbackDateTime.month,
+        selectedFeedbackDateTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    });
   }
 
   Widget _buildModernAppBar(AppLocalizations l10n) {
@@ -337,6 +414,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           GestureDetector(
             onTap: _pickMediaFile,
             child: Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 border: Border.all(
@@ -381,6 +459,148 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ...selectedMediaFiles.map((file) => _buildMediaFileItem(file)),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeSection() {
+    final th = ThemeHelper.of(context);
+    final dateText =
+        DateFormat('EEE, MMM dd, yyyy').format(selectedFeedbackDateTime);
+    final timeText = DateFormat('hh:mm a').format(selectedFeedbackDateTime);
+
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.event_available_rounded,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceLG),
+              Expanded(
+                child: Text(
+                  'Feedback Date & Time',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: th.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          Text(
+            'Defaults to today and current time. Change it if the issue happened earlier.',
+            style: TextStyle(
+              fontSize: AppDesign.textSM,
+              color: th.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: _buildDateTimeButton(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Date',
+                  value: dateText,
+                  onTap: _selectFeedbackDate,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                flex: 2,
+                child: _buildDateTimeButton(
+                  icon: Icons.access_time_rounded,
+                  label: 'Time',
+                  value: timeText,
+                  onTap: _selectFeedbackTime,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeButton({
+    required IconData icon,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    final th = ThemeHelper.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceMD),
+        decoration: BoxDecoration(
+          color: th.subtleBackground,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(color: th.border),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppColors.primaryColor, size: 20),
+            const SizedBox(width: AppDesign.spaceSM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: th.textSecondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -588,6 +808,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         allowCompression: true,
       );
 
+      if (!mounted) return;
+
       if (result != null) {
         final newFiles = result.files
             .where((file) {
@@ -633,30 +855,73 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
 
   void _shareViaWhatsApp() {
     final l10n = AppLocalizations.of(context);
-    // WhatsApp sharing logic
     final message = _buildShareMessage(l10n);
-    final whatsappUrl = 'https://wa.me/?text=${Uri.encodeComponent(message)}';
-    _launchUrl(whatsappUrl);
+    final encodedMessage = Uri.encodeComponent(message);
+    _launchUrlCandidates(
+      [
+        Uri.parse('whatsapp://send?text=$encodedMessage'),
+        Uri.parse('https://wa.me/?text=$encodedMessage'),
+      ],
+      l10n.couldNotLaunchUrl('WhatsApp'),
+    );
   }
 
   void _shareViaEmail() {
     final l10n = AppLocalizations.of(context);
-    // Email sharing logic
     final message = _buildShareMessage(l10n);
-    final subject = 'SafeDriver Feedback - ${l10n.busLabel(widget.busNumber)}';
-    final emailUrl =
-        'mailto:info@safedriver.com?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(message)}';
-    _launchUrl(emailUrl);
+    final feedbackType = _feedbackTypeLabel(l10n);
+    final subject = 'SafeDriver $feedbackType - Bus ${widget.busNumber}';
+    final emailUri = Uri(
+      scheme: 'mailto',
+      path: AppConstants.supportEmail,
+      queryParameters: {
+        'subject': subject,
+        'body': message,
+      },
+    );
+    final gmailComposeUri = Uri.https(
+      'mail.google.com',
+      '/mail/',
+      {
+        'view': 'cm',
+        'fs': '1',
+        'to': AppConstants.supportEmail,
+        'su': subject,
+        'body': message,
+      },
+    );
+    _launchUrlCandidates(
+      [emailUri, gmailComposeUri],
+      l10n.couldNotLaunchUrl('Email'),
+    );
   }
 
   String _buildShareMessage(AppLocalizations l10n) {
+    final userDetails = _currentUserDetails();
+    final feedbackType = _feedbackTypeLabel(l10n);
+    final formattedFeedbackDateTime =
+        DateFormat('yyyy-MM-dd hh:mm a').format(selectedFeedbackDateTime);
+    final formattedPreparedDateTime =
+        DateFormat('yyyy-MM-dd hh:mm a').format(DateTime.now());
     final buffer = StringBuffer();
     buffer.writeln('SafeDriver Feedback');
     buffer.writeln('');
-    buffer.writeln('${l10n.busNumber}: ${widget.busNumber}');
+    buffer.writeln('Passenger Details');
+    buffer.writeln('Name: ${userDetails.name}');
+    buffer.writeln('Email: ${userDetails.email}');
+    buffer.writeln('Phone: ${userDetails.phoneNumber}');
+    buffer.writeln('');
+    buffer.writeln('Feedback Details');
+    buffer.writeln('Bus Number: ${widget.busNumber}');
+    buffer.writeln('Category: $feedbackType');
+    if (widget.feedbackTarget == FeedbackTarget.driver) {
+      buffer.writeln('Driver ID: ${_displayValue(widget.driverId)}');
+      buffer.writeln('Driver Name: ${_displayValue(widget.driverName)}');
+    }
+    buffer.writeln('Feedback Date/Time: $formattedFeedbackDateTime');
+    buffer.writeln('Prepared Date/Time: $formattedPreparedDateTime');
     buffer.writeln(
-        '${l10n.feedbackType}: ${widget.feedbackTarget == FeedbackTarget.bus ? l10n.busFeedback : l10n.driverFeedback}');
-    buffer.writeln('${l10n.ratings}: $selectedRating/5 stars');
+        'Rating: ${selectedRating > 0 ? '$selectedRating/5 stars' : 'Not selected'}');
     buffer.writeln('');
     if (selectedQuickActions.isNotEmpty) {
       buffer.writeln('Quick Feedback:');
@@ -677,17 +942,64 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
     return buffer.toString();
   }
 
-  Future<void> _launchUrl(String url) async {
-    final l10n = AppLocalizations.of(context);
+  _FeedbackContactDetails _currentUserDetails() {
+    final authState = ref.read(authStateProvider);
+    final passenger = authState.passengerProfile;
+    final firebaseUser = authState.user;
+
+    final fullName =
+        '${passenger?.firstName ?? ''} ${passenger?.lastName ?? ''}'.trim();
+    final name = fullName.isNotEmpty
+        ? fullName
+        : (firebaseUser?.displayName?.trim().isNotEmpty == true
+            ? firebaseUser!.displayName!.trim()
+            : 'Not provided');
+    final email = passenger?.email.trim().isNotEmpty == true
+        ? passenger!.email.trim()
+        : (firebaseUser?.email?.trim().isNotEmpty == true
+            ? firebaseUser!.email!.trim()
+            : 'Not provided');
+    final phoneNumber = passenger?.phoneNumber.trim().isNotEmpty == true
+        ? passenger!.phoneNumber.trim()
+        : (firebaseUser?.phoneNumber?.trim().isNotEmpty == true
+            ? firebaseUser!.phoneNumber!.trim()
+            : 'Not provided');
+
+    return _FeedbackContactDetails(
+      name: name,
+      email: email,
+      phoneNumber: phoneNumber,
+    );
+  }
+
+  String _feedbackTypeLabel(AppLocalizations l10n) {
+    return widget.feedbackTarget == FeedbackTarget.bus
+        ? l10n.busFeedback
+        : l10n.driverFeedback;
+  }
+
+  String _displayValue(String? value) {
+    final trimmed = value?.trim();
+    return trimmed == null || trimmed.isEmpty ? 'Not provided' : trimmed;
+  }
+
+  Future<void> _launchUrlCandidates(
+    List<Uri> urls,
+    String failureMessage,
+  ) async {
     try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        _showError(l10n.couldNotLaunchUrl(url));
+      for (final uri in urls) {
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (launched) {
+          return;
+        }
       }
+      _showError(failureMessage);
     } catch (e) {
-      _showError(l10n.errorLaunchingUrl(e.toString()));
+      _showError(failureMessage);
     }
   }
 
@@ -1269,6 +1581,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       debugPrint('🚌 Bus: ${widget.busNumber}');
       debugPrint('⭐ Rating: $selectedRating');
       debugPrint('📝 Comment: ${_commentController.text.trim()}');
+      debugPrint('🕒 Feedback time: $selectedFeedbackDateTime');
       debugPrint('📁 Media files: ${selectedMediaFiles.length}');
 
       // Upload media files to Firebase Storage
@@ -1329,6 +1642,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ? _getRatingText(l10n)
             : selectedQuickActions.first,
         images: uploadedMediaUrls,
+        feedbackDateTime: selectedFeedbackDateTime,
         location: currentLocation != null
             ? location_models.LocationModel(
                 latitude: currentLocation!.latitude,
@@ -1347,6 +1661,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           'platform': 'mobile',
           'userEmail': user['email']!,
           'submittedAt': DateTime.now().toIso8601String(),
+          'feedbackDateTime': selectedFeedbackDateTime.toIso8601String(),
           'mediaCount': uploadedMediaUrls.length,
           'mediaUrls': uploadedMediaUrls,
         },

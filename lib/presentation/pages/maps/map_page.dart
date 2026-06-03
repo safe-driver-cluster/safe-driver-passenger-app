@@ -12,6 +12,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/models/map_hazard_model.dart';
+import '../../../data/repositories/map_hazard_repository.dart';
 import '../../../services/google_places_service.dart' as places_service;
 
 class MapPage extends ConsumerStatefulWidget {
@@ -25,7 +27,9 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   final places_service.GooglePlacesService _placesService =
       places_service.GooglePlacesService();
+  final MapHazardRepository _hazardRepository = MapHazardRepository();
   final Set<Marker> _markers = {};
+  final Set<Circle> _circles = {};
   final Set<Polyline> _polylines = {};
 
   GoogleMapController? _mapController;
@@ -39,7 +43,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   bool _isLoading = true;
   bool _isSearching = false;
   bool _showSuggestions = false;
-  bool _showingBusStops = false;
+  bool _showingHazards = false;
   bool _showingBusRoute = false;
   String? _errorMessage;
 
@@ -300,55 +304,56 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     _mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 16));
   }
 
-  Future<void> _showBusStops() async {
-    if (_currentPosition == null) {
-      await _getCurrentLocation();
-      if (_currentPosition == null) return;
-    }
-
-    setState(() => _showingBusStops = true);
+  Future<void> _showHazards() async {
+    setState(() => _showingHazards = true);
     try {
-      _markers.removeWhere(
-        (marker) => marker.markerId.value.startsWith('bus_stop_'),
-      );
+      _clearHazardOverlays();
+      final hazards = await _hazardRepository.getHazards();
 
-      final stops = await _placesService.nearbyBusStops(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-        radiusMeters: 1500,
-      );
-
-      for (final stop in stops) {
+      for (final hazard in hazards) {
+        final color = _hazardColor(hazard.type);
         _markers.add(
           Marker(
-            markerId: MarkerId('bus_stop_${stop.placeId}'),
-            position: LatLng(stop.lat, stop.lng),
+            markerId: MarkerId('hazard_${hazard.id}'),
+            position: _hazardPosition(hazard),
             infoWindow: InfoWindow(
-              title: stop.name,
-              snippet: stop.vicinity.isEmpty ? 'Bus stop' : stop.vicinity,
+              title: hazard.name,
+              snippet: '${hazard.typeLabel} - radius ${hazard.radiusLabel}',
             ),
             icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueOrange,
+              _hazardMarkerHue(hazard.type),
             ),
+            onTap: () => _showHazardDetails(hazard),
+          ),
+        );
+        _circles.add(
+          Circle(
+            circleId: CircleId('hazard_radius_${hazard.id}'),
+            center: _hazardPosition(hazard),
+            radius: hazard.radius,
+            fillColor: color.withValues(alpha: 0.16),
+            strokeColor: color,
+            strokeWidth: 2,
           ),
         );
       }
 
       if (!mounted) return;
-      setState(() => _showingBusStops = false);
+      setState(() => _showingHazards = false);
+      _focusHazards(hazards);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Found ${stops.length} nearby bus stops'),
+          content: Text('Loaded ${hazards.length} hazards on the map'),
           backgroundColor:
-              stops.isEmpty ? AppColors.warningColor : AppColors.successColor,
+              hazards.isEmpty ? AppColors.warningColor : AppColors.successColor,
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() => _showingBusStops = false);
+      setState(() => _showingHazards = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Unable to load nearby bus stops: $e'),
+          content: Text('Unable to load hazards: $e'),
           backgroundColor: AppColors.dangerColor,
         ),
       );
@@ -358,6 +363,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   Future<void> _navigateToDestination() async {
     if (_currentPosition == null) {
       await _getCurrentLocation();
+      if (!mounted) return;
       if (_currentPosition == null) return;
     }
 
@@ -479,8 +485,22 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     );
   }
 
+  void _clearHazardOverlays() {
+    _markers.removeWhere(
+      (marker) => marker.markerId.value.startsWith('hazard_'),
+    );
+    _circles.removeWhere(
+      (circle) => circle.circleId.value.startsWith('hazard_radius_'),
+    );
+  }
+
   void _fitPoints(List<LatLng> points) {
     if (points.isEmpty || _mapController == null) return;
+    if (points.length == 1) {
+      _mapController!
+          .animateCamera(CameraUpdate.newLatLngZoom(points.first, 15));
+      return;
+    }
 
     var minLat = points.first.latitude;
     var maxLat = points.first.latitude;
@@ -494,6 +514,13 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       maxLng = math.max(maxLng, point.longitude);
     }
 
+    if (minLat == maxLat && minLng == maxLng) {
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLngZoom(LatLng(minLat, minLng), 15),
+      );
+      return;
+    }
+
     _mapController!.animateCamera(
       CameraUpdate.newLatLngBounds(
         LatLngBounds(
@@ -503,6 +530,19 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
         72,
       ),
     );
+  }
+
+  void _focusHazards(List<MapHazard> hazards) {
+    if (hazards.isEmpty) return;
+    final points = <LatLng>[
+      if (_currentLatLng != null) _currentLatLng!,
+      ...hazards.map(_hazardPosition),
+    ];
+    _fitPoints(points);
+  }
+
+  LatLng _hazardPosition(MapHazard hazard) {
+    return LatLng(hazard.latitude, hazard.longitude);
   }
 
   Future<void> _openGoogleMapsBusNavigation() async {
@@ -552,6 +592,87 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
     final hours = directions.totalDurationSeconds / 3600;
     return '${(km / hours).toStringAsFixed(1)} km/h';
   }
+
+  Color _hazardColor(String type) {
+    switch (type.toLowerCase().trim()) {
+      case 'accident':
+        return AppColors.dangerColor;
+      case 'restricted':
+      case 'restricted_area':
+      case 'road_closed':
+        return AppColors.accentColor;
+      case 'construction':
+        return AppColors.warningColor;
+      case 'flood':
+      case 'flooding':
+        return AppColors.infoColor;
+      case 'traffic':
+      case 'heavy_traffic':
+        return Colors.deepOrange;
+      case 'weather':
+      case 'bad_weather':
+        return AppColors.tealAccent;
+      default:
+        return AppColors.greyDark;
+    }
+  }
+
+  double _hazardMarkerHue(String type) {
+    switch (type.toLowerCase().trim()) {
+      case 'accident':
+        return BitmapDescriptor.hueRed;
+      case 'restricted':
+      case 'restricted_area':
+      case 'road_closed':
+        return BitmapDescriptor.hueViolet;
+      case 'construction':
+        return BitmapDescriptor.hueYellow;
+      case 'flood':
+      case 'flooding':
+        return BitmapDescriptor.hueAzure;
+      case 'traffic':
+      case 'heavy_traffic':
+        return BitmapDescriptor.hueOrange;
+      case 'weather':
+      case 'bad_weather':
+        return BitmapDescriptor.hueCyan;
+      default:
+        return BitmapDescriptor.hueRose;
+    }
+  }
+
+  IconData _hazardIcon(String type) {
+    switch (type.toLowerCase().trim()) {
+      case 'accident':
+        return Icons.car_crash_rounded;
+      case 'restricted':
+      case 'restricted_area':
+      case 'road_closed':
+        return Icons.block_rounded;
+      case 'construction':
+        return Icons.construction_rounded;
+      case 'flood':
+      case 'flooding':
+        return Icons.water_drop_rounded;
+      case 'traffic':
+      case 'heavy_traffic':
+        return Icons.traffic_rounded;
+      case 'weather':
+      case 'bad_weather':
+        return Icons.thunderstorm_rounded;
+      default:
+        return Icons.warning_amber_rounded;
+    }
+  }
+
+  String _formatHazardDate(DateTime? date) {
+    if (date == null) return 'Not available';
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+    return '${date.day}/${date.month}/${date.year} $hour:$minute';
+  }
+
+  String _formatCoordinate(double value) => value.toStringAsFixed(5);
 
   void _toggleMapType() {
     setState(() {
@@ -738,11 +859,11 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
       children: [
         Expanded(
           child: _SmallActionButton(
-            icon: Icons.bus_alert_rounded,
-            title: AppLocalizations.of(context).busStop,
-            color: AppColors.secondaryColor,
-            isLoading: _showingBusStops,
-            onTap: _showBusStops,
+            icon: Icons.warning_amber_rounded,
+            title: 'Hazards',
+            color: AppColors.dangerColor,
+            isLoading: _showingHazards,
+            onTap: _showHazards,
           ),
         ),
         const SizedBox(width: AppDesign.spaceMD),
@@ -789,6 +910,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                   zoom: 14,
                 ),
                 markers: _markers,
+                circles: _circles,
                 polylines: _polylines,
                 mapType: _currentMapType,
                 myLocationEnabled: true,
@@ -829,7 +951,7 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
               Container(
                 padding: const EdgeInsets.all(AppDesign.spaceSM),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                 ),
                 child: const Icon(
@@ -957,7 +1079,8 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withOpacity(0.1),
+                              color:
+                                  AppColors.primaryColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
@@ -1050,6 +1173,115 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
             ),
           );
         });
+  }
+
+  void _showHazardDetails(MapHazard hazard) {
+    final color = _hazardColor(hazard.type);
+    _mapController?.animateCamera(CameraUpdate.newLatLng(
+      _hazardPosition(hazard),
+    ));
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        final th = ThemeHelper.of(context);
+        return SafeArea(
+          child: Container(
+            margin: const EdgeInsets.all(AppDesign.spaceMD),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              boxShadow: [
+                BoxShadow(
+                  color: th.shadowMedium,
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                      ),
+                      child: Icon(_hazardIcon(hazard.type), color: color),
+                    ),
+                    const SizedBox(width: AppDesign.spaceMD),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            hazard.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: th.textPrimary,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          Text(
+                            hazard.typeLabel,
+                            style: TextStyle(
+                              color: color,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close_rounded, color: th.textSecondary),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppDesign.spaceLG),
+                _HazardDetailRow(
+                  icon: Icons.place_rounded,
+                  label: 'Location',
+                  value: hazard.location,
+                ),
+                _HazardDetailRow(
+                  icon: Icons.radar_rounded,
+                  label: 'Radius',
+                  value: hazard.radiusLabel,
+                ),
+                _HazardDetailRow(
+                  icon: Icons.my_location_rounded,
+                  label: 'Coordinates',
+                  value:
+                      '${_formatCoordinate(hazard.latitude)}, ${_formatCoordinate(hazard.longitude)}',
+                ),
+                _HazardDetailRow(
+                  icon: Icons.schedule_rounded,
+                  label: 'Updated',
+                  value: _formatHazardDate(hazard.updatedAt),
+                ),
+                if (hazard.createdAt != null)
+                  _HazardDetailRow(
+                    icon: Icons.add_circle_outline_rounded,
+                    label: 'Created',
+                    value: _formatHazardDate(hazard.createdAt),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildErrorState() {
@@ -1239,7 +1471,7 @@ class _TransitStepTile extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               color: (isBus ? AppColors.primaryColor : th.textDisabled)
-                  .withOpacity(0.12),
+                  .withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppDesign.radiusMD),
             ),
             child: Icon(
@@ -1294,6 +1526,56 @@ class _TransitStepTile extends StatelessWidget {
                 fontSize: 12,
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HazardDetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _HazardDetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppDesign.spaceMD),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppColors.primaryColor, size: 20),
+          const SizedBox(width: AppDesign.spaceMD),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: th.textSecondary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: AppDesign.spaceXS),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: th.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

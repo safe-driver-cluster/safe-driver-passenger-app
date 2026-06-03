@@ -112,6 +112,12 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if false; // Only system writes
     }
+
+    // Map hazards - read-only for authenticated users
+    match /hazards/{hazardId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Managed by admin/system
+    }
     
     // Emergency contacts - users can only access their own
     match /emergency_contacts/{userId} {

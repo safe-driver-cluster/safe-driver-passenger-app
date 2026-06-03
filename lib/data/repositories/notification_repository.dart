@@ -11,14 +11,43 @@ class NotificationRepository {
   static const String _notificationsCollection = 'notifications';
 
   /// Add notification to Firestore
-  Future<String> addNotification(NotificationModel notification) async {
+  Future<String> addNotification(
+    NotificationModel notification, {
+    String? documentId,
+  }) async {
     try {
-      final docRef = await _firestore
-          .collection(_notificationsCollection)
-          .add(notification.toJson());
+      if (documentId != null && documentId.isNotEmpty) {
+        final docRef =
+            _firestore.collection(_notificationsCollection).doc(documentId);
+        await docRef.set(notification.toJson(), SetOptions(merge: true));
+        return docRef.id;
+      }
+
+      final docRef = await _firestore.collection(_notificationsCollection).add(
+            notification.toJson(),
+          );
       return docRef.id;
     } catch (e) {
       print('Error adding notification: $e');
+      throw _handleException(e);
+    }
+  }
+
+  /// Get a single notification by document ID
+  Future<NotificationModel?> getNotificationById(String notificationId) async {
+    try {
+      final doc = await _firestore
+          .collection(_notificationsCollection)
+          .doc(notificationId)
+          .get();
+
+      if (!doc.exists) {
+        return null;
+      }
+
+      return NotificationModel.fromFirestore(doc);
+    } catch (e) {
+      print('Error getting notification by id: $e');
       throw _handleException(e);
     }
   }

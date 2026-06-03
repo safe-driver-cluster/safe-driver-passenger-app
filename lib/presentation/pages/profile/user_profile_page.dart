@@ -15,7 +15,7 @@ import '../../widgets/dashboard/reward_points_widget.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
-import 'notifications_page.dart';
+import 'received_notifications_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
@@ -25,7 +25,6 @@ class UserProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    final passengerAsync = ref.watch(currentPassengerProvider);
 
     final th = ThemeHelper.of(context);
     return Scaffold(
@@ -52,7 +51,7 @@ class UserProfilePage extends ConsumerWidget {
                   .refreshPassengerProfile();
 
               // Also refresh the passenger provider stream
-              ref.refresh(currentPassengerProvider);
+              ref.invalidate(currentPassengerProvider);
 
               // Extra wait to ensure all data is loaded
               await Future.delayed(const Duration(milliseconds: 800));
@@ -292,29 +291,6 @@ class UserProfilePage extends ConsumerWidget {
           child: CircularProgressIndicator(
             color: Colors.white,
             strokeWidth: 2,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        AppDesign.spaceSM,
-        AppDesign.spaceLG,
-        AppDesign.spaceLG,
-      ),
-      child: SizedBox(
-        height: 120,
-        child: Center(
-          child: Text(
-            AppLocalizations.of(context).unableToLoadProfile,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-            ),
           ),
         ),
       ),
@@ -625,7 +601,9 @@ class UserProfilePage extends ConsumerWidget {
       MenuItemData(l10n.notifications, Icons.notifications_outlined, () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const NotificationsPage()),
+          MaterialPageRoute(
+            builder: (context) => const ReceivedNotificationsPage(),
+          ),
         );
       }),
       MenuItemData(l10n.appSettings, Icons.settings_outlined, () {

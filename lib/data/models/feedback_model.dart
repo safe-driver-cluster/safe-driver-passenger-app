@@ -33,6 +33,7 @@ class FeedbackModel {
   final String comment;
   final List<String> images;
   final DateTime submittedAt;
+  final DateTime? feedbackDateTime;
 
   FeedbackModel({
     required this.id,
@@ -67,6 +68,7 @@ class FeedbackModel {
     required this.comment,
     required this.images,
     required this.submittedAt,
+    this.feedbackDateTime,
   });
 
   String get categoryDisplay {
@@ -236,6 +238,9 @@ class FeedbackModel {
       images: List<String>.from(json['images'] ?? []),
       submittedAt: DateTime.parse(
           json['submittedAt'] ?? DateTime.now().toIso8601String()),
+      feedbackDateTime: json['feedbackDateTime'] != null
+          ? DateTime.parse(json['feedbackDateTime'])
+          : null,
     );
   }
 
@@ -273,6 +278,7 @@ class FeedbackModel {
       'comment': comment,
       'images': images,
       'submittedAt': submittedAt.toIso8601String(),
+      'feedbackDateTime': feedbackDateTime?.toIso8601String(),
     };
   }
 
@@ -309,6 +315,7 @@ class FeedbackModel {
     String? comment,
     List<String>? images,
     DateTime? submittedAt,
+    DateTime? feedbackDateTime,
   }) {
     return FeedbackModel(
       id: id ?? this.id,
@@ -343,6 +350,7 @@ class FeedbackModel {
       comment: comment ?? this.comment,
       images: images ?? this.images,
       submittedAt: submittedAt ?? this.submittedAt,
+      feedbackDateTime: feedbackDateTime ?? this.feedbackDateTime,
     );
   }
 

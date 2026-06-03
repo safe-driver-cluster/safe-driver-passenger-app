@@ -183,6 +183,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
     FeedbackType type = FeedbackType.general,
     LocationModel? location,
     List<String>? images,
+    DateTime? feedbackDateTime,
     Map<String, dynamic>? metadata,
   }) async {
     try {
@@ -240,6 +241,7 @@ class FeedbackController extends StateNotifier<AsyncValue<void>> {
         comment: comment,
         images: images ?? [],
         submittedAt: DateTime.now(),
+        feedbackDateTime: feedbackDateTime,
       );
 
       debugPrint('📋 FeedbackController: Created feedback model');

@@ -89,93 +89,12 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
       title: widget.categoryName,
       accentColor: accentColor,
       children: [
-        _buildOverviewCard(accentColor),
-        const SizedBox(height: AppDesign.spaceLG),
         _buildSearchCard(),
         const SizedBox(height: AppDesign.spaceLG),
         _buildIssueSection(accentColor),
         const SizedBox(height: AppDesign.spaceLG),
         _buildContactSection(contactInfo, accentColor),
       ],
-    );
-  }
-
-  Widget _buildOverviewCard(Color accentColor) {
-    final th = ThemeHelper.of(context);
-
-    return ProfileSectionCard(
-      padding: EdgeInsets.zero,
-      child: Container(
-        padding: const EdgeInsets.all(AppDesign.spaceLG),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              accentColor.withValues(alpha: 0.18),
-              AppColors.primaryColor.withValues(alpha: 0.06),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              ),
-              child: Icon(
-                _categoryIconForName(widget.categoryName),
-                color: accentColor,
-                size: AppDesign.iconMD,
-              ),
-            ),
-            const SizedBox(width: AppDesign.spaceLG),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Find the right fix faster',
-                    style: AppTextStyles.headline6.copyWith(
-                      color: th.textPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: AppDesign.spaceXS),
-                  Text(
-                    'Browse step-by-step help for ${widget.categoryName.toLowerCase()} and contact support if you still need a hand.',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: th.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: AppDesign.spaceMD),
-                  Wrap(
-                    spacing: AppDesign.spaceSM,
-                    runSpacing: AppDesign.spaceSM,
-                    children: [
-                      _InfoChip(
-                        icon: Icons.article_outlined,
-                        label: '${_issues.length} issues',
-                        color: accentColor,
-                      ),
-                      const _InfoChip(
-                        icon: Icons.manage_search_rounded,
-                        label: 'Search supported',
-                        color: AppColors.primaryColor,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -541,60 +460,6 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
       default:
         return AppColors.primaryColor;
     }
-  }
-
-  IconData _categoryIconForName(String categoryName) {
-    switch (categoryName) {
-      case 'App Issues':
-        return Icons.bug_report_outlined;
-      case 'Bus Services':
-        return Icons.directions_bus_outlined;
-      case 'Account & Security':
-        return Icons.lock_person_outlined;
-      default:
-        return Icons.support_agent_rounded;
-    }
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  const _InfoChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDesign.spaceMD,
-        vertical: AppDesign.spaceSM,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-        border: Border.all(color: color.withValues(alpha: 0.16)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: AppDesign.spaceXS),
-          Text(
-            label,
-            style: AppTextStyles.labelLarge.copyWith(
-              color: color,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
 

@@ -12,6 +12,57 @@ class FirebaseStorageService {
   static const String userProfilePath = 'users/profiles';
   static const String busPhotoPath = 'buses/photos';
 
+  /// Upload a passenger profile image.
+  /// Returns the Firebase Storage download URL.
+  Future<String> uploadUserProfileImage({
+    required File file,
+    required String userId,
+  }) async {
+    try {
+      debugPrint('📤 FirebaseStorageService: Starting profile image upload...');
+      debugPrint('   User ID: $userId');
+      debugPrint('   File path: ${file.path}');
+
+      final fileName = _getFileName(file.path);
+      final fileSize = file.lengthSync();
+
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      if (fileSize > maxFileSize) {
+        throw Exception(
+            'Profile image exceeds 5MB limit. Current size: ${(fileSize / (1024 * 1024)).toStringAsFixed(2)}MB');
+      }
+
+      if (!isImage(fileName)) {
+        throw Exception('Please select a valid image file.');
+      }
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final storagePath = '$userProfilePath/$userId/$timestamp-$fileName';
+      final ref = _storage.ref(storagePath);
+
+      final metadata = SettableMetadata(
+        contentType: _getContentType(fileName),
+        customMetadata: {
+          'userId': userId,
+          'uploadedAt': DateTime.now().toIso8601String(),
+          'originalFileName': fileName,
+          'type': 'profileImage',
+        },
+      );
+
+      final taskSnapshot = await ref.putFile(file, metadata);
+      final downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+      debugPrint('✅ FirebaseStorageService: Profile image upload completed');
+      debugPrint('   Download URL: $downloadUrl');
+
+      return downloadUrl;
+    } catch (e) {
+      debugPrint('❌ FirebaseStorageService: Profile image upload failed: $e');
+      throw Exception('Failed to upload profile image: $e');
+    }
+  }
+
   /// Upload feedback media (image or video)
   /// Returns the download URL of the uploaded file
   Future<String> uploadFeedbackMedia({
@@ -26,7 +77,7 @@ class FirebaseStorageService {
       debugPrint('   File path: ${file.path}');
 
       // Get file info
-      final fileName = file.path.split('/').last;
+      final fileName = _getFileName(file.path);
       final fileSize = file.lengthSync();
 
       debugPrint('   File name: $fileName');
@@ -235,5 +286,9 @@ class FirebaseStorageService {
       default:
         return 'application/octet-stream';
     }
+  }
+
+  static String _getFileName(String path) {
+    return path.split(RegExp(r'[\\/]')).last;
   }
 }

@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import 'package:safedriver_passenger_app/providers/app_providers.dart';
 import 'package:safedriver_passenger_app/providers/language_provider.dart';
@@ -25,141 +24,145 @@ import 'data/services/biometric_service.dart';
 import 'firebase_options.dart';
 import 'presentation/widgets/common/web_responsive_layout.dart';
 
-// Top-level function to handle background messages
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Ensure Firebase is initialized (but don't initialize if already done)
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform);
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     }
-  } catch (e) {
-    // If Firebase is already initialized, continue
-    if (!e.toString().contains('duplicate-app')) {
+  } catch (error) {
+    if (!error.toString().contains('duplicate-app')) {
       rethrow;
     }
   }
+
   debugPrint('Handling a background message: ${message.messageId}');
+  await NotificationService.persistBackgroundMessage(message);
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
+  await _runStartupTask(
+    'Load environment variables',
+    () => dotenv.load(fileName: '.env'),
+  );
 
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  await _runStartupTask(
+    'Set preferred orientations',
+    () => SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]),
+  );
 
-  try {
-    // Initialize Firebase with proper configuration (only if not already initialized)
-    try {
-      if (Firebase.apps.isEmpty) {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-      }
-    } catch (e) {
-      // If Firebase is already initialized (common during hot restart), continue
-      if (!e.toString().contains('duplicate-app')) {
-        rethrow;
-      }
-      debugPrint('Firebase already initialized, continuing...');
-    }
+  final firebaseReady = await _initializeFirebaseCore();
 
-    // Initialize Firebase App Check for security
-    try {
-      if (kDebugMode) {
-        // Use debug provider in debug mode (for emulators)
-        await FirebaseAppCheck.instance.activate(
-          androidProvider: AndroidProvider.debug,
-          appleProvider: AppleProvider.debug,
-          webProvider: ReCaptchaV3Provider(''),
-        );
-        debugPrint('✅ Firebase App Check initialized with DEBUG provider');
-        debugPrint(
-            '🔑 For production, register debug secret in Firebase Console');
-      } else {
-        // Production mode with proper App Check
-        await FirebaseAppCheck.instance.activate(
-          androidProvider: AndroidProvider.playIntegrity,
-          appleProvider: AppleProvider.appAttest,
-        );
-        debugPrint('✅ Firebase App Check initialized in PRODUCTION mode');
-      }
-    } catch (e) {
-      debugPrint('⚠️ Firebase App Check initialization failed: $e');
-      // Continue without App Check in development
-    }
+  if (firebaseReady) {
+    await _initializeFirebaseAppCheck();
 
-    // Enable Firebase Auth persistence to keep user logged in
-    try {
-      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
-      debugPrint(
-          '✅ Firebase Auth persistence ENABLED - User will stay logged in');
-    } catch (e) {
-      debugPrint('⚠️ Firebase Auth persistence configuration: $e');
-      // Persistence might be enabled by default on mobile, this is fine
-    }
+    await _runStartupTask(
+      'Configure Firebase Auth persistence',
+      () => FirebaseAuth.instance.setPersistence(Persistence.LOCAL),
+    );
 
-    // Initialize Firebase services
-    await FirebaseService.instance.initialize();
+    await _runStartupTask(
+      'Initialize Firebase services',
+      () => FirebaseService.instance.initialize(),
+    );
 
-    // Initialize Firebase Messaging background handler
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Initialize Crashlytics for error logging
-    await CrashlyticsService.instance.initialize();
-
-    // Initialize Hive for local storage
-    await Hive.initFlutter();
-
-    // Initialize storage service for local data persistence
-    print('🚀 Initializing storage service...');
-    final storageService = StorageService.instance;
-    final storageInitialized = await storageService.initialize();
-    print('💾 Storage service initialized: $storageInitialized');
-
-    // Initialize auth service
-    print('🔐 Initializing auth service...');
-    final authService = AuthService();
-    await authService.initialize();
-    print('🔐 Auth service initialized');
-
-    // Initialize biometric service
-    print('🔐 Initializing biometric service...');
-    final biometricService = BiometricService();
-    await biometricService.initialize();
-    print('📱 Biometric service initialized');
-
-    // Initialize notification service
-    final notificationService = NotificationService.instance;
-    await notificationService.initialize();
-
-    runApp(
-      const ProviderScope(
-        child: SafeDriverApp(),
-      ),
+    await _runStartupTask(
+      'Initialize Crashlytics',
+      () => CrashlyticsService.instance.initialize(),
     );
-  } catch (error, stackTrace) {
-    // Log error to Crashlytics if available
-    try {
-      await CrashlyticsService.instance.logError(
-        error,
-        stackTrace,
-        reason: 'App initialization failed',
-        fatal: true,
+
+    await _runStartupTask(
+      'Initialize notification service',
+      () => NotificationService.instance.initialize(),
+    );
+  }
+
+  await _runStartupTask(
+    'Initialize storage service',
+    () => StorageService.instance.initialize(),
+  );
+
+  if (firebaseReady) {
+    await _runStartupTask(
+      'Initialize auth service',
+      () => AuthService().initialize(),
+    );
+  }
+
+  await _runStartupTask(
+    'Initialize biometric service',
+    () => BiometricService().initialize(),
+  );
+
+  runApp(
+    const ProviderScope(
+      child: SafeDriverApp(),
+    ),
+  );
+}
+
+Future<bool> _initializeFirebaseCore() async {
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       );
-    } catch (_) {
-      // Crashlytics logging failed, continue with normal error handling
+    }
+    return true;
+  } catch (error, stackTrace) {
+    if (error.toString().contains('duplicate-app')) {
+      debugPrint('Firebase already initialized, continuing...');
+      return true;
     }
 
-    // Handle initialization errors
-    debugPrint('Initialization error: $error');
-    runApp(const SafeDriverErrorApp());
+    debugPrint('Firebase initialization skipped: $error');
+    debugPrintStack(stackTrace: stackTrace);
+    return false;
+  }
+}
+
+Future<void> _initializeFirebaseAppCheck() async {
+  await _runStartupTask('Initialize Firebase App Check', () async {
+    if (kDebugMode) {
+      await FirebaseAppCheck.instance.activate(
+        androidProvider: AndroidProvider.debug,
+        appleProvider: AppleProvider.debug,
+        webProvider: ReCaptchaV3Provider(''),
+      );
+      return;
+    }
+
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.appAttest,
+    );
+  });
+}
+
+Future<void> _runStartupTask(
+  String label,
+  Future<dynamic> Function() task,
+) async {
+  try {
+    await task();
+    debugPrint('$label completed');
+  } catch (error, stackTrace) {
+    debugPrint('$label failed: $error');
+    debugPrintStack(stackTrace: stackTrace);
+    await CrashlyticsService.instance.logError(
+      error,
+      stackTrace,
+      reason: label,
+      fatal: false,
+    );
   }
 }
 
@@ -171,7 +174,8 @@ class SafeDriverApp extends ConsumerWidget {
     final currentLocale = ref.watch(currentLocaleProvider);
     final themeMode = ref.watch(themeModeProvider);
     debugPrint(
-        '🌐 MaterialApp building with locale: ${currentLocale.languageCode}');
+      'MaterialApp building with locale: ${currentLocale.languageCode}',
+    );
 
     return MaterialApp(
       key: ValueKey(currentLocale.languageCode),
@@ -193,54 +197,6 @@ class SafeDriverApp extends ConsumerWidget {
       builder: (context, child) => WebPageFrame(
         maxWidth: 1440,
         child: child ?? const SizedBox.shrink(),
-      ),
-    );
-  }
-}
-
-class SafeDriverErrorApp extends StatelessWidget {
-  const SafeDriverErrorApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SafeDriver',
-      home: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Failed to initialize the app',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Please restart the application',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  SystemNavigator.pop();
-                },
-                child: const Text('Exit'),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

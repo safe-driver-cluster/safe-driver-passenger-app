@@ -24,7 +24,7 @@ import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/language/language_selection_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/onboarding/onboarding_page.dart';
-import '../presentation/pages/profile/notifications_page.dart';
+import '../presentation/pages/profile/received_notifications_page.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
@@ -152,7 +152,7 @@ class AppRoutes {
         return _route(settings, DashboardPage(initialTab: initialTab));
 
       case notifications:
-        return _route(settings, const NotificationsPage());
+        return _route(settings, const ReceivedNotificationsPage());
 
       case buses:
         return _route(settings, const BusListPage());
