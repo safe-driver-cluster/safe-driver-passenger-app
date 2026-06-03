@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,6 +46,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
   final TextEditingController _commentController = TextEditingController();
   Set<String> selectedQuickActions = <String>{};
   List<File> selectedMediaFiles = [];
+  DateTime selectedFeedbackDateTime = DateTime.now();
   Position? currentLocation;
   bool isSubmitting = false;
   bool isLoadingLocation = false;
@@ -132,6 +134,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
                   children: [
                     _buildBusInfoHeader(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
+                    _buildDateTimeSection(),
+                    const SizedBox(height: AppDesign.spaceMD),
                     _buildRatingSection(l10n),
                     const SizedBox(height: AppDesign.spaceMD),
                     _buildQuickActionsSection(l10n),
@@ -199,6 +203,66 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         isLoadingLocation = false;
       });
     }
+  }
+
+  Future<void> _selectFeedbackDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedFeedbackDateTime,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.primaryColor,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate == null || !mounted) return;
+
+    setState(() {
+      selectedFeedbackDateTime = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        selectedFeedbackDateTime.hour,
+        selectedFeedbackDateTime.minute,
+      );
+    });
+  }
+
+  Future<void> _selectFeedbackTime() async {
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(selectedFeedbackDateTime),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: AppColors.primaryColor,
+                ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime == null || !mounted) return;
+
+    setState(() {
+      selectedFeedbackDateTime = DateTime(
+        selectedFeedbackDateTime.year,
+        selectedFeedbackDateTime.month,
+        selectedFeedbackDateTime.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    });
   }
 
   Widget _buildModernAppBar(AppLocalizations l10n) {
@@ -337,6 +401,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           GestureDetector(
             onTap: _pickMediaFile,
             child: Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(AppDesign.spaceLG),
               decoration: BoxDecoration(
                 border: Border.all(
@@ -381,6 +446,148 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ...selectedMediaFiles.map((file) => _buildMediaFileItem(file)),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeSection() {
+    final th = ThemeHelper.of(context);
+    final dateText =
+        DateFormat('EEE, MMM dd, yyyy').format(selectedFeedbackDateTime);
+    final timeText = DateFormat('hh:mm a').format(selectedFeedbackDateTime);
+
+    return Container(
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowLight,
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: const Icon(
+                  Icons.event_available_rounded,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceLG),
+              Expanded(
+                child: Text(
+                  'Feedback Date & Time',
+                  style: TextStyle(
+                    fontSize: AppDesign.textLG,
+                    fontWeight: FontWeight.w600,
+                    color: th.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDesign.spaceSM),
+          Text(
+            'Defaults to today and current time. Change it if the issue happened earlier.',
+            style: TextStyle(
+              fontSize: AppDesign.textSM,
+              color: th.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: _buildDateTimeButton(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Date',
+                  value: dateText,
+                  onTap: _selectFeedbackDate,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                flex: 2,
+                child: _buildDateTimeButton(
+                  icon: Icons.access_time_rounded,
+                  label: 'Time',
+                  value: timeText,
+                  onTap: _selectFeedbackTime,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeButton({
+    required IconData icon,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    final th = ThemeHelper.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+      child: Container(
+        padding: const EdgeInsets.all(AppDesign.spaceMD),
+        decoration: BoxDecoration(
+          color: th.subtleBackground,
+          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+          border: Border.all(color: th.border),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: AppColors.primaryColor, size: 20),
+            const SizedBox(width: AppDesign.spaceSM),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: th.textSecondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -587,6 +794,8 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
         allowMultiple: true,
         allowCompression: true,
       );
+
+      if (!mounted) return;
 
       if (result != null) {
         final newFiles = result.files
@@ -1269,6 +1478,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
       debugPrint('🚌 Bus: ${widget.busNumber}');
       debugPrint('⭐ Rating: $selectedRating');
       debugPrint('📝 Comment: ${_commentController.text.trim()}');
+      debugPrint('🕒 Feedback time: $selectedFeedbackDateTime');
       debugPrint('📁 Media files: ${selectedMediaFiles.length}');
 
       // Upload media files to Firebase Storage
@@ -1329,6 +1539,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
             ? _getRatingText(l10n)
             : selectedQuickActions.first,
         images: uploadedMediaUrls,
+        feedbackDateTime: selectedFeedbackDateTime,
         location: currentLocation != null
             ? location_models.LocationModel(
                 latitude: currentLocation!.latitude,
@@ -1347,6 +1558,7 @@ class _FeedbackSubmissionPageState extends ConsumerState<FeedbackSubmissionPage>
           'platform': 'mobile',
           'userEmail': user['email']!,
           'submittedAt': DateTime.now().toIso8601String(),
+          'feedbackDateTime': selectedFeedbackDateTime.toIso8601String(),
           'mediaCount': uploadedMediaUrls.length,
           'mediaUrls': uploadedMediaUrls,
         },
