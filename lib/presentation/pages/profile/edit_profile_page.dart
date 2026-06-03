@@ -11,6 +11,7 @@ import '../../../core/constants/design_constants.dart';
 import '../../../core/services/sos_service.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/passenger_model.dart';
+import '../../../data/services/firebase_storage_service.dart';
 import '../../../data/services/passenger_service.dart';
 import '../../widgets/common/professional_widgets.dart';
 import '../../widgets/sos/sos_contacts_dialog.dart';
@@ -977,6 +978,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         relationship: _emergencyRelationController.text.trim(),
       );
 
+      String? profileImageUrl = _currentProfile?.profileImageUrl;
+      if (_selectedImage != null) {
+        profileImageUrl = await FirebaseStorageService().uploadUserProfileImage(
+          file: _selectedImage!,
+          userId: user.uid,
+        );
+      }
+
       // Create updated profile
       final updatedProfile = _currentProfile!.copyWith(
         firstName: _firstNameController.text.trim(),
@@ -984,6 +993,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         phoneNumber: _phoneController.text.trim(),
         dateOfBirth: dateOfBirth,
         gender: genderValue,
+        profileImageUrl: profileImageUrl,
         address: updatedAddress,
         preferences: updatedPreferences,
         emergencyContact: updatedEmergencyContact,
@@ -1007,6 +1017,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             ),
           ),
         );
+
+        setState(() {
+          _profileImageUrl = profileImageUrl;
+          _selectedImage = null;
+          _currentProfile = updatedProfile;
+        });
 
         Navigator.of(context).pop(true);
       }
