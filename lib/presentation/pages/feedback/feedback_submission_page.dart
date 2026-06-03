@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
