@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
@@ -426,6 +427,10 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
               ),
             ),
           ],
+          if (_getFeedbackMedia(feedback).isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildFeedbackMediaStrip(th, feedback),
+          ],
           const SizedBox(height: 12),
           Row(
             children: [
@@ -452,6 +457,190 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
         ],
       ),
     );
+  }
+
+  List<_FeedbackMediaItem> _getFeedbackMedia(FeedbackModel feedback) {
+    final media = <_FeedbackMediaItem>[];
+    final seenUrls = <String>{};
+
+    void addMedia(String? url, {String? fileType}) {
+      final trimmedUrl = url?.trim();
+      if (trimmedUrl == null || trimmedUrl.isEmpty) return;
+      if (!seenUrls.add(trimmedUrl)) return;
+
+      media.add(
+        _FeedbackMediaItem(
+          url: trimmedUrl,
+          fileType: fileType ?? _inferMediaType(trimmedUrl),
+        ),
+      );
+    }
+
+    for (final imageUrl in feedback.images) {
+      addMedia(imageUrl);
+    }
+
+    for (final attachment in feedback.attachments) {
+      addMedia(attachment.fileUrl, fileType: attachment.fileType);
+    }
+
+    final metadataUrls = feedback.metadata['mediaUrls'];
+    if (metadataUrls is List) {
+      for (final url in metadataUrls) {
+        addMedia(url?.toString());
+      }
+    }
+
+    return media;
+  }
+
+  Widget _buildFeedbackMediaStrip(ThemeHelper th, FeedbackModel feedback) {
+    final media = _getFeedbackMedia(feedback);
+
+    return SizedBox(
+      height: 92,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: media.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final item = media[index];
+          return _buildMediaPreviewTile(th, item, index + 1);
+        },
+      ),
+    );
+  }
+
+  Widget _buildMediaPreviewTile(
+    ThemeHelper th,
+    _FeedbackMediaItem item,
+    int number,
+  ) {
+    return InkWell(
+      onTap: () => _openMediaPreview(item),
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 92,
+        height: 92,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: th.subtleBackground,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: th.border),
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (item.isImage)
+              Image.network(
+                item.url,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildMediaFallback(th, item),
+              )
+            else
+              _buildMediaFallback(th, item),
+            Positioned(
+              left: 6,
+              top: 6,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  number.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+            if (item.isVideo)
+              const Center(
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Color(0xB3000000),
+                  child: Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMediaFallback(ThemeHelper th, _FeedbackMediaItem item) {
+    return Container(
+      color: AppColors.primaryColor.withValues(alpha: 0.08),
+      child: Icon(
+        item.isVideo ? Icons.videocam_rounded : Icons.broken_image_rounded,
+        color: AppColors.primaryColor,
+        size: 28,
+      ),
+    );
+  }
+
+  void _openMediaPreview(_FeedbackMediaItem item) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(18),
+          backgroundColor: Colors.black,
+          child: AspectRatio(
+            aspectRatio: item.isVideo ? 16 / 9 : 1,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: item.isVideo
+                      ? _FeedbackVideoPreview(url: item.url)
+                      : InteractiveViewer(
+                          child: Image.network(
+                            item.url,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(
+                                Icons.broken_image_rounded,
+                                color: Colors.white70,
+                                size: 48,
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _inferMediaType(String url) {
+    final lowerUrl = Uri.decodeFull(url).toLowerCase();
+    if (lowerUrl.contains('.mp4')) return 'video/mp4';
+    if (lowerUrl.contains('.mov')) return 'video/quicktime';
+    if (lowerUrl.contains('.avi')) return 'video/x-msvideo';
+    if (lowerUrl.contains('.mkv')) return 'video/x-matroska';
+    if (lowerUrl.contains('.webp')) return 'image/webp';
+    if (lowerUrl.contains('.png')) return 'image/png';
+    if (lowerUrl.contains('.gif')) return 'image/gif';
+    return 'image/jpeg';
   }
 
   Widget _buildStatusBadge(Color color, String label) {
@@ -573,5 +762,103 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
       case FeedbackStatus.escalated:
         return Colors.red.shade700;
     }
+  }
+}
+
+class _FeedbackMediaItem {
+  final String url;
+  final String fileType;
+
+  const _FeedbackMediaItem({
+    required this.url,
+    required this.fileType,
+  });
+
+  bool get isVideo => fileType.startsWith('video/');
+  bool get isImage => fileType.startsWith('image/');
+}
+
+class _FeedbackVideoPreview extends StatefulWidget {
+  final String url;
+
+  const _FeedbackVideoPreview({required this.url});
+
+  @override
+  State<_FeedbackVideoPreview> createState() => _FeedbackVideoPreviewState();
+}
+
+class _FeedbackVideoPreviewState extends State<_FeedbackVideoPreview> {
+  late final VideoPlayerController _controller;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+      ..initialize().then((_) {
+        if (!mounted) return;
+        setState(() {});
+        _controller.play();
+      }).catchError((_) {
+        if (mounted) setState(() => _hasError = true);
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hasError) {
+      return const Center(
+        child: Icon(
+          Icons.videocam_off_rounded,
+          color: Colors.white70,
+          size: 48,
+        ),
+      );
+    }
+
+    if (!_controller.value.isInitialized) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _controller.value.isPlaying
+              ? _controller.pause()
+              : _controller.play();
+        });
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: VideoPlayer(_controller),
+            ),
+          ),
+          if (!_controller.value.isPlaying)
+            const CircleAvatar(
+              radius: 26,
+              backgroundColor: Color(0xB3000000),
+              child: Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 38,
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
