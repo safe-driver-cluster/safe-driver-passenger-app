@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
-import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/phone_auth_provider.dart';
 import '../../widgets/common/custom_back_button.dart';
@@ -35,6 +34,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   Timer? _timer;
   int _seconds = 60;
   bool _canResend = false;
+  bool _isVerifying = false;
 
   @override
   void initState() {
@@ -94,6 +94,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   }
 
   Future<void> _verifyOtp() async {
+    if (_isVerifying) return;
+
     final l10n = AppLocalizations.of(context);
     if (_otpCode.length != 6) {
       CustomSnackBar.showError(
@@ -104,6 +106,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     }
 
     try {
+      setState(() => _isVerifying = true);
+
       final phoneAuthController =
           ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
@@ -113,6 +117,10 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
         context,
         '${l10n.verificationFailed}: ${e.toString()}',
       );
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
+      }
     }
   }
 
@@ -148,7 +156,6 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
@@ -334,8 +341,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                       // Verify Button
                       CustomButton(
                         text: l10n.verifyCode,
-                        onPressed: _verifyOtp,
-                        isLoading: isLoading,
+                        onPressed: _isVerifying ? null : _verifyOtp,
+                        isLoading: isLoading || _isVerifying,
                       ),
 
                       const SizedBox(height: 24),
