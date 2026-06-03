@@ -16,6 +16,8 @@ class PhoneAuthService {
   /// Send OTP to phone number
   Future<PhoneAuthResult> sendOtp(String phoneNumber) async {
     try {
+      await _signOutDriverSessionIfNeeded();
+
       // Format and validate phone number
       final formattedPhone =
           _smsGateway.formatSriLankanPhoneNumber(phoneNumber);
@@ -54,6 +56,8 @@ class PhoneAuthService {
     required String phoneNumber,
   }) async {
     try {
+      await _signOutDriverSessionIfNeeded();
+
       print('🔐 Verifying OTP: $otpCode');
 
       // Verify OTP via SMS gateway
@@ -102,6 +106,15 @@ class PhoneAuthService {
   /// Sign out
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  Future<void> _signOutDriverSessionIfNeeded() async {
+    final user = _auth.currentUser;
+    if (user != null && user.uid.toLowerCase().startsWith('driver_')) {
+      print(
+          '⚠️ Driver FirebaseAuth session found in passenger OTP flow. Signing out: ${user.uid}');
+      await _auth.signOut();
+    }
   }
 
   /// Delete current user account
