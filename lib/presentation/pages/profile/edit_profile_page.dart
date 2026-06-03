@@ -709,6 +709,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             icon: Icons.phone_in_talk_outlined,
             keyboardType: TextInputType.phone,
           ),
+          const SizedBox(height: AppDesign.spaceMD),
+
+          _buildFormField(
+            controller: _emergencyRelationController,
+            label: AppLocalizations.of(context).relationship,
+            icon: Icons.favorite_outline_rounded,
+          ),
         ],
       ),
     );
@@ -1005,6 +1012,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         userId: user.uid,
         passenger: updatedProfile,
       );
+      await _saveEmergencyContactToSos(updatedEmergencyContact);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1035,6 +1043,40 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       if (mounted) {
         setState(() => _isSaving = false);
       }
+    }
+  }
+
+  Future<void> _saveEmergencyContactToSos(
+      PassengerEmergencyContact emergencyContact) async {
+    final name = emergencyContact.name.trim();
+    final phoneNumber = emergencyContact.phoneNumber.trim();
+
+    if (name.isEmpty || phoneNumber.isEmpty) {
+      return;
+    }
+
+    final contacts = await _sosService.getContacts();
+    final updatedContact = SosContact(
+      id: contacts.isEmpty
+          ? DateTime.now().millisecondsSinceEpoch.toString()
+          : ([...contacts]..sort(_compareSosContactsNewestFirst)).first.id,
+      name: name,
+      phoneNumber: phoneNumber,
+      relationship: emergencyContact.relationship.trim(),
+      sendSms: contacts.isEmpty
+          ? true
+          : ([...contacts]..sort(_compareSosContactsNewestFirst)).first.sendSms,
+      sendWhatsapp: contacts.isEmpty
+          ? true
+          : ([...contacts]..sort(_compareSosContactsNewestFirst))
+              .first
+              .sendWhatsapp,
+    );
+
+    if (contacts.isEmpty) {
+      await _sosService.addContact(updatedContact);
+    } else {
+      await _sosService.updateContact(updatedContact);
     }
   }
 
