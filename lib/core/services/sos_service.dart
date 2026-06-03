@@ -116,6 +116,24 @@ class SosService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  String? get _currentUserId => _auth.currentUser?.uid;
+
+  String _contactsCacheKey(String? userId) {
+    return userId == null ? _contactsKey : '${_contactsKey}_$userId';
+  }
+
+  String _autoSendCacheKey(String? userId) {
+    return userId == null ? _sosEnabledKey : '${_sosEnabledKey}_$userId';
+  }
+
+  SosContact _contactFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+    return SosContact.fromJson({
+      ...?data,
+      'id': data?['id'] ?? doc.id,
+    });
+  }
+
   DocumentReference<Map<String, dynamic>> _sosUserDoc(String userId) {
     return _firestore.collection(_sosCollection).doc(userId);
   }
@@ -144,39 +162,40 @@ class SosService {
         final doc = await _sosContactsRef(user.uid).get();
 
         if (doc.docs.isNotEmpty) {
-          final contacts =
-              doc.docs.map((d) => SosContact.fromJson(d.data())).toList();
+          final contacts = doc.docs.map(_contactFromDoc).toList();
           // Cache locally
-          await _saveContactsLocal(contacts);
+          await _saveContactsLocal(contacts, user.uid);
           return contacts;
         }
 
         final legacyDoc = await _legacySosContactsRef(user.uid).get();
         if (legacyDoc.docs.isNotEmpty) {
-          final contacts =
-              legacyDoc.docs.map((d) => SosContact.fromJson(d.data())).toList();
-          await _saveContactsLocal(contacts);
+          final contacts = legacyDoc.docs.map(_contactFromDoc).toList();
+          await _saveContactsLocal(contacts, user.uid);
           await saveContacts(contacts);
           return contacts;
         }
+
+        return _getContactsLocal(user.uid);
       }
 
       // Fallback to local storage
       return _getContactsLocal();
     } catch (e) {
       // Fallback to local storage on error
-      return _getContactsLocal();
+      return _getContactsLocal(_currentUserId);
     }
   }
 
   /// Save SOS contacts (both local and Firestore)
   Future<void> saveContacts(List<SosContact> contacts) async {
+    final user = _auth.currentUser;
+
     // Save locally
-    await _saveContactsLocal(contacts);
+    await _saveContactsLocal(contacts, user?.uid);
 
     // Save to Firestore if authenticated
     try {
-      final user = _auth.currentUser;
       if (user != null) {
         final batch = _firestore.batch();
         final sosUserRef = _sosUserDoc(user.uid);
@@ -198,7 +217,11 @@ class SosService {
 
         // Add new
         for (var contact in contacts) {
-          batch.set(collectionRef.doc(contact.id), contact.toJson());
+          batch.set(collectionRef.doc(contact.id), {
+            ...contact.toJson(),
+            'userId': user.uid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
         }
 
         await batch.commit();
@@ -232,9 +255,9 @@ class SosService {
     await saveContacts(contacts);
   }
 
-  Future<List<SosContact>> _getContactsLocal() async {
+  Future<List<SosContact>> _getContactsLocal([String? userId]) async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonStr = prefs.getString(_contactsKey);
+    final jsonStr = prefs.getString(_contactsCacheKey(userId));
     if (jsonStr == null) return [];
     final List<dynamic> jsonList = json.decode(jsonStr);
     return jsonList
@@ -242,22 +265,23 @@ class SosService {
         .toList();
   }
 
-  Future<void> _saveContactsLocal(List<SosContact> contacts) async {
+  Future<void> _saveContactsLocal(
+      List<SosContact> contacts, String? userId) async {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = contacts.map((c) => c.toJson()).toList();
-    await prefs.setString(_contactsKey, json.encode(jsonList));
+    await prefs.setString(_contactsCacheKey(userId), json.encode(jsonList));
   }
 
   /// Check if SOS auto-send is enabled
   Future<bool> isAutoSendEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_sosEnabledKey) ?? true;
+    return prefs.getBool(_autoSendCacheKey(_currentUserId)) ?? true;
   }
 
   /// Enable/disable SOS auto-send
   Future<void> setAutoSendEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_sosEnabledKey, enabled);
+    await prefs.setBool(_autoSendCacheKey(_currentUserId), enabled);
   }
 
   // ─── SOS Alert ─────────────────────────────────────────────────────────
