@@ -1056,21 +1056,18 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     }
 
     final contacts = await _sosService.getContacts();
+    final latestContact = contacts.isEmpty
+        ? null
+        : ([...contacts]..sort(_compareSosContactsNewestFirst)).first;
     final updatedContact = SosContact(
       id: contacts.isEmpty
           ? DateTime.now().millisecondsSinceEpoch.toString()
-          : ([...contacts]..sort(_compareSosContactsNewestFirst)).first.id,
+          : latestContact!.id,
       name: name,
       phoneNumber: phoneNumber,
       relationship: emergencyContact.relationship.trim(),
-      sendSms: contacts.isEmpty
-          ? true
-          : ([...contacts]..sort(_compareSosContactsNewestFirst)).first.sendSms,
-      sendWhatsapp: contacts.isEmpty
-          ? true
-          : ([...contacts]..sort(_compareSosContactsNewestFirst))
-              .first
-              .sendWhatsapp,
+      sendSms: latestContact?.sendSms ?? true,
+      sendWhatsapp: latestContact?.sendWhatsapp ?? true,
     );
 
     if (contacts.isEmpty) {
