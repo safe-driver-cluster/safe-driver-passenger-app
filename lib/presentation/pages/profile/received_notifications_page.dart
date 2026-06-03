@@ -636,7 +636,6 @@ class ReceivedNotificationsContent extends ConsumerWidget {
 
     for (final notification in notifications) {
       final key = [
-        notification.type.name,
         notification.title.trim().toLowerCase(),
         notification.body.trim().toLowerCase(),
         notification.actionUrl ?? '',
