@@ -161,16 +161,33 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
       } else {
         state = state.copyWith(
           isLoading: false,
-          error: result.error,
+          error: _isOtpAlreadyVerified(result.error) ? null : result.error,
+          currentStep: _isOtpAlreadyVerified(result.error)
+              ? PhoneAuthStep.complete
+              : state.currentStep,
         );
       }
     } catch (e) {
       if (!mounted) return;
+      if (_isOtpAlreadyVerified(e.toString())) {
+        state = state.copyWith(
+          isLoading: false,
+          error: null,
+          currentStep: PhoneAuthStep.complete,
+        );
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to verify OTP: $e',
       );
     }
+  }
+
+  bool _isOtpAlreadyVerified(String? message) {
+    final lowerMessage = message?.toLowerCase() ?? '';
+    return lowerMessage.contains('already') &&
+        lowerMessage.contains('verified');
   }
 
   /// Resend OTP
