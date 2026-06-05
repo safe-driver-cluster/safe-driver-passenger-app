@@ -95,6 +95,12 @@ service cloud.firestore {
       }
     }
     
+    // Drivers collection - public read access for authenticated users
+    match /drivers/{driverId} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admin/system writes via Cloud Functions
+    }
+    
     // Routes collection - public read access
     match /routes/{routeId} {
       allow read: if isAuthenticated();
@@ -152,6 +158,22 @@ service cloud.firestore {
                             request.auth.uid == resource.data.userId;
       allow create: if isAuthenticated() && 
                        request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Support conversations - users can only access their own conversation and messages
+    match /support_conversations/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Messages subcollection - users can read all messages in their conversation
+      // and create new messages
+      match /messages/{messageId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && 
+                         isAuthenticated() &&
+                         'createdAt' in request.resource.data &&
+                         'text' in request.resource.data &&
+                         'senderId' in request.resource.data;
+      }
     }
     
     // Notifications - users can only access their own
