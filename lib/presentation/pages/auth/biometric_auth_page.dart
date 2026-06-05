@@ -38,11 +38,11 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
       _errorMessage = null;
     });
 
+    final l10n = AppLocalizations.of(context);
+
     try {
-      final l10n = AppLocalizations.of(context);
       final isAuthenticated = await _biometricService.authenticate(
-        reason: l10n?.translate('biometric_auth_reason') ??
-            'Authenticate to access SafeDriver',
+        reason: l10n.biometricAuthReason,
       );
 
       if (isAuthenticated) {
@@ -55,16 +55,14 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
         }
       } else {
         setState(() {
-          _errorMessage = l10n?.translate('biometric_auth_failed') ??
-              'Authentication failed. Please try again.';
+          _errorMessage = l10n.biometricAuthFailed;
           _isAuthenticating = false;
         });
       }
     } catch (e) {
       print('❌ Biometric authentication error: $e');
       setState(() {
-        _errorMessage =
-            '${l10n?.translate('biometric_auth_error') ?? "Authentication error"}:\n$e';
+        _errorMessage = '${l10n.biometricAuthError}:\n$e';
         _isAuthenticating = false;
       });
     }
@@ -98,7 +96,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
                       shape: BoxShape.circle,
                       color: AppColors.primaryColor.withOpacity(0.2),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.fingerprint,
                       size: 50,
                       color: AppColors.primaryColor,
@@ -108,8 +106,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
 
                   // Title
                   Text(
-                    l10n?.translate('biometric_auth_title') ??
-                        'Biometric Authentication',
+                    l10n.biometricAuthTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -119,8 +116,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
 
                   // Description
                   Text(
-                    l10n?.translate('biometric_auth_description') ??
-                        'Place your finger on the fingerprint sensor or look at the camera to authenticate.',
+                    l10n.biometricAuthDescription,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey,
@@ -132,7 +128,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
                   if (_isAuthenticating)
                     Column(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           width: 50,
                           height: 50,
                           child: CircularProgressIndicator(
@@ -144,8 +140,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          l10n?.translate('biometric_auth_waiting') ??
-                              'Waiting for authentication...',
+                          l10n.biometricAuthWaiting,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
@@ -175,8 +170,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
                           onPressed: _authenticateWithBiometric,
                           icon: const Icon(Icons.refresh),
                           label: Text(
-                            l10n?.translate('biometric_auth_retry') ??
-                                'Try Again',
+                            l10n.biometricAuthRetry,
                           ),
                         ),
                       ],
@@ -187,8 +181,7 @@ class _BiometricAuthPageState extends ConsumerState<BiometricAuthPage> {
                   // Info text
                   if (!_isAuthenticating && _errorMessage == null)
                     Text(
-                      l10n?.translate('biometric_auth_info') ??
-                          'This is required for your account security.',
+                      l10n.biometricAuthInfo,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Colors.grey,

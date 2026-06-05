@@ -134,6 +134,31 @@ class AppLocalizationsTa extends AppLocalizations {
   String get registrationFailed => 'பதிவு தோல்வி';
 
   @override
+  String get biometricAuthReason => 'Authenticate to access SafeDriver';
+
+  @override
+  String get biometricAuthFailed => 'Authentication failed. Please try again.';
+
+  @override
+  String get biometricAuthError => 'Authentication error';
+
+  @override
+  String get biometricAuthTitle => 'Biometric Authentication';
+
+  @override
+  String get biometricAuthDescription =>
+      'Place your finger on the fingerprint sensor or look at the camera to authenticate.';
+
+  @override
+  String get biometricAuthWaiting => 'Waiting for authentication...';
+
+  @override
+  String get biometricAuthRetry => 'Try Again';
+
+  @override
+  String get biometricAuthInfo => 'This is required for your account security.';
+
+  @override
   String get otpVerification => 'OTP சரிபார்ப்பு';
 
   @override

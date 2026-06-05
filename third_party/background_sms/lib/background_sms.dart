@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-enum SmsStatus { sent, failed }
+enum SmsStatus { delivered, sent, failed }
 
 class BackgroundSms {
   static const MethodChannel _channel = const MethodChannel('background_sms');
@@ -17,7 +17,9 @@ class BackgroundSms {
         "msg": message,
         "simSlot": simSlot
       });
-      return result == "Sent" ? SmsStatus.sent : SmsStatus.failed;
+      if (result == "Delivered") return SmsStatus.delivered;
+      if (result == "Sent") return SmsStatus.sent;
+      return SmsStatus.failed;
     } on PlatformException catch (e) {
       print(e.toString());
       return SmsStatus.failed;

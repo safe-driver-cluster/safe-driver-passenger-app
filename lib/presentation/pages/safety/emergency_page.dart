@@ -786,9 +786,9 @@ class _EmergencyPageState extends State<EmergencyPage> {
             Expanded(
               child: Text(
                 isCompleteSuccess
-                    ? 'SOS Alert Sent Successfully!'
+                    ? 'SOS Alert Delivery Confirmed'
                     : isSuccess
-                        ? 'SOS Partially Sent'
+                        ? 'SOS Needs Follow-Up'
                         : 'SOS Alert Failed',
                 style: const TextStyle(
                   color: AppColors.textPrimary,
@@ -828,8 +828,11 @@ class _EmergencyPageState extends State<EmergencyPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildStatusRow('SMS Sent', result.smsSent,
+                    _buildStatusRow('SMS Delivered', result.smsSent,
                         result.totalContacts, AppColors.successColor),
+                    if (result.smsSubmitted > 0)
+                      _buildStatusRow('SMS Submitted', result.smsSubmitted,
+                          result.totalContacts, AppColors.warningColor),
                     if (result.smsFailed > 0)
                       _buildStatusRow('SMS Failed', result.smsFailed,
                           result.totalContacts, AppColors.dangerColor),
@@ -942,7 +945,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
                       ),
                       SizedBox(height: AppDesign.spaceSM),
                       Text(
-                        '1. Manually call your emergency contacts\n2. Call police emergency: 119\n3. Check SMS settings if SMS failed\n4. Verify contact numbers are correct',
+                        '1. Manually call your emergency contacts\n2. Call police emergency: 119\n3. If SMS was only submitted, confirm the contact received it\n4. Verify contact numbers and default SMS SIM',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 13,
