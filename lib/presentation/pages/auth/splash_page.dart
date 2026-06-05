@@ -8,7 +8,9 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/services/biometric_service.dart';
 import '../../../l10n/arb/app_localizations.dart';
+import '../../../providers/biometric_settings_provider.dart';
 import '../../../providers/onboarding_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -141,10 +143,26 @@ class _SplashPageState extends ConsumerState<SplashPage>
     print('👤 Firebase Auth Email: ${currentUser?.email ?? "null"}');
 
     if (currentUser != null) {
-      print('✅ User session found in Firebase Auth, navigating to dashboard');
-      // Firebase Auth has a persisted user, keep them logged in
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
+      // User is logged in - check if biometric auth is required
+      final biometricSettings = ref.read(biometricSettingsProvider);
+      print('🔑 Biometric Enabled: ${biometricSettings.isBiometricEnabled}');
+      print(
+          '🔐 Require Biometric on App Open: ${biometricSettings.requireBiometricOnAppOpen}');
+
+      if (biometricSettings.isBiometricEnabled &&
+          biometricSettings.requireBiometricOnAppOpen) {
+        print('🔐 Biometric authentication required on app open');
+        if (mounted) {
+          // Navigate to biometric authentication screen
+          Navigator.pushReplacementNamed(context, '/biometric-auth',
+              arguments: {'returnTo': '/dashboard'});
+        }
+      } else {
+        print('✅ User session found in Firebase Auth, navigating to dashboard');
+        // No biometric required, go straight to dashboard
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        }
       }
     } else {
       print('❌ No user session found, navigating to login');
