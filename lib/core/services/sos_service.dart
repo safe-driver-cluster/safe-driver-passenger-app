@@ -427,8 +427,9 @@ class SosService {
       debugPrint('SMS: Checking SMS permission...');
       final permission = await Permission.sms.request();
       if (!permission.isGranted) {
-        debugPrint('SMS: Permission denied, falling back to SMS app');
-        return _launchSmsApp(phoneNumber, message);
+        debugPrint('SMS: Permission denied, opening SMS app for manual send');
+        await _launchSmsApp(phoneNumber, message);
+        return false;
       }
       debugPrint('SMS: Permission granted');
 
@@ -448,22 +449,16 @@ class SosService {
           return true;
         } else {
           debugPrint(
-              'SMS: background_sms returned status $result, falling back to SMS app');
-          return _launchSmsApp(phoneNumber, message);
+              'SMS: background_sms returned status $result; auto-send failed');
+          return false;
         }
       } catch (pluginError) {
         debugPrint('SMS: background_sms plugin error: $pluginError');
-        debugPrint('SMS: Falling back to SMS app launcher');
-        return _launchSmsApp(phoneNumber, message);
+        debugPrint('SMS: Auto-send failed');
+        return false;
       }
     } catch (e) {
       debugPrint('SMS: Unexpected error in _sendSms: $e');
-      // Final fallback: open SMS app
-      try {
-        return await _launchSmsApp(phoneNumber, message);
-      } catch (e2) {
-        debugPrint('SMS: Final fallback also failed: $e2');
-      }
       return false;
     }
   }
