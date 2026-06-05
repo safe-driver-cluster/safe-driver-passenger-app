@@ -9,33 +9,24 @@ if (admin.apps.length === 0) {
 const db = admin.firestore();
 const region = 'asia-south1';
 
-const rawEmailConfig = functions.config().email || {};
 const emailConfig = {
-    host: process.env.EMAIL_HOST || rawEmailConfig.host,
-    port: parseInt(process.env.EMAIL_PORT || rawEmailConfig.port || '587', 10),
-    secure: (process.env.EMAIL_SECURE || rawEmailConfig.secure || 'false') === 'true',
-    user: process.env.EMAIL_USER || rawEmailConfig.user,
-    pass: process.env.EMAIL_PASS || rawEmailConfig.pass,
-    fromName: process.env.EMAIL_FROM_NAME || rawEmailConfig.from_name || 'SafeDriver',
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT || '587', 10),
+    secure: (process.env.EMAIL_SECURE || 'false') === 'true',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+    fromName: process.env.EMAIL_FROM_NAME || 'SafeDriver',
     fromEmail:
         process.env.EMAIL_FROM_EMAIL ||
-        rawEmailConfig.from_email ||
-        process.env.EMAIL_USER ||
-        rawEmailConfig.user,
+        process.env.EMAIL_USER,
     replyTo:
         process.env.EMAIL_REPLY_TO ||
-        rawEmailConfig.reply_to ||
         process.env.EMAIL_FROM_EMAIL ||
-        rawEmailConfig.from_email ||
-        process.env.EMAIL_USER ||
-        rawEmailConfig.user,
+        process.env.EMAIL_USER,
     adminEmail:
         process.env.EMAIL_ADMIN ||
-        rawEmailConfig.admin ||
         process.env.EMAIL_REPLY_TO ||
-        rawEmailConfig.reply_to ||
-        process.env.EMAIL_USER ||
-        rawEmailConfig.user,
+        process.env.EMAIL_USER,
 };
 
 let transporter;
@@ -159,15 +150,15 @@ function buildTable(rows) {
         <table class="meta-table" cellpadding="0" cellspacing="0" role="presentation">
             <tbody>
                 ${rows
-                    .map(
-                        ({ label, value }) => `
+            .map(
+                ({ label, value }) => `
                             <tr>
                                 <td class="label">${escapeHtml(label)}</td>
                                 <td class="value">${escapeHtml(value)}</td>
                             </tr>
                         `
-                    )
-                    .join('')}
+            )
+            .join('')}
             </tbody>
         </table>
     `;
@@ -438,23 +429,23 @@ function buildWelcomeEmail(profile) {
     const body = `
         <p class="lead">Hello ${escapeHtml(firstName)}, your SafeDriver passenger account is ready. We have connected your ride history, safety tools, and support channels so you can start using the app immediately.</p>
         ${buildSection(
-            'Account snapshot',
-            buildTable([
-                { label: 'Passenger name', value: fullName },
-                { label: 'Email address', value: normalizeText(profile?.email) },
-                { label: 'Phone number', value: normalizeText(profile?.phoneNumber) },
-                { label: 'Created on', value: createdAt },
-            ])
-        )}
+        'Account snapshot',
+        buildTable([
+            { label: 'Passenger name', value: fullName },
+            { label: 'Email address', value: normalizeText(profile?.email) },
+            { label: 'Phone number', value: normalizeText(profile?.phoneNumber) },
+            { label: 'Created on', value: createdAt },
+        ])
+    )}
         ${buildSection(
-            'What you can do next',
-            buildList([
-                'Track active buses and routes in real time.',
-                'Start and end journeys with QR-based ride history.',
-                'Send support requests and feedback from the app.',
-                'Manage emergency contacts and safety preferences.',
-            ])
-        )}
+        'What you can do next',
+        buildList([
+            'Track active buses and routes in real time.',
+            'Start and end journeys with QR-based ride history.',
+            'Send support requests and feedback from the app.',
+            'Manage emergency contacts and safety preferences.',
+        ])
+    )}
         <div class="pill-row">
             <span class="pill">Journey tracking</span>
             <span class="pill">Safety alerts</span>
@@ -495,27 +486,27 @@ function buildFeedbackUserEmail(profile, feedbackId, feedback) {
     const body = `
         <p class="lead">Hello ${escapeHtml(firstName)}, we received your feedback and shared it with the SafeDriver team. Thank you for helping us improve ride quality and passenger safety.</p>
         ${buildSection(
-            'Feedback summary',
-            buildTable([
-                { label: 'Reference', value: feedbackId },
-                { label: 'Bus number', value: busNumber },
-                { label: 'Category', value: category },
-                { label: 'Rating', value: rating },
-                { label: 'Submitted', value: submittedAt },
-            ])
-        )}
+        'Feedback summary',
+        buildTable([
+            { label: 'Reference', value: feedbackId },
+            { label: 'Bus number', value: busNumber },
+            { label: 'Category', value: category },
+            { label: 'Rating', value: rating },
+            { label: 'Submitted', value: submittedAt },
+        ])
+    )}
         ${buildSection(
-            'Your message',
-            `<div class="message-box">${escapeHtml(feedback.message)}</div>`
-        )}
+        'Your message',
+        `<div class="message-box">${escapeHtml(feedback.message)}</div>`
+    )}
         ${buildSection(
-            'What happens next',
-            buildList([
-                'Our support team reviews each submission.',
-                'High-priority safety concerns are escalated faster.',
-                'If more details are needed, we may contact you using your account email.',
-            ])
-        )}
+        'What happens next',
+        buildList([
+            'Our support team reviews each submission.',
+            'High-priority safety concerns are escalated faster.',
+            'If more details are needed, we may contact you using your account email.',
+        ])
+    )}
     `;
 
     return {
@@ -550,25 +541,25 @@ function buildFeedbackAdminEmail(profile, feedbackId, feedback) {
     const body = `
         <p class="lead">A new passenger feedback item was created in SafeDriver. Review the details below and follow up where needed.</p>
         ${buildSection(
-            'Submission details',
-            buildTable([
-                { label: 'Feedback ID', value: feedbackId },
-                { label: 'Passenger', value: passengerName },
-                { label: 'Passenger email', value: normalizeText(profile?.email) },
-                { label: 'Phone number', value: normalizeText(profile?.phoneNumber) },
-                { label: 'Bus number', value: normalizeText(feedback.busNumber, 'Not linked') },
-                { label: 'Driver name', value: normalizeText(feedback.driverName, 'Not linked') },
-                { label: 'Route number', value: normalizeText(feedback.routeNumber, 'Not linked') },
-                { label: 'Category', value: normalizeText(feedback.category, 'general') },
-                { label: 'Rating', value: rating },
-                { label: 'Priority', value: normalizeText(feedback.priority, 'medium') },
-                { label: 'Submitted', value: formatDateTime(feedback.submittedAt) },
-            ])
-        )}
+        'Submission details',
+        buildTable([
+            { label: 'Feedback ID', value: feedbackId },
+            { label: 'Passenger', value: passengerName },
+            { label: 'Passenger email', value: normalizeText(profile?.email) },
+            { label: 'Phone number', value: normalizeText(profile?.phoneNumber) },
+            { label: 'Bus number', value: normalizeText(feedback.busNumber, 'Not linked') },
+            { label: 'Driver name', value: normalizeText(feedback.driverName, 'Not linked') },
+            { label: 'Route number', value: normalizeText(feedback.routeNumber, 'Not linked') },
+            { label: 'Category', value: normalizeText(feedback.category, 'general') },
+            { label: 'Rating', value: rating },
+            { label: 'Priority', value: normalizeText(feedback.priority, 'medium') },
+            { label: 'Submitted', value: formatDateTime(feedback.submittedAt) },
+        ])
+    )}
         ${buildSection(
-            'Passenger message',
-            `<div class="message-box">${escapeHtml(feedback.message)}</div>`
-        )}
+        'Passenger message',
+        `<div class="message-box">${escapeHtml(feedback.message)}</div>`
+    )}
     `;
 
     return {
@@ -608,21 +599,21 @@ function buildPasswordChangedEmail(profile, source, changedAt) {
     const body = `
         <p class="lead">Hello ${escapeHtml(firstName)}, this is a security confirmation that your SafeDriver account password was changed successfully.</p>
         ${buildSection(
-            'Security event',
-            buildTable([
-                { label: 'Account email', value: normalizeText(profile?.email) },
-                { label: 'Change type', value: changedSource },
-                { label: 'Changed at', value: formatDateTime(changedAt) },
-            ])
-        )}
+        'Security event',
+        buildTable([
+            { label: 'Account email', value: normalizeText(profile?.email) },
+            { label: 'Change type', value: changedSource },
+            { label: 'Changed at', value: formatDateTime(changedAt) },
+        ])
+    )}
         ${buildSection(
-            'If this was not you',
-            buildList([
-                'Reset your password immediately from the SafeDriver sign-in screen.',
-                'Review recent account activity and update trusted contact details.',
-                'Contact support as soon as possible so we can help secure the account.',
-            ])
-        )}
+        'If this was not you',
+        buildList([
+            'Reset your password immediately from the SafeDriver sign-in screen.',
+            'Review recent account activity and update trusted contact details.',
+            'Contact support as soon as possible so we can help secure the account.',
+        ])
+    )}
     `;
 
     return {
@@ -655,22 +646,22 @@ function buildJourneyCompletedEmail(profile, journeyId, journey) {
     const body = `
         <p class="lead">Hello ${escapeHtml(firstName)}, your SafeDriver journey has ended. Here is a clean receipt-style summary for your trip history.</p>
         ${buildSection(
-            'Journey details',
-            buildTable([
-                { label: 'Journey ID', value: journeyId },
-                { label: 'Bus number', value: normalizeText(journey.busNumber, 'Not available') },
-                { label: 'Route number', value: normalizeText(journey.routeNumber, 'Not available') },
-                { label: 'Driver name', value: normalizeText(journey.driverName, 'Not available') },
-                { label: 'Started', value: formatDateTime(startedAt) },
-                { label: 'Ended', value: formatDateTime(endedAt) },
-                { label: 'Duration', value: formatDuration(startedAt, endedAt) },
-                { label: 'Ended reason', value: normalizeText(journey.endedReason, 'Completed') },
-            ])
-        )}
+        'Journey details',
+        buildTable([
+            { label: 'Journey ID', value: journeyId },
+            { label: 'Bus number', value: normalizeText(journey.busNumber, 'Not available') },
+            { label: 'Route number', value: normalizeText(journey.routeNumber, 'Not available') },
+            { label: 'Driver name', value: normalizeText(journey.driverName, 'Not available') },
+            { label: 'Started', value: formatDateTime(startedAt) },
+            { label: 'Ended', value: formatDateTime(endedAt) },
+            { label: 'Duration', value: formatDuration(startedAt, endedAt) },
+            { label: 'Ended reason', value: normalizeText(journey.endedReason, 'Completed') },
+        ])
+    )}
         ${buildSection(
-            'Trip note',
-            `<div class="message-box">Thank you for travelling with SafeDriver. You can review this trip again from Trip History inside the app.</div>`
-        )}
+        'Trip note',
+        `<div class="message-box">Thank you for travelling with SafeDriver. You can review this trip again from Trip History inside the app.</div>`
+    )}
     `;
 
     return {

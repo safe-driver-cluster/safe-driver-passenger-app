@@ -23,9 +23,9 @@ const emailModule = require('./email');
 // Environment configuration with fallbacks
 const config = {
     textlk: {
-        apiToken: process.env.TEXTLK_API_TOKEN || functions.config().textlk?.apitoken,
+        apiToken: process.env.TEXTLK_API_TOKEN,
         apiUrl: process.env.TEXTLK_API_URL || 'https://app.text.lk/api/v3/sms/send',
-        senderId: process.env.TEXTLK_SENDER_ID || functions.config().textlk?.senderid || 'SafeDriver',
+        senderId: process.env.TEXTLK_SENDER_ID || 'SafeDriver',
     },
     otp: {
         expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES) || 10,
