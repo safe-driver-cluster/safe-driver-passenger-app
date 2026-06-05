@@ -87,6 +87,9 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   Future<void> sendOtp(String phoneNumber) async {
     if (!mounted) return;
 
+    print('========== PHONE AUTH PROVIDER SEND START ==========');
+    print('[PhoneAuthController.sendOtp] phoneNumber: $phoneNumber');
+
     state = state.copyWith(
       isLoading: true,
       error: null,
@@ -95,10 +98,13 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
 
     try {
       final result = await _phoneAuthService.sendOtp(phoneNumber);
+      print('[PhoneAuthController.sendOtp] service result: $result');
 
       if (!mounted) return;
 
       if (result.success) {
+        print(
+            '[PhoneAuthController.sendOtp] success verificationId: ${result.verificationId}');
         state = state.copyWith(
           isLoading: false,
           verificationId: result.verificationId,
@@ -107,19 +113,25 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
           isOtpSent: true,
           currentStep: PhoneAuthStep.verifyOtp,
         );
+        print('[PhoneAuthController.sendOtp] state step: ${state.currentStep}');
+        print('========== PHONE AUTH PROVIDER SEND END: SUCCESS ==========');
       } else {
+        print('[PhoneAuthController.sendOtp] failed error: ${result.error}');
         state = state.copyWith(
           isLoading: false,
           error: result.error ?? 'Failed to send OTP',
         );
+        print('========== PHONE AUTH PROVIDER SEND END: FAILED ==========');
       }
     } catch (e) {
       if (!mounted) return;
 
+      print('[PhoneAuthController.sendOtp] exception: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
       );
+      print('========== PHONE AUTH PROVIDER SEND END: ERROR ==========');
     }
   }
 
@@ -127,10 +139,18 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
   Future<void> verifyOtp(String otpCode) async {
     if (!mounted) return;
 
+    print('========== PHONE AUTH PROVIDER VERIFY START ==========');
+    print('[PhoneAuthController.verifyOtp] otp length: ${otpCode.length}');
+    print(
+        '[PhoneAuthController.verifyOtp] state verificationId: ${state.verificationId}');
+    print('[PhoneAuthController.verifyOtp] state phoneNumber: ${state.phoneNumber}');
+
     if (state.verificationId == null || state.phoneNumber == null) {
+      print('[PhoneAuthController.verifyOtp] invalid session');
       state = state.copyWith(
         error: 'Invalid verification session. Please start over.',
       );
+      print('========== PHONE AUTH PROVIDER VERIFY END: INVALID SESSION ==========');
       return;
     }
 
@@ -145,6 +165,7 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
         otpCode: otpCode,
         phoneNumber: state.phoneNumber!,
       );
+      print('[PhoneAuthController.verifyOtp] service result: $result');
 
       if (!mounted) return;
 
@@ -157,20 +178,47 @@ class PhoneAuthController extends StateNotifier<PhoneAuthState> {
           currentStep: PhoneAuthStep.complete,
         );
 
-        print('✅ OTP verification complete - ready for account creation');
+        print('[PhoneAuthController.verifyOtp] state step: ${state.currentStep}');
+        print('========== PHONE AUTH PROVIDER VERIFY END: SUCCESS ==========');
       } else {
+        print('[PhoneAuthController.verifyOtp] failed error: ${result.error}');
         state = state.copyWith(
           isLoading: false,
-          error: result.error,
+          error: _isOtpAlreadyVerified(result.error) ? null : result.error,
+          currentStep: _isOtpAlreadyVerified(result.error)
+              ? PhoneAuthStep.complete
+              : state.currentStep,
         );
+        print('[PhoneAuthController.verifyOtp] state error: ${state.error}');
+        print('[PhoneAuthController.verifyOtp] state step: ${state.currentStep}');
+        print('========== PHONE AUTH PROVIDER VERIFY END: FAILED ==========');
       }
     } catch (e) {
       if (!mounted) return;
+      print('[PhoneAuthController.verifyOtp] exception: $e');
+      if (_isOtpAlreadyVerified(e.toString())) {
+        state = state.copyWith(
+          isLoading: false,
+          error: null,
+          currentStep: PhoneAuthStep.complete,
+        );
+        print('[PhoneAuthController.verifyOtp] already verified treated success');
+        print('========== PHONE AUTH PROVIDER VERIFY END: ALREADY VERIFIED ==========');
+        return;
+      }
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to verify OTP: $e',
       );
+      print('[PhoneAuthController.verifyOtp] state error: ${state.error}');
+      print('========== PHONE AUTH PROVIDER VERIFY END: ERROR ==========');
     }
+  }
+
+  bool _isOtpAlreadyVerified(String? message) {
+    final lowerMessage = message?.toLowerCase() ?? '';
+    return lowerMessage.contains('already') &&
+        lowerMessage.contains('verified');
   }
 
   /// Resend OTP

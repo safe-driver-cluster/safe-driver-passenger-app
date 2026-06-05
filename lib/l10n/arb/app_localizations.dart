@@ -334,6 +334,54 @@ abstract class AppLocalizations {
   /// **'Registration failed'**
   String get registrationFailed;
 
+  /// No description provided for @biometricAuthReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to access SafeDriver'**
+  String get biometricAuthReason;
+
+  /// No description provided for @biometricAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please try again.'**
+  String get biometricAuthFailed;
+
+  /// No description provided for @biometricAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error'**
+  String get biometricAuthError;
+
+  /// No description provided for @biometricAuthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Authentication'**
+  String get biometricAuthTitle;
+
+  /// No description provided for @biometricAuthDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Place your finger on the fingerprint sensor or look at the camera to authenticate.'**
+  String get biometricAuthDescription;
+
+  /// No description provided for @biometricAuthWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for authentication...'**
+  String get biometricAuthWaiting;
+
+  /// No description provided for @biometricAuthRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get biometricAuthRetry;
+
+  /// No description provided for @biometricAuthInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'This is required for your account security.'**
+  String get biometricAuthInfo;
+
   /// No description provided for @otpVerification.
   ///
   /// In en, this message translates to:

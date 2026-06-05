@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
-import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/phone_auth_provider.dart';
@@ -44,6 +43,7 @@ class _AccountVerificationPageState
   bool _canResend = false;
   String? _verificationId;
   bool _isOtpSent = false;
+  bool _isVerifying = false;
   int _focusedIndex = -1; // Track which OTP field has focus
 
   @override
@@ -155,6 +155,8 @@ class _AccountVerificationPageState
   }
 
   Future<void> _verifyOtp() async {
+    if (_isVerifying) return;
+
     final l10n = AppLocalizations.of(context);
     if (_otpCode.length != 6) {
       CustomSnackBar.showError(context, l10n.pleaseEnterCompleteOtp);
@@ -167,6 +169,8 @@ class _AccountVerificationPageState
     }
 
     try {
+      setState(() => _isVerifying = true);
+
       final phoneAuthController =
           ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
@@ -223,6 +227,10 @@ class _AccountVerificationPageState
         }
 
         CustomSnackBar.showError(context, errorMessage);
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
       }
     }
   }
@@ -303,7 +311,6 @@ class _AccountVerificationPageState
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
@@ -478,7 +485,8 @@ class _AccountVerificationPageState
                           ],
                         ),
                         child: ElevatedButton(
-                          onPressed: _isOtpSent ? _verifyOtp : null,
+                          onPressed:
+                              _isOtpSent && !_isVerifying ? _verifyOtp : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,

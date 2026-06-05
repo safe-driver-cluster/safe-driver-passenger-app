@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../presentation/pages/auth/account_verification_page.dart';
+import '../presentation/pages/auth/biometric_auth_page.dart';
 import '../presentation/pages/auth/forgot_password_otp_page.dart';
 import '../presentation/pages/auth/forgot_password_page.dart';
 import '../presentation/pages/auth/login_page.dart';
@@ -49,6 +50,7 @@ class AppRoutes {
   static const String forgotPasswordOtp = '/forgot-password-otp';
   static const String resetPassword = '/reset-password';
   static const String otpVerification = '/otp-verification';
+  static const String biometricAuth = '/biometric-auth';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';
 
@@ -143,6 +145,15 @@ class AppRoutes {
           OtpVerificationPage(
             phoneNumber: args?['phoneNumber'] ?? '',
             verificationId: args?['verificationId'] ?? '',
+          ),
+        );
+
+      case biometricAuth:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return _route(
+          settings,
+          BiometricAuthPage(
+            returnTo: args?['returnTo'] as String? ?? '/dashboard',
           ),
         );
 

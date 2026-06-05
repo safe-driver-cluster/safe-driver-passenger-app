@@ -69,6 +69,7 @@ class SosContact {
 class SosAlertResult {
   final int totalContacts;
   final int smsSent;
+  final int smsSubmitted;
   final int smsFailed;
   final int whatsappLaunched;
   final int whatsappFailed;
@@ -77,20 +78,31 @@ class SosAlertResult {
   SosAlertResult({
     required this.totalContacts,
     required this.smsSent,
+    required this.smsSubmitted,
     required this.smsFailed,
     required this.whatsappLaunched,
     required this.whatsappFailed,
     required this.errors,
   });
 
-  bool get isPartialSuccess => smsSent > 0 || whatsappLaunched > 0;
+  bool get hasUnconfirmedSms => smsSubmitted > 0;
+  bool get isPartialSuccess =>
+      smsSent > 0 || smsSubmitted > 0 || whatsappLaunched > 0;
   bool get isCompleteSuccess =>
-      smsSent + whatsappLaunched > 0 && smsFailed == 0 && whatsappFailed == 0;
+      smsSent + whatsappLaunched > 0 &&
+      smsSubmitted == 0 &&
+      smsFailed == 0 &&
+      whatsappFailed == 0;
 
   String get summary {
     final parts = <String>[];
     if (smsSent > 0) {
-      parts.add('SMS sent to $smsSent contact${smsSent > 1 ? 's' : ''}');
+      parts.add(
+          'SMS delivered to $smsSent contact${smsSent > 1 ? 's' : ''}');
+    }
+    if (smsSubmitted > 0) {
+      parts.add(
+          'SMS submitted but delivery not confirmed for $smsSubmitted contact${smsSubmitted > 1 ? 's' : ''}');
     }
     if (whatsappLaunched > 0) {
       parts.add(
@@ -101,6 +113,8 @@ class SosAlertResult {
     return parts.isEmpty ? 'No actions taken' : parts.join(', ');
   }
 }
+
+enum SosSmsStatus { delivered, submitted, failed }
 
 /// Service for handling SOS emergency alerts
 class SosService {
@@ -299,6 +313,7 @@ class SosService {
       return SosAlertResult(
         totalContacts: 0,
         smsSent: 0,
+        smsSubmitted: 0,
         smsFailed: 0,
         whatsappLaunched: 0,
         whatsappFailed: 0,
@@ -343,6 +358,7 @@ class SosService {
     debugPrint('SOS: Alert message prepared (length: ${message.length})');
 
     int smsSent = 0;
+    int smsSubmitted = 0;
     int smsFailed = 0;
     int whatsappLaunched = 0;
     int whatsappFailed = 0;
@@ -358,14 +374,24 @@ class SosService {
         try {
           debugPrint('SOS: Sending SMS to ${contact.name}...');
           final result = await _sendSms(phone, message);
-          if (result) {
-            smsSent++;
-            debugPrint('SOS: SMS sent successfully to ${contact.name}');
-          } else {
-            smsFailed++;
-            final errorMsg = 'SMS failed for ${contact.name}';
-            debugPrint('SOS: $errorMsg');
-            errors.add(errorMsg);
+          switch (result) {
+            case SosSmsStatus.delivered:
+              smsSent++;
+              debugPrint('SOS: SMS delivery confirmed for ${contact.name}');
+              break;
+            case SosSmsStatus.submitted:
+              smsSubmitted++;
+              final warningMsg =
+                  'SMS submitted for ${contact.name}, but delivery was not confirmed';
+              debugPrint('SOS: $warningMsg');
+              errors.add(warningMsg);
+              break;
+            case SosSmsStatus.failed:
+              smsFailed++;
+              final errorMsg = 'SMS failed for ${contact.name}';
+              debugPrint('SOS: $errorMsg');
+              errors.add(errorMsg);
+              break;
           }
         } catch (e) {
           smsFailed++;
@@ -408,6 +434,7 @@ class SosService {
     return SosAlertResult(
       totalContacts: contacts.length,
       smsSent: smsSent,
+      smsSubmitted: smsSubmitted,
       smsFailed: smsFailed,
       whatsappLaunched: whatsappLaunched,
       whatsappFailed: whatsappFailed,
@@ -416,19 +443,21 @@ class SosService {
   }
 
   /// Send SMS using background_sms plugin (sends directly without leaving app)
-  Future<bool> _sendSms(String phoneNumber, String message) async {
+  Future<SosSmsStatus> _sendSms(String phoneNumber, String message) async {
     try {
       if (!Platform.isAndroid) {
         debugPrint('SMS: Non-Android platform, using SMS app');
-        return _launchSmsApp(phoneNumber, message);
+        await _launchSmsApp(phoneNumber, message);
+        return SosSmsStatus.failed;
       }
 
       // Verify and request SMS permission
       debugPrint('SMS: Checking SMS permission...');
       final permission = await Permission.sms.request();
       if (!permission.isGranted) {
-        debugPrint('SMS: Permission denied, falling back to SMS app');
-        return _launchSmsApp(phoneNumber, message);
+        debugPrint('SMS: Permission denied, opening SMS app for manual send');
+        await _launchSmsApp(phoneNumber, message);
+        return SosSmsStatus.failed;
       }
       debugPrint('SMS: Permission granted');
 
@@ -443,28 +472,27 @@ class SosService {
         debugPrint('SMS: background_sms returned status: $result');
 
         // The plugin may return success but not actually send, so we add extra diagnostics
-        if (result == SmsStatus.sent) {
-          debugPrint('SMS: Reported as sent to $phoneNumber');
-          return true;
-        } else {
-          debugPrint(
-              'SMS: background_sms returned status $result, falling back to SMS app');
-          return _launchSmsApp(phoneNumber, message);
+        switch (result) {
+          case SmsStatus.delivered:
+            debugPrint('SMS: Delivery confirmed for $phoneNumber');
+            return SosSmsStatus.delivered;
+          case SmsStatus.sent:
+            debugPrint(
+                'SMS: Submitted to carrier for $phoneNumber, delivery not confirmed');
+            return SosSmsStatus.submitted;
+          case SmsStatus.failed:
+            debugPrint(
+                'SMS: background_sms returned status $result; auto-send failed');
+            return SosSmsStatus.failed;
         }
       } catch (pluginError) {
         debugPrint('SMS: background_sms plugin error: $pluginError');
-        debugPrint('SMS: Falling back to SMS app launcher');
-        return _launchSmsApp(phoneNumber, message);
+        debugPrint('SMS: Auto-send failed');
+        return SosSmsStatus.failed;
       }
     } catch (e) {
       debugPrint('SMS: Unexpected error in _sendSms: $e');
-      // Final fallback: open SMS app
-      try {
-        return await _launchSmsApp(phoneNumber, message);
-      } catch (e2) {
-        debugPrint('SMS: Final fallback also failed: $e2');
-      }
-      return false;
+      return SosSmsStatus.failed;
     }
   }
 

@@ -275,6 +275,8 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       print('🎯 Starting sign in with phone: $phoneNumber');
       state = state.copyWith(isLoading: true, error: null);
 
+      await _signOutDriverSessionIfNeeded();
+
       // Format phone number to match storage format
       final smsGateway = _ref.read(smsGatewayServiceProvider);
       final formattedPhone = smsGateway.formatSriLankanPhoneNumber(phoneNumber);
@@ -373,6 +375,16 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     }
 
     return null;
+  }
+
+  Future<void> _signOutDriverSessionIfNeeded() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null &&
+        currentUser.uid.toLowerCase().startsWith('driver_')) {
+      print(
+          '⚠️ Driver FirebaseAuth session found in passenger login. Signing out: ${currentUser.uid}');
+      await FirebaseAuth.instance.signOut();
+    }
   }
 
   // Sign in with email and password (fallback/alternative)
@@ -735,7 +747,20 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   // Get Firebase error message
   String _getFirebaseErrorMessage(String error) {
-    if (error.contains('user-not-found')) {
+    if (error.contains('No account found with this phone number')) {
+      return 'No account found with this phone number.';
+    } else if (error.contains('Incorrect password')) {
+      return 'Incorrect password. Please try again.';
+    } else if (error.contains('Invalid verification code') ||
+        error.contains('invalid verification')) {
+      return 'Invalid verification code. Please try again.';
+    } else if (error.contains('OTP has expired') ||
+        error.contains('deadline-exceeded')) {
+      return 'OTP has expired. Please request a new one.';
+    } else if (error.contains('Too many verification attempts') ||
+        error.contains('resource-exhausted')) {
+      return 'Too many attempts. Please try again later.';
+    } else if (error.contains('user-not-found')) {
       return 'No account found with this email address.';
     } else if (error.contains('wrong-password')) {
       return 'Incorrect password. Please try again.';

@@ -104,7 +104,7 @@ dependencies:
   encrypt: ^5.0.3
 
   # Biometrics
-  local_auth: ^2.1.7
+  local_auth: ^2.2.0
 
   # Push Notifications
   flutter_local_notifications: ^17.2.2
