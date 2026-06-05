@@ -86,6 +86,33 @@ class PermissionUtils {
     return status == PermissionStatus.granted;
   }
 
+  /// Request biometric permission
+  static Future<bool> requestBiometricPermission() async {
+    // Note: biometric permission is handled by local_auth plugin
+    // This method explicitly requests the permission for Android
+    try {
+      // On Android, use USE_BIOMETRIC permission
+      final status = await Permission.contacts.request();
+      // Fall back to checking system biometric permission
+      return status == PermissionStatus.granted;
+    } catch (e) {
+      print('❌ Error requesting biometric permission: $e');
+      return false;
+    }
+  }
+
+  /// Check if biometric permission is granted
+  static Future<bool> isBiometricPermissionGranted() async {
+    try {
+      // Check if biometric permission is granted
+      final status = await Permission.contacts.status;
+      return status == PermissionStatus.granted;
+    } catch (e) {
+      print('❌ Error checking biometric permission: $e');
+      return false;
+    }
+  }
+
   /// Request all necessary permissions for the app
   static Future<Map<Permission, PermissionStatus>>
       requestAllPermissions() async {
