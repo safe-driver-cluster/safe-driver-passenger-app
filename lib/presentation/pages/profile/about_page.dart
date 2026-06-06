@@ -92,7 +92,7 @@ class _AboutPageState extends State<AboutPage> {
                     ],
                   ),
                   child: Image.asset(
-                    'assets/images/logo.png',
+                    'assets/images/logo2.png',
                     fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => const Icon(
                       Icons.directions_bus_rounded,
@@ -351,7 +351,7 @@ class _AboutPageState extends State<AboutPage> {
       child: Column(
         children: [
           Text(
-            'SafeDriver Passenger App',
+            'SafeDriver - Passenger App',
             textAlign: TextAlign.center,
             style: AppTextStyles.bodyMedium.copyWith(
               color: th.textPrimary,

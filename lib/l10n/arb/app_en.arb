@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "SafeDriver Passenger",
+  "appName": "SafeDriver - Passenger App",
   "@appName": {
     "description": "The name of the application"
   },

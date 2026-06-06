@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// The name of the application
   ///
   /// In en, this message translates to:
-  /// **'SafeDriver Passenger'**
+  /// **'SafeDriver - Passenger App'**
   String get appName;
 
   /// The tagline of the application

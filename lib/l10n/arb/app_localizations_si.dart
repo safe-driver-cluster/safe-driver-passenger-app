@@ -9,7 +9,7 @@ class AppLocalizationsSi extends AppLocalizations {
   AppLocalizationsSi([String locale = 'si']) : super(locale);
 
   @override
-  String get appName => 'SafeDriver මගී';
+  String get appName => 'SafeDriver - Passenger App';
 
   @override
   String get appTagline => 'ඔබේ ආරක්ෂාව, අපේ ප්‍රමුඛතාවය';

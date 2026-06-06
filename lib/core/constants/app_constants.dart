@@ -1,6 +1,6 @@
 class AppConstants {
   // App Information
-  static const String appName = 'SafeDriver';
+  static const String appName = 'SafeDriver - Passenger App';
   static const String appVersion = '1.0.0';
   static const String appBuildNumber = '1';
 
@@ -142,7 +142,7 @@ class StorageKeys {
 // Asset Paths
 class AssetPaths {
   // Images
-  static const String logoImage = 'assets/images/logo.png';
+  static const String logoImage = 'assets/images/logo2.png';
   static const String splashImage = 'assets/images/splash_bg.png';
   static const String onboardingImage1 = 'assets/images/onboarding_1.png';
   static const String onboardingImage2 = 'assets/images/onboarding_2.png';
