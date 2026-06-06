@@ -16,7 +16,7 @@ class SupportDataService {
       id: 'faq_1',
       question: 'How do I download and install the app?',
       answer:
-          'You can download SafeDriver Passenger App from Google Play Store for Android or Apple App Store for iOS. Search for "SafeDriver Passenger" and tap Install. Once installed, open the app and sign up with your email or phone number.',
+          'You can download SafeDriver - Passenger App from Google Play Store for Android or Apple App Store for iOS. Search for "SafeDriver - Passenger App" and tap Install. Once installed, open the app and sign up with your email or phone number.',
       category: 'App Issues',
       displayOrder: 1,
       isPopular: true,

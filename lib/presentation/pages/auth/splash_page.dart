@@ -215,7 +215,7 @@ class _SplashPageState extends ConsumerState<SplashPage>
                         ),
                         child: ClipOval(
                           child: Image.asset(
-                            'assets/images/logo.png',
+                            'assets/images/logo2.png',
                             fit: BoxFit.contain,
                           ),
                         ),

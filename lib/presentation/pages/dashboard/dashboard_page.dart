@@ -176,7 +176,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
                             borderRadius:
                                 BorderRadius.circular(AppDesign.radiusMD),
                             child: Image.asset(
-                              'assets/images/logo.png',
+                              'assets/images/logo2.png',
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) {
                                 return const Icon(

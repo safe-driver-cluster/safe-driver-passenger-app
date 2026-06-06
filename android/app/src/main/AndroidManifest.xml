@@ -24,7 +24,7 @@
     <uses-permission android:name="android.permission.BIOMETRIC" android:maxSdkVersion="30" />
     
     <application
-        android:label="SafeDriver"
+        android:label="SafeDriver - Passenger App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
