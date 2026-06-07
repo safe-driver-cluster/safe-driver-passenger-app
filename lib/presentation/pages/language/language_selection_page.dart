@@ -1,11 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/services/storage_service.dart';
-import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/language_provider.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 
 class LanguageSelectionPage extends ConsumerStatefulWidget {
   const LanguageSelectionPage({super.key});
@@ -74,7 +74,11 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final th = ThemeHelper.of(context);
+    final isWideWeb = WebResponsive.isWideWeb(
+      context,
+      minWidth: WebResponsive.desktopBreakpoint,
+    );
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -93,33 +97,52 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-                _buildHeader(),
-                const SizedBox(height: 50),
-                Expanded(
-                  child: _buildLanguageOptions(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isWideWeb ? 560 : double.infinity,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWideWeb ? 32 : 24,
+                          vertical: isWideWeb ? 48 : 24,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildHeader(isWideWeb: isWideWeb),
+                            SizedBox(height: isWideWeb ? 44 : 40),
+                            _buildLanguageOptions(),
+                            SizedBox(height: isWideWeb ? 34 : 28),
+                            _buildContinueButton(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                _buildContinueButton(),
-                const SizedBox(height: 40),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader({required bool isWideWeb}) {
     return Column(
       children: [
         // Simple Language Icon
         Container(
-          width: 80,
-          height: 80,
+          width: isWideWeb ? 88 : 80,
+          height: isWideWeb ? 88 : 80,
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.15),
             shape: BoxShape.circle,
@@ -138,11 +161,21 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
         // Simple Title
         Text(
           AppLocalizations.of(context).chooseYourLanguage,
-          style: const TextStyle(
-            fontSize: 24,
+          style: TextStyle(
+            fontSize: isWideWeb ? 28 : 24,
             fontWeight: FontWeight.w700,
             color: Colors.white,
             letterSpacing: 0.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          AppLocalizations.of(context).selectYourPreferredLanguage,
+          style: TextStyle(
+            fontSize: isWideWeb ? 16 : 14,
+            color: Colors.white.withOpacity(0.78),
+            fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.center,
         ),
@@ -165,7 +198,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
     final isSelected = selectedLanguage == language;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(16),
@@ -265,7 +298,6 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   Widget _buildContinueButton() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: ElevatedButton(
         onPressed: selectedLanguage != null ? _selectLanguage : null,
         style: ElevatedButton.styleFrom(
