@@ -99,7 +99,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
           // Emergency message
           Container(
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: ThemeHelper.of(context).cardBackground,
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               boxShadow: [
                 BoxShadow(
@@ -126,11 +126,11 @@ class _EmergencyPageState extends State<EmergencyPage> {
                     ),
                   ),
                   const SizedBox(width: AppDesign.spaceMD),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'Tap any contact below for immediate assistance',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: ThemeHelper.of(context).textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -148,9 +148,9 @@ class _EmergencyPageState extends State<EmergencyPage> {
   Widget _buildEmergencyContent(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: AppDesign.spaceLG),
-      decoration: const BoxDecoration(
-        color: AppColors.scaffoldBackground,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: ThemeHelper.of(context).background,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
         ),
@@ -189,10 +189,10 @@ class _EmergencyPageState extends State<EmergencyPage> {
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            const Text(
+            Text(
               'Emergency Contacts',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: ThemeHelper.of(context).textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -288,8 +288,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
         ),
         title: Text(
           title,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: ThemeHelper.of(context).textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -309,8 +309,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
             const SizedBox(height: AppDesign.spaceXS),
             Text(
               description,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: ThemeHelper.of(context).textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -344,7 +344,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
   Widget _buildQuickActionsSection(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: ThemeHelper.of(context).cardBackground,
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           boxShadow: [
             BoxShadow(
@@ -374,10 +374,10 @@ class _EmergencyPageState extends State<EmergencyPage> {
                     ),
                   ),
                   const SizedBox(width: AppDesign.spaceMD),
-                  const Text(
+                  Text(
                     'Quick Actions',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: ThemeHelper.of(context).textPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -478,7 +478,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
   Widget _buildSafetyTipsSection() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: ThemeHelper.of(context).cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: [
           BoxShadow(
@@ -508,10 +508,10 @@ class _EmergencyPageState extends State<EmergencyPage> {
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
-                const Text(
+                Text(
                   'Emergency Safety Tips',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: ThemeHelper.of(context).textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -555,8 +555,8 @@ class _EmergencyPageState extends State<EmergencyPage> {
                   Expanded(
                     child: Text(
                       tip,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
+                      style: TextStyle(
+                        color: ThemeHelper.of(context).textSecondary,
                         fontSize: 15,
                       ),
                     ),
@@ -657,7 +657,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.white,
+        backgroundColor: ThemeHelper.of(context).cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         ),
@@ -752,7 +752,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.white,
+        backgroundColor: ThemeHelper.of(context).cardBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         ),
@@ -819,7 +819,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
               Container(
                 padding: const EdgeInsets.all(AppDesign.spaceMD),
                 decoration: BoxDecoration(
-                  color: AppColors.scaffoldBackground,
+                  color: ThemeHelper.of(context).subtleBackground,
                   borderRadius: BorderRadius.circular(AppDesign.radiusMD),
                   border: Border.all(
                     color: AppColors.textSecondary.withOpacity(0.1),

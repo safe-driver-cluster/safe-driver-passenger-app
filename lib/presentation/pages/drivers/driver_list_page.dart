@@ -276,7 +276,7 @@ class _DriverListPageState extends State<DriverListPage> {
               await Future.delayed(const Duration(seconds: 1));
             },
             color: AppColors.primaryColor,
-            backgroundColor: Colors.white,
+            backgroundColor: ThemeHelper.of(context).cardBackground,
             child: LayoutBuilder(
               builder: (context, constraints) {
                 if (!isWideWeb) {
@@ -316,6 +316,7 @@ class _DriverListPageState extends State<DriverListPage> {
 
   Widget _buildDriverCard(
       AppLocalizations l10n, Map<String, dynamic> driverData) {
+    final th = ThemeHelper.of(context);
     final name = driverData['name'] ?? l10n.unknown;
     final licenseNumber = driverData['licenseNumber'] ?? 'N/A';
     final route = driverData['route'] ?? l10n.unknown;
@@ -330,11 +331,17 @@ class _DriverListPageState extends State<DriverListPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        boxShadow: AppDesign.shadowMD,
+        boxShadow: [
+          BoxShadow(
+            color: th.shadowMedium,
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
         border: Border.all(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: th.border,
           width: 1,
         ),
       ),
@@ -378,14 +385,14 @@ class _DriverListPageState extends State<DriverListPage> {
                               name,
                               style: AppTextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
+                                color: th.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               '${l10n.license}: $licenseNumber',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: th.textSecondary,
                               ),
                             ),
                           ],
@@ -456,7 +463,7 @@ class _DriverListPageState extends State<DriverListPage> {
                     route,
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                     ),
                   ),
                 ),
@@ -466,6 +473,7 @@ class _DriverListPageState extends State<DriverListPage> {
             const SizedBox(height: AppDesign.spaceMD),
 
             _buildInfoRow(
+              th: th,
               icon: Icons.work_rounded,
               label: l10n.driverExperience,
               value: experience.toString(),
@@ -478,6 +486,7 @@ class _DriverListPageState extends State<DriverListPage> {
               children: [
                 Expanded(
                   child: _buildInfoRow(
+                    th: th,
                     icon: Icons.phone_rounded,
                     label: l10n.phoneNumber,
                     value: _maskPhone(phone.toString()),
@@ -486,6 +495,7 @@ class _DriverListPageState extends State<DriverListPage> {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildInfoRow(
+                    th: th,
                     icon: Icons.email_rounded,
                     label: l10n.email,
                     value: _maskEmail(email.toString()),
@@ -497,6 +507,7 @@ class _DriverListPageState extends State<DriverListPage> {
             if (joinDate.isNotEmpty) ...[
               const SizedBox(height: AppDesign.spaceSM),
               _buildInfoRow(
+                th: th,
                 icon: Icons.calendar_today_rounded,
                 label: l10n.joined,
                 value: joinDate,
@@ -504,19 +515,19 @@ class _DriverListPageState extends State<DriverListPage> {
             ],
 
             const SizedBox(height: AppDesign.spaceSM),
-            _buildAssignedBusChips(assignedBuses),
+            _buildAssignedBusChips(assignedBuses, th),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAssignedBusChips(List<String> busNumbers) {
+  Widget _buildAssignedBusChips(List<String> busNumbers, ThemeHelper th) {
     if (busNumbers.isEmpty) {
       return Text(
         'Assigned buses: 0',
         style: AppTextStyles.bodySmall.copyWith(
-          color: AppColors.textSecondary,
+          color: th.textSecondary,
           fontWeight: FontWeight.w500,
         ),
       );
@@ -550,6 +561,7 @@ class _DriverListPageState extends State<DriverListPage> {
   }
 
   Widget _buildInfoRow({
+    required ThemeHelper th,
     required IconData icon,
     required String label,
     required String value,
@@ -560,7 +572,7 @@ class _DriverListPageState extends State<DriverListPage> {
         Icon(
           icon,
           size: 16,
-          color: AppColors.textSecondary,
+          color: th.textSecondary,
         ),
         const SizedBox(width: AppDesign.spaceXS),
         Expanded(
@@ -570,14 +582,14 @@ class _DriverListPageState extends State<DriverListPage> {
               Text(
                 label,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                   fontSize: 11,
                 ),
               ),
               Text(
                 value,
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: valueColor ?? AppColors.textPrimary,
+                  color: valueColor ?? th.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
                 overflow: TextOverflow.ellipsis,

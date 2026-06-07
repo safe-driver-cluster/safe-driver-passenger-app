@@ -31,19 +31,26 @@ class CountryCodePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
+        color: th.inputFill,
+        border: Border.all(color: th.borderLight),
         borderRadius: BorderRadius.circular(12),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: selectedCountryCode,
           isExpanded: false,
-          icon: const Icon(Icons.arrow_drop_down, size: 20),
+          dropdownColor: th.cardBackground,
+          style: TextStyle(color: th.textPrimary),
+          icon: Icon(
+            Icons.arrow_drop_down,
+            size: 20,
+            color: th.textSecondary,
+          ),
           onChanged: (String? newValue) {
             if (newValue != null) {
               onCountryCodeChanged(newValue);
@@ -62,7 +69,7 @@ class CountryCodePicker extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     country['code']!,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: th.textPrimary),
                   ),
                 ],
               ),
@@ -94,7 +101,7 @@ class PhoneNumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Row(
       children: [
         // Country Code Picker
@@ -107,10 +114,10 @@ class PhoneNumberField extends StatelessWidget {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.grey[50],
+              color: th.inputFill,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.grey[300]!,
+                color: th.borderLight,
                 width: 1,
               ),
             ),
@@ -118,6 +125,7 @@ class PhoneNumberField extends StatelessWidget {
               controller: controller,
               keyboardType: TextInputType.phone,
               enabled: enabled,
+              style: TextStyle(color: th.textPrimary),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
               ],
@@ -125,15 +133,17 @@ class PhoneNumberField extends StatelessWidget {
                 labelText: labelText,
                 prefixIcon: Icon(
                   Icons.phone_outlined,
-                  color: Colors.grey[600],
+                  color: th.textSecondary,
                 ),
+                filled: true,
+                fillColor: Colors.transparent,
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 18,
                 ),
                 labelStyle: TextStyle(
-                  color: Colors.grey[600],
+                  color: th.textSecondary,
                   fontSize: 16,
                 ),
               ),
