@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/services/google_maps_web_loader.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/map_hazard_model.dart';
 import '../../../data/repositories/map_hazard_repository.dart';
@@ -73,6 +74,18 @@ class _MapPageState extends ConsumerState<MapPage> with WidgetsBindingObserver {
   }
 
   Future<void> _initializeMap() async {
+    final mapsReady = await ensureGoogleMapsWebApiReady();
+    if (!mounted) return;
+
+    if (!mapsReady) {
+      setState(() {
+        _errorMessage =
+            'Google Maps could not load. Check the web API key and Maps JavaScript API configuration.';
+        _isLoading = false;
+      });
+      return;
+    }
+
     await _getCurrentLocation();
   }
 

@@ -6,7 +6,6 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
-import '../../widgets/common/bottom_navigation_widget.dart';
 import '../../widgets/common/web_responsive_layout.dart';
 
 class DriverListPage extends StatefulWidget {
@@ -58,29 +57,6 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
         ),
       ),
-      bottomNavigationBar: WebResponsive.isWideWeb(
-        context,
-        minWidth: WebResponsive.desktopBreakpoint,
-      )
-          ? null
-          : BottomNavigationWidget(
-              currentIndex: 1, // Search tab is selected for drivers
-              onTap: (index) {
-                switch (index) {
-                  case 0:
-                  case 1:
-                  case 2:
-                  case 3:
-                    // Navigate back to dashboard with correct tab
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/dashboard',
-                      (route) => false,
-                      arguments: {'initialTab': index},
-                    );
-                    break;
-                }
-              },
-            ),
     );
   }
 

@@ -131,11 +131,16 @@ Future<bool> _initializeFirebaseCore() async {
 
 Future<void> _initializeFirebaseAppCheck() async {
   await _runStartupTask('Initialize Firebase App Check', () async {
+    // Web App Check requires a registered reCAPTCHA site key. Activating it
+    // with an empty key prevents Firebase web requests from completing.
+    if (kIsWeb) {
+      return;
+    }
+
     if (kDebugMode) {
       await FirebaseAppCheck.instance.activate(
         androidProvider: AndroidProvider.debug,
         appleProvider: AppleProvider.debug,
-        webProvider: ReCaptchaV3Provider(''),
       );
       return;
     }
