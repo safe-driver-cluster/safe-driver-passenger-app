@@ -90,9 +90,9 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
             stops: const [0.0, 0.4, 0.8, 1.0],
             colors: [
               AppColors.primaryColor,
-              AppColors.primaryColor.withOpacity(0.8),
+              AppColors.primaryColor.withValues(alpha: 0.8),
               AppColors.primaryDark,
-              AppColors.scaffoldBackground.withOpacity(0.9),
+              AppColors.scaffoldBackground.withValues(alpha: 0.9),
             ],
           ),
         ),
@@ -144,10 +144,10 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           width: isWideWeb ? 88 : 80,
           height: isWideWeb ? 88 : 80,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 2,
             ),
           ),
@@ -174,7 +174,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
           AppLocalizations.of(context).selectYourPreferredLanguage,
           style: TextStyle(
             fontSize: isWideWeb ? 16 : 14,
-            color: Colors.white.withOpacity(0.78),
+            color: Colors.white.withValues(alpha: 0.78),
             fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.center,
@@ -214,13 +214,13 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
               color: isSelected
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.08),
+                  ? Colors.white.withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isSelected
-                    ? Colors.white.withOpacity(0.6)
-                    : Colors.white.withOpacity(0.2),
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : Colors.white.withValues(alpha: 0.2),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -231,7 +231,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Center(
@@ -260,7 +260,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                         language.englishName,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withOpacity(0.7),
+                          color: Colors.white.withValues(alpha: 0.7),
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -275,7 +275,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
                     shape: BoxShape.circle,
                     color: isSelected ? Colors.white : Colors.transparent,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       width: 2,
                     ),
                   ),
@@ -296,14 +296,14 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
   }
 
   Widget _buildContinueButton() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: selectedLanguage != null ? _selectLanguage : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: selectedLanguage != null
               ? Colors.white
-              : Colors.white.withOpacity(0.3),
+              : Colors.white.withValues(alpha: 0.3),
           foregroundColor: AppColors.primaryColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -318,7 +318,7 @@ class _LanguageSelectionPageState extends ConsumerState<LanguageSelectionPage> {
             fontWeight: FontWeight.w600,
             color: selectedLanguage != null
                 ? AppColors.primaryColor
-                : AppColors.primaryColor.withOpacity(0.6),
+                : AppColors.primaryColor.withValues(alpha: 0.6),
           ),
         ),
       ),
