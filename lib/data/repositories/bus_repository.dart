@@ -6,10 +6,14 @@ import 'package:flutter/foundation.dart';
 import '../../core/utils/bus_qr_utils.dart';
 import '../../core/services/firebase_service.dart';
 import '../models/bus_model.dart';
+import '../models/notification_model.dart';
+import 'notification_repository.dart';
 
 class BusRepository {
   final FirebaseService _firebaseService;
   final String _collection = 'vehicles'; // Changed from 'buses' to 'vehicles'
+  final NotificationRepository _notificationRepository =
+      NotificationRepository();
 
   BusRepository({FirebaseService? firebaseService})
       : _firebaseService = firebaseService ?? FirebaseService.instance;
@@ -391,6 +395,11 @@ class BusRepository {
       });
 
       await batch.commit();
+      await _createJourneyStartedNotification(
+        userId: resolvedUserId,
+        journeyId: journeyRef.id,
+        bus: bus,
+      );
     } catch (e) {
       throw BusRepositoryException('Failed to start active journey: $e');
     }
@@ -414,6 +423,15 @@ class BusRepository {
       final activeJourneys = await query.get();
       if (activeJourneys.docs.isEmpty) return;
 
+      final endedJourneySummaries = activeJourneys.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return {
+          'id': doc.id,
+          'busNumber': (data['busNumber'] ?? 'Bus').toString(),
+          'routeNumber': (data['routeNumber'] ?? '').toString(),
+        };
+      }).toList();
+
       final batch = _firebaseService.firestore.batch();
       for (final doc in activeJourneys.docs) {
         batch.update(doc.reference, {
@@ -425,8 +443,68 @@ class BusRepository {
       }
 
       await batch.commit();
+      for (final journey in endedJourneySummaries) {
+        await _createJourneyEndedNotification(
+          userId: resolvedUserId,
+          journeyId: journey['id']!,
+          busNumber: journey['busNumber']!,
+          routeNumber: journey['routeNumber']!,
+        );
+      }
     } catch (e) {
       throw BusRepositoryException('Failed to end active journey: $e');
+    }
+  }
+
+  Future<void> _createJourneyStartedNotification({
+    required String userId,
+    required String journeyId,
+    required BusModel bus,
+  }) async {
+    try {
+      final routeText =
+          bus.routeNumber.trim().isEmpty ? '' : ' on route ${bus.routeNumber}';
+      await _notificationRepository.createUserNotification(
+        userId: userId,
+        type: NotificationType.journey,
+        title: 'Journey Started',
+        body: 'Your journey on Bus ${bus.busNumber}$routeText has started.',
+        data: {
+          'journeyId': journeyId,
+          'busId': bus.id,
+          'busNumber': bus.busNumber,
+          'routeNumber': bus.routeNumber,
+        },
+        actionUrl: '/dashboard',
+      );
+    } catch (_) {
+      // Journey creation succeeded; notification creation is secondary.
+    }
+  }
+
+  Future<void> _createJourneyEndedNotification({
+    required String userId,
+    required String journeyId,
+    required String busNumber,
+    required String routeNumber,
+  }) async {
+    try {
+      final routeText =
+          routeNumber.trim().isEmpty ? '' : ' on route $routeNumber';
+      await _notificationRepository.createUserNotification(
+        userId: userId,
+        type: NotificationType.journey,
+        title: 'Journey Ended',
+        body: 'Your journey on Bus $busNumber$routeText has ended.',
+        data: {
+          'journeyId': journeyId,
+          'busNumber': busNumber,
+          'routeNumber': routeNumber,
+        },
+        actionUrl: '/trip-history',
+      );
+    } catch (_) {
+      // Journey end succeeded; notification creation is secondary.
     }
   }
 

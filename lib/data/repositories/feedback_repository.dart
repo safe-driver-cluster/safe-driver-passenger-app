@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/feedback_model.dart';
+import '../models/notification_model.dart';
+import 'notification_repository.dart';
 import '../services/reward_points_service.dart';
 
 /// Repository for feedback operations
@@ -9,9 +11,11 @@ class FeedbackRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collection = 'feedback';
   final RewardPointsService _rewardPointsService = RewardPointsService();
+  final NotificationRepository _notificationRepository =
+      NotificationRepository();
 
   /// Submit feedback with reward points tracking
-  Future<void> submitFeedback(FeedbackModel feedback) async {
+  Future<String> submitFeedback(FeedbackModel feedback) async {
     try {
       debugPrint('🔥 FeedbackRepository: Preparing to submit feedback...');
       debugPrint('📄 FeedbackRepository: Feedback JSON: ${feedback.toJson()}');
@@ -28,6 +32,24 @@ class FeedbackRepository {
       debugPrint(
           '✅ FeedbackRepository: Successfully submitted with ID: ${docRef.id}');
 
+      try {
+        await _notificationRepository.createUserNotification(
+          userId: feedback.userId,
+          type: NotificationType.feedback,
+          title: 'Feedback Submitted',
+          body:
+              'Thanks for your ${feedback.categoryDisplay.toLowerCase()} feedback. We received it successfully.',
+          data: {
+            'feedbackId': docRef.id,
+            'category': feedback.category.toString().split('.').last,
+            'type': feedback.type.toString().split('.').last,
+          },
+          actionUrl: '/feedback-history',
+        );
+      } catch (e) {
+        debugPrint('FeedbackRepository: Could not add notification: $e');
+      }
+
       // Award points for feedback submission
       try {
         await _rewardPointsService.addFeedbackSubmissionPoints(
@@ -41,6 +63,7 @@ class FeedbackRepository {
         debugPrint('⚠️  FeedbackRepository: Could not add reward points: $e');
         // Don't throw - feedback was already submitted successfully
       }
+      return docRef.id;
     } catch (e) {
       debugPrint('❌ FeedbackRepository: Error submitting feedback: $e');
       throw Exception('Failed to submit feedback: $e');

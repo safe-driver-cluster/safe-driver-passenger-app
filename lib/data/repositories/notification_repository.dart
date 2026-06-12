@@ -10,6 +10,34 @@ class NotificationRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const String _notificationsCollection = 'notifications';
 
+  /// Create a notification for a user.
+  Future<String> createUserNotification({
+    required String userId,
+    required NotificationType type,
+    required String title,
+    required String body,
+    NotificationPriority priority = NotificationPriority.normal,
+    Map<String, dynamic>? data,
+    String? actionUrl,
+    String? documentId,
+  }) {
+    return addNotification(
+      NotificationModel(
+        id: documentId ?? '',
+        userId: userId,
+        type: type,
+        title: title,
+        body: body,
+        priority: priority,
+        status: NotificationStatus.sent,
+        sentAt: DateTime.now(),
+        data: data,
+        actionUrl: actionUrl,
+      ),
+      documentId: documentId,
+    );
+  }
+
   /// Add notification to Firestore
   Future<String> addNotification(
     NotificationModel notification, {
@@ -118,14 +146,16 @@ class NotificationRepository {
       final snapshot = await _firestore
           .collection(_notificationsCollection)
           .where('userId', isEqualTo: userId)
-          .where('status', isEqualTo: 'sent')
           .get();
 
       for (var doc in snapshot.docs) {
-        batch.update(doc.reference, {
-          'status': 'read',
-          'readAt': Timestamp.now(),
-        });
+        final status = doc.data()['status'] ?? 'sent';
+        if (status != 'read') {
+          batch.update(doc.reference, {
+            'status': 'read',
+            'readAt': Timestamp.now(),
+          });
+        }
       }
 
       await batch.commit();

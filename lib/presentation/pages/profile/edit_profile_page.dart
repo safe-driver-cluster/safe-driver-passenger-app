@@ -10,7 +10,9 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/services/sos_service.dart';
 import '../../../core/utils/theme_helper.dart';
+import '../../../data/models/notification_model.dart';
 import '../../../data/models/passenger_model.dart';
+import '../../../data/repositories/notification_repository.dart';
 import '../../../data/services/firebase_storage_service.dart';
 import '../../../data/services/passenger_service.dart';
 import '../../widgets/common/professional_widgets.dart';
@@ -1013,6 +1015,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         passenger: updatedProfile,
       );
       await _saveEmergencyContactToSos(updatedEmergencyContact);
+      await _createProfileUpdatedNotification(
+        user.uid,
+        _currentProfile,
+        updatedProfile,
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1075,6 +1082,93 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     } else {
       await _sosService.updateContact(updatedContact);
     }
+  }
+
+  Future<void> _createProfileUpdatedNotification(
+    String userId,
+    PassengerModel? previousProfile,
+    PassengerModel updatedProfile,
+  ) async {
+    final changedFields = _changedProfileFields(
+      previousProfile,
+      updatedProfile,
+    );
+
+    if (changedFields.isEmpty) {
+      return;
+    }
+
+    try {
+      final fieldsText = changedFields.join(', ');
+      await NotificationRepository().createUserNotification(
+        userId: userId,
+        type: NotificationType.profile,
+        title: 'Profile Updated',
+        body: 'Your profile has been updated ($fieldsText).',
+        data: {
+          'changedFields': changedFields,
+        },
+        actionUrl: '/profile',
+      );
+    } catch (_) {
+      // Profile save succeeded; notification creation is secondary.
+    }
+  }
+
+  List<String> _changedProfileFields(
+    PassengerModel? previousProfile,
+    PassengerModel updatedProfile,
+  ) {
+    if (previousProfile == null) {
+      return const [];
+    }
+
+    final changes = <String>[];
+    if (previousProfile.firstName.trim() != updatedProfile.firstName.trim() ||
+        previousProfile.lastName.trim() != updatedProfile.lastName.trim()) {
+      changes.add('name');
+    }
+    if (previousProfile.phoneNumber.trim() !=
+        updatedProfile.phoneNumber.trim()) {
+      changes.add('phone number');
+    }
+    if (previousProfile.dateOfBirth != updatedProfile.dateOfBirth) {
+      changes.add('date of birth');
+    }
+    if ((previousProfile.gender ?? '') != (updatedProfile.gender ?? '')) {
+      changes.add('gender');
+    }
+    if ((previousProfile.profileImageUrl ?? '') !=
+        (updatedProfile.profileImageUrl ?? '')) {
+      changes.add('profile image');
+    }
+    if (!_sameAddress(previousProfile.address, updatedProfile.address)) {
+      changes.add('address');
+    }
+    if (!_sameEmergencyContact(
+      previousProfile.emergencyContact,
+      updatedProfile.emergencyContact,
+    )) {
+      changes.add('emergency contact');
+    }
+
+    return changes;
+  }
+
+  bool _sameAddress(PassengerAddress? a, PassengerAddress? b) {
+    return (a?.street.trim() ?? '') == (b?.street.trim() ?? '') &&
+        (a?.city.trim() ?? '') == (b?.city.trim() ?? '') &&
+        (a?.postalCode.trim() ?? '') == (b?.postalCode.trim() ?? '') &&
+        (a?.country.trim() ?? '') == (b?.country.trim() ?? '');
+  }
+
+  bool _sameEmergencyContact(
+    PassengerEmergencyContact? a,
+    PassengerEmergencyContact? b,
+  ) {
+    return (a?.name.trim() ?? '') == (b?.name.trim() ?? '') &&
+        (a?.phoneNumber.trim() ?? '') == (b?.phoneNumber.trim() ?? '') &&
+        (a?.relationship.trim() ?? '') == (b?.relationship.trim() ?? '');
   }
 
   void _showErrorDialog(String message) {

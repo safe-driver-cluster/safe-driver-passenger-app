@@ -110,8 +110,7 @@ class ReceivedNotificationsContent extends ConsumerWidget {
                   const SizedBox(height: 12),
                   notificationsAsyncValue.when(
                     data: (notifications) {
-                      final count =
-                          _uniqueNotifications(notifications).where((item) {
+                      final count = notifications.where((item) {
                         return !item.isRead;
                       }).length;
 
@@ -163,25 +162,47 @@ class ReceivedNotificationsContent extends ConsumerWidget {
             Expanded(
               child: notificationsAsyncValue.when(
                 data: (notifications) {
-                  final visibleNotifications = _uniqueNotifications(
-                    notifications,
-                  );
+                  final visibleNotifications = notifications;
 
                   if (visibleNotifications.isEmpty) {
                     return _buildEmptyState();
                   }
 
                   return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                     itemCount: visibleNotifications.length,
                     itemBuilder: (context, index) {
                       final notification = visibleNotifications[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildNotificationCard(
-                          context,
-                          ref,
-                          notification,
+                      return Dismissible(
+                        key: ValueKey(notification.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.centerRight,
+                          decoration: BoxDecoration(
+                            color: AppColors.errorColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                        confirmDismiss: (_) async {
+                          await ref
+                              .read(notificationControllerProvider.notifier)
+                              .deleteNotification(notification.id);
+                          return true;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildNotificationCard(
+                            context,
+                            ref,
+                            notification,
+                          ),
                         ),
                       );
                     },
@@ -552,27 +573,6 @@ class ReceivedNotificationsContent extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  List<NotificationModel> _uniqueNotifications(
-    List<NotificationModel> notifications,
-  ) {
-    final seen = <String>{};
-    final unique = <NotificationModel>[];
-
-    for (final notification in notifications) {
-      final key = [
-        notification.title.trim().toLowerCase(),
-        notification.body.trim().toLowerCase(),
-        notification.actionUrl ?? '',
-      ].join('|');
-
-      if (seen.add(key)) {
-        unique.add(notification);
-      }
-    }
-
-    return unique;
   }
 
   IconData _notificationIcon(NotificationModel notification) {

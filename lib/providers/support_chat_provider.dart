@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/models/notification_model.dart';
 import '../data/models/support_chat_models.dart';
+import '../data/repositories/notification_repository.dart';
 import '../data/services/support_chat_service.dart';
 import '../data/services/support_data_service.dart';
 
@@ -58,10 +60,12 @@ class SupportChatComposerState {
 class SupportChatController extends StateNotifier<SupportChatComposerState> {
   SupportChatController(Ref ref)
       : _service = ref.read(supportChatServiceProvider),
+        _notificationRepository = NotificationRepository(),
         _supportData = ref.read(supportDataServiceProvider),
         super(const SupportChatComposerState());
 
   final SupportChatService _service;
+  final NotificationRepository _notificationRepository;
   final SupportDataService _supportData;
 
   Future<void> ensureConversation({
@@ -96,11 +100,13 @@ class SupportChatController extends StateNotifier<SupportChatComposerState> {
     state = state.copyWith(isSending: true, clearError: true);
 
     try {
-      await _service.ensureConversation(
+      final conversation = await _service.ensureConversation(
         userId: userId,
         userName: userName,
         userEmail: userEmail,
       );
+      final isNewTicket =
+          conversation.lastMessage == 'Support conversation created';
 
       await _service.sendMessage(
         userId: userId,
@@ -110,6 +116,10 @@ class SupportChatController extends StateNotifier<SupportChatComposerState> {
         isFromUser: true,
         status: SupportConversationStatus.waitingOnSupport,
       );
+
+      if (isNewTicket) {
+        await _createSupportTicketNotification(userId);
+      }
 
       state = state.copyWith(
         isSending: false,
@@ -148,6 +158,23 @@ class SupportChatController extends StateNotifier<SupportChatComposerState> {
       state = state.copyWith(
         error: 'Unable to update conversation status right now.',
       );
+    }
+  }
+
+  Future<void> _createSupportTicketNotification(String userId) async {
+    try {
+      await _notificationRepository.createUserNotification(
+        userId: userId,
+        type: NotificationType.general,
+        title: 'Support Ticket Submitted',
+        body: 'Your support ticket has been submitted. We will help you here.',
+        data: {
+          'source': 'support_chat',
+        },
+        actionUrl: '/support',
+      );
+    } catch (_) {
+      // Message delivery is the important action; notification is secondary.
     }
   }
 
