@@ -740,7 +740,6 @@ class _BusListPageState extends State<BusListPage> {
             width: double.infinity,
             constraints: const BoxConstraints(
               maxWidth: 420,
-              minHeight: 260,
             ),
             decoration: BoxDecoration(
               color: th.cardBackground,
@@ -758,10 +757,14 @@ class _BusListPageState extends State<BusListPage> {
               future: _loadRouteDetails(routeId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                  return const SizedBox(
+                    height: 120,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.primaryColor,
+                        ),
+                      ),
                     ),
                   );
                 }
