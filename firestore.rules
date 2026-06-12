@@ -39,6 +39,11 @@ service cloud.firestore {
         allow read, write: if isOwner(userId);
       }
     }
+
+    // Passenger profile documents - users can only access their own profile
+    match /passenger_details/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
     
     // OTP verifications - only Cloud Functions can write, users cannot directly access
     match /otp_verifications/{verificationId} {

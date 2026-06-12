@@ -329,7 +329,6 @@ class _BusListPageState extends State<BusListPage> {
     final busId = busData['id']?.toString();
     final driverName = busData['driverName'] ?? l10n.unknown;
     final model = busData['model'] ?? 'N/A';
-    final safetyScore = busData['safetyScore'] ?? 0;
     final status = (busData['status'] ?? 'active').toString();
     final location = busData['location'] as Map<String, dynamic>?;
     final address = location?['address'] ?? l10n.noData;
@@ -422,8 +421,6 @@ class _BusListPageState extends State<BusListPage> {
                     ],
                   ),
                 ),
-                const SizedBox(width: AppDesign.spaceSM),
-                _buildSafetyPill(safetyScore),
               ],
             ),
             const SizedBox(height: AppDesign.spaceLG),
@@ -440,7 +437,7 @@ class _BusListPageState extends State<BusListPage> {
                       final assignment = snapshot.data;
                       return _buildBusInfoTile(
                         icon: Icons.person_rounded,
-                        label: 'Active driver',
+                        label: 'Bus Owner',
                         value: assignment?.activeDriverName ??
                             driverName.toString(),
                         th: th,
@@ -563,39 +560,6 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Widget _buildSafetyPill(int score) {
-    final color = _getSafetyScoreColor(score);
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDesign.spaceSM,
-        vertical: AppDesign.spaceXS,
-      ),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.shield_rounded,
-            color: color,
-            size: 16,
-          ),
-          const SizedBox(width: AppDesign.spaceXS),
-          Text(
-            '$score%',
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildStatusPill(String status) {
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -664,12 +628,6 @@ class _BusListPageState extends State<BusListPage> {
         ],
       ),
     );
-  }
-
-  Color _getSafetyScoreColor(int score) {
-    if (score >= 90) return AppColors.successColor;
-    if (score >= 75) return AppColors.warningColor;
-    return AppColors.errorColor;
   }
 
   Future<_BusDriverAssignment> _driverAssignmentFuture({

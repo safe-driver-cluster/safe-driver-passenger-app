@@ -615,9 +615,13 @@ class _DriverListPageState extends State<DriverListPage> {
         return;
       }
 
-      final text = value.toString().trim();
-      if (text.isEmpty || text.toUpperCase() == 'N/A') return;
-      buses.add(text);
+      final parts = value
+          .toString()
+          .split(',')
+          .map((part) => part.trim())
+          .where((part) => part.isNotEmpty && part.toUpperCase() != 'N/A');
+
+      buses.addAll(parts);
     }
 
     addValue(driverData['busNumber']);

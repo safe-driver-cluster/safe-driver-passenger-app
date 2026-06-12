@@ -1161,8 +1161,69 @@ class _EmergencyPageState extends State<EmergencyPage> {
     }
   }
 
-  void _reportIncident() {
-    // Implement incident reporting functionality
+  Future<void> _shareIncidentLocation(BuildContext context) async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                    AppLocalizations.of(context).locationPermissionRequired),
+                backgroundColor: AppColors.dangerColor,
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Location permission is permanently denied. Please enable it from settings.'),
+              backgroundColor: AppColors.dangerColor,
+            ),
+          );
+        }
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final locationUrl =
+          'https://maps.google.com/?q=${position.latitude},${position.longitude}';
+      final shareMessage =
+          'I need help with a SafeDriver incident. Please check my current location.\n'
+          'Latitude: ${position.latitude}\n'
+          'Longitude: ${position.longitude}\n'
+          'View on map: $locationUrl';
+
+      await Share.share(
+        shareMessage,
+        subject: 'SafeDriver Incident Report',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to get location: ${e.toString()}'),
+            backgroundColor: AppColors.dangerColor,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _reportIncident() async {
+    if (!mounted) return;
+
+    await _shareIncidentLocation(context);
   }
 
   void _viewEmergencyContacts(BuildContext context) {
