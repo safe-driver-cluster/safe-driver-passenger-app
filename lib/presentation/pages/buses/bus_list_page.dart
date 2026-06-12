@@ -16,19 +16,12 @@ class BusListPage extends StatefulWidget {
 
 class _BusListPageState extends State<BusListPage> {
   final TextEditingController _searchController = TextEditingController();
-  final Map<String, Future<_BusDriverAssignment>> _driverAssignmentFutures = {};
   String _searchQuery = '';
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  @override
-  void reassemble() {
-    _driverAssignmentFutures.clear();
-    super.reassemble();
   }
 
   @override
@@ -330,7 +323,6 @@ class _BusListPageState extends State<BusListPage> {
     final routeId = (busData['routeId'] ?? '').toString().trim();
     final busNumber =
         busData['busNumberPlate'] ?? busData['busNumber'] ?? 'N/A';
-    final busId = busData['id']?.toString();
     final ownerName = (busData['ownerName'] ?? l10n.unknown).toString();
     final model = busData['model'] ?? 'N/A';
     final status = (busData['status'] ?? 'active').toString();
@@ -454,19 +446,6 @@ class _BusListPageState extends State<BusListPage> {
                 ),
               ],
             ),
-            const SizedBox(height: AppDesign.spaceSM),
-            FutureBuilder<_BusDriverAssignment>(
-              future: _driverAssignmentFuture(
-                busNumber: busNumber.toString(),
-                busId: busId,
-              ),
-              builder: (context, snapshot) {
-                return _buildAssignedDriverChips(
-                  th,
-                  snapshot.data?.assignedDrivers ?? const [],
-                );
-              },
-            ),
           ],
         ),
       ),
@@ -530,53 +509,6 @@ class _BusListPageState extends State<BusListPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildAssignedDriverChips(
-    ThemeHelper th,
-    List<Map<String, dynamic>> drivers,
-  ) {
-    if (drivers.isEmpty) {
-      return Text(
-        'Assigned drivers: 0',
-        style: AppTextStyles.bodySmall.copyWith(
-          color: th.textSecondary,
-          fontWeight: FontWeight.w500,
-        ),
-      );
-    }
-
-    return Wrap(
-      spacing: AppDesign.spaceSM,
-      runSpacing: AppDesign.spaceSM,
-      children: drivers.map((driverData) {
-        final driverName = _driverNameFromData(driverData);
-        final label = driverName.isEmpty
-            ? (driverData['id'] ?? 'Driver').toString()
-            : driverName;
-        return ActionChip(
-          avatar: const Icon(
-            Icons.person_rounded,
-            size: 15,
-            color: AppColors.primaryColor,
-          ),
-          label: Text(label),
-          labelStyle: const TextStyle(
-            color: AppColors.primaryColor,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          ),
-          backgroundColor: AppColors.primaryColor.withOpacity(0.08),
-          side: BorderSide.none,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-          ),
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: VisualDensity.compact,
-          onPressed: () => _showDriverDetails(driverData),
-        );
-      }).toList(),
     );
   }
 
@@ -648,81 +580,6 @@ class _BusListPageState extends State<BusListPage> {
         ],
       ),
     );
-  }
-
-  Future<_BusDriverAssignment> _driverAssignmentFuture({
-    required String busNumber,
-    required String? busId,
-  }) {
-    final cacheKey = '$busNumber|${busId ?? ''}';
-    return _driverAssignmentFutures.putIfAbsent(
-      cacheKey,
-      () => _loadDriverAssignment(
-        busNumber: busNumber,
-        busId: busId,
-      ),
-    );
-  }
-
-  Future<_BusDriverAssignment> _loadDriverAssignment({
-    required String busNumber,
-    required String? busId,
-  }) async {
-    final driversById = <String, Map<String, dynamic>>{};
-    final drivers = FirebaseFirestore.instance.collection('drivers');
-    final busKeys = {
-      if (busNumber.trim().isNotEmpty) busNumber.trim(),
-      if (busId != null && busId.trim().isNotEmpty) busId.trim(),
-    };
-
-    Future<void> addQuery(Query<Map<String, dynamic>> query) async {
-      final snapshot = await query.get();
-      for (final doc in snapshot.docs) {
-        driversById[doc.id] = {
-          'id': doc.id,
-          ...doc.data(),
-        };
-      }
-    }
-
-    for (final busKey in busKeys) {
-      await addQuery(drivers.where('busNumber', isEqualTo: busKey));
-      await addQuery(drivers.where('currentBusNumber', isEqualTo: busKey));
-      await addQuery(drivers.where('currentBusId', isEqualTo: busKey));
-      await addQuery(drivers.where('assignedBuses', arrayContains: busKey));
-      await addQuery(
-        drivers.where('assignedBusNumbers', arrayContains: busKey),
-      );
-    }
-
-    final driverDocs = driversById.values.toList();
-    final activeDriver = driverDocs.cast<Map<String, dynamic>?>().firstWhere(
-          (driver) => driver != null && _isOnDutyStatus(driver['status']),
-          orElse: () => driverDocs.isNotEmpty ? driverDocs.first : null,
-        );
-
-    final activeName = activeDriver == null
-        ? 'No active driver'
-        : _driverNameFromData(activeDriver);
-
-    return _BusDriverAssignment(
-      activeDriverName: activeName.isEmpty ? 'No active driver' : activeName,
-      assignedDrivers: driverDocs,
-    );
-  }
-
-  String _driverNameFromData(Map<String, dynamic> data) {
-    final direct = (data['name'] ?? data['driverName'] ?? '').toString().trim();
-    if (direct.isNotEmpty) return direct;
-
-    final firstName = (data['firstName'] ?? '').toString().trim();
-    final lastName = (data['lastName'] ?? '').toString().trim();
-    return '$firstName $lastName'.trim();
-  }
-
-  bool _isOnDutyStatus(Object? status) {
-    final value = (status ?? '').toString().toLowerCase().replaceAll('_', '');
-    return value == 'onduty' || value == 'active' || value == 'driving';
   }
 
   Future<void> _showRouteDetails(String routeId) async {
@@ -946,159 +803,6 @@ class _BusListPageState extends State<BusListPage> {
     );
   }
 
-  Future<void> _showDriverDetails(Map<String, dynamic> driverData) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final th = ThemeHelper.of(context);
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: AppDesign.spaceXL,
-            vertical: AppDesign.spaceXL,
-          ),
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(
-              maxWidth: 420,
-              minHeight: 260,
-            ),
-            decoration: BoxDecoration(
-              color: th.cardBackground,
-              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.18),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(AppDesign.spaceLG),
-            child: _buildDriverDetailsContent(th, driverData),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDriverDetailsContent(
-    ThemeHelper th,
-    Map<String, dynamic> driverData,
-  ) {
-    final name = _driverNameFromData(driverData);
-    final details = <_DriverDetailItem>[
-      _DriverDetailItem(
-        'Status',
-        _driverStatusText(driverData['status']),
-        Icons.circle_rounded,
-      ),
-      _DriverDetailItem(
-        'License',
-        (driverData['licenseNumber'] ?? 'N/A').toString(),
-        Icons.badge_rounded,
-      ),
-      _DriverDetailItem(
-        'Route',
-        (driverData['route'] ?? driverData['currentRoute'] ?? 'N/A').toString(),
-        Icons.route_rounded,
-      ),
-      _DriverDetailItem(
-        'Experience',
-        _experienceText(driverData['experience']),
-        Icons.work_rounded,
-      ),
-      _DriverDetailItem(
-        'Phone',
-        _maskPhone((driverData['phone'] ?? driverData['phoneNumber'] ?? '')
-            .toString()),
-        Icons.phone_rounded,
-      ),
-      _DriverDetailItem(
-        'Email',
-        _maskEmail((driverData['email'] ?? '').toString()),
-        Icons.email_rounded,
-      ),
-    ];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDriverDialogHeader(th, name),
-        const SizedBox(height: AppDesign.spaceLG),
-        ...details.map(
-          (item) => Padding(
-            padding: const EdgeInsets.only(bottom: AppDesign.spaceSM),
-            child: Row(
-              children: [
-                Icon(item.icon, size: 18, color: AppColors.textSecondary),
-                const SizedBox(width: AppDesign.spaceSM),
-                SizedBox(
-                  width: 86,
-                  child: Text(
-                    item.label,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    item.value,
-                    style: TextStyle(
-                      color: th.textPrimary,
-                      fontWeight: item.label == 'License'
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDriverDialogHeader(ThemeHelper th, String driverName) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppDesign.spaceMD),
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
-          ),
-          child: const Icon(
-            Icons.person_rounded,
-            color: AppColors.primaryColor,
-          ),
-        ),
-        const SizedBox(width: AppDesign.spaceMD),
-        Expanded(
-          child: Text(
-            driverName.isEmpty ? 'Driver details' : driverName,
-            style: TextStyle(
-              color: th.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.close_rounded),
-          color: AppColors.errorColor,
-          tooltip: 'Close',
-        ),
-      ],
-    );
-  }
-
   String _driverStatusText(Object? status) {
     final value = (status ?? 'N/A').toString().trim();
     if (value.isEmpty) return 'N/A';
@@ -1108,16 +812,6 @@ class _BusListPageState extends State<BusListPage> {
         .where((part) => part.isNotEmpty)
         .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
         .join(' ');
-  }
-
-  String _experienceText(Object? experience) {
-    if (experience is Map) {
-      final years = experience['totalYears'] ?? experience['years'];
-      if (years != null) return '$years years';
-    }
-    final value = (experience ?? 'N/A').toString().trim();
-    if (value.isEmpty) return 'N/A';
-    return RegExp(r'^\d+$').hasMatch(value) ? '$value years' : value;
   }
 
   String _formatRouteNumber(Object? value, {required String suffix}) {
@@ -1147,42 +841,6 @@ class _BusListPageState extends State<BusListPage> {
     final value = (vehicles ?? '').toString().trim();
     return value.isEmpty ? 'N/A' : value;
   }
-
-  String _maskPhone(String phone) {
-    final value = phone.trim();
-    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
-    if (value.length <= 4) return '***';
-
-    final visibleStart = value.length >= 7 ? 3 : 1;
-    final visibleEnd = value.length >= 7 ? 2 : 1;
-    return '${value.substring(0, visibleStart)}***${value.substring(value.length - visibleEnd)}';
-  }
-
-  String _maskEmail(String email) {
-    final value = email.trim();
-    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
-
-    final atIndex = value.indexOf('@');
-    if (atIndex <= 0) return '***';
-
-    final local = value.substring(0, atIndex);
-    final domain = value.substring(atIndex);
-    final visible = local.length <= 2 ? local[0] : local.substring(0, 3);
-    return '$visible***$domain';
-  }
-}
-
-class _BusDriverAssignment {
-  final String activeDriverName;
-  final List<Map<String, dynamic>>? _assignedDrivers;
-
-  List<Map<String, dynamic>> get assignedDrivers =>
-      _assignedDrivers ?? const [];
-
-  const _BusDriverAssignment({
-    required this.activeDriverName,
-    List<Map<String, dynamic>>? assignedDrivers,
-  }) : _assignedDrivers = assignedDrivers;
 }
 
 class _DriverDetailItem {
