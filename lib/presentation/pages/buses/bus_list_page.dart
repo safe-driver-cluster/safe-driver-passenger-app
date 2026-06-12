@@ -218,16 +218,19 @@ class _BusListPageState extends State<BusListPage> {
           final route = (data['route'] ?? '').toString().toLowerCase();
           final busNumber =
               (data['busNumberPlate'] ?? '').toString().toLowerCase();
-          final driverName =
-              (data['driverName'] ?? '').toString().toLowerCase();
+          final routeId = (data['routeId'] ?? '').toString().toLowerCase();
+          final ownerName = (data['ownerName'] ?? '').toString().toLowerCase();
+          final model = (data['model'] ?? '').toString().toLowerCase();
           final location = data['location'] as Map<String, dynamic>?;
           final address = (location?['address'] ?? '').toString().toLowerCase();
 
           if (_searchQuery.isEmpty) return true;
 
           return route.contains(_searchQuery) ||
+              routeId.contains(_searchQuery) ||
               busNumber.contains(_searchQuery) ||
-              driverName.contains(_searchQuery) ||
+              ownerName.contains(_searchQuery) ||
+              model.contains(_searchQuery) ||
               address.contains(_searchQuery);
         }).toList();
 
@@ -324,10 +327,11 @@ class _BusListPageState extends State<BusListPage> {
   Widget _buildBusCard(
       ThemeHelper th, AppLocalizations l10n, Map<String, dynamic> busData) {
     final route = busData['route'] ?? l10n.unknown;
+    final routeId = (busData['routeId'] ?? '').toString().trim();
     final busNumber =
         busData['busNumberPlate'] ?? busData['busNumber'] ?? 'N/A';
     final busId = busData['id']?.toString();
-    final driverName = busData['driverName'] ?? l10n.unknown;
+    final ownerName = (busData['ownerName'] ?? l10n.unknown).toString();
     final model = busData['model'] ?? 'N/A';
     final status = (busData['status'] ?? 'active').toString();
     final location = busData['location'] as Map<String, dynamic>?;
@@ -416,6 +420,10 @@ class _BusListPageState extends State<BusListPage> {
                           ),
                           const SizedBox(width: AppDesign.spaceSM),
                           _buildModelChip(model),
+                          if (routeId.isNotEmpty) ...[
+                            const SizedBox(width: AppDesign.spaceSM),
+                            _buildRouteChip(routeId),
+                          ],
                         ],
                       ),
                     ],
@@ -427,23 +435,12 @@ class _BusListPageState extends State<BusListPage> {
             Row(
               children: [
                 Expanded(
-                  child: FutureBuilder<_BusDriverAssignment>(
-                    future: _driverAssignmentFuture(
-                      busNumber: busNumber.toString(),
-                      busId: busId,
-                      fallbackDriverName: driverName.toString(),
-                    ),
-                    builder: (context, snapshot) {
-                      final assignment = snapshot.data;
-                      return _buildBusInfoTile(
-                        icon: Icons.person_rounded,
-                        label: 'Bus Owner',
-                        value: assignment?.activeDriverName ??
-                            driverName.toString(),
-                        th: th,
-                        isImportant: true,
-                      );
-                    },
+                  child: _buildBusInfoTile(
+                    icon: Icons.person_rounded,
+                    label: 'Bus Owner',
+                    value: ownerName,
+                    th: th,
+                    isImportant: true,
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceSM),
@@ -462,7 +459,6 @@ class _BusListPageState extends State<BusListPage> {
               future: _driverAssignmentFuture(
                 busNumber: busNumber.toString(),
                 busId: busId,
-                fallbackDriverName: driverName.toString(),
               ),
               builder: (context, snapshot) {
                 return _buildAssignedDriverChips(
@@ -474,6 +470,30 @@ class _BusListPageState extends State<BusListPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildRouteChip(String routeId) {
+    return ActionChip(
+      avatar: const Icon(
+        Icons.route_rounded,
+        size: 14,
+        color: AppColors.primaryColor,
+      ),
+      label: Text(routeId),
+      labelStyle: const TextStyle(
+        color: AppColors.primaryColor,
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+      ),
+      backgroundColor: AppColors.primaryColor.withOpacity(0.08),
+      side: BorderSide.none,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+      ),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      visualDensity: VisualDensity.compact,
+      onPressed: () => _showRouteDetails(routeId),
     );
   }
 
@@ -633,7 +653,6 @@ class _BusListPageState extends State<BusListPage> {
   Future<_BusDriverAssignment> _driverAssignmentFuture({
     required String busNumber,
     required String? busId,
-    required String fallbackDriverName,
   }) {
     final cacheKey = '$busNumber|${busId ?? ''}';
     return _driverAssignmentFutures.putIfAbsent(
@@ -641,7 +660,6 @@ class _BusListPageState extends State<BusListPage> {
       () => _loadDriverAssignment(
         busNumber: busNumber,
         busId: busId,
-        fallbackDriverName: fallbackDriverName,
       ),
     );
   }
@@ -649,7 +667,6 @@ class _BusListPageState extends State<BusListPage> {
   Future<_BusDriverAssignment> _loadDriverAssignment({
     required String busNumber,
     required String? busId,
-    required String fallbackDriverName,
   }) async {
     final driversById = <String, Map<String, dynamic>>{};
     final drivers = FirebaseFirestore.instance.collection('drivers');
@@ -684,11 +701,8 @@ class _BusListPageState extends State<BusListPage> {
           orElse: () => driverDocs.isNotEmpty ? driverDocs.first : null,
         );
 
-    final fallback = fallbackDriverName.trim();
     final activeName = activeDriver == null
-        ? (fallback.isEmpty || fallback.toUpperCase() == 'N/A'
-            ? 'No active driver'
-            : fallback)
+        ? 'No active driver'
         : _driverNameFromData(activeDriver);
 
     return _BusDriverAssignment(
@@ -709,6 +723,224 @@ class _BusListPageState extends State<BusListPage> {
   bool _isOnDutyStatus(Object? status) {
     final value = (status ?? '').toString().toLowerCase().replaceAll('_', '');
     return value == 'onduty' || value == 'active' || value == 'driving';
+  }
+
+  Future<void> _showRouteDetails(String routeId) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final th = ThemeHelper.of(context);
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: AppDesign.spaceXL,
+            vertical: AppDesign.spaceXL,
+          ),
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(
+              maxWidth: 420,
+              minHeight: 260,
+            ),
+            decoration: BoxDecoration(
+              color: th.cardBackground,
+              borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.18),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            child: FutureBuilder<Map<String, dynamic>?>(
+              future: _loadRouteDetails(routeId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                    ),
+                  );
+                }
+
+                return _buildRouteDetailsContent(
+                  th,
+                  routeId,
+                  snapshot.data,
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>?> _loadRouteDetails(String routeId) async {
+    final routes = FirebaseFirestore.instance.collection('routes');
+    final byDoc = await routes.doc(routeId).get();
+    if (byDoc.exists) {
+      return {
+        'id': byDoc.id,
+        ...?byDoc.data(),
+      };
+    }
+
+    final byId = await routes.where('id', isEqualTo: routeId).limit(1).get();
+    if (byId.docs.isEmpty) return null;
+
+    final doc = byId.docs.first;
+    return {
+      'id': doc.id,
+      ...doc.data(),
+    };
+  }
+
+  Widget _buildRouteDetailsContent(
+    ThemeHelper th,
+    String routeId,
+    Map<String, dynamic>? routeData,
+  ) {
+    final details = routeData == null
+        ? <_DriverDetailItem>[
+            _DriverDetailItem(
+              'Route ID',
+              routeId,
+              Icons.confirmation_number_rounded,
+            ),
+            const _DriverDetailItem(
+              'Status',
+              'No route details found',
+              Icons.info_outline_rounded,
+            ),
+          ]
+        : <_DriverDetailItem>[
+            _DriverDetailItem(
+              'Route ID',
+              (routeData['id'] ?? routeId).toString(),
+              Icons.confirmation_number_rounded,
+            ),
+            _DriverDetailItem(
+              'Name',
+              (routeData['name'] ?? 'N/A').toString(),
+              Icons.route_rounded,
+            ),
+            _DriverDetailItem(
+              'Bus Number',
+              (routeData['busNumber'] ?? 'N/A').toString(),
+              Icons.directions_bus_rounded,
+            ),
+            _DriverDetailItem(
+              'Start',
+              (routeData['startPoint'] ?? 'N/A').toString(),
+              Icons.trip_origin_rounded,
+            ),
+            _DriverDetailItem(
+              'End',
+              (routeData['endPoint'] ?? 'N/A').toString(),
+              Icons.location_on_rounded,
+            ),
+            _DriverDetailItem(
+              'Distance',
+              _formatRouteNumber(routeData['distance'], suffix: ' km'),
+              Icons.straighten_rounded,
+            ),
+            _DriverDetailItem(
+              'Time',
+              _formatRouteNumber(routeData['estimatedTime'], suffix: ' min'),
+              Icons.schedule_rounded,
+            ),
+            _DriverDetailItem(
+              'Vehicles',
+              _routeVehiclesText(routeData['vehicles']),
+              Icons.directions_bus_filled_rounded,
+            ),
+            _DriverDetailItem(
+              'Status',
+              _driverStatusText(routeData['status']),
+              Icons.circle_rounded,
+            ),
+          ];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildRouteDialogHeader(th, routeData?['name']?.toString() ?? routeId),
+        const SizedBox(height: AppDesign.spaceLG),
+        ...details.map(
+          (item) => Padding(
+            padding: const EdgeInsets.only(bottom: AppDesign.spaceSM),
+            child: Row(
+              children: [
+                Icon(item.icon, size: 18, color: AppColors.textSecondary),
+                const SizedBox(width: AppDesign.spaceSM),
+                SizedBox(
+                  width: 92,
+                  child: Text(
+                    item.label,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    item.value,
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontWeight: item.label == 'Route ID'
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRouteDialogHeader(ThemeHelper th, String routeTitle) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppDesign.spaceMD),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+          ),
+          child: const Icon(
+            Icons.route_rounded,
+            color: AppColors.primaryColor,
+          ),
+        ),
+        const SizedBox(width: AppDesign.spaceMD),
+        Expanded(
+          child: Text(
+            routeTitle.isEmpty ? 'Route details' : routeTitle,
+            style: TextStyle(
+              color: th.textPrimary,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close_rounded),
+          color: AppColors.errorColor,
+          tooltip: 'Close',
+        ),
+      ],
+    );
   }
 
   Future<void> _showDriverDetails(Map<String, dynamic> driverData) async {
@@ -883,6 +1115,34 @@ class _BusListPageState extends State<BusListPage> {
     final value = (experience ?? 'N/A').toString().trim();
     if (value.isEmpty) return 'N/A';
     return RegExp(r'^\d+$').hasMatch(value) ? '$value years' : value;
+  }
+
+  String _formatRouteNumber(Object? value, {required String suffix}) {
+    if (value == null) return 'N/A';
+
+    if (value is num) {
+      if (value == 0) return 'N/A';
+      return '${value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 1)}$suffix';
+    }
+
+    final text = value.toString().trim();
+    if (text.isEmpty || text == '0') return 'N/A';
+    return text.endsWith(suffix.trim()) ? text : '$text$suffix';
+  }
+
+  String _routeVehiclesText(Object? vehicles) {
+    if (vehicles is Iterable) {
+      final values = vehicles
+          .map((vehicle) => vehicle.toString().trim())
+          .where((vehicle) => vehicle.isNotEmpty)
+          .toList();
+
+      if (values.isEmpty) return 'N/A';
+      return values.join(', ');
+    }
+
+    final value = (vehicles ?? '').toString().trim();
+    return value.isEmpty ? 'N/A' : value;
   }
 
   String _maskPhone(String phone) {
