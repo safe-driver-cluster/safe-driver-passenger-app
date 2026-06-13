@@ -2,11 +2,11 @@
 
 ## 📋 Introduction
 
-The SafeDriver Passenger App is an AI-powered real-time driver monitoring and accident prevention system designed for Sri Lanka's public transport sector. This UAT test suite covers the critical user journeys and core functionalities of the application. These test cases ensure that the app delivers the expected user experience for passenger safety monitoring, bus tracking, driver performance evaluation, and emergency response capabilities.
+The SafeDriver Passenger App is a Flutter-based mobile application designed for passengers to access bus information, provide feedback, track their trips, and access emergency features. This UAT test suite validates the core user journeys and critical functionalities including authentication, QR code scanning, feedback submission, trip history access, and emergency alert system. The tests are based on the actual app implementation and ensure all core features work as designed.
 
-**Scope:** End-to-end user workflows covering authentication, real-time monitoring, QR code scanning, bus tracking, and emergency alerts.
+**Scope:** End-to-end user workflows covering authentication, QR code scanning, feedback submission, trip history, bus search, emergency features, and profile management.
 
-**Test Environment:** Android device/emulator with internet connectivity, Firebase backend configured, GPS enabled.
+**Test Environment:** Android device/emulator (API 21+) with internet connectivity, Firebase backend configured, device permissions enabled.
 
 ---
 
