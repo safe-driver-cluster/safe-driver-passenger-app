@@ -114,41 +114,77 @@ class ReceivedNotificationsContent extends ConsumerWidget {
                         return !item.isRead;
                       }).length;
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: count > 0
-                              ? Colors.orange.withOpacity(0.3)
-                              : Colors.green.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: count > 0
-                                ? Colors.orange.withOpacity(0.5)
-                                : Colors.green.withOpacity(0.5),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              count > 0 ? Icons.mail_outline : Icons.done_all,
-                              size: 14,
-                              color: count > 0 ? Colors.orange : Colors.green,
+                      return Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              count > 0 ? '$count new' : 'All caught up',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white.withOpacity(0.9),
+                            decoration: BoxDecoration(
+                              color: count > 0
+                                  ? Colors.orange.withOpacity(0.3)
+                                  : Colors.green.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: count > 0
+                                    ? Colors.orange.withOpacity(0.5)
+                                    : Colors.green.withOpacity(0.5),
                               ),
                             ),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  count > 0
+                                      ? Icons.mail_outline
+                                      : Icons.done_all,
+                                  size: 14,
+                                  color:
+                                      count > 0 ? Colors.orange : Colors.green,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  count > 0 ? '$count new' : 'All caught up',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: count == 0
+                                ? null
+                                : () {
+                                    ref
+                                        .read(notificationControllerProvider
+                                            .notifier)
+                                        .markAllAsReadForCurrentUser();
+                                  },
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFFFFE1E1),
+                              disabledForegroundColor:
+                                  Colors.white.withValues(alpha: 0.45),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text(
+                              'Mark all read',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                     loading: () => const ShimmerBadge(),
