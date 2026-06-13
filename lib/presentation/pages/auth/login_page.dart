@@ -6,7 +6,6 @@ import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
-import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/web_responsive_layout.dart';
 
@@ -110,24 +109,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         }
       } else {
         // Error feedback
-        HapticFeedback.heavyImpact();
-        _showErrorSnackBar(
-            result.message ?? AppLocalizations.of(context).loginFailed);
-      }
-    }
-  }
-
-  Future<void> _googleSignIn() async {
-    HapticFeedback.lightImpact();
-
-    final authNotifier = ref.read(authStateProvider.notifier);
-    final result = await authNotifier.signInWithGoogle();
-
-    if (mounted) {
-      if (result.success) {
-        HapticFeedback.mediumImpact();
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else {
         HapticFeedback.heavyImpact();
         _showErrorSnackBar(
             result.message ?? AppLocalizations.of(context).loginFailed);
@@ -558,82 +539,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                         ),
                                       ),
 
-                                      const SizedBox(height: 32),
-
-                                      // Divider with modern style
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              height: 1,
-                                              color: th.divider,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Text(
-                                              l10n.or,
-                                              style: TextStyle(
-                                                color: th.textSecondary,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              height: 1,
-                                              color: th.divider,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      const SizedBox(height: 32),
-
-                                      // Google Sign-In Button with modern design
-                                      Container(
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          color: th.cardBackground,
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          border: Border.all(
-                                            color: th.border,
-                                            width: 1,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: th.shadowMedium,
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: OutlinedButton.icon(
-                                          onPressed:
-                                              isLoading ? null : _googleSignIn,
-                                          icon: const GoogleIcon(size: 24),
-                                          label: Text(
-                                            l10n.continueWithGoogle,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: th.textPrimary,
-                                            ),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
                                       const SizedBox(height: 40),
 
                                       // Sign Up Link with modern style
@@ -835,26 +740,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   l10n.login,
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(child: Divider(color: th.divider)),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(l10n.or),
-                ),
-                Expanded(child: Divider(color: th.divider)),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 54,
-              child: OutlinedButton.icon(
-                onPressed: isLoading ? null : _googleSignIn,
-                icon: const GoogleIcon(size: 22),
-                label: Text(l10n.continueWithGoogle),
               ),
             ),
             const SizedBox(height: 24),

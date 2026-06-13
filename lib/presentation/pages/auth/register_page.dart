@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/theme_helper.dart';
 import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
@@ -177,6 +178,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
 
@@ -315,9 +317,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     // Form Section
                     Container(
                       height: MediaQuery.of(context).size.height * 0.6,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: th.cardBackground,
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(32),
                           topRight: Radius.circular(32),
                         ),
@@ -355,7 +357,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                                 borderSide: BorderSide(
-                                                    color: Colors.grey[300]!),
+                                                  color: th.borderLight,
+                                                ),
                                               ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderRadius:
@@ -383,7 +386,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                                 borderSide: BorderSide(
-                                                    color: Colors.grey[300]!),
+                                                  color: th.borderLight,
+                                                ),
                                               ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderRadius:
@@ -416,7 +420,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                           borderSide: BorderSide(
-                                              color: Colors.grey[300]!),
+                                            color: th.borderLight,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
@@ -474,7 +479,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                           borderSide: BorderSide(
-                                              color: Colors.grey[300]!),
+                                            color: th.borderLight,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
@@ -517,7 +523,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                           borderSide: BorderSide(
-                                              color: Colors.grey[300]!),
+                                            color: th.borderLight,
+                                          ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
@@ -554,7 +561,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                               RichText(
                                                 text: TextSpan(
                                                   style: TextStyle(
-                                                    color: Colors.grey[600],
+                                                    color: th.textSecondary,
                                                     fontSize: 14,
                                                   ),
                                                   children: [
@@ -631,22 +638,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                     Row(
                                       children: [
                                         Expanded(
-                                            child: Divider(
-                                                color: Colors.grey[300])),
+                                            child: Divider(color: th.divider)),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16),
                                           child: Text(
                                             l10n.or,
                                             style: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
                                         Expanded(
-                                            child: Divider(
-                                                color: Colors.grey[300])),
+                                            child: Divider(color: th.divider)),
                                       ],
                                     ),
 
@@ -687,7 +692,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                         Text(
                                           l10n.alreadyHaveAccount,
                                           style: TextStyle(
-                                              color: Colors.grey[600]),
+                                              color: th.textSecondary),
                                         ),
                                         TextButton(
                                           onPressed: () {

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/services/firebase_service.dart';
+import '../models/notification_model.dart';
+import '../repositories/notification_repository.dart';
 import '../services/passenger_service.dart';
 
 /// Model for feedback submitted by passengers
@@ -218,6 +220,8 @@ class FeedbackService {
 
   final FirebaseService _firebaseService = FirebaseService.instance;
   final PassengerService _passengerService = PassengerService.instance;
+  final NotificationRepository _notificationRepository =
+      NotificationRepository();
   final String _collection = 'feedback';
 
   /// Submit feedback with passenger details
@@ -276,6 +280,26 @@ class FeedbackService {
             'phoneNumber': passenger.phoneNumber,
           },
         });
+      }
+
+      try {
+        await _notificationRepository.createUserNotification(
+          userId: userId,
+          type: NotificationType.feedback,
+          title: 'Feedback Submitted',
+          body:
+              'Thanks for your $category feedback. We received it successfully.',
+          data: {
+            'feedbackId': docRef.id,
+            'category': category,
+            'type': type,
+            if (busId != null) 'busId': busId,
+            if (journeyId != null) 'journeyId': journeyId,
+          },
+          actionUrl: '/feedback-history',
+        );
+      } catch (_) {
+        // Feedback was saved successfully; notification creation is secondary.
       }
 
       return docRef.id;

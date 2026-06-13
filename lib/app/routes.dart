@@ -23,6 +23,7 @@ import '../presentation/pages/feedback/feedback_system_page.dart';
 import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/language/language_selection_page.dart';
+import '../presentation/pages/maps/map_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/onboarding/onboarding_page.dart';
 import '../presentation/pages/profile/received_notifications_page.dart';
@@ -53,6 +54,7 @@ class AppRoutes {
   static const String biometricAuth = '/biometric-auth';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';
+  static const String maps = '/maps';
 
   // Bus routes
   static const String buses = '/buses';
@@ -170,6 +172,9 @@ class AppRoutes {
 
       case drivers:
         return _route(settings, const DriverListPage());
+
+      case maps:
+        return _route(settings, const MapPage());
 
       case busSearch:
         return _route(settings, const BusListPage());
@@ -311,10 +316,27 @@ class AppRoutes {
     return MaterialPageRoute(
       builder: (_) => WebPageFrame(
         maxWidth: _webMaxWidthFor(settings.name),
+        routeName: _webFrameRouteName(settings),
         child: page,
       ),
       settings: settings,
     );
+  }
+
+  static String? _webFrameRouteName(RouteSettings settings) {
+    if (settings.name != dashboard) return settings.name;
+
+    final args = settings.arguments as Map<String, dynamic>?;
+    switch (args?['initialTab'] as int?) {
+      case 1:
+        return buses;
+      case 2:
+        return maps;
+      case 3:
+        return profile;
+      default:
+        return settings.name;
+    }
   }
 
   static double _webMaxWidthFor(String? routeName) {

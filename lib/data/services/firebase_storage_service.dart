@@ -8,8 +8,8 @@ class FirebaseStorageService {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Storage paths
-  static const String feedbackMediaPath = 'feedback/media';
-  static const String userProfilePath = 'users/profiles';
+  static const String feedbackMediaPath = 'feedback/attachments';
+  static const String userProfilePath = 'users';
   static const String busPhotoPath = 'buses/photos';
 
   /// Upload a passenger profile image.
@@ -37,7 +37,8 @@ class FirebaseStorageService {
       }
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final storagePath = '$userProfilePath/$userId/$timestamp-$fileName';
+      final storagePath =
+          '$userProfilePath/$userId/profile/$timestamp-$fileName';
       final ref = _storage.ref(storagePath);
 
       final metadata = SettableMetadata(

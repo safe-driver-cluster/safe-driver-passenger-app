@@ -6,12 +6,7 @@ import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../../core/utils/theme_helper.dart';
 import '../../../providers/notification_provider.dart';
-import '../../widgets/common/bottom_navigation_widget.dart';
-import '../buses/bus_list_page.dart';
-import '../dashboard/dashboard_page.dart';
-import '../maps/map_page.dart';
 import '../profile/notifications_page.dart';
-import '../profile/user_profile_page.dart';
 
 class ReceivedNotificationsPage extends ConsumerStatefulWidget {
   const ReceivedNotificationsPage({super.key});
@@ -23,26 +18,6 @@ class ReceivedNotificationsPage extends ConsumerStatefulWidget {
 
 class _ReceivedNotificationsPageState
     extends ConsumerState<ReceivedNotificationsPage> {
-  int _selectedIndex = 0;
-
-  void _onNavigateToTab(int index) {
-    if (index == 0) {
-      // Navigate back to dashboard
-      Navigator.of(context).pop();
-    } else {
-      // Navigate to other tabs from dashboard
-      final pages = [
-        const DashboardPage(),
-        const BusListPage(),
-        const MapPage(),
-        const UserProfilePage(),
-      ];
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => pages[index]),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final th = ThemeHelper.of(context);
@@ -52,58 +27,9 @@ class _ReceivedNotificationsPageState
         builder: (context, ref, _) {
           final notificationsAsyncValue = ref.watch(userNotificationsProvider);
 
-          final pages = [
-            ReceivedNotificationsContent(
-              notificationsAsyncValue: notificationsAsyncValue,
-              ref: ref,
-            ),
-            const BusListPage(),
-            const MapPage(),
-            const UserProfilePage(),
-          ];
-
-          return Scaffold(
-            backgroundColor: th.background,
-            body: IndexedStack(
-              index: _selectedIndex,
-              children: pages,
-            ),
-            floatingActionButton: _selectedIndex == 0
-                ? Container(
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryColor.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: FloatingActionButton(
-                      heroTag: "notifications_qr_fab",
-                      onPressed: () {
-                        setState(() {
-                          _selectedIndex = 2; // Navigate to QR scanner
-                        });
-                      },
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      child: const Icon(
-                        Icons.qr_code_scanner_rounded,
-                        color: Colors.white,
-                        size: AppDesign.iconLG,
-                      ),
-                    ),
-                  )
-                : null,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: BottomNavigationWidget(
-              currentIndex: _selectedIndex,
-              onTap: _onNavigateToTab,
-            ),
+          return ReceivedNotificationsContent(
+            notificationsAsyncValue: notificationsAsyncValue,
+            ref: ref,
           );
         },
       ),
@@ -184,46 +110,81 @@ class ReceivedNotificationsContent extends ConsumerWidget {
                   const SizedBox(height: 12),
                   notificationsAsyncValue.when(
                     data: (notifications) {
-                      final count =
-                          _uniqueNotifications(notifications).where((item) {
+                      final count = notifications.where((item) {
                         return !item.isRead;
                       }).length;
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: count > 0
-                              ? Colors.orange.withOpacity(0.3)
-                              : Colors.green.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: count > 0
-                                ? Colors.orange.withOpacity(0.5)
-                                : Colors.green.withOpacity(0.5),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              count > 0 ? Icons.mail_outline : Icons.done_all,
-                              size: 14,
-                              color: count > 0 ? Colors.orange : Colors.green,
+                      return Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              count > 0 ? '$count new' : 'All caught up',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white.withOpacity(0.9),
+                            decoration: BoxDecoration(
+                              color: count > 0
+                                  ? Colors.orange.withOpacity(0.3)
+                                  : Colors.green.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: count > 0
+                                    ? Colors.orange.withOpacity(0.5)
+                                    : Colors.green.withOpacity(0.5),
                               ),
                             ),
-                          ],
-                        ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  count > 0
+                                      ? Icons.mail_outline
+                                      : Icons.done_all,
+                                  size: 14,
+                                  color:
+                                      count > 0 ? Colors.orange : Colors.green,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  count > 0 ? '$count new' : 'All caught up',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: count == 0
+                                ? null
+                                : () {
+                                    ref
+                                        .read(notificationControllerProvider
+                                            .notifier)
+                                        .markAllAsReadForCurrentUser();
+                                  },
+                            style: TextButton.styleFrom(
+                              foregroundColor: const Color(0xFFFFE1E1),
+                              disabledForegroundColor:
+                                  Colors.white.withValues(alpha: 0.45),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: const Text(
+                              'Mark all read',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     },
                     loading: () => const ShimmerBadge(),
@@ -237,25 +198,47 @@ class ReceivedNotificationsContent extends ConsumerWidget {
             Expanded(
               child: notificationsAsyncValue.when(
                 data: (notifications) {
-                  final visibleNotifications = _uniqueNotifications(
-                    notifications,
-                  );
+                  final visibleNotifications = notifications;
 
                   if (visibleNotifications.isEmpty) {
                     return _buildEmptyState();
                   }
 
                   return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                     itemCount: visibleNotifications.length,
                     itemBuilder: (context, index) {
                       final notification = visibleNotifications[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildNotificationCard(
-                          context,
-                          ref,
-                          notification,
+                      return Dismissible(
+                        key: ValueKey(notification.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.centerRight,
+                          decoration: BoxDecoration(
+                            color: AppColors.errorColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                        confirmDismiss: (_) async {
+                          await ref
+                              .read(notificationControllerProvider.notifier)
+                              .deleteNotification(notification.id);
+                          return true;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildNotificationCard(
+                            context,
+                            ref,
+                            notification,
+                          ),
                         ),
                       );
                     },
@@ -626,27 +609,6 @@ class ReceivedNotificationsContent extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  List<NotificationModel> _uniqueNotifications(
-    List<NotificationModel> notifications,
-  ) {
-    final seen = <String>{};
-    final unique = <NotificationModel>[];
-
-    for (final notification in notifications) {
-      final key = [
-        notification.title.trim().toLowerCase(),
-        notification.body.trim().toLowerCase(),
-        notification.actionUrl ?? '',
-      ].join('|');
-
-      if (seen.add(key)) {
-        unique.add(notification);
-      }
-    }
-
-    return unique;
   }
 
   IconData _notificationIcon(NotificationModel notification) {

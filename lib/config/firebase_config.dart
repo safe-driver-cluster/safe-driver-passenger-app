@@ -7,13 +7,13 @@ class FirebaseConfig {
   // Production API keys - These should be stored securely
   static const String androidApiKey = 'AIzaSyCcibaYhXUItkAhrUQuugWyDirmQ3-0VfY';
   static const String iosApiKey = 'AIzaSyCcibaYhXUItkAhrUQuugWyDirmQ3-0VfY';
-  static const String webApiKey = 'AIzaSyCcibaYhXUItkAhrUQuugWyDirmQ3-0VfY';
+  static const String webApiKey = 'AIzaSyBhjbnNGQcGllHwGal2NIUPTAstnUlSwaw';
 
   // App IDs for different platforms
   static const String androidAppId =
       '1:719842751658:android:c1b794fb9edad4d2514cd3';
   static const String iosAppId = '1:719842751658:ios:production_ios_app_id';
-  static const String webAppId = '1:719842751658:web:production_web_app_id';
+  static const String webAppId = '1:719842751658:web:a33e3ed23332c42e514cd3';
 
   // Bundle/Package identifiers
   static const String androidPackageName = 'com.safedriver.passenger';
@@ -29,5 +29,5 @@ class FirebaseConfig {
 
   // Security settings
   static const String authDomain = 'safe-driver-system.firebaseapp.com';
-  static const String measurementId = 'G-PRODUCTION_MEASUREMENT_ID';
+  static const String measurementId = 'G-57DJS709YJ';
 }

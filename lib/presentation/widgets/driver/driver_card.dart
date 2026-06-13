@@ -26,7 +26,7 @@ class DriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
+    final th = ThemeHelper.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 2,
@@ -75,7 +75,7 @@ class DriverCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: isCompact ? 16 : 18,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: th.textPrimary,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -88,16 +88,16 @@ class DriverCard extends StatelessWidget {
                           'ID: ${driver.id}',
                           style: TextStyle(
                             fontSize: isCompact ? 12 : 14,
-                            color: AppColors.textSecondary,
+                            color: th.textSecondary,
                           ),
                         ),
                         if (!isCompact && driver.currentBusId != null) ...[
                           const SizedBox(height: 2),
                           Text(
                             'Bus: ${driver.currentBusId}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: th.textSecondary,
                             ),
                           ),
                         ],
@@ -133,16 +133,16 @@ class DriverCard extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Driver Details
-                _buildDetailsGrid(),
+                _buildDetailsGrid(th),
 
                 const SizedBox(height: 12),
 
                 // Safety Score and Experience
                 Row(
                   children: [
-                    Expanded(child: _buildSafetyScore()),
+                    Expanded(child: _buildSafetyScore(th)),
                     const SizedBox(width: 16),
-                    Expanded(child: _buildExperience()),
+                    Expanded(child: _buildExperience(th)),
                   ],
                 ),
 
@@ -211,11 +211,12 @@ class DriverCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsGrid() {
+  Widget _buildDetailsGrid(ThemeHelper th) {
     return Row(
       children: [
         Expanded(
           child: _buildDetailItem(
+            th: th,
             icon: Icons.schedule,
             label: 'On Duty',
             value: driver.isOnDuty ? 'Yes' : 'No',
@@ -224,6 +225,7 @@ class DriverCard extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _buildDetailItem(
+            th: th,
             icon: Icons.card_membership,
             label: 'License',
             value: driver.licenseNumber,
@@ -234,6 +236,7 @@ class DriverCard extends StatelessWidget {
   }
 
   Widget _buildDetailItem({
+    required ThemeHelper th,
     required IconData icon,
     required String label,
     required String value,
@@ -243,7 +246,7 @@ class DriverCard extends StatelessWidget {
         Icon(
           icon,
           size: 16,
-          color: AppColors.textSecondary,
+          color: th.textSecondary,
         ),
         const SizedBox(width: 6),
         Expanded(
@@ -252,17 +255,17 @@ class DriverCard extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                 ),
               ),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -273,7 +276,7 @@ class DriverCard extends StatelessWidget {
     );
   }
 
-  Widget _buildSafetyScore() {
+  Widget _buildSafetyScore(ThemeHelper th) {
     final score = driver.safetyScore;
     final color = _getSafetyScoreColor(score);
 
@@ -288,11 +291,11 @@ class DriverCard extends StatelessWidget {
               color: color,
             ),
             const SizedBox(width: 6),
-            const Text(
+            Text(
               'Safety Score',
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
             ),
           ],
@@ -312,7 +315,7 @@ class DriverCard extends StatelessWidget {
             Expanded(
               child: LinearProgressIndicator(
                 value: score / 5.0,
-                backgroundColor: AppColors.textSecondary.withOpacity(0.2),
+                backgroundColor: th.textSecondary.withOpacity(0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
             ),
@@ -322,25 +325,25 @@ class DriverCard extends StatelessWidget {
     );
   }
 
-  Widget _buildExperience() {
+  Widget _buildExperience(ThemeHelper th) {
     final years = driver.experience.totalYears;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
             Icon(
               Icons.work,
               size: 16,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
             SizedBox(width: 6),
             Text(
               'Experience',
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
             ),
           ],
@@ -348,10 +351,10 @@ class DriverCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '$years year${years != 1 ? 's' : ''}',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: th.textPrimary,
           ),
         ),
       ],
@@ -405,7 +408,6 @@ class CompactDriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  final th = ThemeHelper.of(context);
     return DriverCard(
       driver: driver,
       onTap: onTap,

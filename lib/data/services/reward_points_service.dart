@@ -2,11 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/feedback_model.dart';
+import '../models/notification_model.dart';
+import '../repositories/notification_repository.dart';
 
 /// Service for managing reward points
 class RewardPointsService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _passengersCollection = 'passenger_details';
+  final NotificationRepository _notificationRepository =
+      NotificationRepository();
 
   /// Point values
   static const int initialFeedbackPoints = 1;
@@ -165,6 +169,15 @@ class RewardPointsService {
       // Log point transaction
       await _logPointTransaction(userId, pointsDelta, reason, newPoints);
 
+      if (pointsDelta > 0) {
+        await _notifyPointsAdded(
+          userId: userId,
+          pointsDelta: pointsDelta,
+          reason: reason,
+          newBalance: newPoints,
+        );
+      }
+
       debugPrint(
           '✅ RewardPointsService: Updated points - Old: $currentPoints, New: $newPoints, Delta: $pointsDelta');
     } catch (e) {
@@ -187,6 +200,31 @@ class RewardPointsService {
     } catch (e) {
       debugPrint('⚠️  RewardPointsService: Could not log transaction: $e');
       // Don't throw - this is non-critical
+    }
+  }
+
+  Future<void> _notifyPointsAdded({
+    required String userId,
+    required int pointsDelta,
+    required String reason,
+    required int newBalance,
+  }) async {
+    try {
+      await _notificationRepository.createUserNotification(
+        userId: userId,
+        type: NotificationType.general,
+        title: 'Reward Points Added',
+        body:
+            '+$pointsDelta point${pointsDelta == 1 ? '' : 's'} added. Your balance is now $newBalance.',
+        data: {
+          'pointsDelta': pointsDelta,
+          'newBalance': newBalance,
+          'reason': reason,
+        },
+        actionUrl: '/profile',
+      );
+    } catch (e) {
+      debugPrint('RewardPointsService: Could not add notification: $e');
     }
   }
 

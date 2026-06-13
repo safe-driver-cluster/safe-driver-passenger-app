@@ -40,7 +40,10 @@ class NotificationService {
   PassengerNotificationSettings? _currentSettings;
   String? _activeUserId;
   Set<String> _activeTopics = <String>{};
+  final Map<String, DateTime> _recentMessageFingerprints = <String, DateTime>{};
   bool _initialized = false;
+
+  static const Duration _duplicateMessageWindow = Duration(seconds: 30);
 
   Stream<String> get notificationStream => _notificationController.stream;
   Stream<RemoteMessage> get fcmStream => _fcmController.stream;
@@ -139,9 +142,9 @@ class NotificationService {
 
   Future<void> _initializeFirebaseMessaging() async {
     await _firebaseMessaging.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
+      alert: false,
+      badge: false,
+      sound: false,
     );
 
     FirebaseMessaging.onMessage.listen((message) async {
@@ -289,6 +292,11 @@ class NotificationService {
       return;
     }
 
+    if (!openedFromSystemNotification && _isDuplicateMessage(message)) {
+      debugPrint('Skipping duplicate notification: ${message.messageId}');
+      return;
+    }
+
     _fcmController.add(message);
 
     final persistedId = await persistRemoteMessage(
@@ -320,7 +328,11 @@ class NotificationService {
       return null;
     }
 
-    final documentId = message.messageId;
+    final documentId = _extractStringFromKeys(
+          message.data,
+          const ['notificationId', 'eventId', 'alertId'],
+        ) ??
+        message.messageId;
     final now = DateTime.now();
 
     if (documentId != null && documentId.isNotEmpty) {
@@ -712,6 +724,33 @@ class NotificationService {
       const ['silent', 'isSilent'],
     );
     return silentValue == 'true' || silentValue == '1';
+  }
+
+  bool _isDuplicateMessage(RemoteMessage message) {
+    final now = DateTime.now();
+    _recentMessageFingerprints.removeWhere(
+      (_, receivedAt) => now.difference(receivedAt) > _duplicateMessageWindow,
+    );
+
+    final sourceId = _extractStringFromKeys(
+      message.data,
+      const ['notificationId', 'eventId', 'alertId'],
+    );
+    final fingerprint = sourceId ??
+        [
+          message.collapseKey ?? '',
+          message.data['type'] ?? '',
+          _extractTitle(message),
+          _extractBody(message),
+          _extractActionUrl(message) ?? '',
+        ].join('|');
+
+    if (_recentMessageFingerprints.containsKey(fingerprint)) {
+      return true;
+    }
+
+    _recentMessageFingerprints[fingerprint] = now;
+    return false;
   }
 
   int _localNotificationId(RemoteMessage message) {
