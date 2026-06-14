@@ -366,7 +366,7 @@ class _DriverListPageState extends State<DriverListPage> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${l10n.license}: $licenseNumber',
+                              '${l10n.license}: ${_maskLicenseNumber(licenseNumber.toString())}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: th.textSecondary,
                               ),
@@ -641,6 +641,14 @@ class _DriverListPageState extends State<DriverListPage> {
     final visibleStart = value.length >= 7 ? 3 : 1;
     final visibleEnd = value.length >= 7 ? 2 : 1;
     return '${value.substring(0, visibleStart)}***${value.substring(value.length - visibleEnd)}';
+  }
+
+  String _maskLicenseNumber(String licenseNumber) {
+    final value = licenseNumber.trim();
+    if (value.isEmpty || value.toUpperCase() == 'N/A') return '***';
+    if (value.length <= 4) return '***';
+
+    return '${value.substring(0, 2)}***${value.substring(value.length - 2)}';
   }
 
   String _maskEmail(String email) {

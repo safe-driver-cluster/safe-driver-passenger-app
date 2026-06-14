@@ -586,12 +586,19 @@ class _ReviewsPageState extends ConsumerState<ReviewsPage> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'submitted':
+      case 'received':
         return AppColors.primaryColor;
+      case 'inReview':
       case 'reviewed':
+      case 'responded':
+        return const Color(0xFFFF9800);
+      case 'approved':
         return const Color(0xFF4CAF50);
       case 'resolved':
+      case 'closed':
         return const Color(0xFF2196F3);
       case 'rejected':
+      case 'escalated':
         return const Color(0xFFF44336);
       default:
         return AppColors.textSecondary;

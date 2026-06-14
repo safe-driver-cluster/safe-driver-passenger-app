@@ -771,11 +771,14 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
       case FeedbackStatus.received:
         return AppColors.primaryColor;
       case FeedbackStatus.inReview:
+      case FeedbackStatus.reviewed:
       case FeedbackStatus.responded:
         return Colors.orange.shade700;
+      case FeedbackStatus.approved:
       case FeedbackStatus.resolved:
       case FeedbackStatus.closed:
         return Colors.green.shade700;
+      case FeedbackStatus.rejected:
       case FeedbackStatus.escalated:
         return Colors.red.shade700;
     }
