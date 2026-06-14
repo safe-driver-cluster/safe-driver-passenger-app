@@ -123,6 +123,12 @@ class FeedbackModel {
         return 'Received';
       case FeedbackStatus.inReview:
         return 'In Review';
+      case FeedbackStatus.reviewed:
+        return 'Reviewed';
+      case FeedbackStatus.approved:
+        return 'Approved';
+      case FeedbackStatus.rejected:
+        return 'Rejected';
       case FeedbackStatus.responded:
         return 'Responded';
       case FeedbackStatus.resolved:
@@ -167,7 +173,9 @@ class FeedbackModel {
   bool get hasResponse => response != null && response!.isNotEmpty;
 
   bool get isResolved =>
-      status == FeedbackStatus.resolved || status == FeedbackStatus.closed;
+      status == FeedbackStatus.approved ||
+      status == FeedbackStatus.resolved ||
+      status == FeedbackStatus.closed;
 
   Duration get timeSinceSubmission => DateTime.now().difference(timestamp);
 
@@ -396,6 +404,9 @@ enum FeedbackStatus {
   submitted,
   received,
   inReview,
+  reviewed,
+  approved,
+  rejected,
   responded,
   resolved,
   closed,
@@ -638,6 +649,9 @@ class FeedbackStatistics {
   double get resolutionRate {
     final resolved = feedbackByStatus[FeedbackStatus.resolved] ?? 0;
     final closed = feedbackByStatus[FeedbackStatus.closed] ?? 0;
-    return totalFeedback > 0 ? (resolved + closed) / totalFeedback : 0.0;
+    final approved = feedbackByStatus[FeedbackStatus.approved] ?? 0;
+    return totalFeedback > 0
+        ? (approved + resolved + closed) / totalFeedback
+        : 0.0;
   }
 }

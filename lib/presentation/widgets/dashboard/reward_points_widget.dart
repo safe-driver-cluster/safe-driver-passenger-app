@@ -424,8 +424,8 @@ class _RewardPointsWidgetState extends State<RewardPointsWidget>
                           iconColor: const Color(0xFFDC2626),
                           title: 'Keep Feedback Genuine',
                           description:
-                              'Fake or spam feedback will result in point deduction',
-                          points: '-1 point',
+                              'Rejected feedback counts as negative reward points',
+                          points: '-1 point total',
                           pointsColor: const Color(0xFFDC2626),
                         ),
                       ],

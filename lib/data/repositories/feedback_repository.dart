@@ -171,10 +171,26 @@ class FeedbackRepository {
   Future<void> updateFeedbackStatus(
       String feedbackId, FeedbackStatus status) async {
     try {
+      final feedbackRef = _firestore.collection(_collection).doc(feedbackId);
+      final feedbackSnapshot = await feedbackRef.get();
+      final feedbackData = feedbackSnapshot.data();
+      final previousStatus = feedbackData?['status'] as String?;
+      final userId = feedbackData?['userId'] as String?;
+      final newStatus = status.toString().split('.').last;
+
       await _firestore.collection(_collection).doc(feedbackId).update({
-        'status': status.toString().split('.').last,
+        'status': newStatus,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      if (userId != null && userId.isNotEmpty) {
+        await _rewardPointsService.applyFeedbackStatusPoints(
+          userId: userId,
+          feedbackId: feedbackId,
+          previousStatus: previousStatus,
+          newStatus: newStatus,
+        );
+      }
     } catch (e) {
       throw Exception('Failed to update feedback status: $e');
     }

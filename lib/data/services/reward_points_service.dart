@@ -15,6 +15,9 @@ class RewardPointsService {
   /// Point values
   static const int initialFeedbackPoints = 1;
   static const int approvedFeedbackAdditionalPoints = 2; // Total 3 with initial
+  static const int rejectedFeedbackTotalPoints = -1;
+  static const int rejectedFeedbackStatusAdjustment =
+      rejectedFeedbackTotalPoints - initialFeedbackPoints;
   static const int rejectedFeedbackPenalty = 1;
 
   /// Add points for feedback submission (initial +1 point)
@@ -31,6 +34,59 @@ class RewardPointsService {
     } catch (e) {
       debugPrint('❌ RewardPointsService: Error adding feedback points: $e');
       throw Exception('Failed to add reward points: $e');
+    }
+  }
+
+  /// Apply or reverse status-based feedback point adjustments.
+  Future<void> applyFeedbackStatusPoints({
+    required String userId,
+    required String feedbackId,
+    required String? previousStatus,
+    required String newStatus,
+  }) async {
+    final wasApproved = _isApprovedStatus(previousStatus);
+    final isApproved = _isApprovedStatus(newStatus);
+    final wasRejected = _isRejectedStatus(previousStatus);
+    final isRejected = _isRejectedStatus(newStatus);
+
+    if (!wasApproved && isApproved) {
+      await _applyFeedbackPointAdjustment(
+        userId: userId,
+        feedbackId: feedbackId,
+        action: 'approval_bonus',
+        pointsDelta: approvedFeedbackAdditionalPoints,
+        reason: 'Feedback approved - $feedbackId',
+        status: newStatus,
+      );
+    } else if (wasApproved && !isApproved) {
+      await _applyFeedbackPointAdjustment(
+        userId: userId,
+        feedbackId: feedbackId,
+        action: 'approval_bonus_reversal',
+        pointsDelta: -approvedFeedbackAdditionalPoints,
+        reason: 'Feedback approval reversed - $feedbackId',
+        status: newStatus,
+      );
+    }
+
+    if (!wasRejected && isRejected) {
+      await _applyFeedbackPointAdjustment(
+        userId: userId,
+        feedbackId: feedbackId,
+        action: 'rejection_penalty',
+        pointsDelta: rejectedFeedbackStatusAdjustment,
+        reason: 'Rejected feedback penalty - $feedbackId',
+        status: newStatus,
+      );
+    } else if (wasRejected && !isRejected) {
+      await _applyFeedbackPointAdjustment(
+        userId: userId,
+        feedbackId: feedbackId,
+        action: 'rejection_penalty_reversal',
+        pointsDelta: -rejectedFeedbackStatusAdjustment,
+        reason: 'Rejected feedback penalty reversed - $feedbackId',
+        status: newStatus,
+      );
     }
   }
 
@@ -114,9 +170,9 @@ class RewardPointsService {
 
         if (status == 'submitted' || status == 'inReview') {
           submittedCount++;
-        } else if (status == 'resolved' || status == 'closed') {
+        } else if (_isApprovedStatus(status)) {
           approvedCount++;
-        } else if (status == 'escalated') {
+        } else if (_isRejectedStatus(status)) {
           // Could be treated as suspicious
           rejectedCount++;
         }
@@ -131,7 +187,10 @@ class RewardPointsService {
             submittedCount * initialFeedbackPoints,
         'estimatedPointsFromApprovals':
             approvedCount * approvedFeedbackAdditionalPoints,
-        'estimatedPointsFromPenalties': rejectedCount * rejectedFeedbackPenalty,
+        'estimatedPointsFromRejectedFeedback':
+            rejectedCount * rejectedFeedbackTotalPoints,
+        'estimatedPointsFromRejectionAdjustments':
+            rejectedCount * rejectedFeedbackStatusAdjustment,
       };
 
       debugPrint('✅ RewardPointsService: Summary - $summary');
@@ -148,26 +207,63 @@ class RewardPointsService {
   }
 
   /// Update user points
-  Future<void> _updateUserPoints(
-      String userId, int pointsDelta, String reason) async {
+  Future<void> _updateUserPoints(String userId, int pointsDelta, String reason,
+      {String? transactionId,
+      String? feedbackId,
+      String? action,
+      String? status}) async {
     try {
       debugPrint(
           '💾 RewardPointsService: Updating points for user: $userId, Delta: $pointsDelta, Reason: $reason');
 
       final userRef = _firestore.collection(_passengersCollection).doc(userId);
+      final transactionRef = transactionId == null
+          ? _firestore.collection('point_transactions').doc()
+          : _firestore.collection('point_transactions').doc(transactionId);
 
-      // Get current points
-      final currentPoints = await getUserRewardPoints(userId);
-      final newPoints = (currentPoints + pointsDelta).clamp(0, 999999);
+      if (transactionId != null) {
+        final existingTransaction = await transactionRef.get();
+        if (existingTransaction.exists) {
+          debugPrint(
+              'ℹ️ RewardPointsService: Transaction already applied: $transactionId');
+          return;
+        }
+      }
 
-      // Update user stats
-      await userRef.update({
-        'stats.pointsEarned': newPoints,
-        'updatedAt': FieldValue.serverTimestamp(),
+      final newPoints =
+          await _firestore.runTransaction<int>((transaction) async {
+        if (transactionId != null) {
+          final existingTransaction = await transaction.get(transactionRef);
+          if (existingTransaction.exists) {
+            final data = existingTransaction.data();
+            return data?['newBalance'] as int? ?? 0;
+          }
+        }
+
+        final userSnapshot = await transaction.get(userRef);
+        final data = userSnapshot.data() ?? {};
+        final stats = data['stats'] as Map<String, dynamic>? ?? {};
+        final currentPoints = stats['pointsEarned'] as int? ?? 0;
+        final nextPoints = (currentPoints + pointsDelta).clamp(0, 999999);
+
+        transaction.update(userRef, {
+          'stats.pointsEarned': nextPoints,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        transaction.set(transactionRef, {
+          'userId': userId,
+          'delta': pointsDelta,
+          'newBalance': nextPoints,
+          'reason': reason,
+          'feedbackId': feedbackId,
+          'action': action,
+          'status': status,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        return nextPoints;
       });
-
-      // Log point transaction
-      await _logPointTransaction(userId, pointsDelta, reason, newPoints);
 
       if (pointsDelta > 0) {
         await _notifyPointsAdded(
@@ -179,28 +275,38 @@ class RewardPointsService {
       }
 
       debugPrint(
-          '✅ RewardPointsService: Updated points - Old: $currentPoints, New: $newPoints, Delta: $pointsDelta');
+          '✅ RewardPointsService: Updated points - New: $newPoints, Delta: $pointsDelta');
     } catch (e) {
       debugPrint('❌ RewardPointsService: Error updating points: $e');
       throw Exception('Failed to update points: $e');
     }
   }
 
-  /// Log point transaction for audit trail
-  Future<void> _logPointTransaction(
-      String userId, int pointsDelta, String reason, int newBalance) async {
-    try {
-      await _firestore.collection('point_transactions').add({
-        'userId': userId,
-        'delta': pointsDelta,
-        'newBalance': newBalance,
-        'reason': reason,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      debugPrint('⚠️  RewardPointsService: Could not log transaction: $e');
-      // Don't throw - this is non-critical
-    }
+  Future<void> _applyFeedbackPointAdjustment({
+    required String userId,
+    required String feedbackId,
+    required String action,
+    required int pointsDelta,
+    required String reason,
+    required String status,
+  }) {
+    return _updateUserPoints(
+      userId,
+      pointsDelta,
+      reason,
+      transactionId: 'feedback_${feedbackId}_$action',
+      feedbackId: feedbackId,
+      action: action,
+      status: status,
+    );
+  }
+
+  bool _isApprovedStatus(String? status) {
+    return status == 'approved' || status == 'resolved' || status == 'closed';
+  }
+
+  bool _isRejectedStatus(String? status) {
+    return status == 'rejected' || status == 'escalated';
   }
 
   Future<void> _notifyPointsAdded({
