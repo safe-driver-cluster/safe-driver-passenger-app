@@ -10,9 +10,9 @@ allprojects {
 // modules (for example, plugins in pub-cache) that expect these to be
 // available on the root project.
 ext {
-    compileSdkVersion = 35
+    compileSdkVersion = 36
     minSdkVersion = 23
-    targetSdkVersion = 35
+    targetSdkVersion = 36
 }
 
 // Provide a lightweight `flutter` map for plugin projects that expect the
