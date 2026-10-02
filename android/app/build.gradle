@@ -9,10 +9,30 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Keep upload-key credentials outside source control. Existing local.properties
+// entries remain supported while moving to the standard key.properties file.
+def signingProperties = new Properties()
+def signingPropertiesFile = rootProject.file("key.properties")
+if (!signingPropertiesFile.exists()) {
+    signingPropertiesFile = rootProject.file("local.properties")
+}
+if (signingPropertiesFile.exists()) {
+    signingPropertiesFile.withInputStream { signingProperties.load(it) }
+}
+def unsignedCompatibilityCheck = (project.findProperty("allowUnsignedRelease") ?:
+        project.findProperty("ALLOWUNSIGNEDRELEASE")) == "true"
+
 android {
     namespace = "com.codecrafters.safedriver"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    // NDK r28 builds native code with 16 KB page alignment by default.
+    ndkVersion = "28.2.13676358"
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -37,16 +57,18 @@ android {
 
     signingConfigs {
         release {
-            storeFile = file("G:\\safedriver.jks")
-            storePassword = "@Rensith2001"
-            keyAlias = "safedriver"
-            keyPassword = "@Rensith2001"
+            storeFile = signingProperties["storeFile"] ? file(signingProperties["storeFile"]) : null
+            storePassword = signingProperties["storePassword"]
+            keyAlias = signingProperties["keyAlias"]
+            keyPassword = signingProperties["keyPassword"]
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // Unsigned output is only for local compatibility verification.
+            // Normal release builds still require the real upload key.
+            signingConfig unsignedCompatibilityCheck ? null : signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -57,6 +79,22 @@ android {
 flutter {
     source = "../.."
 }
+
+if (!unsignedCompatibilityCheck) {
+    def validateUploadKey = tasks.register("validateReleaseUploadKey") {
+        doLast {
+            def requiredKeys = ["storeFile", "storePassword", "keyAlias", "keyPassword"]
+            if (requiredKeys.any { !signingProperties[it] } ||
+                    !file(signingProperties["storeFile"]).exists()) {
+                throw new GradleException("Release upload key is missing. Configure android/key.properties with your existing Play upload keystore.")
+            }
+        }
+    }
+    tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+        dependsOn(validateUploadKey)
+    }
+}
+
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }

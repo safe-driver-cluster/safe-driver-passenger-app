@@ -235,7 +235,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     return MobileScanner(
       controller: controller,
       onDetect: _onDetect,
-      errorBuilder: (context, error, child) {
+      errorBuilder: (context, error) {
         return Container(
           color: Colors.black,
           child: Center(
