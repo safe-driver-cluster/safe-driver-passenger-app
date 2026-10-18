@@ -599,7 +599,7 @@ class _EmergencyPageState extends State<EmergencyPage> {
 
       debugPrint('Emergency Page: SOS alert completed');
       debugPrint(
-          'Emergency Page: Result - SMS: ${result.smsSent}/${result.totalContacts}, WhatsApp: ${result.whatsappLaunched}/${result.totalContacts}');
+          'Emergency Page: Result - SMS: ${result.smsPrepared}/${result.totalContacts}, WhatsApp: ${result.whatsappLaunched}/${result.totalContacts}');
 
       if (mounted) {
         setState(() => _isSendingSos = false);
@@ -828,11 +828,9 @@ class _EmergencyPageState extends State<EmergencyPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildStatusRow('SMS Delivered', result.smsSent,
-                        result.totalContacts, AppColors.successColor),
-                    if (result.smsSubmitted > 0)
-                      _buildStatusRow('SMS Submitted', result.smsSubmitted,
-                          result.totalContacts, AppColors.warningColor),
+                    if (result.smsPrepared > 0)
+                      _buildStatusRow('SMS Ready to Send', result.smsPrepared,
+                          result.totalContacts, AppColors.successColor),
                     if (result.smsFailed > 0)
                       _buildStatusRow('SMS Failed', result.smsFailed,
                           result.totalContacts, AppColors.dangerColor),
