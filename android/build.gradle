@@ -11,7 +11,7 @@ allprojects {
 // available on the root project.
 ext {
     compileSdkVersion = 36
-    minSdkVersion = 23
+    minSdkVersion = 24
     targetSdkVersion = 36
 }
 
