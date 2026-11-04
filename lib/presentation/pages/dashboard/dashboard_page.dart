@@ -3,15 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/greeting_util.dart';
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
+import '../../../providers/notification_provider.dart';
 import '../../../providers/passenger_provider.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../widgets/common/bottom_navigation_widget.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 import '../../widgets/dashboard/active_journey_widget.dart';
 import '../../widgets/dashboard/recent_activity_widget.dart';
-import '../../widgets/notifications/notifications_bottom_sheet.dart';
 import '../buses/bus_list_page.dart';
-import '../drivers/driver_list_page.dart';
 import '../maps/map_page.dart';
+import '../profile/received_notifications_page.dart';
 import '../profile/user_profile_page.dart';
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -48,6 +52,10 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isWideWeb = WebResponsive.isWideWeb(
+      context,
+      minWidth: WebResponsive.desktopBreakpoint,
+    );
     final pages = [
       DashboardHome(
         onNavigateToTab: _onNavigateToTab,
@@ -62,7 +70,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
         index: _selectedIndex,
         children: pages,
       ),
-      floatingActionButton: _selectedIndex == 0
+      floatingActionButton: !isWideWeb && _selectedIndex == 0
           ? Container(
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
@@ -78,9 +86,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
               child: FloatingActionButton(
                 heroTag: "dashboard_qr_fab", // Unique hero tag
                 onPressed: () {
-                  setState(() {
-                    _selectedIndex = 2; // Navigate to QR scanner
-                  });
+                  Navigator.pushNamed(context, '/qr-scanner');
                 },
                 backgroundColor: Colors.transparent,
                 elevation: 0,
@@ -93,13 +99,91 @@ class _DashboardPageState extends ConsumerState<DashboardPage> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationWidget(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+      bottomNavigationBar: isWideWeb
+          ? null
+          : BottomNavigationWidget(
+              currentIndex: _selectedIndex,
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+    );
+  }
+}
+
+class _NotificationBellButton extends ConsumerWidget {
+  const _NotificationBellButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unreadCountAsync = ref.watch(unreadNotificationCountProvider);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.glassGradient,
+        borderRadius: BorderRadius.circular(AppDesign.radiusFull),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ReceivedNotificationsPage(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.notifications_rounded,
+              color: Colors.white,
+              size: 22,
+            ),
+          ),
+          unreadCountAsync.when(
+            data: (count) {
+              if (count <= 0) {
+                return const SizedBox.shrink();
+              }
+
+              final label = count > 9 ? '9+' : '$count';
+              return Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.warningColor,
+                    borderRadius: BorderRadius.circular(
+                      AppDesign.radiusFull,
+                    ),
+                    border: Border.all(color: Colors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              );
+            },
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+        ],
       ),
     );
   }
@@ -112,21 +196,23 @@ class DashboardHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final dashboardState = ref.watch(dashboardControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.primaryColor,
               AppColors.primaryDark,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -137,7 +223,7 @@ class DashboardHome extends ConsumerWidget {
                   .loadDashboardData();
             },
             color: AppColors.primaryColor,
-            backgroundColor: Colors.white,
+            backgroundColor: th.cardBackground,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -161,7 +247,8 @@ class DashboardHome extends ConsumerWidget {
 
                         // Active Journey Section
                         _buildProfessionalSection(
-                          title: 'Current Journey',
+                          context: context,
+                          title: l10n.activeJourney,
                           icon: Icons.directions_bus_rounded,
                           gradient: AppColors.primaryGradient,
                           child: const ActiveJourneyWidget(),
@@ -170,7 +257,8 @@ class DashboardHome extends ConsumerWidget {
 
                         // Recent Activity Section
                         _buildProfessionalSection(
-                          title: 'Recent Activity',
+                          context: context,
+                          title: l10n.recentActivity,
                           icon: Icons.history_rounded,
                           gradient: AppColors.accentGradient,
                           child: const RecentActivityWidget(),
@@ -192,11 +280,12 @@ class DashboardHome extends ConsumerWidget {
     return Consumer(
       builder: (context, ref, child) {
         final passengerAsyncValue = ref.watch(currentPassengerProvider);
-        final greeting = _getGreeting();
+        final l10n = AppLocalizations.of(context);
 
         return passengerAsyncValue.when(
           data: (passenger) {
-            final firstName = passenger?.firstName ?? 'Traveler';
+            final firstName = passenger?.firstName ?? '';
+            final greeting = GreetingUtil.getFullGreeting(firstName, l10n);
             return Container(
               padding: const EdgeInsets.fromLTRB(
                 AppDesign.spaceLG,
@@ -216,7 +305,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting, $firstName 👋',
+                              greeting,
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -226,7 +315,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -236,33 +325,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
@@ -288,7 +351,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting 👋',
+                              '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -298,7 +361,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -308,33 +371,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
@@ -342,7 +379,6 @@ class DashboardHome extends ConsumerWidget {
             );
           },
           error: (error, stack) {
-            final greeting = _getGreeting();
             return Container(
               padding: const EdgeInsets.fromLTRB(
                 AppDesign.spaceLG,
@@ -361,7 +397,7 @@ class DashboardHome extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Good $greeting 👋',
+                              '${GreetingUtil.getTimeBasedGreeting(l10n)} ${GreetingUtil.getGreetingEmoji()}',
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w800,
@@ -371,7 +407,7 @@ class DashboardHome extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Ready for your journey?',
+                              l10n.appTagline,
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Colors.white.withOpacity(0.9),
@@ -381,33 +417,7 @@ class DashboardHome extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.glassGradient,
-                          borderRadius:
-                              BorderRadius.circular(AppDesign.radiusFull),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) =>
-                                  const NotificationsBottomSheet(),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.notifications_rounded,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ),
-                      ),
+                      const _NotificationBellButton(),
                     ],
                   ),
                 ],
@@ -420,13 +430,15 @@ class DashboardHome extends ConsumerWidget {
   }
 
   Widget _buildProfessionalQuickActions(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowLG,
         border: Border.all(
-          color: AppColors.primaryColor.withOpacity(0.1),
+          color: th.border,
           width: 1,
         ),
       ),
@@ -452,9 +464,9 @@ class DashboardHome extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Quick Actions',
+                  l10n.quickActions,
                   style: AppTextStyles.headline6.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -466,31 +478,21 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'View Buses',
-                    subtitle: 'Available',
+                    title: l10n.busInformation,
+                    subtitle: l10n.busStatus,
                     icon: Icons.directions_bus_rounded,
                     gradient: AppColors.primaryGradient,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BusListPage(),
-                      ),
-                    ),
+                    onTap: () => Navigator.pushNamed(context, '/buses'),
                   ),
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Our Drivers',
-                    subtitle: 'Details',
+                    title: l10n.driverInformation,
+                    subtitle: l10n.details,
                     icon: Icons.person_rounded,
                     gradient: AppColors.accentGradient,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DriverListPage(),
-                      ),
-                    ),
+                    onTap: () => Navigator.pushNamed(context, '/drivers'),
                   ),
                 ),
               ],
@@ -500,8 +502,8 @@ class DashboardHome extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Emergency',
-                    subtitle: 'Get help',
+                    title: l10n.emergency,
+                    subtitle: l10n.callForHelp,
                     icon: Icons.warning_rounded,
                     gradient: AppColors.dangerGradient,
                     onTap: () => Navigator.pushNamed(context, '/emergency'),
@@ -510,8 +512,8 @@ class DashboardHome extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Feedback',
-                    subtitle: 'Share',
+                    title: l10n.feedback,
+                    subtitle: l10n.share,
                     icon: Icons.feedback_rounded,
                     gradient: AppColors.successGradient,
                     onTap: () =>
@@ -600,14 +602,16 @@ class DashboardHome extends ConsumerWidget {
     required IconData icon,
     required LinearGradient gradient,
     required Widget child,
+    required BuildContext context,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -647,18 +651,5 @@ class DashboardHome extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Morning';
-    } else if (hour < 17) {
-      return 'Afternoon';
-    } else if (hour < 20) {
-      return 'Evening';
-    } else {
-      return 'Night';
-    }
   }
 }

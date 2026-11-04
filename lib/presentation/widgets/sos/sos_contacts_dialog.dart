@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/core/constants/design_constants.dart';
 import 'package:safedriver_passenger_app/core/services/sos_service.dart';
 
@@ -59,8 +60,10 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: AppColors.white,
+        builder: (context, setDialogState) {
+          final th = ThemeHelper.of(context);
+          return AlertDialog(
+          backgroundColor: th.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           ),
@@ -90,8 +93,8 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
               const SizedBox(width: AppDesign.spaceMD),
               Text(
                 contact == null ? 'Add SOS Contact' : 'Edit SOS Contact',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
+                style: TextStyle(
+                  color: th.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
@@ -127,10 +130,10 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                     icon: Icons.favorite_rounded,
                   ),
                   const SizedBox(height: AppDesign.spaceLG),
-                  const Text(
+                  Text(
                     'Alert Methods',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -139,13 +142,13 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                   SwitchListTile(
                     value: sendSms,
                     onChanged: (v) => setDialogState(() => sendSms = v),
-                    title: const Row(
+                    title: Row(
                       children: [
                         Icon(Icons.sms_rounded,
                             color: AppColors.primaryColor, size: 20),
                         SizedBox(width: AppDesign.spaceSM),
                         Text('SMS',
-                            style: TextStyle(color: AppColors.textPrimary)),
+                            style: TextStyle(color: th.textPrimary)),
                       ],
                     ),
                     activeThumbColor: AppColors.primaryColor,
@@ -155,13 +158,13 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                   SwitchListTile(
                     value: sendWhatsapp,
                     onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                    title: const Row(
+                    title: Row(
                       children: [
                         Icon(Icons.chat_rounded,
                             color: AppColors.successColor, size: 20),
                         SizedBox(width: AppDesign.spaceSM),
                         Text('WhatsApp',
-                            style: TextStyle(color: AppColors.textPrimary)),
+                            style: TextStyle(color: th.textPrimary)),
                       ],
                     ),
                     activeThumbColor: AppColors.successColor,
@@ -175,15 +178,15 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel',
-                  style: TextStyle(color: AppColors.textSecondary)),
+              child: Text('Cancel',
+                  style: TextStyle(color: th.textSecondary)),
             ),
             ElevatedButton(
               onPressed: () async {
                 if (nameController.text.trim().isEmpty ||
                     phoneController.text.trim().isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
+                    SnackBar(
                       content: Text('Please fill in name and phone number'),
                       backgroundColor: AppColors.dangerColor,
                     ),
@@ -214,7 +217,7 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                 backgroundColor: contact == null
                     ? AppColors.dangerColor
                     : AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
@@ -222,7 +225,8 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
               child: Text(contact == null ? 'Add Contact' : 'Save Changes'),
             ),
           ],
-        ),
+        );
+        },
       ),
     );
   }
@@ -230,8 +234,10 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
   void _confirmDelete(SosContact contact) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.white,
+      builder: (context) {
+        final th = ThemeHelper.of(context);
+        return AlertDialog(
+        backgroundColor: th.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         ),
@@ -250,10 +256,10 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            const Text(
+            Text(
               'Remove Contact',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -262,16 +268,16 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
         ),
         content: Text(
           'Remove ${contact.name} from SOS contacts?',
-          style: const TextStyle(
-            color: AppColors.textSecondary,
+          style: TextStyle(
+            color: th.textSecondary,
             fontSize: 16,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.textSecondary)),
+            child: Text('Cancel',
+                style: TextStyle(color: th.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -281,7 +287,7 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.dangerColor,
-              foregroundColor: AppColors.white,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppDesign.radiusLG),
               ),
@@ -289,14 +295,16 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
             child: const Text('Remove'),
           ),
         ],
-      ),
+      );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return AlertDialog(
-      backgroundColor: AppColors.white,
+      backgroundColor: th.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
       ),
@@ -316,10 +324,10 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
             ),
           ),
           const SizedBox(width: AppDesign.spaceMD),
-          const Text(
+          Text(
             'SOS Contacts',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -344,16 +352,16 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                     SwitchListTile(
                       value: _autoSendEnabled,
                       onChanged: _toggleAutoSend,
-                      title: const Text(
+                      title: Text(
                         'Auto-send SOS alerts',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
+                          color: th.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      subtitle: const Text(
+                      subtitle: Text(
                         'Send alerts to all contacts instantly',
-                        style: TextStyle(color: AppColors.textSecondary),
+                        style: TextStyle(color: th.textSecondary),
                       ),
                       activeThumbColor: AppColors.dangerColor,
                       contentPadding: EdgeInsets.zero,
@@ -374,8 +382,8 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Close',
-              style: TextStyle(color: AppColors.textSecondary)),
+          child: Text('Close',
+              style: TextStyle(color: th.textSecondary)),
         ),
         ElevatedButton.icon(
           onPressed: () => _showAddEditDialog(),
@@ -383,7 +391,7 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
           label: const Text('Add Contact'),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.dangerColor,
-            foregroundColor: AppColors.white,
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppDesign.radiusLG),
             ),
@@ -394,13 +402,14 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
   }
 
   Widget _buildContactTile(SosContact contact) {
+    final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       padding: const EdgeInsets.all(AppDesign.spaceMD),
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: th.inputFill,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: th.borderLight),
       ),
       child: Row(
         children: [
@@ -429,16 +438,16 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
               children: [
                 Text(
                   contact.name,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
+                  style: TextStyle(
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: AppDesign.spaceXS),
                 Text(
                   contact.phoneNumber,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
+                  style: TextStyle(
+                    color: th.textSecondary,
                     fontSize: 13,
                   ),
                 ),
@@ -446,8 +455,8 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
                   const SizedBox(height: AppDesign.spaceXS),
                   Text(
                     contact.relationship,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
+                    style: TextStyle(
+                      color: th.textSecondary,
                       fontSize: 12,
                     ),
                   ),
@@ -490,28 +499,29 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
   }
 
   Widget _buildEmptyState() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
-        color: AppColors.greyExtraLight,
+        color: th.inputFill,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        border: Border.all(color: AppColors.greyLight),
+        border: Border.all(color: th.borderLight),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.contacts_rounded, color: AppColors.dangerColor, size: 32),
-          SizedBox(height: AppDesign.spaceSM),
+          const Icon(Icons.contacts_rounded, color: AppColors.dangerColor, size: 32),
+          const SizedBox(height: AppDesign.spaceSM),
           Text(
             'No SOS contacts yet',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: AppDesign.spaceXS),
+          const SizedBox(height: AppDesign.spaceXS),
           Text(
             'Add trusted contacts to receive your alerts',
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            style: TextStyle(color: th.textSecondary, fontSize: 13),
             textAlign: TextAlign.center,
           ),
         ],
@@ -525,32 +535,33 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
     required bool enabled,
     required Color activeColor,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDesign.spaceSM,
         vertical: AppDesign.spaceXS,
       ),
       decoration: BoxDecoration(
-        color: enabled ? activeColor.withOpacity(0.1) : AppColors.greyLight,
+        color: enabled ? activeColor.withOpacity(0.1) : th.subtleBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusSM),
         border: Border.all(
           color: enabled
               ? activeColor.withOpacity(0.3)
-              : AppColors.greyMedium.withOpacity(0.3),
+              : th.border,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon,
-              size: 12, color: enabled ? activeColor : AppColors.greyMedium),
+              size: 12, color: enabled ? activeColor : th.textDisabled),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: enabled ? activeColor : AppColors.greyMedium,
+              color: enabled ? activeColor : th.textDisabled,
             ),
           ),
         ],
@@ -565,29 +576,30 @@ class _SosContactsDialogState extends State<SosContactsDialog> {
     required IconData icon,
     TextInputType? keyboardType,
   }) {
+    final th = ThemeHelper.of(context);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        hintStyle: const TextStyle(color: AppColors.textHint),
+        labelStyle: TextStyle(color: th.textSecondary),
+        hintStyle: TextStyle(color: th.textHint),
         prefixIcon: Icon(icon, color: AppColors.primaryColor, size: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          borderSide: const BorderSide(color: AppColors.greyMedium),
+          borderSide: BorderSide(color: th.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          borderSide: const BorderSide(color: AppColors.greyMedium),
+          borderSide: BorderSide(color: th.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
+          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
         ),
         filled: true,
-        fillColor: AppColors.greyExtraLight,
+        fillColor: th.inputFill,
       ),
     );
   }

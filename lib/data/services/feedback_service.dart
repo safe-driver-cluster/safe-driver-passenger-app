@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../core/services/firebase_service.dart';
+import '../models/feedback_model.dart' as feedback_data;
+import '../models/notification_model.dart';
+import '../repositories/notification_repository.dart';
 import '../services/passenger_service.dart';
+import '../services/reward_points_service.dart';
 
 /// Model for feedback submitted by passengers
 class FeedbackModel {
@@ -218,6 +222,9 @@ class FeedbackService {
 
   final FirebaseService _firebaseService = FirebaseService.instance;
   final PassengerService _passengerService = PassengerService.instance;
+  final RewardPointsService _rewardPointsService = RewardPointsService();
+  final NotificationRepository _notificationRepository =
+      NotificationRepository();
   final String _collection = 'feedback';
 
   /// Submit feedback with passenger details
@@ -278,6 +285,36 @@ class FeedbackService {
         });
       }
 
+      try {
+        await _notificationRepository.createUserNotification(
+          userId: userId,
+          type: NotificationType.feedback,
+          title: 'Feedback Submitted',
+          body:
+              'Thanks for your $category feedback. We received it successfully.',
+          data: {
+            'feedbackId': docRef.id,
+            'category': category,
+            'type': type,
+            if (busId != null) 'busId': busId,
+            if (journeyId != null) 'journeyId': journeyId,
+          },
+          actionUrl: '/feedback-history',
+        );
+      } catch (_) {
+        // Feedback was saved successfully; notification creation is secondary.
+      }
+
+      try {
+        await _rewardPointsService.addFeedbackSubmissionPoints(
+          userId,
+          _parseFeedbackCategory(category),
+          _parseFeedbackType(type),
+        );
+      } catch (_) {
+        // Feedback was saved successfully; reward points are secondary.
+      }
+
       return docRef.id;
     } catch (e) {
       throw Exception('Failed to submit feedback: $e');
@@ -324,13 +361,26 @@ class FeedbackService {
     required String status,
   }) async {
     try {
-      await _firebaseService.firestore
-          .collection(_collection)
-          .doc(feedbackId)
-          .update({
+      final feedbackRef =
+          _firebaseService.firestore.collection(_collection).doc(feedbackId);
+      final feedbackSnapshot = await feedbackRef.get();
+      final feedbackData = feedbackSnapshot.data();
+      final previousStatus = feedbackData?['status'] as String?;
+      final userId = feedbackData?['userId'] as String?;
+
+      await feedbackRef.update({
         'status': status,
         'updatedAt': DateTime.now().toIso8601String(),
       });
+
+      if (userId != null && userId.isNotEmpty) {
+        await _rewardPointsService.applyFeedbackStatusPoints(
+          userId: userId,
+          feedbackId: feedbackId,
+          previousStatus: previousStatus,
+          newStatus: status,
+        );
+      }
     } catch (e) {
       throw Exception('Failed to update feedback status: $e');
     }
@@ -472,5 +522,19 @@ class FeedbackService {
           .map((doc) => FeedbackModel.fromFirestore(doc))
           .toList();
     });
+  }
+
+  feedback_data.FeedbackCategory _parseFeedbackCategory(String category) {
+    return feedback_data.FeedbackCategory.values.firstWhere(
+      (value) => value.toString().split('.').last == category,
+      orElse: () => feedback_data.FeedbackCategory.general,
+    );
+  }
+
+  feedback_data.FeedbackType _parseFeedbackType(String type) {
+    return feedback_data.FeedbackType.values.firstWhere(
+      (value) => value.toString().split('.').last == type,
+      orElse: () => feedback_data.FeedbackType.general,
+    );
   }
 }

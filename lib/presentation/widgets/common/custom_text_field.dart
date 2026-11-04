@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -75,6 +76,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -85,7 +87,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color:
-                  _isFocused ? AppColors.primaryColor : AppColors.textPrimary,
+                  _isFocused ? AppColors.primaryColor : th.textPrimary,
             ),
             child: Text(widget.label!),
           ),
@@ -105,7 +107,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ]
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: th.shadowLight,
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -125,16 +127,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
             inputFormatters: widget.inputFormatters,
             textCapitalization: widget.textCapitalization,
             enabled: widget.enabled,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
               fontWeight: FontWeight.w500,
             ),
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: const TextStyle(
+              hintStyle: TextStyle(
                 fontSize: 15,
-                color: AppColors.textHint,
+                color: th.textHint,
                 fontWeight: FontWeight.w400,
               ),
               prefixIcon: widget.prefixIcon != null
@@ -145,7 +147,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         widget.prefixIcon,
                         color: _isFocused
                             ? AppColors.primaryColor
-                            : AppColors.textSecondary,
+                            : th.textSecondary,
                         size: 22,
                       ),
                     )
@@ -165,16 +167,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
               filled: true,
               fillColor: widget.fillColor ??
                   (widget.enabled
-                      ? (_isFocused ? Colors.white : AppColors.greyExtraLight)
-                      : AppColors.greyLight),
+                      ? (_isFocused ? th.surface : th.inputFill)
+                      : th.subtleBackground),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: const BorderSide(
-                  color: AppColors.greyLight,
+                borderSide: BorderSide(
+                  color: th.borderLight,
                   width: 1.5,
                 ),
               ),
@@ -201,8 +203,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
-                borderSide: const BorderSide(
-                  color: AppColors.textDisabled,
+                borderSide: BorderSide(
+                  color: th.textDisabled,
                   width: 1,
                 ),
               ),

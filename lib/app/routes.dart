@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../presentation/pages/auth/account_verification_page.dart';
+import '../presentation/pages/auth/biometric_auth_page.dart';
 import '../presentation/pages/auth/forgot_password_otp_page.dart';
 import '../presentation/pages/auth/forgot_password_page.dart';
 import '../presentation/pages/auth/login_page.dart';
@@ -22,9 +23,10 @@ import '../presentation/pages/feedback/feedback_system_page.dart';
 import '../presentation/pages/feedback/feedback_test_page.dart';
 import '../presentation/pages/hazard/hazard_zone_intelligence_page.dart';
 import '../presentation/pages/language/language_selection_page.dart';
+import '../presentation/pages/maps/map_page.dart';
 import '../presentation/pages/not_found_page.dart';
 import '../presentation/pages/onboarding/onboarding_page.dart';
-import '../presentation/pages/profile/notifications_page.dart';
+import '../presentation/pages/profile/received_notifications_page.dart';
 import '../presentation/pages/profile/settings_page.dart';
 import '../presentation/pages/profile/trip_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
@@ -34,6 +36,7 @@ import '../presentation/pages/safety/hazard_zones_page.dart';
 import '../presentation/pages/safety/safety_alerts_page.dart';
 import '../presentation/pages/safety/safety_hub_page.dart';
 import '../presentation/pages/safety/sos_contacts_page.dart';
+import '../presentation/widgets/common/web_responsive_layout.dart';
 
 /// Application route configuration and navigation management
 class AppRoutes {
@@ -48,8 +51,10 @@ class AppRoutes {
   static const String forgotPasswordOtp = '/forgot-password-otp';
   static const String resetPassword = '/reset-password';
   static const String otpVerification = '/otp-verification';
+  static const String biometricAuth = '/biometric-auth';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';
+  static const String maps = '/maps';
 
   // Bus routes
   static const String buses = '/buses';
@@ -99,107 +104,80 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
-        return MaterialPageRoute(
-          builder: (_) => const SplashPage(),
-          settings: settings,
-        );
+        return _route(settings, const SplashPage());
 
       case languageSelection:
-        return MaterialPageRoute(
-          builder: (_) => const LanguageSelectionPage(),
-          settings: settings,
-        );
+        return _route(settings, const LanguageSelectionPage());
 
       case onboarding:
-        return MaterialPageRoute(
-          builder: (_) => const OnboardingPage(),
-          settings: settings,
-        );
+        return _route(settings, const OnboardingPage());
 
       case login:
-        return MaterialPageRoute(
-          builder: (_) => const LoginPage(),
-          settings: settings,
-        );
+        return _route(settings, const LoginPage());
 
       case register:
-        return MaterialPageRoute(
-          builder: (_) => const RegisterPage(),
-          settings: settings,
-        );
+        return _route(settings, const RegisterPage());
 
       case accountVerification:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => AccountVerificationPage(
+        return _route(
+          settings,
+          AccountVerificationPage(
             phoneNumber: args?['phoneNumber'] ?? '',
             email: args?['email'] ?? '',
             firstName: args?['firstName'] ?? '',
             lastName: args?['lastName'] ?? '',
             password: args?['password'] ?? '',
           ),
-          settings: settings,
         );
 
       case forgotPassword:
-        return MaterialPageRoute(
-          builder: (_) => const ForgotPasswordPage(),
-          settings: settings,
-        );
+        return _route(settings, const ForgotPasswordPage());
 
       case forgotPasswordOtp:
-        return MaterialPageRoute(
-          builder: (_) => const ForgotPasswordOtpPage(),
-          settings: settings,
-        );
+        return _route(settings, const ForgotPasswordOtpPage());
 
       case resetPassword:
-        return MaterialPageRoute(
-          builder: (_) => const ResetPasswordPage(),
-          settings: settings,
-        );
+        return _route(settings, const ResetPasswordPage());
 
       case otpVerification:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => OtpVerificationPage(
+        return _route(
+          settings,
+          OtpVerificationPage(
             phoneNumber: args?['phoneNumber'] ?? '',
             verificationId: args?['verificationId'] ?? '',
           ),
-          settings: settings,
+        );
+
+      case biometricAuth:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return _route(
+          settings,
+          BiometricAuthPage(
+            returnTo: args?['returnTo'] as String? ?? '/dashboard',
+          ),
         );
 
       case dashboard:
         final args = settings.arguments as Map<String, dynamic>?;
         final initialTab = args?['initialTab'] as int?;
-        return MaterialPageRoute(
-          builder: (_) => DashboardPage(initialTab: initialTab),
-          settings: settings,
-        );
+        return _route(settings, DashboardPage(initialTab: initialTab));
 
       case notifications:
-        return MaterialPageRoute(
-          builder: (_) => const NotificationsPage(),
-          settings: settings,
-        );
+        return _route(settings, const ReceivedNotificationsPage());
 
       case buses:
-        return MaterialPageRoute(
-          builder: (_) => const BusListPage(),
-          settings: settings,
-        );
+        return _route(settings, const BusListPage());
 
       case drivers:
-        return MaterialPageRoute(
-          builder: (_) => const DriverListPage(),
-          settings: settings,
-        );
+        return _route(settings, const DriverListPage());
+
+      case maps:
+        return _route(settings, const MapPage());
 
       case busSearch:
-        return MaterialPageRoute(
-          builder: (_) => const BusListPage(),
-          settings: settings,
-        );
+        return _route(settings, const BusListPage());
 
       // case busDetails:
       //   final args = settings.arguments as Map<String, dynamic>?;
@@ -227,152 +205,167 @@ class AppRoutes {
 
       case driverProfile:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => DriverProfilePage(
+        return _route(
+          settings,
+          DriverProfilePage(
             driverId: args?['driverId'] ?? '',
           ),
-          settings: settings,
         );
 
       case driverHistory:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => DriverHistoryPage(
+        return _route(
+          settings,
+          DriverHistoryPage(
             driverId: args?['driverId'] ?? '',
           ),
-          settings: settings,
         );
 
       case driverPerformance:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => DriverPerformancePage(
+        return _route(
+          settings,
+          DriverPerformancePage(
             driverId: args?['driverId'] ?? '',
           ),
-          settings: settings,
         );
 
       case safetyAlerts:
-        return MaterialPageRoute(
-          builder: (_) => const SafetyAlertsPage(),
-          settings: settings,
-        );
+        return _route(settings, const SafetyAlertsPage());
 
       case safetyHub:
-        return MaterialPageRoute(
-          builder: (_) => const SafetyHubPage(),
-          settings: settings,
-        );
+        return _route(settings, const SafetyHubPage());
 
       case hazardZones:
-        return MaterialPageRoute(
-          builder: (_) => const HazardZonesPage(),
-          settings: settings,
-        );
+        return _route(settings, const HazardZonesPage());
 
       case emergency:
-        return MaterialPageRoute(
-          builder: (_) => const EmergencyPage(),
-          settings: settings,
-        );
+        return _route(settings, const EmergencyPage());
 
       case sosContacts:
-        return MaterialPageRoute(
-          builder: (_) => const SosContactsPage(),
-          settings: settings,
-        );
+        return _route(settings, const SosContactsPage());
 
       case feedback:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => FeedbackPage(
+        return _route(
+          settings,
+          FeedbackPage(
             busId: args?['busId'],
             driverId: args?['driverId'],
             tripId: args?['tripId'],
           ),
-          settings: settings,
         );
 
       case feedbackForm:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => FeedbackFormScreen(
+        return _route(
+          settings,
+          FeedbackFormScreen(
             busId: args?['busId'],
             driverId: args?['driverId'],
             journeyId: args?['journeyId'],
           ),
-          settings: settings,
         );
 
       case feedbackSystem:
-        return MaterialPageRoute(
-          builder: (_) => const FeedbackSystemPage(),
-          settings: settings,
-        );
+        return _route(settings, const FeedbackSystemPage());
 
       case feedbackTest:
-        return MaterialPageRoute(
-          builder: (_) => const FeedbackTestPage(),
-          settings: settings,
-        );
+        return _route(settings, const FeedbackTestPage());
 
       case feedbackHistory:
-        return MaterialPageRoute(
-          builder: (_) => const FeedbackHistoryPage(),
-          settings: settings,
-        );
+        return _route(settings, const FeedbackHistoryPage());
 
       case qrScanner:
-        return MaterialPageRoute(
-          builder: (_) => const QrScannerPage(),
-          settings: settings,
-        );
+        return _route(settings, const QrScannerPage());
 
       case driverInfo:
         final args = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute(
-          builder: (_) => DriverInfoPage(
+        return _route(
+          settings,
+          DriverInfoPage(
             driverId: args?['driverId'] ?? 'demo_driver_001',
             driverName: args?['driverName'] ?? 'John Doe',
           ),
-          settings: settings,
         );
 
       case hazardZoneIntelligence:
-        return MaterialPageRoute(
-          builder: (_) => const HazardZoneIntelligencePage(),
-          settings: settings,
-        );
+        return _route(settings, const HazardZoneIntelligencePage());
 
       case tripHistory:
-        return MaterialPageRoute(
-          builder: (_) => const TripHistoryPage(),
-          settings: settings,
-        );
+        return _route(settings, const TripHistoryPage());
 
       case userProfile:
-        return MaterialPageRoute(
-          builder: (_) => const UserProfilePage(),
-          settings: settings,
-        );
+        return _route(settings, const UserProfilePage());
 
       case profile:
-        return MaterialPageRoute(
-          builder: (_) => const UserProfilePage(),
-          settings: settings,
-        );
+        return _route(settings, const UserProfilePage());
 
       case AppRoutes.settings:
-        return MaterialPageRoute(
-          builder: (_) => const SettingsPage(),
-          settings: settings,
-        );
+        return _route(settings, const SettingsPage());
 
       default:
-        return MaterialPageRoute(
-          builder: (_) => const NotFoundPage(),
-          settings: settings,
-        );
+        return _route(settings, const NotFoundPage());
+    }
+  }
+
+  static MaterialPageRoute<dynamic> _route(
+    RouteSettings settings,
+    Widget page,
+  ) {
+    return MaterialPageRoute(
+      builder: (_) => WebPageFrame(
+        maxWidth: _webMaxWidthFor(settings.name),
+        routeName: _webFrameRouteName(settings),
+        child: page,
+      ),
+      settings: settings,
+    );
+  }
+
+  static String? _webFrameRouteName(RouteSettings settings) {
+    if (settings.name != dashboard) return settings.name;
+
+    final args = settings.arguments as Map<String, dynamic>?;
+    switch (args?['initialTab'] as int?) {
+      case 1:
+        return buses;
+      case 2:
+        return maps;
+      case 3:
+        return profile;
+      default:
+        return settings.name;
+    }
+  }
+
+  static double _webMaxWidthFor(String? routeName) {
+    switch (routeName) {
+      case splash:
+      case languageSelection:
+      case onboarding:
+      case login:
+      case register:
+      case accountVerification:
+      case forgotPassword:
+      case forgotPasswordOtp:
+      case resetPassword:
+      case otpVerification:
+        return 520;
+      case dashboard:
+      case liveTracking:
+        return 1440;
+      case buses:
+      case busSearch:
+      case drivers:
+      case safetyHub:
+      case feedbackSystem:
+      case hazardZoneIntelligence:
+        return 1180;
+      case qrScanner:
+        return 760;
+      default:
+        return 960;
     }
   }
 

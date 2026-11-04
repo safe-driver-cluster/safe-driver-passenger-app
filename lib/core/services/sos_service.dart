@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:background_sms/background_sms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -68,7 +66,8 @@ class SosContact {
 /// Result of an SOS alert attempt
 class SosAlertResult {
   final int totalContacts;
-  final int smsSent;
+  /// Contacts pre-filled in the device messaging app (user taps Send).
+  final int smsPrepared;
   final int smsFailed;
   final int whatsappLaunched;
   final int whatsappFailed;
@@ -76,24 +75,29 @@ class SosAlertResult {
 
   SosAlertResult({
     required this.totalContacts,
-    required this.smsSent,
+    required this.smsPrepared,
     required this.smsFailed,
     required this.whatsappLaunched,
     required this.whatsappFailed,
     required this.errors,
   });
 
-  bool get isPartialSuccess => smsSent > 0 || whatsappLaunched > 0;
+  bool get isPartialSuccess => smsPrepared > 0 || whatsappLaunched > 0;
   bool get isCompleteSuccess =>
-      smsSent + whatsappLaunched > 0 && smsFailed == 0 && whatsappFailed == 0;
+      smsPrepared + whatsappLaunched > 0 &&
+      smsFailed == 0 &&
+      whatsappFailed == 0;
 
   String get summary {
     final parts = <String>[];
-    if (smsSent > 0)
-      parts.add('SMS sent to $smsSent contact${smsSent > 1 ? 's' : ''}');
-    if (whatsappLaunched > 0)
+    if (smsPrepared > 0) {
       parts.add(
-          'WhatsApp sent to $whatsappLaunched contact${whatsappLaunched > 1 ? 's' : ''}');
+          'SMS ready for $smsPrepared contact${smsPrepared > 1 ? 's' : ''} - tap Send in your messaging app');
+    }
+    if (whatsappLaunched > 0) {
+      parts.add(
+          'WhatsApp opened for $whatsappLaunched contact${whatsappLaunched > 1 ? 's' : ''}');
+    }
     if (smsFailed > 0) parts.add('$smsFailed SMS failed');
     if (whatsappFailed > 0) parts.add('$whatsappFailed WhatsApp failed');
     return parts.isEmpty ? 'No actions taken' : parts.join(', ');
@@ -107,10 +111,47 @@ class SosService {
   SosService._internal();
 
   static const String _contactsKey = 'sos_contacts';
+  static const String _eventsKey = 'sos_events';
+  static const String _sosCollection = 'SOS';
   static const String _sosEnabledKey = 'sos_auto_enabled';
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String? get _currentUserId => _auth.currentUser?.uid;
+
+  String _contactsCacheKey(String? userId) {
+    return userId == null ? _contactsKey : '${_contactsKey}_$userId';
+  }
+
+  String _autoSendCacheKey(String? userId) {
+    return userId == null ? _sosEnabledKey : '${_sosEnabledKey}_$userId';
+  }
+
+  SosContact _contactFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data();
+    return SosContact.fromJson({
+      ...?data,
+      'id': data?['id'] ?? doc.id,
+    });
+  }
+
+  DocumentReference<Map<String, dynamic>> _sosUserDoc(String userId) {
+    return _firestore.collection(_sosCollection).doc(userId);
+  }
+
+  CollectionReference<Map<String, dynamic>> _sosContactsRef(String userId) {
+    return _sosUserDoc(userId).collection(_contactsKey);
+  }
+
+  CollectionReference<Map<String, dynamic>> _sosEventsRef(String userId) {
+    return _sosUserDoc(userId).collection(_eventsKey);
+  }
+
+  CollectionReference<Map<String, dynamic>> _legacySosContactsRef(
+      String userId) {
+    return _firestore.collection('users').doc(userId).collection(_contactsKey);
+  }
 
   // ─── Contact Management ────────────────────────────────────────────────
 
@@ -120,43 +161,47 @@ class SosService {
       // Try Firestore first (if user is authenticated)
       final user = _auth.currentUser;
       if (user != null) {
-        final doc = await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_contacts')
-            .get();
+        final doc = await _sosContactsRef(user.uid).get();
 
         if (doc.docs.isNotEmpty) {
-          final contacts =
-              doc.docs.map((d) => SosContact.fromJson(d.data())).toList();
+          final contacts = doc.docs.map(_contactFromDoc).toList();
           // Cache locally
-          await _saveContactsLocal(contacts);
+          await _saveContactsLocal(contacts, user.uid);
           return contacts;
         }
+
+        final legacyDoc = await _legacySosContactsRef(user.uid).get();
+        if (legacyDoc.docs.isNotEmpty) {
+          final contacts = legacyDoc.docs.map(_contactFromDoc).toList();
+          await _saveContactsLocal(contacts, user.uid);
+          await saveContacts(contacts);
+          return contacts;
+        }
+
+        return _getContactsLocal(user.uid);
       }
 
       // Fallback to local storage
       return _getContactsLocal();
     } catch (e) {
       // Fallback to local storage on error
-      return _getContactsLocal();
+      return _getContactsLocal(_currentUserId);
     }
   }
 
   /// Save SOS contacts (both local and Firestore)
   Future<void> saveContacts(List<SosContact> contacts) async {
+    final user = _auth.currentUser;
+
     // Save locally
-    await _saveContactsLocal(contacts);
+    await _saveContactsLocal(contacts, user?.uid);
 
     // Save to Firestore if authenticated
     try {
-      final user = _auth.currentUser;
       if (user != null) {
         final batch = _firestore.batch();
-        final collectionRef = _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_contacts');
+        final sosUserRef = _sosUserDoc(user.uid);
+        final collectionRef = _sosContactsRef(user.uid);
 
         // Delete existing
         final existing = await collectionRef.get();
@@ -164,9 +209,21 @@ class SosService {
           batch.delete(doc.reference);
         }
 
+        batch.set(
+            sosUserRef,
+            {
+              'userId': user.uid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
+
         // Add new
         for (var contact in contacts) {
-          batch.set(collectionRef.doc(contact.id), contact.toJson());
+          batch.set(collectionRef.doc(contact.id), {
+            ...contact.toJson(),
+            'userId': user.uid,
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
         }
 
         await batch.commit();
@@ -200,9 +257,9 @@ class SosService {
     await saveContacts(contacts);
   }
 
-  Future<List<SosContact>> _getContactsLocal() async {
+  Future<List<SosContact>> _getContactsLocal([String? userId]) async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonStr = prefs.getString(_contactsKey);
+    final jsonStr = prefs.getString(_contactsCacheKey(userId));
     if (jsonStr == null) return [];
     final List<dynamic> jsonList = json.decode(jsonStr);
     return jsonList
@@ -210,22 +267,23 @@ class SosService {
         .toList();
   }
 
-  Future<void> _saveContactsLocal(List<SosContact> contacts) async {
+  Future<void> _saveContactsLocal(
+      List<SosContact> contacts, String? userId) async {
     final prefs = await SharedPreferences.getInstance();
     final jsonList = contacts.map((c) => c.toJson()).toList();
-    await prefs.setString(_contactsKey, json.encode(jsonList));
+    await prefs.setString(_contactsCacheKey(userId), json.encode(jsonList));
   }
 
   /// Check if SOS auto-send is enabled
   Future<bool> isAutoSendEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_sosEnabledKey) ?? true;
+    return prefs.getBool(_autoSendCacheKey(_currentUserId)) ?? true;
   }
 
   /// Enable/disable SOS auto-send
   Future<void> setAutoSendEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_sosEnabledKey, enabled);
+    await prefs.setBool(_autoSendCacheKey(_currentUserId), enabled);
   }
 
   // ─── SOS Alert ─────────────────────────────────────────────────────────
@@ -235,11 +293,14 @@ class SosService {
     String? customMessage,
     bool includeLocation = true,
   }) async {
+    debugPrint('=== SOS ALERT START ===');
     final contacts = await getContacts();
+
     if (contacts.isEmpty) {
+      debugPrint('SOS: No contacts configured');
       return SosAlertResult(
         totalContacts: 0,
-        smsSent: 0,
+        smsPrepared: 0,
         smsFailed: 0,
         whatsappLaunched: 0,
         whatsappFailed: 0,
@@ -247,11 +308,14 @@ class SosService {
       );
     }
 
+    debugPrint('SOS: Found ${contacts.length} SOS contacts');
+
     // Get location
     String? locationUrl;
     String? locationText;
     if (includeLocation) {
       try {
+        debugPrint('SOS: Attempting to get location...');
         final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           timeLimit: const Duration(seconds: 10),
@@ -260,8 +324,9 @@ class SosService {
             'https://maps.google.com/?q=${position.latitude},${position.longitude}';
         locationText =
             'Lat: ${position.latitude.toStringAsFixed(6)}, Lng: ${position.longitude.toStringAsFixed(6)}';
+        debugPrint('SOS: Location obtained: $locationText');
       } catch (e) {
-        debugPrint('Could not get location for SOS: $e');
+        debugPrint('SOS: Could not get location: $e');
       }
     }
 
@@ -277,45 +342,55 @@ class SosService {
     }
     message += '\n🕐 Time: $timestamp';
 
-    int smsSent = 0;
+    debugPrint('SOS: Alert message prepared (length: ${message.length})');
+
+    int smsPrepared = 0;
     int smsFailed = 0;
     int whatsappLaunched = 0;
     int whatsappFailed = 0;
     final errors = <String>[];
 
-    // Send to each contact
+    // SMS: open the device messaging app once, pre-filled with every SMS
+    // contact and the alert text. The user taps Send, so no SEND_SMS
+    // permission is needed (Play policy restricts it to default SMS apps).
+    final smsContacts = contacts.where((c) => c.sendSms).toList();
+    if (smsContacts.isNotEmpty) {
+      final phones =
+          smsContacts.map((c) => _formatPhoneNumber(c.phoneNumber)).toList();
+      debugPrint('SOS: Opening SMS app for ${phones.length} contact(s)...');
+      if (await _launchSmsApp(phones, message)) {
+        smsPrepared = smsContacts.length;
+      } else {
+        smsFailed = smsContacts.length;
+        const errorMsg = 'Could not open the messaging app for SMS';
+        debugPrint('SOS: $errorMsg');
+        errors.add(errorMsg);
+      }
+    }
+
     for (final contact in contacts) {
       final phone = _formatPhoneNumber(contact.phoneNumber);
-
-      // Send SMS
-      if (contact.sendSms) {
-        try {
-          final result = await _sendSms(phone, message);
-          if (result) {
-            smsSent++;
-          } else {
-            smsFailed++;
-            errors.add('SMS failed for ${contact.name}');
-          }
-        } catch (e) {
-          smsFailed++;
-          errors.add('SMS error for ${contact.name}: $e');
-        }
-      }
+      debugPrint('SOS: Processing contact: ${contact.name} ($phone)');
 
       // Send WhatsApp
       if (contact.sendWhatsapp) {
         try {
+          debugPrint('SOS: Launching WhatsApp for ${contact.name}...');
           final result = await _sendWhatsapp(phone, message);
           if (result) {
             whatsappLaunched++;
+            debugPrint('SOS: WhatsApp launched for ${contact.name}');
           } else {
             whatsappFailed++;
-            errors.add('WhatsApp failed for ${contact.name}');
+            final errorMsg = 'WhatsApp failed for ${contact.name}';
+            debugPrint('SOS: $errorMsg');
+            errors.add(errorMsg);
           }
         } catch (e) {
           whatsappFailed++;
-          errors.add('WhatsApp error for ${contact.name}: $e');
+          final errorMsg = 'WhatsApp error for ${contact.name}: $e';
+          debugPrint('SOS: $errorMsg');
+          errors.add(errorMsg);
         }
       }
     }
@@ -323,9 +398,13 @@ class SosService {
     // Log SOS event to Firestore
     await _logSosEvent(contacts, message, locationUrl);
 
+    debugPrint(
+        'SOS: Alert complete - SMS: $smsPrepared prepared, $smsFailed failed | WhatsApp: $whatsappLaunched launched, $whatsappFailed failed');
+    debugPrint('=== SOS ALERT END ===');
+
     return SosAlertResult(
       totalContacts: contacts.length,
-      smsSent: smsSent,
+      smsPrepared: smsPrepared,
       smsFailed: smsFailed,
       whatsappLaunched: whatsappLaunched,
       whatsappFailed: whatsappFailed,
@@ -333,44 +412,23 @@ class SosService {
     );
   }
 
-  /// Send SMS using background_sms plugin (sends directly without leaving app)
-  Future<bool> _sendSms(String phoneNumber, String message) async {
+  /// Open the device messaging app with recipients and body pre-filled.
+  Future<bool> _launchSmsApp(List<String> phoneNumbers, String message) async {
     try {
-      if (!Platform.isAndroid) {
-        return _launchSmsApp(phoneNumber, message);
-      }
-
-      final permission = await Permission.sms.request();
-      if (!permission.isGranted) {
-        return _launchSmsApp(phoneNumber, message);
-      }
-
-      // Send SMS in background
-      final result = await BackgroundSms.sendMessage(
-        phoneNumber: phoneNumber,
-        message: message,
-      );
-
-      return result == SmsStatus.sent;
+      // Android accepts comma-separated recipients; iOS only supports one.
+      final recipients =
+          Platform.isAndroid ? phoneNumbers.join(',') : phoneNumbers.first;
+      final separator = Platform.isIOS ? '&' : '?';
+      final uri = Uri.parse(
+          'sms:$recipients${separator}body=${Uri.encodeComponent(message)}');
+      final result =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      debugPrint('SMS: SMS app launch result: $result');
+      return result;
     } catch (e) {
-      debugPrint('SMS send error: $e');
-      // Fallback: open SMS app
-      try {
-        return await _launchSmsApp(phoneNumber, message);
-      } catch (e2) {
-        debugPrint('SMS fallback error: $e2');
-      }
+      debugPrint('SMS: Error launching SMS app: $e');
       return false;
     }
-  }
-
-  Future<bool> _launchSmsApp(String phoneNumber, String message) async {
-    final uri =
-        Uri.parse('sms:$phoneNumber?body=${Uri.encodeComponent(message)}');
-    if (await canLaunchUrl(uri)) {
-      return await launchUrl(uri);
-    }
-    return false;
   }
 
   /// Send WhatsApp message via deep link
@@ -410,32 +468,31 @@ class SosService {
     try {
       final user = _auth.currentUser;
       if (user != null) {
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('sos_events')
-            .add({
+        final sosUserRef = _sosUserDoc(user.uid);
+        final eventRef = _sosEventsRef(user.uid).doc();
+        final batch = _firestore.batch();
+
+        batch.set(
+            sosUserRef,
+            {
+              'userId': user.uid,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
+
+        batch.set(eventRef, {
           'timestamp': FieldValue.serverTimestamp(),
+          'userId': user.uid,
           'message': message,
           'locationUrl': locationUrl,
           'contactsNotified': contacts.map((c) => c.toJson()).toList(),
           'platform': 'mobile_app',
         });
+
+        await batch.commit();
       }
     } catch (e) {
       debugPrint('Error logging SOS event: $e');
-    }
-  }
-
-  /// Check and request SMS permission
-  Future<bool> requestSmsPermission() async {
-    try {
-      if (!Platform.isAndroid) return false;
-      final result = await Permission.sms.request();
-      return result.isGranted;
-    } catch (e) {
-      debugPrint('SMS permission check error: $e');
-      return false;
     }
   }
 }

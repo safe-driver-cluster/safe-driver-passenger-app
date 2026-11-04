@@ -158,6 +158,74 @@ class DriverRepository {
     }
   }
 
+  /// Get all drivers assigned to a bus.
+  Future<List<DriverModel>> getAssignedDriversForBus({
+    required String busId,
+    required String busNumber,
+    String? primaryDriverId,
+  }) async {
+    try {
+      final driversById = <String, DriverModel>{};
+
+      void addDriver(DriverModel? driver) {
+        if (driver != null && driver.id.isNotEmpty) {
+          driversById[driver.id] = driver;
+        }
+      }
+
+      if (primaryDriverId != null && primaryDriverId.trim().isNotEmpty) {
+        addDriver(await getDriverById(primaryDriverId.trim()));
+      }
+
+      final busKeys = {
+        if (busId.trim().isNotEmpty) busId.trim(),
+        if (busNumber.trim().isNotEmpty) busNumber.trim(),
+      };
+
+      Future<void> addQuery(Query<Map<String, dynamic>> query) async {
+        final snapshot = await query.get();
+        for (final doc in snapshot.docs) {
+          addDriver(DriverModel.fromJson({
+            'id': doc.id,
+            ...doc.data(),
+          }));
+        }
+      }
+
+      for (final busKey in busKeys) {
+        await addQuery(
+          _firestore
+              .collection('drivers')
+              .where('currentBusId', isEqualTo: busKey),
+        );
+        await addQuery(
+          _firestore
+              .collection('drivers')
+              .where('currentBusNumber', isEqualTo: busKey),
+        );
+        await addQuery(
+          _firestore
+              .collection('drivers')
+              .where('busNumber', isEqualTo: busKey),
+        );
+        await addQuery(
+          _firestore
+              .collection('drivers')
+              .where('assignedBuses', arrayContains: busKey),
+        );
+        await addQuery(
+          _firestore
+              .collection('drivers')
+              .where('assignedBusNumbers', arrayContains: busKey),
+        );
+      }
+
+      return driversById.values.toList();
+    } catch (e) {
+      throw Exception('Failed to get assigned drivers for bus: $e');
+    }
+  }
+
   // Add driver performance record
   Future<void> addDriverPerformance(
       String driverId, DriverPerformance performance) async {

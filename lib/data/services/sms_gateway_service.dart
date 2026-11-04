@@ -17,7 +17,8 @@ class SmsGatewayService {
   /// Send OTP to phone number via Text.lk SMS gateway
   Future<OtpSendResult> sendOtp(String phoneNumber) async {
     try {
-      print('🔐 Sending OTP to: $phoneNumber');
+      print('========== OTP SEND START ==========');
+      print('[SmsGatewayService.sendOtp] input phoneNumber: $phoneNumber');
 
       final HttpsCallable callable = _functions.httpsCallable('sendOTP');
       final result = await callable.call({
@@ -25,9 +26,11 @@ class SmsGatewayService {
       });
 
       final data = result.data as Map<String, dynamic>;
+      print('[SmsGatewayService.sendOtp] function response: $data');
 
       if (data['success'] == true) {
-        print('✅ OTP sent successfully');
+        print('[SmsGatewayService.sendOtp] OTP sent successfully');
+        print('========== OTP SEND END: SUCCESS ==========');
         return OtpSendResult(
           success: true,
           verificationId: data['verificationId'] as String,
@@ -35,14 +38,21 @@ class SmsGatewayService {
           expiresAt: DateTime.parse(data['expiresAt'] as String),
         );
       } else {
+        print('[SmsGatewayService.sendOtp] function returned success=false');
+        print('========== OTP SEND END: FAILED ==========');
         throw Exception(
             'Failed to send OTP: ${data['message'] ?? 'Unknown error'}');
       }
     } on FirebaseFunctionsException catch (e) {
-      print('❌ Firebase Functions error: ${e.code} - ${e.message}');
+      print('[SmsGatewayService.sendOtp] Firebase Functions error');
+      print('  code: ${e.code}');
+      print('  message: ${e.message}');
+      print('  details: ${e.details}');
+      print('========== OTP SEND END: FUNCTIONS ERROR ==========');
       throw _handleFunctionsError(e);
     } catch (e) {
-      print('❌ SMS Gateway error: $e');
+      print('[SmsGatewayService.sendOtp] unexpected error: $e');
+      print('========== OTP SEND END: ERROR ==========');
       throw Exception('Failed to send OTP: ${e.toString()}');
     }
   }
@@ -55,7 +65,12 @@ class SmsGatewayService {
     bool skipAuthentication = false,
   }) async {
     try {
-      print('🔐 Verifying OTP: $otpCode for verification: $verificationId');
+      print('========== OTP VERIFY START ==========');
+      print('[SmsGatewayService.verifyOtp] verificationId: $verificationId');
+      print('[SmsGatewayService.verifyOtp] phoneNumber: $phoneNumber');
+      print('[SmsGatewayService.verifyOtp] otp length: ${otpCode.length}');
+      print(
+          '[SmsGatewayService.verifyOtp] current Firebase user before function: ${_auth.currentUser?.uid}');
 
       final HttpsCallable callable = _functions.httpsCallable('verifyOTP');
       final result = await callable.call({
@@ -65,15 +80,18 @@ class SmsGatewayService {
       });
 
       final data = result.data as Map<String, dynamic>;
+      print('[SmsGatewayService.verifyOtp] function response: $data');
 
       if (data['success'] == true) {
-        print('✅ OTP verified successfully!');
-        
+        print('[SmsGatewayService.verifyOtp] OTP verified successfully');
+
         final formattedPhone = data['phoneNumber'] as String;
-        
+
         // Use phone number (digits only) as unique userId
         final userId = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-        
+        print('[SmsGatewayService.verifyOtp] derived userId: $userId');
+        print('[SmsGatewayService.verifyOtp] formatted phone: $formattedPhone');
+
         // Store verification in Firestore
         await FirebaseFirestore.instance
             .collection('users')
@@ -88,6 +106,9 @@ class SmsGatewayService {
         // Create a mock User object for compatibility
         // since we're using phone-based auth, not Firebase Auth
         final mockUser = FirebaseAuth.instance.currentUser;
+        print(
+            '[SmsGatewayService.verifyOtp] current Firebase user after verify: ${mockUser?.uid}');
+        print('========== OTP VERIFY END: SUCCESS ==========');
 
         return OtpVerifyResult(
           success: true,
@@ -97,14 +118,21 @@ class SmsGatewayService {
           isNewUser: true,
         );
       } else {
+        print('[SmsGatewayService.verifyOtp] function returned success=false');
+        print('========== OTP VERIFY END: FAILED ==========');
         throw Exception(
             'Failed to verify OTP: ${data['message'] ?? 'Unknown error'}');
       }
     } on FirebaseFunctionsException catch (e) {
-      print('❌ Firebase Functions error: ${e.code} - ${e.message}');
+      print('[SmsGatewayService.verifyOtp] Firebase Functions error');
+      print('  code: ${e.code}');
+      print('  message: ${e.message}');
+      print('  details: ${e.details}');
+      print('========== OTP VERIFY END: FUNCTIONS ERROR ==========');
       throw _handleFunctionsError(e);
     } catch (e) {
-      print('❌ OTP verification error: $e');
+      print('[SmsGatewayService.verifyOtp] unexpected error: $e');
+      print('========== OTP VERIFY END: ERROR ==========');
       throw Exception('Failed to verify OTP: ${e.toString()}');
     }
   }

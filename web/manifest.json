@@ -1,11 +1,11 @@
 {
-    "name": "safedriver_passenger_app",
-    "short_name": "safedriver_passenger_app",
+    "name": "SafeDriver - Passenger App",
+    "short_name": "SafeDriver",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#hexcode",
-    "theme_color": "#hexcode",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#2563EB",
+    "description": "SafeDriver - Passenger App",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

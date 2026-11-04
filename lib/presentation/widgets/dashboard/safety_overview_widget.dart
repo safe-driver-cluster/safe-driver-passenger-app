@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class SafetyOverviewWidget extends ConsumerWidget {
@@ -10,6 +11,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
     final dashboardState = ref.watch(dashboardControllerProvider);
 
     return Card(
@@ -25,12 +27,12 @@ class SafetyOverviewWidget extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Fleet Safety Score',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 Container(
@@ -56,7 +58,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
             // Safety Score Progress Bar
             LinearProgressIndicator(
               value: dashboardState.fleetSafetyScore / 5.0,
-              backgroundColor: Colors.grey[300],
+              backgroundColor: th.subtleBackground,
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getSafetyScoreColor(dashboardState.fleetSafetyScore),
               ),
@@ -69,6 +71,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     'Active Buses',
                     '${dashboardState.activeBuses}/${dashboardState.totalBuses}',
                     Icons.directions_bus,
@@ -78,6 +81,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildMetricCard(
+                    context,
                     'Active Incidents',
                     '${dashboardState.activeIncidents}',
                     Icons.warning,
@@ -94,7 +98,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
             SizedBox(
               height: 120,
               child: LineChart(
-                _buildSafetyChart(dashboardState),
+                _buildSafetyChart(context, dashboardState),
               ),
             ),
           ],
@@ -104,7 +108,8 @@ class SafetyOverviewWidget extends ConsumerWidget {
   }
 
   Widget _buildMetricCard(
-      String title, String value, IconData icon, Color color) {
+      BuildContext context, String title, String value, IconData icon, Color color) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -126,9 +131,9 @@ class SafetyOverviewWidget extends ConsumerWidget {
           ),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -144,7 +149,8 @@ class SafetyOverviewWidget extends ConsumerWidget {
     return Colors.red[800]!;
   }
 
-  LineChartData _buildSafetyChart(DashboardState state) {
+  LineChartData _buildSafetyChart(BuildContext context, DashboardState state) {
+    final th = ThemeHelper.of(context);
     // Mock data for safety trend over the last 7 days
     final spots = <FlSpot>[
       const FlSpot(0, 4.2),
@@ -171,7 +177,7 @@ class SafetyOverviewWidget extends ConsumerWidget {
               if (value.toInt() < days.length) {
                 return Text(
                   days[value.toInt()],
-                  style: const TextStyle(fontSize: 10),
+                  style: TextStyle(fontSize: 10, color: th.textSecondary),
                 );
               }
               return const Text('');

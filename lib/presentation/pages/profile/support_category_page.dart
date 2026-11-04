@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/constants/design_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/data/models/faq_model.dart';
 import 'package:safedriver_passenger_app/data/services/support_data_service.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
+import 'package:safedriver_passenger_app/presentation/widgets/common/profile_page_components.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportCategoryPage extends StatefulWidget {
@@ -38,26 +40,26 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
         _filteredIssues = _issues;
       } else {
         _filteredIssues = _issues
-            .where((issue) =>
-                issue.title.toLowerCase().contains(query) ||
-                issue.description.toLowerCase().contains(query))
+            .where(
+              (issue) =>
+                  issue.title.toLowerCase().contains(query) ||
+                  issue.description.toLowerCase().contains(query),
+            )
             .toList();
       }
     });
   }
 
-  void _makeCall(String phoneNumber) async {
+  Future<void> _makeCall(String phoneNumber) async {
     final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     try {
       if (await canLaunchUrl(launchUri)) {
-        await launchUrl(launchUri);
+        await launchUrl(launchUri, mode: LaunchMode.externalApplication);
       }
-    } catch (e) {
-      // Handle error
-    }
+    } catch (_) {}
   }
 
-  void _sendEmail(String email) async {
+  Future<void> _sendEmail(String email) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: email,
@@ -67,11 +69,9 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
     );
     try {
       if (await canLaunchUrl(emailUri)) {
-        await launchUrl(emailUri);
+        await launchUrl(emailUri, mode: LaunchMode.externalApplication);
       }
-    } catch (e) {
-      // Handle error
-    }
+    } catch (_) {}
   }
 
   @override
@@ -83,396 +83,446 @@ class _SupportCategoryPageState extends State<SupportCategoryPage> {
   @override
   Widget build(BuildContext context) {
     final contactInfo = _supportService.getContactInfo();
+    final accentColor = _accentColorForCategory(widget.categoryName);
 
-    return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryGradientEnd,
-            ],
+    return ProfilePageScaffold(
+      title: widget.categoryName,
+      accentColor: accentColor,
+      children: [
+        _buildSearchCard(),
+        const SizedBox(height: AppDesign.spaceLG),
+        _buildIssueSection(accentColor),
+        const SizedBox(height: AppDesign.spaceLG),
+        _buildContactSection(contactInfo, accentColor),
+      ],
+    );
+  }
+
+  Widget _buildSearchCard() {
+    final th = ThemeHelper.of(context);
+
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.search_rounded,
+            title: 'Search Issues',
+            subtitle: 'Filter solutions by title or description.',
+            color: AppColors.primaryColor,
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Custom App Bar
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: AppDesign.spaceLG),
+          TextField(
+            controller: _searchController,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: th.textPrimary,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Search issues...',
+              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                color: th.textHint,
+              ),
+              filled: true,
+              fillColor: th.subtleBackground,
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                color: AppColors.primaryColor,
+              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: AppColors.primaryColor,
                       ),
-                      child: const CustomBackButton(color: Colors.white),
-                    ),
-                    const SizedBox(width: 16),
+                      onPressed: _searchController.clear,
+                    )
+                  : null,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppDesign.spaceLG,
+                vertical: AppDesign.spaceMD,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                borderSide: BorderSide(color: th.borderLight),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                  width: 1.4,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIssueSection(Color accentColor) {
+    if (_filteredIssues.isEmpty) {
+      return ProfileSectionCard(
+        child: Column(
+          children: [
+            const ProfileSectionHeader(
+              icon: Icons.search_off_rounded,
+              title: 'No Matches Found',
+              subtitle: 'Try a broader keyword or clear your search.',
+              color: AppColors.warningColor,
+            ),
+            const SizedBox(height: AppDesign.spaceLG),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
+              decoration: BoxDecoration(
+                color: AppColors.warningColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                border: Border.all(
+                  color: AppColors.warningColor.withValues(alpha: 0.18),
+                ),
+              ),
+              child: Text(
+                'No issues found for "${_searchController.text}". Clear the search to see all available help topics.',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: ThemeHelper.of(context).textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProfileSectionHeader(
+            icon: Icons.topic_outlined,
+            title: 'Available Help Topics',
+            subtitle:
+                '${_filteredIssues.length} issue${_filteredIssues.length == 1 ? '' : 's'} currently visible.',
+            color: accentColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          ...List.generate(_filteredIssues.length, (index) {
+            final spacing = index == _filteredIssues.length - 1
+                ? const SizedBox.shrink()
+                : const SizedBox(height: AppDesign.spaceMD);
+
+            return Column(
+              children: [
+                _buildIssueCard(_filteredIssues[index], accentColor),
+                spacing,
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactSection(
+      Map<String, String> contactInfo, Color accentColor) {
+    final th = ThemeHelper.of(context);
+
+    return ProfileSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ProfileSectionHeader(
+            icon: Icons.support_agent_rounded,
+            title: 'Still Need Help?',
+            subtitle: 'Reach the SafeDriver team directly for extra support.',
+            color: AppColors.successColor,
+          ),
+          const SizedBox(height: AppDesign.spaceLG),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppDesign.spaceLG),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  accentColor.withValues(alpha: 0.08),
+                  AppColors.successColor.withValues(alpha: 0.08),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+              border: Border.all(color: th.border),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
                     Expanded(
-                      child: Text(
-                        widget.categoryName,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      child: _ContactActionCard(
+                        icon: Icons.call_rounded,
+                        title: 'Call Support',
+                        detail: contactInfo['phone'] ?? '',
+                        color: AppColors.successColor,
+                        onTap: () => _makeCall(contactInfo['phone'] ?? ''),
+                      ),
+                    ),
+                    const SizedBox(width: AppDesign.spaceMD),
+                    Expanded(
+                      child: _ContactActionCard(
+                        icon: Icons.email_outlined,
+                        title: 'Send Email',
+                        detail: contactInfo['email'] ?? '',
+                        color: AppColors.primaryColor,
+                        onTap: () => _sendEmail(contactInfo['email'] ?? ''),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIssueCard(SupportIssue issue, Color accentColor) {
+    final th = ThemeHelper.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppDesign.spaceLG),
+      decoration: BoxDecoration(
+        color: th.subtleBackground,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        border: Border.all(color: th.borderLight),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: Icon(
+                  Icons.help_outline_rounded,
+                  color: accentColor,
+                  size: AppDesign.iconSM,
+                ),
+              ),
+              const SizedBox(width: AppDesign.spaceMD),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      issue.title,
+                      style: AppTextStyles.headline6.copyWith(
+                        color: th.textPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceXS),
+                    Text(
+                      issue.description,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: th.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
-
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search issues...',
-                      hintStyle: const TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
-                      border: InputBorder.none,
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: AppColors.primaryColor,
-                      ),
-                      suffixIcon: _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(
-                                Icons.clear,
-                                color: AppColors.primaryColor,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                            )
-                          : null,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Content
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: _filteredIssues.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.help_outline,
-                                size: 64,
-                                color: AppColors.textSecondary
-                                    .withOpacity(0.5),
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'No issues found',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : ListView(
-                          padding: const EdgeInsets.all(16),
-                          children: [
-                            ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: _filteredIssues.length,
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                return _buildIssueCard(_filteredIssues[index]);
-                              },
-                            ),
-                            const SizedBox(height: 24),
-
-                            // Contact Support Section
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppColors.infoColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColors.infoColor.withOpacity(0.3),
-                                ),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.support_agent,
-                                        color: AppColors.infoColor,
-                                        size: 24,
-                                      ),
-                                      SizedBox(width: 12),
-                                      Text(
-                                        'Still Need Help?',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'Contact our support team directly:',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () =>
-                                              _makeCall(contactInfo['phone']!),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                AppColors.successColor,
-                                            foregroundColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          icon: const Icon(Icons.call),
-                                          label: const Text('Call'),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: ElevatedButton.icon(
-                                          onPressed: () =>
-                                              _sendEmail(contactInfo['email']!),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                AppColors.primaryColor,
-                                            foregroundColor: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          icon: const Icon(Icons.email),
-                                          label: const Text('Email'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
-              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIssueCard(SupportIssue issue) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.scaffoldBackground,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Title
+          const SizedBox(height: AppDesign.spaceLG),
           Text(
-            issue.title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+            'Solutions',
+            style: AppTextStyles.labelLarge.copyWith(
+              color: th.textPrimary,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 8),
-
-          // Description
-          Text(
-            issue.description,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Solutions
-          const Text(
-            'Solutions:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          ...List.generate(
-            issue.solutions.length,
-            (index) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+          const SizedBox(height: AppDesign.spaceMD),
+          ...List.generate(issue.solutions.length, (index) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom:
+                    index == issue.solutions.length - 1 ? 0 : AppDesign.spaceMD,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 24,
-                    height: 24,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
                       color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(AppDesign.radiusFull),
                     ),
                     child: Center(
                       child: Text(
                         '${index + 1}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
+                        style: AppTextStyles.labelMedium.copyWith(
                           color: Colors.white,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppDesign.spaceMD),
                   Expanded(
-                    child: Text(
-                      issue.solutions[index],
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textSecondary,
-                        height: 1.4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        issue.solutions[index],
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: th.textSecondary,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-
-          if (issue.contactEmail != null || issue.contactPhone != null)
-            Column(
-              children: [
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.warningColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: AppColors.warningColor.withOpacity(0.3),
+            );
+          }),
+          if (issue.contactEmail != null || issue.contactPhone != null) ...[
+            const SizedBox(height: AppDesign.spaceLG),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppDesign.spaceLG),
+              decoration: BoxDecoration(
+                color: AppColors.warningColor.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                border: Border.all(
+                  color: AppColors.warningColor.withValues(alpha: 0.24),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'If the problem persists, contact:',
+                    style: AppTextStyles.labelLarge.copyWith(
+                      color: th.textPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'If problem persists, contact:',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                  if (issue.contactEmail != null) ...[
+                    const SizedBox(height: AppDesign.spaceSM),
+                    GestureDetector(
+                      onTap: () => _sendEmail(issue.contactEmail!),
+                      child: Text(
+                        issue.contactEmail!,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      if (issue.contactEmail != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: GestureDetector(
-                            onTap: () => _sendEmail(issue.contactEmail!),
-                            child: Text(
-                              issue.contactEmail!,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                    ),
+                  ],
+                  if (issue.contactPhone != null) ...[
+                    const SizedBox(height: AppDesign.spaceXS),
+                    GestureDetector(
+                      onTap: () => _makeCall(issue.contactPhone!),
+                      child: Text(
+                        issue.contactPhone!,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w700,
                         ),
-                      if (issue.contactPhone != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: GestureDetector(
-                            onTap: () => _makeCall(issue.contactPhone!),
-                            child: Text(
-                              issue.contactPhone!,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
+          ],
         ],
+      ),
+    );
+  }
+
+  Color _accentColorForCategory(String categoryName) {
+    switch (categoryName) {
+      case 'App Issues':
+        return AppColors.accentColor;
+      case 'Bus Services':
+        return AppColors.warningColor;
+      case 'Account & Security':
+        return AppColors.successColor;
+      default:
+        return AppColors.primaryColor;
+    }
+  }
+}
+
+class _ContactActionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String detail;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ContactActionCard({
+    required this.icon,
+    required this.title,
+    required this.detail,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+        child: Ink(
+          padding: const EdgeInsets.all(AppDesign.spaceLG),
+          decoration: BoxDecoration(
+            color: th.cardBackground,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+            border: Border.all(color: color.withValues(alpha: 0.16)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppDesign.spaceSM),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppDesign.radiusMD),
+                ),
+                child: Icon(icon, color: color, size: AppDesign.iconSM),
+              ),
+              const SizedBox(height: AppDesign.spaceMD),
+              Text(
+                title,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: th.textPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: AppDesign.spaceXS),
+              Text(
+                detail,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: th.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

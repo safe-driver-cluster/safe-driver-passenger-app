@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../controllers/dashboard_controller.dart';
 
 class ModernSafetyOverviewWidget extends ConsumerWidget {
@@ -10,15 +11,16 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
     final dashboardState = ref.watch(dashboardControllerProvider);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: th.shadowLight,
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -33,12 +35,12 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Fleet Safety Score',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                   ),
                 ),
                 Container(
@@ -82,7 +84,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: th.shadowLight,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -92,7 +94,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
                   value: dashboardState.fleetSafetyScore / 5.0,
-                  backgroundColor: AppColors.greyExtraLight,
+                  backgroundColor: th.inputFill,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getSafetyScoreColor(dashboardState.fleetSafetyScore),
                   ),
@@ -107,6 +109,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildEnhancedMetricCard(
+                    context,
                     'Active Buses',
                     '${dashboardState.activeBuses}/${dashboardState.totalBuses}',
                     Icons.directions_bus_rounded,
@@ -116,6 +119,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildEnhancedMetricCard(
+                    context,
                     'Incidents',
                     '${dashboardState.activeIncidents}',
                     Icons.warning_rounded,
@@ -131,6 +135,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildEnhancedMetricCard(
+                    context,
                     'Avg Speed',
                     '45 km/h',
                     Icons.speed_rounded,
@@ -140,6 +145,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildEnhancedMetricCard(
+                    context,
                     'On Time',
                     '94%',
                     Icons.schedule_rounded,
@@ -155,7 +161,7 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
             SizedBox(
               height: 120,
               child: LineChart(
-                _buildSafetyChart(dashboardState),
+                _buildSafetyChart(context, dashboardState),
               ),
             ),
           ],
@@ -165,11 +171,13 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
   }
 
   Widget _buildEnhancedMetricCard(
+    BuildContext context,
     String title,
     String value,
     IconData icon,
     Color color,
   ) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -226,9 +234,9 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -247,15 +255,16 @@ class ModernSafetyOverviewWidget extends ConsumerWidget {
     }
   }
 
-  LineChartData _buildSafetyChart(dynamic dashboardState) {
+  LineChartData _buildSafetyChart(BuildContext context, dynamic dashboardState) {
+    final th = ThemeHelper.of(context);
     return LineChartData(
       gridData: FlGridData(
         show: true,
         drawVerticalLine: false,
         horizontalInterval: 1,
         getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: AppColors.greyLight,
+          return FlLine(
+            color: th.borderLight,
             strokeWidth: 1,
           );
         },

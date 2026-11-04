@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,8 @@ import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
 import '../../widgets/common/professional_widgets.dart';
+import '../../controllers/dashboard_controller.dart' hide busRepositoryProvider;
+import '../../controllers/qr_controller.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
   const QrScannerPage({super.key});
@@ -29,16 +32,20 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   late Animation<double> _scanLineAnimation;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  final TextEditingController _manualCodeController = TextEditingController();
 
   bool _isScanning = true;
   bool _hasPermission = false;
   bool _isTorchOn = false;
+  bool _isProcessing = false;
 
   @override
   void initState() {
     super.initState();
     _initializeAnimations();
-    _checkPermissions();
+    if (!kIsWeb) {
+      _checkPermissions();
+    }
   }
 
   void _initializeAnimations() {
@@ -90,6 +97,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return _buildWebManualScanner();
+    }
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -105,7 +116,117 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
           // Bottom Controls
           _buildBottomControls(),
+
+          if (_isProcessing) _buildProcessingOverlay(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWebManualScanner() {
+    final l10n = AppLocalizations.of(context);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F8FC),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Padding(
+              padding: const EdgeInsets.all(AppDesign.spaceXL),
+              child: Container(
+                padding: const EdgeInsets.all(AppDesign.space2XL),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppDesign.radius2XL),
+                  boxShadow: AppDesign.shadowLG,
+                  border: Border.all(
+                    color: AppColors.primaryColor.withValues(alpha: 0.08),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        const CustomBackButton(
+                          color: AppColors.primaryColor,
+                          backgroundColor: Color(0x142563EB),
+                        ),
+                        const SizedBox(width: AppDesign.spaceMD),
+                        Expanded(
+                          child: Text(
+                            l10n.enterCodeManually,
+                            style: AppTextStyles.headline4.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(
+                          AppDesign.radiusXL,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.qr_code_scanner_rounded,
+                        color: Colors.white,
+                        size: 56,
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceXL),
+                    TextField(
+                      controller: _manualCodeController,
+                      autofocus: true,
+                      textCapitalization: TextCapitalization.characters,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: _processQrCode,
+                      decoration: InputDecoration(
+                        hintText: 'NB-9999',
+                        prefixIcon: const Icon(Icons.directions_bus_rounded),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radiusLG,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radiusLG,
+                          ),
+                          borderSide: const BorderSide(
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppDesign.spaceLG),
+                    ProfessionalButton(
+                      text: l10n.submit,
+                      onPressed: () => _processQrCode(
+                        _manualCodeController.text,
+                      ),
+                    ),
+                    if (_isProcessing) ...[
+                      const SizedBox(height: AppDesign.spaceLG),
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -114,7 +235,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     return MobileScanner(
       controller: controller,
       onDetect: _onDetect,
-      errorBuilder: (context, error, child) {
+      errorBuilder: (context, error) {
         return Container(
           color: Colors.black,
           child: Center(
@@ -147,6 +268,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildProcessingOverlay() {
+    return Container(
+      color: Colors.black.withOpacity(0.45),
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryColor,
+        ),
+      ),
     );
   }
 
@@ -380,15 +512,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         ),
         child: Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
-                ),
-              ),
-              child: const CustomBackButton(color: Colors.white, ),
+            const CustomBackButton(
+              color: Colors.white,
+              backgroundColor: Color(0x1AFFFFFF),
             ),
             const SizedBox(width: AppDesign.spaceLG),
             Expanded(
@@ -397,9 +523,13 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                 children: [
                   Text(
                     AppLocalizations.of(context).qrScanner,
-                    style: AppTextStyles.headline5.copyWith(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: AppDesign.spaceXS),
@@ -545,6 +675,8 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   void _showManualEntryDialog() {
+    _manualCodeController.clear();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -556,8 +688,16 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
+              controller: _manualCodeController,
+              autofocus: true,
+              textCapitalization: TextCapitalization.characters,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (value) {
+                Navigator.pop(context);
+                _processQrCode(value);
+              },
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).enterBusStopCode,
+                hintText: 'NB-9999',
                 prefixIcon: const Icon(Icons.qr_code_rounded),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
@@ -578,8 +718,9 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           ProfessionalButton(
             text: AppLocalizations.of(context).submit,
             onPressed: () {
+              final code = _manualCodeController.text;
               Navigator.pop(context);
-              // Handle manual code entry
+              _processQrCode(code);
             },
             height: 36,
           ),
@@ -588,21 +729,65 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     );
   }
 
-  void _processQrCode(String code) {
-    // Process QR code and navigate accordingly
+  Future<void> _processQrCode(String code) async {
+    final normalizedCode = code.trim();
+    if (normalizedCode.isEmpty) {
+      _showScanError('Please enter a bus ID, for example NB-9999.');
+      return;
+    }
+
+    setState(() {
+      _isScanning = false;
+      _isProcessing = true;
+    });
+
+    final bus = await ref
+        .read(qrControllerProvider.notifier)
+        .validateQrCode(normalizedCode);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isProcessing = false;
+    });
+
+    if (bus == null) {
+      final error = ref.read(qrControllerProvider).error ??
+          'Bus not found. Check the bus ID and try again.';
+      _showScanError(error);
+      setState(() => _isScanning = true);
+      return;
+    }
+
+    ref.read(dashboardControllerProvider.notifier)
+      ..updateActiveJourney(bus)
+      ..addRecentActivity('Started journey on Bus ${bus.busNumber}');
+
+    HapticFeedback.mediumImpact();
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(AppLocalizations.of(context).qrCodeDetected(code)),
+        content: Text('Bus ${bus.busNumber} selected'),
         backgroundColor: AppColors.successColor,
       ),
     );
 
-    // Add navigation logic here based on the QR code content
-    Navigator.pop(context);
+    Navigator.pop(context, bus);
+  }
+
+  void _showScanError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.errorColor,
+      ),
+    );
   }
 
   @override
   void dispose() {
+    _manualCodeController.dispose();
     _animationController.dispose();
     _pulseController.dispose();
     controller.dispose();

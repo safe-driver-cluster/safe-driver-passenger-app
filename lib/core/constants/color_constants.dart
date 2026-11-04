@@ -58,11 +58,17 @@ class AppColors {
   static const Color textOnCard = Color(0xFF374151); // Card Text
 
   // Premium Dark Theme Colors
-  static const Color darkBackground = Color(0xFF0F172A);
-  static const Color darkSurface = Color(0xFF1E293B);
-  static const Color darkCard = Color(0xFF334155);
-  static const Color darkTextPrimary = Color(0xFFF8FAFC);
-  static const Color darkTextSecondary = Color(0xFFCBD5E1);
+  static const Color darkBackground = Color(0xFF0F172A);      // Very dark blue-grey
+  static const Color darkSurface = Color(0xFF1E293B);        // Dark blue-grey surface
+  static const Color darkCard = Color(0xFF1E293B);           // Card background (same as surface)
+  static const Color darkCardHover = Color(0xFF334155);      // Card hover state
+  static const Color darkTextPrimary = Color(0xFFF8FAFC);    // White/light grey text
+  static const Color darkTextSecondary = Color(0xFF94A3B8);  // Medium grey text
+  static const Color darkTextHint = Color(0xFF64748B);       // Darker grey for hints
+  static const Color darkTextDisabled = Color(0xFF475569);   // Disabled text
+  static const Color darkBorder = Color(0xFF334155);         // Border color
+  static const Color darkDivider = Color(0xFF1E293B);       // Divider color
+  static const Color darkInputBackground = Color(0xFF0F172A); // Input field background
 
   // Professional Gradient Collections
   static const LinearGradient primaryGradient = LinearGradient(

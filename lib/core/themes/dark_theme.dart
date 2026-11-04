@@ -202,7 +202,7 @@ class DarkTheme {
   );
 
   /// Card theme
-  static const CardTheme _cardTheme = CardTheme(
+  static const CardThemeData _cardTheme = CardThemeData(
     color: Color(0xFF2C2C2C),
     elevation: 4,
     shadowColor: Color(0x40000000),
@@ -415,7 +415,7 @@ class DarkTheme {
   );
 
   /// Dialog theme
-  static const DialogTheme _dialogTheme = DialogTheme(
+  static const DialogThemeData _dialogTheme = DialogThemeData(
     backgroundColor: Color(0xFF2C2C2C),
     elevation: 24,
     shape: RoundedRectangleBorder(
@@ -501,7 +501,7 @@ class DarkTheme {
   );
 
   /// Tab bar theme
-  static const TabBarTheme _tabBarTheme = TabBarTheme(
+  static const TabBarThemeData _tabBarTheme = TabBarThemeData(
     labelColor: Color(0xFF2196F3),
     unselectedLabelColor: Color(0xFFB0B0B0),
     indicator: UnderlineTabIndicator(

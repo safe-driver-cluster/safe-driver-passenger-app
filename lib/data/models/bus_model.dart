@@ -76,6 +76,8 @@ class BusModel {
   }
 
   factory BusModel.fromJson(Map<String, dynamic> json) {
+    final locationJson = json['currentLocation'] ?? json['location'];
+
     return BusModel(
       id: json['id'] ?? '',
       // Handle both 'busNumber' and 'busNumberPlate' from Firebase
@@ -95,23 +97,37 @@ class BusModel {
         (e) => e.toString().split('.').last == (json['status'] ?? 'offline'),
         orElse: () => BusStatus.offline,
       ),
-      currentLocation: json['currentLocation'] != null
-          ? LocationModel.fromJson(json['currentLocation'])
+      currentLocation: locationJson is Map<String, dynamic>
+          ? LocationModel.fromJson(locationJson)
           : null,
-      currentSpeed: json['currentSpeed']?.toDouble(),
+      currentSpeed: (json['currentSpeed'] ?? json['speed'])?.toDouble(),
       heading: json['heading']?.toDouble(),
       safetyScore: json['safetyScore']?.toDouble() ?? 0.0,
       amenities: List<String>.from(json['amenities'] ?? []),
       specifications: BusSpecifications.fromJson(json['specifications'] ?? {}),
       maintenanceInfo: MaintenanceInfo.fromJson(json['maintenanceInfo'] ?? {}),
-      lastUpdated: DateTime.parse(
-          json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+      lastUpdated: _parseDateTime(json['lastUpdated'] ?? json['updatedAt']),
       isActive: json['isActive'] ?? true,
       safetyFeatures: (json['safetyFeatures'] as List<dynamic>?)
               ?.map((e) => SafetyFeature.fromJson(e))
               .toList() ??
           [],
     );
+  }
+
+  static DateTime _parseDateTime(dynamic value) {
+    if (value is DateTime) return value;
+    if (value != null) {
+      try {
+        final toDate = value.toDate;
+        if (toDate is Function) return toDate() as DateTime;
+      } catch (_) {
+        // Fall through to string parsing.
+      }
+      final parsed = DateTime.tryParse(value.toString());
+      if (parsed != null) return parsed;
+    }
+    return DateTime.now();
   }
 
   Map<String, dynamic> toJson() {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -274,30 +275,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
       print('🎯 Starting sign in with phone: $phoneNumber');
       state = state.copyWith(isLoading: true, error: null);
 
+      await _signOutDriverSessionIfNeeded();
+
       // Format phone number to match storage format
       final smsGateway = _ref.read(smsGatewayServiceProvider);
       final formattedPhone = smsGateway.formatSriLankanPhoneNumber(phoneNumber);
       print('📞 Formatted phone: $formattedPhone');
 
-      // Look up user by phone number in Firestore to get email
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('passenger_details')
-          .where('phoneNumber', isEqualTo: formattedPhone)
-          .limit(1)
-          .get();
-
-      if (querySnapshot.docs.isEmpty) {
-        throw Exception('No account found with this phone number');
-      }
-
-      final userData = querySnapshot.docs.first.data();
-      final userEmail = userData['email'] as String?;
+      // Look up user by phone number in Firestore to get email.
+      // Web can otherwise return a stale empty cached result before login.
+      final userEmail = await _lookupPassengerEmailByPhone(formattedPhone);
 
       if (userEmail == null || userEmail.isEmpty) {
         print(
             '⚠️ Email not found in Firestore profile for phone: $formattedPhone');
-        throw Exception(
-            'Account found but email not set. Please try again or use the email login option.');
+        throw Exception('No account found with this phone number');
       }
 
       print('📧 Found email: $userEmail');
@@ -342,6 +334,56 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         error: errorMessage,
       );
       return AuthResult(success: false, message: errorMessage);
+    }
+  }
+
+  Future<String?> _lookupPassengerEmailByPhone(String formattedPhone) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('passenger_details')
+          .where('phoneNumber', isEqualTo: formattedPhone)
+          .limit(1)
+          .get(const GetOptions(source: Source.server));
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final userData = querySnapshot.docs.first.data();
+        return userData['email'] as String?;
+      }
+
+      print(
+          'Phone lookup returned empty from Firestore server, trying Cloud Function fallback');
+    } on FirebaseException catch (e) {
+      print(
+          'Firestore phone lookup failed (${e.code}), trying Cloud Function fallback');
+    }
+
+    try {
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+          .httpsCallable('lookupPassengerByPhone');
+      final result = await callable.call({'phoneNumber': formattedPhone});
+      final data = Map<String, dynamic>.from(result.data as Map);
+
+      if (data['success'] == true) {
+        return data['email'] as String?;
+      }
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code != 'not-found') {
+        print('Cloud Function phone lookup failed: ${e.code} - ${e.message}');
+      }
+    } catch (e) {
+      print('Cloud Function phone lookup error: $e');
+    }
+
+    return null;
+  }
+
+  Future<void> _signOutDriverSessionIfNeeded() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null &&
+        currentUser.uid.toLowerCase().startsWith('driver_')) {
+      print(
+          '⚠️ Driver FirebaseAuth session found in passenger login. Signing out: ${currentUser.uid}');
+      await FirebaseAuth.instance.signOut();
     }
   }
 
@@ -705,7 +747,20 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
 
   // Get Firebase error message
   String _getFirebaseErrorMessage(String error) {
-    if (error.contains('user-not-found')) {
+    if (error.contains('No account found with this phone number')) {
+      return 'No account found with this phone number.';
+    } else if (error.contains('Incorrect password')) {
+      return 'Incorrect password. Please try again.';
+    } else if (error.contains('Invalid verification code') ||
+        error.contains('invalid verification')) {
+      return 'Invalid verification code. Please try again.';
+    } else if (error.contains('OTP has expired') ||
+        error.contains('deadline-exceeded')) {
+      return 'OTP has expired. Please request a new one.';
+    } else if (error.contains('Too many verification attempts') ||
+        error.contains('resource-exhausted')) {
+      return 'Too many attempts. Please try again later.';
+    } else if (error.contains('user-not-found')) {
       return 'No account found with this email address.';
     } else if (error.contains('wrong-password')) {
       return 'Incorrect password. Please try again.';
@@ -778,9 +833,9 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
     required String phoneNumber,
     required String newPassword,
     required String otpCode,
+    required String verificationId,
   }) async {
     try {
-      // Find user by phone number
       final querySnapshot = await FirebaseFirestore.instance
           .collection('passenger_details')
           .where('phoneNumber', isEqualTo: phoneNumber)
@@ -799,17 +854,21 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
         throw Exception('Account found but no email associated');
       }
 
-      // For forgot password flow, update password directly in Firestore
-      // Hash the new password (simple hash for demo - use proper hashing in production)
-      final hashedPassword = _hashPassword(newPassword);
+      final callable = FirebaseFunctions.instanceFor(region: 'asia-south1')
+          .httpsCallable('resetPassword');
 
-      // Update password in Firestore
-      await userDoc.reference.update({
-        'password':
-            hashedPassword, // Update the password field used during login
-        'passwordUpdatedAt': FieldValue.serverTimestamp(),
-        'resetViaOTP': true, // Flag to indicate password was reset via OTP
+      final result = await callable.call({
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'newPassword': newPassword,
+        'otpCode': otpCode,
+        'verificationId': verificationId,
       });
+
+      final data = Map<String, dynamic>.from(result.data as Map);
+      if (data['success'] != true) {
+        throw Exception(data['message'] ?? 'Failed to reset password');
+      }
 
       print('✅ Password reset successful for phone: $phoneNumber');
 
@@ -826,12 +885,5 @@ class AuthStateNotifier extends StateNotifier<AuthState> {
             : 'Failed to reset password',
       );
     }
-  }
-
-  // Simple password hashing (for demo purposes - use proper hashing in production)
-  String _hashPassword(String password) {
-    // In production, use a proper password hashing library like bcrypt
-    // This is just a simple hash for demonstration
-    return password.hashCode.toString();
   }
 }

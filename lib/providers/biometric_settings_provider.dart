@@ -122,11 +122,29 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   Future<void> setBiometricEnabled(bool enabled) async {
     try {
       if (!_biometricService.isBiometricSupported) {
-        state = state.copyWith(error: 'Biometric not supported on this device');
+        state = state.copyWith(
+          error:
+              'Biometric not supported on this device. Ensure fingerprint or face ID is set up in device settings.',
+        );
         return;
       }
 
       state = state.copyWith(isLoading: true, error: null);
+
+      // If enabling, request permissions explicitly
+      if (enabled) {
+        final permissionGranted =
+            await _biometricService.requestBiometricPermission();
+
+        if (!permissionGranted || _biometricService.availableBiometrics.isEmpty) {
+          state = state.copyWith(
+            isLoading: false,
+            error:
+                'Biometric not available. Please ensure fingerprint/face ID is enabled in device settings: Settings > Security > Biometric',
+          );
+          return;
+        }
+      }
 
       await _storage.saveBool(_biometricEnabledKey, enabled);
 
@@ -138,6 +156,7 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
 
       state = state.copyWith(
         isBiometricEnabled: enabled,
+        primaryBiometricType: _biometricService.getPrimaryBiometricType(),
         isLoading: false,
       );
 
@@ -145,7 +164,7 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to update biometric settings',
+        error: 'Failed to update biometric settings: $e',
       );
       print('❌ Error updating biometric settings: $e');
     }
@@ -154,13 +173,40 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   /// Enable/disable fingerprint
   Future<void> setFingerPrintEnabled(bool enabled) async {
     try {
-      if (!_biometricService.hasFingerprint) {
-        state =
-            state.copyWith(error: 'Fingerprint not available on this device');
+      if (!_biometricService.isBiometricSupported) {
+        state = state.copyWith(
+          error:
+              'Fingerprint not available. Ensure fingerprint is set up in device settings.',
+        );
         return;
       }
 
       state = state.copyWith(isLoading: true, error: null);
+
+      // If enabling, request permissions explicitly
+      if (enabled) {
+        final permissionGranted =
+            await _biometricService.requestBiometricPermission();
+
+        if (!permissionGranted) {
+          state = state.copyWith(
+            isLoading: false,
+            error:
+                'Could not enable fingerprint. Please check device settings: Settings > Security > Fingerprint',
+          );
+          return;
+        }
+
+        // Verify fingerprint is now available
+        if (!_biometricService.hasFingerprint) {
+          state = state.copyWith(
+            isLoading: false,
+            error:
+                'Fingerprint not detected on this device. Set up fingerprint in device settings first.',
+          );
+          return;
+        }
+      }
 
       await _storage.saveBool(_fingerPrintEnabledKey, enabled);
 
@@ -179,7 +225,7 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to update fingerprint settings',
+        error: 'Failed to update fingerprint settings: $e',
       );
       print('❌ Error updating fingerprint settings: $e');
     }
@@ -188,13 +234,40 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
   /// Enable/disable face ID
   Future<void> setFaceIdEnabled(bool enabled) async {
     try {
-      if (!_biometricService.hasFaceRecognition) {
+      if (!_biometricService.isBiometricSupported) {
         state = state.copyWith(
-            error: 'Face recognition not available on this device');
+          error:
+              'Face ID not available. Ensure face ID is set up in device settings.',
+        );
         return;
       }
 
       state = state.copyWith(isLoading: true, error: null);
+
+      // If enabling, request permissions explicitly
+      if (enabled) {
+        final permissionGranted =
+            await _biometricService.requestBiometricPermission();
+
+        if (!permissionGranted) {
+          state = state.copyWith(
+            isLoading: false,
+            error:
+                'Could not enable Face ID. Please check device settings: Settings > Security > Face Unlock',
+          );
+          return;
+        }
+
+        // Verify face recognition is now available
+        if (!_biometricService.hasFaceRecognition) {
+          state = state.copyWith(
+            isLoading: false,
+            error:
+                'Face ID not detected on this device. Set up Face Unlock in device settings first.',
+          );
+          return;
+        }
+      }
 
       await _storage.saveBool(_faceIdEnabledKey, enabled);
 
@@ -213,9 +286,9 @@ class BiometricSettingsNotifier extends StateNotifier<BiometricSettings> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to update face ID settings',
+        error: 'Failed to update Face ID settings: $e',
       );
-      print('❌ Error updating face ID settings: $e');
+      print('❌ Error updating Face ID settings: $e');
     }
   }
 

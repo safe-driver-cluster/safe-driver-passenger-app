@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/constants/color_constants.dart';
 import '../../../data/models/bus_model.dart';
 import '../../../data/models/location_model.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Live map widget for displaying bus locations and routes
 class LiveMapWidget extends StatefulWidget {
@@ -63,6 +64,7 @@ class _LiveMapWidgetState extends State<LiveMapWidget> {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Container(
       height: widget.height,
       decoration: BoxDecoration(
@@ -337,6 +339,7 @@ class CompactMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     if (bus.currentLocation == null) {
       return Container(
         height: height,

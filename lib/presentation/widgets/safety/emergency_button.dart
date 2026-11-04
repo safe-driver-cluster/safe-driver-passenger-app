@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Emergency button widget for immediate help
 class EmergencyButton extends StatefulWidget {
@@ -140,6 +141,7 @@ class _EmergencyButtonState extends State<EmergencyButton>
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final theme = Theme.of(context);
     final backgroundColor = widget.backgroundColor ??
         (widget.isActive ? Colors.red : Colors.red.shade600);
@@ -253,6 +255,7 @@ class EmergencyPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     final theme = Theme.of(context);
 
     return Container(
@@ -433,6 +436,7 @@ class QuickEmergencyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: EmergencyButton(

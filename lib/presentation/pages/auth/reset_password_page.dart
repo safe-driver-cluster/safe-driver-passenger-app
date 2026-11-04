@@ -1,9 +1,10 @@
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
+import '../../widgets/common/custom_back_button.dart';
 
 class ResetPasswordPage extends ConsumerStatefulWidget {
   const ResetPasswordPage({super.key});
@@ -23,6 +24,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
 
   String _phoneNumber = '';
   String _otpCode = '';
+  String _verificationId = '';
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       if (args != null) {
         _phoneNumber = args['phoneNumber'] ?? '';
         _otpCode = args['otpCode'] ?? '';
+        _verificationId = args['verificationId'] ?? '';
       }
     });
   }
@@ -45,6 +48,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   }
 
   Future<void> _resetPassword() async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -61,6 +65,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
         phoneNumber: _phoneNumber,
         newPassword: _passwordController.text.trim(),
         otpCode: _otpCode,
+        verificationId: _verificationId,
       );
 
       if (mounted) {
@@ -69,13 +74,13 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
           _showSuccessDialog();
         } else {
           HapticFeedback.heavyImpact();
-          _showErrorSnackBar(result.message ?? 'Failed to reset password');
+          _showErrorSnackBar(result.message ?? l10n.errorOccurred);
         }
       }
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar('An error occurred. Please try again.');
+        _showErrorSnackBar(l10n.errorOccurred);
       }
     } finally {
       if (mounted) {
@@ -87,6 +92,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   }
 
   void _showSuccessDialog() {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -101,18 +107,18 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
               color: Colors.green,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Password Reset Successful',
-              style: TextStyle(
+            Text(
+              l10n.passwordResetSuccessful,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Your password has been reset successfully. You can now sign in with your new password.',
-              style: TextStyle(
+            Text(
+              l10n.passwordResetSuccessMessage,
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.grey,
               ),
@@ -129,8 +135,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                     (route) => false,
                     arguments: {
                       'phoneNumber': _phoneNumber,
-                      'message':
-                          'Password reset successful. Please sign in with your new password.',
+                      'message': l10n.passwordResetSuccessLoginMessage,
                     },
                   );
                 },
@@ -142,9 +147,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Go to Sign In',
-                  style: TextStyle(
+                child: Text(
+                  l10n.goToSignIn,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -175,30 +180,33 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   }
 
   String? _validatePassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Please enter a password';
+      return l10n.passwordRequired;
     }
     if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
+      return l10n.passwordTooShort;
     }
     if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-      return 'Password must contain uppercase, lowercase, and numbers';
+      return l10n.passwordComplexity;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    final l10n = AppLocalizations.of(context);
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return l10n.confirmPasswordRequired;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return l10n.passwordsDoNotMatch;
     }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -228,9 +236,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                   child: Column(
                     children: [
                       // Back Button
-                      Row(
+                      const Row(
                         children: [
-                          const CustomBackButton(color: Colors.white),
+                          CustomBackButton(color: Colors.white),
                         ],
                       ),
                       const SizedBox(height: 40),
@@ -262,9 +270,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const Text(
-                        'Reset Password',
-                        style: TextStyle(
+                      Text(
+                        l10n.resetPassword,
+                        style: const TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -272,7 +280,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create a strong new password\nfor your account',
+                        l10n.createStrongNewPassword,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
@@ -320,7 +328,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                   controller: _passwordController,
                                   obscureText: _obscurePassword,
                                   decoration: InputDecoration(
-                                    labelText: 'New Password',
+                                    labelText: l10n.newPassword,
                                     prefixIcon: Icon(
                                       Icons.lock_outlined,
                                       color: Colors.grey[600],
@@ -368,7 +376,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                   controller: _confirmPasswordController,
                                   obscureText: _obscureConfirmPassword,
                                   decoration: InputDecoration(
-                                    labelText: 'Confirm Password',
+                                    labelText: l10n.confirmPassword,
                                     prefixIcon: Icon(
                                       Icons.lock_outlined,
                                       color: Colors.grey[600],
@@ -415,31 +423,30 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                         .withOpacity(0.1),
                                   ),
                                 ),
-                                child: const Column(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Password Requirements:',
-                                      style: TextStyle(
+                                      l10n.passwordRequirements,
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Color(0xFF2563EB),
                                         fontSize: 14,
                                       ),
                                     ),
-                                    SizedBox(height: 8),
-                                    Text('• At least 8 characters long',
-                                        style: TextStyle(
+                                    const SizedBox(height: 8),
+                                    Text(l10n.passwordReq1,
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF64748B),
                                         )),
-                                    Text(
-                                        '• Contains uppercase and lowercase letters',
-                                        style: TextStyle(
+                                    Text(l10n.passwordReq2,
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF64748B),
                                         )),
-                                    Text('• Contains at least one number',
-                                        style: TextStyle(
+                                    Text(l10n.passwordReq3,
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           color: Color(0xFF64748B),
                                         )),
@@ -489,9 +496,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                                     Colors.white),
                                           ),
                                         )
-                                      : const Text(
-                                          'Reset Password',
-                                          style: TextStyle(
+                                      : Text(
+                                          l10n.resetPassword,
+                                          style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -511,9 +518,9 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
                                     '/login',
                                     (route) => false,
                                   ),
-                                  child: const Text(
-                                    'Back to Sign In',
-                                    style: TextStyle(
+                                  child: Text(
+                                    l10n.backToSignIn,
+                                    style: const TextStyle(
                                       color: Color(0xFF2563EB),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class LoadingWidget extends StatelessWidget {
   final Widget child;
@@ -19,21 +20,22 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Stack(
       children: [
         child,
         if (isLoading)
           Container(
-            color: backgroundColor ?? Colors.black.withOpacity(0.3),
+            color: backgroundColor ?? th.overlay,
             child: Center(
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: th.surface,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: th.shadowMedium,
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -51,10 +53,10 @@ class LoadingWidget extends StatelessWidget {
                       const SizedBox(height: 16),
                       Text(
                         loadingText!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
+                          color: th.textPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -82,10 +84,11 @@ class SimpleLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     if (!isLoading) return const SizedBox.shrink();
 
     return Container(
-      color: Colors.black.withOpacity(0.3),
+      color: th.overlay,
       child: Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(
@@ -120,6 +123,7 @@ class LoadingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return SizedBox(
       width: width,
       height: height,
@@ -131,7 +135,7 @@ class LoadingButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          disabledBackgroundColor: Colors.grey.shade300,
+          disabledBackgroundColor: th.subtleBackground,
         ),
         child: isLoading
             ? const SizedBox(

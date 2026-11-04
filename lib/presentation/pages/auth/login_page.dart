@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/theme_helper.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/auth_provider.dart';
 import '../../widgets/common/country_code_picker.dart';
-import '../../widgets/common/google_icon.dart';
 import '../../widgets/common/loading_widget.dart';
-import 'register_page.dart';
+import '../../widgets/common/web_responsive_layout.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -109,24 +110,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       } else {
         // Error feedback
         HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Login failed');
-      }
-    }
-  }
-
-  Future<void> _googleSignIn() async {
-    HapticFeedback.lightImpact();
-
-    final authNotifier = ref.read(authStateProvider.notifier);
-    final result = await authNotifier.signInWithGoogle();
-
-    if (mounted) {
-      if (result.success) {
-        HapticFeedback.mediumImpact();
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      } else {
-        HapticFeedback.heavyImpact();
-        _showErrorSnackBar(result.message ?? 'Google Sign-In failed');
+        _showErrorSnackBar(
+            result.message ?? AppLocalizations.of(context).loginFailed);
       }
     }
   }
@@ -144,20 +129,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
-            SizedBox(width: 12),
-            Text('Verify Email'),
+            const Icon(Icons.mark_email_read, color: Color(0xFF2563EB)),
+            const SizedBox(width: 12),
+            Text(AppLocalizations.of(context).otpVerification),
           ],
         ),
-        content: const Text(
-          'Please verify your email address before continuing. Check your inbox and click the verification link.',
+        content: Text(
+          AppLocalizations.of(context).comingSoonFeature,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context).ok),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -166,11 +151,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   .read(authStateProvider.notifier)
                   .sendEmailVerification();
               if (mounted) {
-                _showSuccessSnackBar(
-                    result.message ?? 'Verification email sent');
+                _showSuccessSnackBar(result.message ??
+                    AppLocalizations.of(context).operationSuccessful);
               }
             },
-            child: const Text('Resend'),
+            child: Text(AppLocalizations.of(context).resendOTP),
           ),
         ],
       ),
@@ -191,7 +176,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         action: SnackBarAction(
-          label: 'Dismiss',
+          label: AppLocalizations.of(context).dismiss,
           textColor: Colors.white,
           onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
         ),
@@ -218,6 +203,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authStateProvider);
 
     // Listen for auth state changes and navigate accordingly
@@ -233,6 +220,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     final isLoading = authState.isLoading;
+
+    if (WebResponsive.isWideWeb(
+      context,
+      minWidth: WebResponsive.desktopBreakpoint,
+    )) {
+      return LoadingWidget(
+        isLoading: isLoading,
+        child: Scaffold(
+          body: WebAuthSplitShell(
+            title: l10n.welcomeTitle,
+            subtitle: l10n.appTagline,
+            icon: Icons.login_rounded,
+            child: _buildWebLoginForm(th, l10n, isLoading),
+          ),
+        ),
+      );
+    }
 
     return LoadingWidget(
       isLoading: isLoading,
@@ -253,7 +257,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
+                final content = SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints:
                         BoxConstraints(minHeight: constraints.maxHeight),
@@ -264,34 +268,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 60, horizontal: 24),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Logo with glow effect
+                              // Logo with glow effect - Perfect Circle
                               Container(
+                                width: 140,
+                                height: 140,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.white.withOpacity(0.3),
-                                      blurRadius: 20,
-                                      spreadRadius: 5,
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 25,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 10),
                                     ),
                                   ],
                                 ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
+                                child: ClipOval(
                                   child: Image.asset(
-                                    'assets/images/logo.png',
-                                    width: 120,
-                                    height: 120,
+                                    'assets/images/logo2.png',
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Container(
-                                        width: 120,
-                                        height: 120,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
                                           color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(30),
                                         ),
                                         child: const Icon(
                                           Icons.local_taxi,
@@ -304,9 +307,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 ),
                               ),
                               const SizedBox(height: 32),
-                              const Text(
-                                'Welcome Back',
-                                style: TextStyle(
+                              Text(
+                                l10n.welcomeTitle,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -314,7 +318,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Sign in to continue your safe journey',
+                                l10n.appTagline,
+                                textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.white.withOpacity(0.8),
@@ -326,9 +331,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         // Form Section
                         Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
+                          decoration: BoxDecoration(
+                            color: th.cardBackground,
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(32),
                               topRight: Radius.circular(32),
                             ),
@@ -357,13 +362,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             _selectedCountryCode = code;
                                           });
                                         },
-                                        labelText: 'Phone Number',
+                                        labelText: l10n.phoneNumber,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
-                                            return 'Please enter your phone number';
+                                            return l10n.phoneRequired;
                                           }
                                           if (value.length < 9) {
-                                            return 'Please enter a valid phone number';
+                                            return l10n.invalidPhone;
                                           }
                                           return null;
                                         },
@@ -374,22 +379,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       // Password Field with modern design
                                       Container(
                                         decoration: BoxDecoration(
-                                          color: Colors.grey[50],
+                                          color: th.inputFill,
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           border: Border.all(
-                                            color: Colors.grey[200]!,
+                                            color: th.borderLight,
                                             width: 1,
                                           ),
                                         ),
                                         child: TextFormField(
                                           controller: _passwordController,
                                           obscureText: _obscurePassword,
+                                          style: TextStyle(
+                                            color: th.textPrimary,
+                                          ),
                                           decoration: InputDecoration(
-                                            labelText: 'Password',
+                                            labelText: l10n.password,
                                             prefixIcon: Icon(
                                               Icons.lock_outlined,
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                             ),
                                             suffixIcon: IconButton(
                                               icon: Icon(
@@ -397,7 +405,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                     ? Icons.visibility_outlined
                                                     : Icons
                                                         .visibility_off_outlined,
-                                                color: Colors.grey[600],
+                                                color: th.textSecondary,
                                               ),
                                               onPressed: () {
                                                 setState(() {
@@ -413,17 +421,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                               vertical: 20,
                                             ),
                                             labelStyle: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
+                                            ),
+                                            hintStyle: TextStyle(
+                                              color: th.textHint,
                                             ),
                                           ),
                                           validator: (value) {
                                             if (value == null ||
                                                 value.isEmpty) {
-                                              return 'Please enter your password';
+                                              return l10n.passwordRequired;
                                             }
                                             if (value.length < 6) {
-                                              return 'Password must be at least 6 characters';
+                                              return l10n.passwordTooShort;
                                             }
                                             return null;
                                           },
@@ -449,9 +460,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                   BorderRadius.circular(4),
                                             ),
                                           ),
-                                          const Text(
-                                            'Remember me',
-                                            style: TextStyle(
+                                          Text(
+                                            l10n.rememberMe,
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -459,9 +470,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                           const Spacer(),
                                           TextButton(
                                             onPressed: _forgotPassword,
-                                            child: const Text(
-                                              'Forgot Password?',
-                                              style: TextStyle(
+                                            child: Text(
+                                              l10n.forgotPassword,
+                                              style: const TextStyle(
                                                 color: Color(0xFF2563EB),
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
@@ -517,91 +528,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                                             Colors.white),
                                                   ),
                                                 )
-                                              : const Text(
-                                                  'Sign In',
-                                                  style: TextStyle(
+                                              : Text(
+                                                  l10n.login,
+                                                  style: const TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(height: 32),
-
-                                      // Divider with modern style
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Container(
-                                              height: 1,
-                                              color: Colors.grey[300],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Text(
-                                              'OR',
-                                              style: TextStyle(
-                                                color: Colors.grey[500],
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              height: 1,
-                                              color: Colors.grey[300],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      const SizedBox(height: 32),
-
-                                      // Google Sign-In Button with modern design
-                                      Container(
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(16),
-                                          border: Border.all(
-                                            color: Colors.grey[300]!,
-                                            width: 1,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: OutlinedButton.icon(
-                                          onPressed:
-                                              isLoading ? null : _googleSignIn,
-                                          icon: const GoogleIcon(size: 24),
-                                          label: const Text(
-                                            'Continue with Google',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            side: BorderSide.none,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                          ),
                                         ),
                                       ),
 
@@ -613,24 +547,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            'Don\'t have an account? ',
+                                            l10n.dontHaveAccount,
                                             style: TextStyle(
-                                              color: Colors.grey[600],
+                                              color: th.textSecondary,
                                               fontSize: 16,
                                             ),
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const RegisterPage()),
+                                              Navigator.pushNamed(
+                                                context,
+                                                '/register',
                                               );
                                             },
-                                            child: const Text(
-                                              'Sign Up',
+                                            child: Text(
+                                              l10n.register,
                                               style: TextStyle(
-                                                color: Color(0xFF2563EB),
+                                                color: th.primary,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
                                               ),
@@ -651,9 +584,176 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ),
                 );
+                if (WebResponsive.isWideWeb(
+                  context,
+                  minWidth: WebResponsive.desktopBreakpoint,
+                )) {
+                  return WebAuthSplitShell(
+                    title: l10n.welcomeTitle,
+                    subtitle: l10n.appTagline,
+                    icon: Icons.login_rounded,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(28),
+                      child: content,
+                    ),
+                  );
+                }
+                return content;
               },
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWebLoginForm(
+    ThemeHelper th,
+    AppLocalizations l10n,
+    bool isLoading,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: th.cardBackground,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: th.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.login,
+              style: TextStyle(
+                color: th.textPrimary,
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.appTagline,
+              style: TextStyle(color: th.textSecondary, fontSize: 15),
+            ),
+            const SizedBox(height: 28),
+            PhoneNumberField(
+              controller: _phoneController,
+              selectedCountryCode: _selectedCountryCode,
+              onCountryCodeChanged: (code) {
+                setState(() {
+                  _selectedCountryCode = code;
+                });
+              },
+              labelText: l10n.phoneNumber,
+              validator: (value) {
+                if (value == null || value.isEmpty) return l10n.phoneRequired;
+                if (value.length < 9) return l10n.invalidPhone;
+                return null;
+              },
+            ),
+            const SizedBox(height: 18),
+            Container(
+              decoration: BoxDecoration(
+                color: th.inputFill,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: th.borderLight),
+              ),
+              child: TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                style: TextStyle(color: th.textPrimary),
+                decoration: InputDecoration(
+                  labelText: l10n.password,
+                  prefixIcon:
+                      Icon(Icons.lock_outlined, color: th.textSecondary),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: th.textSecondary,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return l10n.passwordRequired;
+                  }
+                  if (value.length < 6) return l10n.passwordTooShort;
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Checkbox(
+                  value: _rememberMe,
+                  onChanged: (value) {
+                    setState(() {
+                      _rememberMe = value ?? false;
+                    });
+                  },
+                  activeColor: const Color(0xFF2563EB),
+                ),
+                Text(l10n.rememberMe),
+                const Spacer(),
+                TextButton(
+                  onPressed: _forgotPassword,
+                  child: Text(l10n.forgotPassword),
+                ),
+              ],
+            ),
+            const SizedBox(height: 22),
+            SizedBox(
+              height: 54,
+              child: ElevatedButton(
+                onPressed: isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: Text(
+                  l10n.login,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(l10n.dontHaveAccount),
+                TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/register'),
+                  child: Text(l10n.register),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

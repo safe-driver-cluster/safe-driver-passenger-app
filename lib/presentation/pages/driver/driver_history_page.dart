@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class DriverHistoryPage extends StatelessWidget {
   final String? driverId;
@@ -8,16 +9,27 @@ class DriverHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
+      backgroundColor: th.background,
       appBar: AppBar(
-        title: const Text('Driver History'),
+        title: const Text(
+          'Driver History',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
         backgroundColor: AppColors.primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Center(
         child: Text(
           'Driver History Page - Driver ID: ${driverId ?? 'Unknown'}',
-          style: const TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, color: th.textPrimary),
         ),
       ),
     );

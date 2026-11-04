@@ -5,11 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/color_constants.dart';
+import '../../../l10n/arb/app_localizations.dart';
 import '../../../providers/phone_auth_provider.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 import '../../widgets/common/loading_widget.dart';
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String phoneNumber;
@@ -33,6 +34,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   Timer? _timer;
   int _seconds = 60;
   bool _canResend = false;
+  bool _isVerifying = false;
 
   @override
   void initState() {
@@ -92,15 +94,20 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   }
 
   Future<void> _verifyOtp() async {
+    if (_isVerifying) return;
+
+    final l10n = AppLocalizations.of(context);
     if (_otpCode.length != 6) {
       CustomSnackBar.showError(
         context,
-        'Please enter the complete 6-digit OTP',
+        l10n.pleaseEnterComplete6DigitOtp,
       );
       return;
     }
 
     try {
+      setState(() => _isVerifying = true);
+
       final phoneAuthController =
           ref.read(phoneAuthControllerProvider.notifier);
       await phoneAuthController.verifyOtp(_otpCode);
@@ -108,12 +115,17 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
       print('OTP verification error: $e');
       CustomSnackBar.showError(
         context,
-        'Verification failed: ${e.toString()}',
+        '${l10n.verificationFailed}: ${e.toString()}',
       );
+    } finally {
+      if (mounted) {
+        setState(() => _isVerifying = false);
+      }
     }
   }
 
   Future<void> _resendOtp() async {
+    final l10n = AppLocalizations.of(context);
     if (!_canResend) return;
 
     try {
@@ -131,19 +143,20 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
       CustomSnackBar.showSuccess(
         context,
-        'OTP sent successfully to ${widget.phoneNumber}',
+        l10n.otpSentTo(widget.phoneNumber),
       );
     } catch (e) {
       print('Resend OTP error: $e');
       CustomSnackBar.showError(
         context,
-        'Failed to resend OTP: ${e.toString()}',
+        '${l10n.otpFailed}: ${e.toString()}',
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final phoneAuthState = ref.watch(phoneAuthControllerProvider);
     final isLoading = phoneAuthState.isLoading;
 
@@ -205,9 +218,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Verify Your Phone',
-                      style: TextStyle(
+                    Text(
+                      l10n.verifyYourPhone,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -215,7 +228,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'We sent a code to ${widget.phoneNumber}',
+                      l10n.verificationCodeSent(widget.phoneNumber),
                       style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white70,
@@ -244,9 +257,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        'Enter Verification Code',
-                        style: TextStyle(
+                      Text(
+                        l10n.enterVerificationCode,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -256,9 +269,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
                       const SizedBox(height: 8),
 
-                      const Text(
-                        'Type the 6-digit code we sent you',
-                        style: TextStyle(
+                      Text(
+                        l10n.type6DigitCode,
+                        style: const TextStyle(
                           fontSize: 14,
                           color: AppColors.textSecondary,
                         ),
@@ -327,9 +340,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
                       // Verify Button
                       CustomButton(
-                        text: 'Verify Code',
-                        onPressed: _verifyOtp,
-                        isLoading: isLoading,
+                        text: l10n.verifyCode,
+                        onPressed: _isVerifying ? null : _verifyOtp,
+                        isLoading: isLoading || _isVerifying,
                       ),
 
                       const SizedBox(height: 24),
@@ -338,18 +351,18 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            "Didn't receive the code? ",
-                            style: TextStyle(
+                          Text(
+                            l10n.didntReceiveCode,
+                            style: const TextStyle(
                               color: AppColors.textSecondary,
                             ),
                           ),
                           if (_canResend)
                             TextButton(
                               onPressed: _resendOtp,
-                              child: const Text(
-                                'Resend',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.resend,
+                                style: const TextStyle(
                                   color: AppColors.primaryColor,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -357,7 +370,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                             )
                           else
                             Text(
-                              'Resend in $_seconds s',
+                              l10n.resendIn(_seconds),
                               style: const TextStyle(
                                 color: AppColors.textSecondary,
                                 fontWeight: FontWeight.w600,
@@ -373,9 +386,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'Change phone number',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.changePhoneNumber,
+                          style: const TextStyle(
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
                           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/core/constants/color_constants.dart';
+import 'package:safedriver_passenger_app/core/utils/theme_helper.dart';
 import 'package:safedriver_passenger_app/core/constants/design_constants.dart';
 import 'package:safedriver_passenger_app/core/services/sos_service.dart';
 import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
@@ -49,150 +50,152 @@ class _SosContactsPageState extends State<SosContactsPage> {
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          ),
-          title: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppDesign.spaceSM),
-                decoration: BoxDecoration(
-                  color: AppColors.dangerColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
-                child: const Icon(
-                  Icons.person_add_rounded,
-                  color: AppColors.dangerColor,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Add SOS Contact',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        builder: (context, setDialogState) {
+          final th = ThemeHelper.of(context);
+          return AlertDialog(
+            backgroundColor: th.cardBackground,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+            ),
+            title: Row(
               children: [
-                _buildDialogTextField(
-                  controller: nameController,
-                  label: 'Contact Name',
-                  hint: 'e.g., Mom, Dad, Spouse',
-                  icon: Icons.person_rounded,
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceSM),
+                  decoration: BoxDecoration(
+                    color: AppColors.dangerColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.person_add_rounded,
+                    color: AppColors.dangerColor,
+                    size: 20,
+                  ),
                 ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: phoneController,
-                  label: 'Phone Number',
-                  hint: 'e.g., 0771234567',
-                  icon: Icons.phone_rounded,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: relationshipController,
-                  label: 'Relationship',
-                  hint: 'e.g., Parent, Friend',
-                  icon: Icons.favorite_rounded,
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-                const Text(
-                  'Alert Methods',
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Add SOS Contact',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
+                    color: th.textPrimary,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: AppDesign.spaceSM),
-                SwitchListTile(
-                  value: sendSms,
-                  onChanged: (v) => setDialogState(() => sendSms = v),
-                  title: const Row(
-                    children: [
-                      Icon(Icons.sms_rounded,
-                          color: AppColors.primaryColor, size: 20),
-                      SizedBox(width: AppDesign.spaceSM),
-                      Text('SMS',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
-                  ),
-                  activeThumbColor: AppColors.primaryColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-                SwitchListTile(
-                  value: sendWhatsapp,
-                  onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                  title: const Row(
-                    children: [
-                      Icon(Icons.chat_rounded,
-                          color: AppColors.successColor, size: 20),
-                      SizedBox(width: AppDesign.spaceSM),
-                      Text('WhatsApp',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
-                  ),
-                  activeThumbColor: AppColors.successColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
               ],
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel',
-                  style: TextStyle(color: AppColors.textSecondary)),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (nameController.text.trim().isEmpty ||
-                    phoneController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in name and phone number'),
-                      backgroundColor: AppColors.dangerColor,
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDialogTextField(
+                    controller: nameController,
+                    label: 'Contact Name',
+                    hint: 'e.g., Mom, Dad, Spouse',
+                    icon: Icons.person_rounded,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: phoneController,
+                    label: 'Phone Number',
+                    hint: 'e.g., 0771234567',
+                    icon: Icons.phone_rounded,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: relationshipController,
+                    label: 'Relationship',
+                    hint: 'e.g., Parent, Friend',
+                    icon: Icons.favorite_rounded,
+                  ),
+                  const SizedBox(height: AppDesign.spaceLG),
+                  Text(
+                    'Alert Methods',
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
-                  );
-                  return;
-                }
-
-                final contact = SosContact(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: nameController.text.trim(),
-                  phoneNumber: phoneController.text.trim(),
-                  relationship: relationshipController.text.trim(),
-                  sendSms: sendSms,
-                  sendWhatsapp: sendWhatsapp,
-                );
-
-                await _sosService.addContact(contact);
-                if (context.mounted) Navigator.pop(context);
-                _loadContacts();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dangerColor,
-                foregroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-                ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  SwitchListTile(
+                    value: sendSms,
+                    onChanged: (v) => setDialogState(() => sendSms = v),
+                    title: Row(
+                      children: [
+                        const Icon(Icons.sms_rounded,
+                            color: AppColors.primaryColor, size: 20),
+                        const SizedBox(width: AppDesign.spaceSM),
+                        Text('SMS', style: TextStyle(color: th.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.primaryColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                  SwitchListTile(
+                    value: sendWhatsapp,
+                    onChanged: (v) => setDialogState(() => sendWhatsapp = v),
+                    title: Row(
+                      children: [
+                        const Icon(Icons.chat_rounded,
+                            color: AppColors.successColor, size: 20),
+                        const SizedBox(width: AppDesign.spaceSM),
+                        Text('WhatsApp',
+                            style: TextStyle(color: th.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.successColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                ],
               ),
-              child: const Text('Add Contact'),
             ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child:
+                    Text('Cancel', style: TextStyle(color: th.textSecondary)),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameController.text.trim().isEmpty ||
+                      phoneController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please fill in name and phone number'),
+                        backgroundColor: AppColors.dangerColor,
+                      ),
+                    );
+                    return;
+                  }
+
+                  final contact = SosContact(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: nameController.text.trim(),
+                    phoneNumber: phoneController.text.trim(),
+                    relationship: relationshipController.text.trim(),
+                    sendSms: sendSms,
+                    sendWhatsapp: sendWhatsapp,
+                  );
+
+                  await _sosService.addContact(contact);
+                  if (context.mounted) Navigator.pop(context);
+                  _loadContacts();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.dangerColor,
+                  foregroundColor: AppColors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                ),
+                child: const Text('Add Contact'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -208,8 +211,162 @@ class _SosContactsPageState extends State<SosContactsPage> {
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: AppColors.white,
+        builder: (context, setDialogState) {
+          final th = ThemeHelper.of(context);
+          return AlertDialog(
+            backgroundColor: th.cardBackground,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+            ),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(AppDesign.spaceSM),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                  child: const Icon(
+                    Icons.edit_rounded,
+                    color: AppColors.primaryColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppDesign.spaceMD),
+                Text(
+                  'Edit Contact',
+                  style: TextStyle(
+                    color: th.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDialogTextField(
+                    controller: nameController,
+                    label: 'Contact Name',
+                    hint: 'e.g., Mom, Dad, Spouse',
+                    icon: Icons.person_rounded,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: phoneController,
+                    label: 'Phone Number',
+                    hint: 'e.g., 0771234567',
+                    icon: Icons.phone_rounded,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: AppDesign.spaceMD),
+                  _buildDialogTextField(
+                    controller: relationshipController,
+                    label: 'Relationship',
+                    hint: 'e.g., Parent, Friend',
+                    icon: Icons.favorite_rounded,
+                  ),
+                  const SizedBox(height: AppDesign.spaceLG),
+                  Text(
+                    'Alert Methods',
+                    style: TextStyle(
+                      color: th.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppDesign.spaceSM),
+                  SwitchListTile(
+                    value: sendSms,
+                    onChanged: (v) => setDialogState(() => sendSms = v),
+                    title: Row(
+                      children: [
+                        const Icon(Icons.sms_rounded,
+                            color: AppColors.primaryColor, size: 20),
+                        const SizedBox(width: AppDesign.spaceSM),
+                        Text('SMS', style: TextStyle(color: th.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.primaryColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                  SwitchListTile(
+                    value: sendWhatsapp,
+                    onChanged: (v) => setDialogState(() => sendWhatsapp = v),
+                    title: Row(
+                      children: [
+                        const Icon(Icons.chat_rounded,
+                            color: AppColors.successColor, size: 20),
+                        const SizedBox(width: AppDesign.spaceSM),
+                        Text('WhatsApp',
+                            style: TextStyle(color: th.textPrimary)),
+                      ],
+                    ),
+                    activeThumbColor: AppColors.successColor,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child:
+                    Text('Cancel', style: TextStyle(color: th.textSecondary)),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameController.text.trim().isEmpty ||
+                      phoneController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please fill in name and phone number'),
+                        backgroundColor: AppColors.dangerColor,
+                      ),
+                    );
+                    return;
+                  }
+
+                  final updated = contact.copyWith(
+                    name: nameController.text.trim(),
+                    phoneNumber: phoneController.text.trim(),
+                    relationship: relationshipController.text.trim(),
+                    sendSms: sendSms,
+                    sendWhatsapp: sendWhatsapp,
+                  );
+
+                  await _sosService.updateContact(updated);
+                  if (context.mounted) Navigator.pop(context);
+                  _loadContacts();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  foregroundColor: AppColors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppDesign.radiusLG),
+                  ),
+                ),
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _confirmDeleteContact(SosContact contact) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final th = ThemeHelper.of(context);
+        return AlertDialog(
+          backgroundColor: th.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           ),
@@ -218,206 +375,56 @@ class _SosContactsPageState extends State<SosContactsPage> {
               Container(
                 padding: const EdgeInsets.all(AppDesign.spaceSM),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
+                  color: AppColors.dangerColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
                 child: const Icon(
-                  Icons.edit_rounded,
-                  color: AppColors.primaryColor,
+                  Icons.delete_rounded,
+                  color: AppColors.dangerColor,
                   size: 20,
                 ),
               ),
               const SizedBox(width: AppDesign.spaceMD),
-              const Text(
-                'Edit Contact',
+              Text(
+                'Remove Contact',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDialogTextField(
-                  controller: nameController,
-                  label: 'Contact Name',
-                  hint: 'e.g., Mom, Dad, Spouse',
-                  icon: Icons.person_rounded,
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: phoneController,
-                  label: 'Phone Number',
-                  hint: 'e.g., 0771234567',
-                  icon: Icons.phone_rounded,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: AppDesign.spaceMD),
-                _buildDialogTextField(
-                  controller: relationshipController,
-                  label: 'Relationship',
-                  hint: 'e.g., Parent, Friend',
-                  icon: Icons.favorite_rounded,
-                ),
-                const SizedBox(height: AppDesign.spaceLG),
-                const Text(
-                  'Alert Methods',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: AppDesign.spaceSM),
-                SwitchListTile(
-                  value: sendSms,
-                  onChanged: (v) => setDialogState(() => sendSms = v),
-                  title: const Row(
-                    children: [
-                      Icon(Icons.sms_rounded,
-                          color: AppColors.primaryColor, size: 20),
-                      SizedBox(width: AppDesign.spaceSM),
-                      Text('SMS',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
-                  ),
-                  activeThumbColor: AppColors.primaryColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-                SwitchListTile(
-                  value: sendWhatsapp,
-                  onChanged: (v) => setDialogState(() => sendWhatsapp = v),
-                  title: const Row(
-                    children: [
-                      Icon(Icons.chat_rounded,
-                          color: AppColors.successColor, size: 20),
-                      SizedBox(width: AppDesign.spaceSM),
-                      Text('WhatsApp',
-                          style: TextStyle(color: AppColors.textPrimary)),
-                    ],
-                  ),
-                  activeThumbColor: AppColors.successColor,
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                ),
-              ],
+          content: Text(
+            'Are you sure you want to remove ${contact.name} from your SOS contacts?',
+            style: TextStyle(
+              color: th.textSecondary,
+              fontSize: 16,
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel',
-                  style: TextStyle(color: AppColors.textSecondary)),
+              child: Text('Cancel', style: TextStyle(color: th.textSecondary)),
             ),
             ElevatedButton(
               onPressed: () async {
-                if (nameController.text.trim().isEmpty ||
-                    phoneController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in name and phone number'),
-                      backgroundColor: AppColors.dangerColor,
-                    ),
-                  );
-                  return;
-                }
-
-                final updated = contact.copyWith(
-                  name: nameController.text.trim(),
-                  phoneNumber: phoneController.text.trim(),
-                  relationship: relationshipController.text.trim(),
-                  sendSms: sendSms,
-                  sendWhatsapp: sendWhatsapp,
-                );
-
-                await _sosService.updateContact(updated);
+                await _sosService.deleteContact(contact.id);
                 if (context.mounted) Navigator.pop(context);
                 _loadContacts();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                backgroundColor: AppColors.dangerColor,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppDesign.radiusLG),
                 ),
               ),
-              child: const Text('Save'),
+              child: const Text('Remove'),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void _confirmDeleteContact(SosContact contact) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-        ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(AppDesign.spaceSM),
-              decoration: BoxDecoration(
-                color: AppColors.dangerColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              ),
-              child: const Icon(
-                Icons.delete_rounded,
-                color: AppColors.dangerColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: AppDesign.spaceMD),
-            const Text(
-              'Remove Contact',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          'Are you sure you want to remove ${contact.name} from your SOS contacts?',
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 16,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.textSecondary)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await _sosService.deleteContact(contact.id);
-              if (context.mounted) Navigator.pop(context);
-              _loadContacts();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.dangerColor,
-              foregroundColor: AppColors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-              ),
-            ),
-            child: const Text('Remove'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -428,48 +435,50 @@ class _SosContactsPageState extends State<SosContactsPage> {
     required IconData icon,
     TextInputType? keyboardType,
   }) {
+    final th = ThemeHelper.of(context);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        hintStyle: const TextStyle(color: AppColors.textHint),
+        labelStyle: TextStyle(color: th.textSecondary),
+        hintStyle: TextStyle(color: th.textHint),
         prefixIcon: Icon(icon, color: AppColors.primaryColor, size: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          borderSide: const BorderSide(color: AppColors.greyMedium),
+          borderSide: BorderSide(color: th.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-          borderSide: const BorderSide(color: AppColors.greyMedium),
+          borderSide: BorderSide(color: th.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppDesign.radiusLG),
           borderSide: const BorderSide(color: AppColors.primaryColor, width: 2),
         ),
         filled: true,
-        fillColor: AppColors.greyExtraLight,
+        fillColor: th.inputFill,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.dangerColor,
               AppColors.criticalColor,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 1.0],
+            stops: const [0.0, 0.3, 1.0],
           ),
         ),
         child: SafeArea(
@@ -479,9 +488,9 @@ class _SosContactsPageState extends State<SosContactsPage> {
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(top: AppDesign.spaceLG),
-                  decoration: const BoxDecoration(
-                    color: AppColors.scaffoldBackground,
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: th.background,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
                     ),
@@ -500,7 +509,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddContactDialog,
         backgroundColor: AppColors.dangerColor,
-        foregroundColor: AppColors.white,
+        foregroundColor: Colors.white,
         icon: const Icon(Icons.person_add_rounded),
         label: const Text('Add Contact',
             style: TextStyle(fontWeight: FontWeight.w600)),
@@ -513,12 +522,9 @@ class _SosContactsPageState extends State<SosContactsPage> {
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(AppDesign.radiusLG),
-            ),
-            child: const CustomBackButton(color: AppColors.white),
+          const CustomBackButton(
+            color: AppColors.white,
+            backgroundColor: Color(0x33FFFFFF),
           ),
           const SizedBox(width: AppDesign.spaceMD),
           const Text(
@@ -556,9 +562,10 @@ class _SosContactsPageState extends State<SosContactsPage> {
   }
 
   Widget _buildAutoSendToggle() {
+    final th = ThemeHelper.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusLG),
         boxShadow: AppDesign.shadowSM,
       ),
@@ -580,14 +587,14 @@ class _SosContactsPageState extends State<SosContactsPage> {
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Auto-Send SOS',
                     style: TextStyle(
-                      color: AppColors.textPrimary,
+                      color: th.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -595,7 +602,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
                   Text(
                     'Automatically send alerts to all contacts',
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: th.textSecondary,
                       fontSize: 13,
                     ),
                   ),
@@ -610,6 +617,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
   }
 
   Widget _buildInfoCard() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.spaceLG),
       decoration: BoxDecoration(
@@ -632,11 +640,11 @@ class _SosContactsPageState extends State<SosContactsPage> {
             ),
           ),
           const SizedBox(width: AppDesign.spaceMD),
-          const Expanded(
+          Expanded(
             child: Text(
               'Add trusted contacts who will receive your SOS alerts via SMS and WhatsApp with your live location.',
               style: TextStyle(
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -647,6 +655,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
   }
 
   Widget _buildContactsList() {
+    final th = ThemeHelper.of(context);
     if (_contacts.isEmpty) {
       return _buildEmptyState();
     }
@@ -669,10 +678,10 @@ class _SosContactsPageState extends State<SosContactsPage> {
               ),
             ),
             const SizedBox(width: AppDesign.spaceMD),
-            const Text(
+            Text(
               'My SOS Contacts',
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -680,8 +689,8 @@ class _SosContactsPageState extends State<SosContactsPage> {
             const Spacer(),
             Text(
               '${_contacts.length} contact${_contacts.length != 1 ? 's' : ''}',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              style: TextStyle(
+                color: th.textSecondary,
                 fontSize: 14,
               ),
             ),
@@ -694,6 +703,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
   }
 
   Widget _buildContactCard(SosContact contact) {
+    final th = ThemeHelper.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: AppDesign.spaceMD),
       decoration: BoxDecoration(
@@ -723,8 +733,8 @@ class _SosContactsPageState extends State<SosContactsPage> {
         ),
         title: Text(
           contact.name,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: th.textPrimary,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -745,8 +755,8 @@ class _SosContactsPageState extends State<SosContactsPage> {
               const SizedBox(height: AppDesign.spaceXS),
               Text(
                 contact.relationship,
-                style: const TextStyle(
-                  color: AppColors.textSecondary,
+                style: TextStyle(
+                  color: th.textSecondary,
                   fontSize: 13,
                 ),
               ),
@@ -800,32 +810,30 @@ class _SosContactsPageState extends State<SosContactsPage> {
     required bool enabled,
     required Color activeColor,
   }) {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDesign.spaceSM,
         vertical: AppDesign.spaceXS,
       ),
       decoration: BoxDecoration(
-        color: enabled ? activeColor.withOpacity(0.1) : AppColors.greyLight,
+        color: enabled ? activeColor.withOpacity(0.1) : th.subtleBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusSM),
         border: Border.all(
-          color: enabled
-              ? activeColor.withOpacity(0.3)
-              : AppColors.greyMedium.withOpacity(0.3),
+          color: enabled ? activeColor.withOpacity(0.3) : th.textDisabled,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon,
-              size: 14, color: enabled ? activeColor : AppColors.greyMedium),
+          Icon(icon, size: 14, color: enabled ? activeColor : th.textDisabled),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: enabled ? activeColor : AppColors.greyMedium,
+              color: enabled ? activeColor : th.textDisabled,
             ),
           ),
         ],
@@ -834,6 +842,7 @@ class _SosContactsPageState extends State<SosContactsPage> {
   }
 
   Widget _buildEmptyState() {
+    final th = ThemeHelper.of(context);
     return Container(
       padding: const EdgeInsets.all(AppDesign.space3XL),
       decoration: BoxDecoration(
@@ -856,19 +865,19 @@ class _SosContactsPageState extends State<SosContactsPage> {
             ),
           ),
           const SizedBox(height: AppDesign.spaceXL),
-          const Text(
+          Text(
             'No SOS Contacts Yet',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: th.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: AppDesign.spaceMD),
-          const Text(
+          Text(
             'Add trusted contacts who will receive your emergency alerts with your live location.',
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: th.textSecondary,
               fontSize: 15,
             ),
             textAlign: TextAlign.center,

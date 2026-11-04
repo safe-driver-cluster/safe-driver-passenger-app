@@ -1,17 +1,19 @@
+import '../../l10n/arb/app_localizations.dart';
+
 /// Utility class for time-based greetings
 class GreetingUtil {
   /// Get time-based greeting
-  static String getTimeBasedGreeting() {
+  static String getTimeBasedGreeting(AppLocalizations l10n) {
     final hour = DateTime.now().hour;
 
     if (hour >= 5 && hour < 12) {
-      return 'Good Morning';
+      return l10n.goodMorning;
     } else if (hour >= 12 && hour < 17) {
-      return 'Good Afternoon';
+      return l10n.goodAfternoon;
     } else if (hour >= 17 && hour < 21) {
-      return 'Good Evening';
+      return l10n.goodEvening;
     } else {
-      return 'Good Night';
+      return l10n.goodNight;
     }
   }
 
@@ -31,7 +33,9 @@ class GreetingUtil {
   }
 
   /// Get full greeting with emoji
-  static String getFullGreeting(String firstName) {
-    return '${getTimeBasedGreeting()}, ${firstName.isNotEmpty ? firstName : 'Traveler'} ${getGreetingEmoji()}';
+  static String getFullGreeting(String firstName, AppLocalizations l10n) {
+    final greeting = getTimeBasedGreeting(l10n);
+    final name = firstName.isNotEmpty ? firstName : l10n.traveler;
+    return '$greeting, $name ${getGreetingEmoji()}';
   }
 }

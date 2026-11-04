@@ -6,6 +6,7 @@ import 'package:safedriver_passenger_app/presentation/pages/feedback/feedback_hi
 
 import '../../../core/constants/color_constants.dart';
 import '../../../core/constants/design_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 import '../../../data/models/passenger_model.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/passenger_provider.dart';
@@ -14,7 +15,7 @@ import '../../widgets/dashboard/reward_points_widget.dart';
 import 'about_page.dart';
 import 'edit_profile_page.dart';
 import 'help_support_page.dart';
-import 'notifications_page.dart';
+import 'received_notifications_page.dart';
 import 'settings_page.dart';
 import 'trip_history_page.dart';
 
@@ -24,21 +25,21 @@ class UserProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
-    final passengerAsync = ref.watch(currentPassengerProvider);
 
+    final th = ThemeHelper.of(context);
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBackground,
+      backgroundColor: th.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
               AppColors.accentColor,
               AppColors.primaryColor,
-              AppColors.scaffoldBackground,
+              th.background,
             ],
-            stops: [0.0, 0.3, 0.7],
+            stops: const [0.0, 0.3, 0.7],
           ),
         ),
         child: SafeArea(
@@ -50,13 +51,13 @@ class UserProfilePage extends ConsumerWidget {
                   .refreshPassengerProfile();
 
               // Also refresh the passenger provider stream
-              ref.refresh(currentPassengerProvider);
+              ref.invalidate(currentPassengerProvider);
 
               // Extra wait to ensure all data is loaded
               await Future.delayed(const Duration(milliseconds: 800));
             },
             color: AppColors.primaryColor,
-            backgroundColor: Colors.white,
+            backgroundColor: th.cardBackground,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
@@ -121,10 +122,12 @@ class UserProfilePage extends ConsumerWidget {
         : '${userProfile.firstName} ${userProfile.lastName}'.trim().isNotEmpty
             ? '${userProfile.firstName} ${userProfile.lastName}'.trim()
             : 'User';
-    final email = userProfile.email.isNotEmpty ? userProfile.email : 'No email';
+    final l10n = AppLocalizations.of(context);
+    final email =
+        userProfile.email.isNotEmpty ? userProfile.email : l10n.noEmail;
     final phoneNumber = userProfile.phoneNumber.isNotEmpty
         ? userProfile.phoneNumber
-        : 'Not provided';
+        : l10n.notProvided;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(
@@ -230,9 +233,9 @@ class UserProfilePage extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      child: const Text(
-                        'Verified Member',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.verifiedMember,
+                        style: const TextStyle(
                           fontSize: 11,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -294,33 +297,12 @@ class UserProfilePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppDesign.spaceLG,
-        AppDesign.spaceSM,
-        AppDesign.spaceLG,
-        AppDesign.spaceLG,
-      ),
-      child: const SizedBox(
-        height: 120,
-        child: Center(
-          child: Text(
-            'Unable to load profile',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildProfessionalQuickActions(BuildContext context) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowLG,
         border: Border.all(
@@ -350,9 +332,9 @@ class UserProfilePage extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Quick Actions',
+                  l10n.quickActions,
                   style: AppTextStyles.headline6.copyWith(
-                    color: AppColors.textPrimary,
+                    color: th.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -364,8 +346,8 @@ class UserProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Edit Profile',
-                    subtitle: 'Update info',
+                    title: l10n.editProfile,
+                    subtitle: l10n.updateInfo,
                     icon: Icons.edit_rounded,
                     gradient: AppColors.primaryGradient,
                     onTap: () {
@@ -381,8 +363,8 @@ class UserProfilePage extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Trip History',
-                    subtitle: 'View trips',
+                    title: l10n.tripHistory,
+                    subtitle: l10n.viewTrips,
                     icon: Icons.history_rounded,
                     gradient: AppColors.accentGradient,
                     onTap: () {
@@ -402,8 +384,8 @@ class UserProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Feedback History',
-                    subtitle: 'Your feedback',
+                    title: l10n.feedbackHistory,
+                    subtitle: l10n.yourFeedback,
                     icon: Icons.feedback_rounded,
                     gradient: AppColors.successGradient,
                     onTap: () {
@@ -419,8 +401,8 @@ class UserProfilePage extends ConsumerWidget {
                 const SizedBox(width: AppDesign.spaceMD),
                 Expanded(
                   child: _buildProfessionalActionCard(
-                    title: 'Support',
-                    subtitle: 'Get help',
+                    title: l10n.support,
+                    subtitle: l10n.getHelp,
                     icon: Icons.help_rounded,
                     gradient: AppColors.warningGradient,
                     onTap: () {
@@ -524,29 +506,34 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   Widget _buildLoadingStats() {
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDesign.radiusXL),
-        boxShadow: AppDesign.shadowMD,
-      ),
-      child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
+    return Builder(builder: (context) {
+      final th = ThemeHelper.of(context);
+      return Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: th.cardBackground,
+          borderRadius: BorderRadius.circular(AppDesign.radiusXL),
+          boxShadow: AppDesign.shadowMD,
         ),
-      ),
-    );
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryColor,
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildProfessionalMenuSection(BuildContext context, WidgetRef ref) {
+    final th = ThemeHelper.of(context);
+    final l10n = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: th.cardBackground,
         borderRadius: BorderRadius.circular(AppDesign.radiusXL),
         boxShadow: AppDesign.shadowMD,
         border: Border.all(
-          color: AppColors.greyLight,
+          color: th.border,
           width: 1,
         ),
       ),
@@ -572,7 +559,7 @@ class UserProfilePage extends ConsumerWidget {
                 ),
                 const SizedBox(width: AppDesign.spaceMD),
                 Text(
-                  'Account & Settings',
+                  l10n.accountAndSettings,
                   style: AppTextStyles.headline6.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
@@ -594,14 +581,15 @@ class UserProfilePage extends ConsumerWidget {
   }
 
   List<Widget> _buildMenuItems(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final accountMenuItems = [
-      MenuItemData('Edit Profile', Icons.person_outline_rounded, () {
+      MenuItemData(l10n.editProfile, Icons.person_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const EditProfilePage()),
         );
       }),
-      MenuItemData('Trip History', Icons.history_rounded, () {
+      MenuItemData(l10n.tripHistory, Icons.history_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const TripHistoryPage()),
@@ -610,25 +598,27 @@ class UserProfilePage extends ConsumerWidget {
     ];
 
     final settingsMenuItems = [
-      MenuItemData('Notifications', Icons.notifications_outlined, () {
+      MenuItemData(l10n.notifications, Icons.notifications_outlined, () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const NotificationsPage()),
+          MaterialPageRoute(
+            builder: (context) => const ReceivedNotificationsPage(),
+          ),
         );
       }),
-      MenuItemData('App Settings', Icons.settings_outlined, () {
+      MenuItemData(l10n.appSettings, Icons.settings_outlined, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SettingsPage()),
         );
       }),
-      MenuItemData('Help & Support', Icons.help_outline_rounded, () {
+      MenuItemData(l10n.emergencyHelp, Icons.help_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const HelpSupportPage()),
         );
       }),
-      MenuItemData('About App', Icons.info_outline_rounded, () {
+      MenuItemData(l10n.aboutApp, Icons.info_outline_rounded, () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AboutPage()),
@@ -637,8 +627,8 @@ class UserProfilePage extends ConsumerWidget {
     ];
 
     final actionMenuItems = [
-      MenuItemData('Sign Out', Icons.logout_rounded, () {
-        _showSignOutDialog(context, ref);
+      MenuItemData(l10n.signOut, Icons.logout_rounded, () {
+        showSignOutDialog(context, ref);
       }, isDestructive: true),
     ];
 
@@ -689,21 +679,19 @@ class UserProfilePage extends ConsumerWidget {
       title: Text(
         item.title,
         style: AppTextStyles.bodyMedium.copyWith(
-          color:
-              item.isDestructive ? AppColors.errorColor : AppColors.textPrimary,
+          color: item.isDestructive ? AppColors.errorColor : null,
           fontWeight: FontWeight.w500,
         ),
       ),
       trailing: const Icon(
         Icons.chevron_right_rounded,
-        color: AppColors.textHint,
         size: AppDesign.iconSM,
       ),
       onTap: item.onTap,
     );
   }
 
-  void _showSignOutDialog(BuildContext context, WidgetRef ref) {
+  void showSignOutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -712,10 +700,10 @@ class UserProfilePage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           ProfessionalButton(
-            text: 'Sign Out',
+            text: AppLocalizations.of(context).signOut,
             onPressed: () async {
               Navigator.pop(context);
 

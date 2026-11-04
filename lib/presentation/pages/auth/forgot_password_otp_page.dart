@@ -1,4 +1,3 @@
-import 'package:safedriver_passenger_app/presentation/widgets/common/custom_back_button.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/services/sms_gateway_service.dart';
+import '../../../l10n/arb/app_localizations.dart';
+import '../../widgets/common/custom_back_button.dart';
 import '../../widgets/common/custom_snackbar.dart';
 
 class ForgotPasswordOtpPage extends ConsumerStatefulWidget {
@@ -75,16 +76,15 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
   }
 
   Future<void> _verifyOtp() async {
+    final l10n = AppLocalizations.of(context);
     final otpCode = _otpCode;
     if (otpCode.length != 6) {
-      CustomSnackBar.showError(
-          context, 'Please enter the complete 6-digit OTP');
+      CustomSnackBar.showError(context, l10n.pleaseEnterComplete6DigitOtp);
       return;
     }
 
     if (_verificationId.isEmpty) {
-      CustomSnackBar.showError(
-          context, 'Verification ID not found. Please try again.');
+      CustomSnackBar.showError(context, l10n.verificationIdNotFound);
       return;
     }
 
@@ -113,6 +113,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
             arguments: {
               'phoneNumber': _phoneNumber,
               'otpCode': otpCode,
+              'verificationId': _verificationId,
               'userId': result.userId,
             },
           );
@@ -120,14 +121,14 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
       } else {
         if (mounted) {
           HapticFeedback.heavyImpact();
-          CustomSnackBar.showError(context, 'Invalid OTP. Please try again.');
+          CustomSnackBar.showError(context, l10n.invalidOtpTryAgain);
         }
       }
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
         CustomSnackBar.showError(
-            context, 'Verification failed: ${e.toString()}');
+            context, '${l10n.verificationFailed}: ${e.toString()}');
       }
     } finally {
       if (mounted) {
@@ -139,11 +140,11 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
   }
 
   Future<void> _resendOtp() async {
+    final l10n = AppLocalizations.of(context);
     if (_isResending || _countdown > 0) return;
 
     if (_phoneNumber.isEmpty) {
-      CustomSnackBar.showError(
-          context, 'Phone number not found. Please try again.');
+      CustomSnackBar.showError(context, l10n.phoneRequired);
       return;
     }
 
@@ -161,7 +162,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
         _verificationId = result.verificationId!;
         if (mounted) {
           HapticFeedback.mediumImpact();
-          CustomSnackBar.showSuccess(context, 'OTP sent successfully');
+          CustomSnackBar.showSuccess(context, l10n.otpSentSuccessfully);
           _startCountdown();
 
           // Clear existing OTP
@@ -172,15 +173,13 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
         }
       } else {
         if (mounted) {
-          CustomSnackBar.showError(
-              context, result.error ?? 'Failed to resend OTP');
+          CustomSnackBar.showError(context, result.error ?? l10n.otpFailed);
         }
       }
     } catch (e) {
       if (mounted) {
         HapticFeedback.heavyImpact();
-        CustomSnackBar.showError(
-            context, 'Failed to resend OTP: ${e.toString()}');
+        CustomSnackBar.showError(context, '${l10n.otpFailed}: ${e.toString()}');
       }
     } finally {
       if (mounted) {
@@ -204,42 +203,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
     }
   }
 
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -271,13 +237,11 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       // Back Button
                       Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const CustomBackButton(color: Colors.white, ),
-                      )],
+                          const CustomBackButton(
+                            color: Colors.white,
+                            backgroundColor: Color(0x33FFFFFF),
+                          )
+                        ],
                       ),
                       const SizedBox(height: 40),
 
@@ -308,9 +272,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const Text(
-                        'Verify OTP',
-                        style: TextStyle(
+                      Text(
+                        l10n.verifyOTP,
+                        style: const TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -318,7 +282,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'We sent a 6-digit code to\n$_phoneNumber',
+                        l10n.verificationCodeSent(_phoneNumber),
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
@@ -455,7 +419,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                                     ),
                                   )
                                 : Text(
-                                    'Verify OTP',
+                                    l10n.verifyOTP,
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -475,7 +439,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Didn\'t receive the code? ',
+                              l10n.didntReceiveCode,
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 14,
@@ -483,7 +447,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                             ),
                             if (_countdown > 0)
                               Text(
-                                'Resend in ${_countdown}s',
+                                l10n.resendIn(_countdown),
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 14,
@@ -493,7 +457,7 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                               GestureDetector(
                                 onTap: _isResending ? null : _resendOtp,
                                 child: Text(
-                                  _isResending ? 'Sending...' : 'Resend OTP',
+                                  _isResending ? l10n.sending : l10n.resendOTP,
                                   style: TextStyle(
                                     color: _isResending
                                         ? Colors.grey[600]
@@ -512,9 +476,9 @@ class _ForgotPasswordOtpPageState extends ConsumerState<ForgotPasswordOtpPage> {
                         Center(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: const Text(
-                              'Change Phone Number',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.changePhoneNumber,
+                              style: const TextStyle(
                                 color: Color(0xFF2563EB),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class CustomBackButton extends StatelessWidget {
   final Color? color;
@@ -8,7 +9,7 @@ class CustomBackButton extends StatelessWidget {
 
   const CustomBackButton({
     super.key,
-    this.color = Colors.white,
+    this.color,
     this.backgroundColor,
     this.onPressed,
     this.size = 22.0,
@@ -16,11 +17,11 @@ class CustomBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Automatically determine a suitable background color if not provided
-    final isWhite = color == Colors.white;
-    final defaultBg = isWhite
-        ? Colors.white.withOpacity(0.25)
-        : Colors.black.withOpacity(0.05);
+    final th = ThemeHelper.of(context);
+    final resolvedColor = color ?? th.textPrimary;
+    final defaultBg = th.isDark
+        ? Colors.white.withOpacity(0.1)
+        : resolvedColor.withOpacity(0.08);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -30,7 +31,7 @@ class CustomBackButton extends StatelessWidget {
         color: backgroundColor ?? defaultBg,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (color ?? Colors.white).withOpacity(0.1),
+          color: resolvedColor.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -39,7 +40,7 @@ class CustomBackButton extends StatelessWidget {
         icon: Icon(
           Icons.arrow_back,
           size: size,
-          color: color,
+          color: resolvedColor,
         ),
         onPressed: onPressed ?? () => Navigator.pop(context),
       ),

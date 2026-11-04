@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safedriver_passenger_app/l10n/arb/app_localizations.dart';
 import '../../../core/constants/color_constants.dart';
+import '../../../core/utils/theme_helper.dart';
 
 /// Custom error widget for displaying error states
 class CustomErrorWidget extends StatelessWidget {
@@ -23,6 +24,7 @@ class CustomErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -38,14 +40,14 @@ class CustomErrorWidget extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) => Icon(
                   icon ?? Icons.error_outline,
                   size: 80,
-                  color: AppColors.errorColor,
+                  color: th.error,
                 ),
               )
             else
               Icon(
                 icon ?? Icons.error_outline,
                 size: 80,
-                color: AppColors.errorColor,
+                color: th.error,
               ),
 
             const SizedBox(height: 24),
@@ -54,10 +56,10 @@ class CustomErrorWidget extends StatelessWidget {
             if (title != null) ...[
               Text(
                 title!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: th.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -67,9 +69,9 @@ class CustomErrorWidget extends StatelessWidget {
             // Error Message
             Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -86,8 +88,8 @@ class CustomErrorWidget extends StatelessWidget {
                 icon: const Icon(Icons.refresh),
                 label: Text(AppLocalizations.of(context).tryAgain),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: AppColors.white,
+                  backgroundColor: th.primary,
+                  foregroundColor: th.textOnPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
@@ -155,6 +157,7 @@ class NotFoundErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return CustomErrorWidget(
       title: 'Not Found',
       message: message ?? 'The requested content could not be found.',
@@ -165,8 +168,8 @@ class NotFoundErrorWidget extends StatelessWidget {
               icon: const Icon(Icons.arrow_back),
               label: Text(AppLocalizations.of(context).goBack),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                backgroundColor: th.primary,
+                foregroundColor: th.textOnPrimary,
               ),
             )
           : null,
@@ -187,6 +190,7 @@ class PermissionErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return CustomErrorWidget(
       title: 'Permission Required',
       message:
@@ -198,8 +202,8 @@ class PermissionErrorWidget extends StatelessWidget {
               icon: const Icon(Icons.settings),
               label: Text(AppLocalizations.of(context).openSettings),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                foregroundColor: AppColors.white,
+                backgroundColor: th.primary,
+                foregroundColor: th.textOnPrimary,
               ),
             )
           : null,
@@ -226,6 +230,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -241,14 +246,14 @@ class EmptyStateWidget extends StatelessWidget {
                 errorBuilder: (context, error, stackTrace) => Icon(
                   icon ?? Icons.inbox_outlined,
                   size: 80,
-                  color: AppColors.textSecondary,
+                  color: th.textSecondary,
                 ),
               )
             else
               Icon(
                 icon ?? Icons.inbox_outlined,
                 size: 80,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
               ),
 
             const SizedBox(height: 24),
@@ -256,10 +261,10 @@ class EmptyStateWidget extends StatelessWidget {
             // Title
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -269,9 +274,9 @@ class EmptyStateWidget extends StatelessWidget {
             // Message
             Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -307,6 +312,7 @@ class InfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final th = ThemeHelper.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -316,24 +322,24 @@ class InfoWidget extends StatelessWidget {
             Icon(
               icon,
               size: 80,
-              color: iconColor ?? AppColors.primaryColor,
+              color: iconColor ?? th.primary,
             ),
             const SizedBox(height: 24),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: th.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
               message,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textSecondary,
+                color: th.textSecondary,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,

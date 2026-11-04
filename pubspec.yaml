@@ -1,5 +1,5 @@
 name: safedriver_passenger_app
-description: "SafeDriver - Your trusted ride companion"
+description: "SafeDriver - Passenger App"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.2+10
 
 environment:
   sdk: ^3.5.3
@@ -62,7 +62,8 @@ dependencies:
   location: ^5.0.3
 
   # QR Code Scanner
-  mobile_scanner: ^3.5.6
+  # 16 KB-compatible CameraX/ML Kit; retain compatibility with Firebase's web SDK.
+  mobile_scanner: '>=7.1.4 <7.2.0'
   qr_flutter: ^4.1.0
 
   # Media & Camera
@@ -93,8 +94,6 @@ dependencies:
   intl: ^0.20.0
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
-  background_sms:
-    path: third_party/background_sms
   device_info_plus: ^9.1.1
   package_info_plus: ^8.0.2
   flutter_dotenv: ^5.1.0
@@ -104,7 +103,7 @@ dependencies:
   encrypt: ^5.0.3
 
   # Biometrics
-  local_auth: ^2.1.7
+  local_auth: ^2.2.0
 
   # Push Notifications
   flutter_local_notifications: ^17.2.2
@@ -115,6 +114,7 @@ dependencies:
   form_builder_validators: ^11.0.0
   flutter_gen: 5.9.0
   file_picker: ^8.0.7
+  nfc_manager: ^4.0.2
 
 dev_dependencies:
   flutter_test:
@@ -130,28 +130,23 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/icons/
-    - assets/animations/
-    - assets/fonts/
-    - assets/audio/
-    - assets/videos/
-    - assets/data/
+    - .env
 
 # Configuration for flutter_launcher_icons
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/logo2.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   web:
     generate: true
-    image_path: "assets/images/logo.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
+    image_path: "assets/images/logo2.png"
+    background_color: "#FFFFFF"
+    theme_color: "#2563EB"
   windows:
     generate: true
-    image_path: "assets/images/logo.png"
+    image_path: "assets/images/logo2.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
     generate: true
-    image_path: "assets/images/logo.png"
+    image_path: "assets/images/logo2.png"

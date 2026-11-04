@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/theme_helper.dart';
 
 class GoogleIcon extends StatelessWidget {
   final double size;
@@ -7,6 +8,7 @@ class GoogleIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final th = ThemeHelper.of(context);
     return Container(
       width: size,
       height: size,
