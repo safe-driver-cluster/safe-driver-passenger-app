@@ -57,13 +57,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  background_sms:
-    dependency: "direct main"
-    description:
-      path: "third_party/background_sms"
-      relative: true
-    source: path
-    version: "0.0.4"
   boolean_selector:
     dependency: transitive
     description:
@@ -1288,10 +1281,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.16.0"
   mime:
     dependency: transitive
     description:
@@ -1304,10 +1297,10 @@ packages:
     dependency: "direct main"
     description:
       name: mobile_scanner
-      sha256: "1b60b8f9d4ce0cb0e7d7bc223c955d083a0737bee66fa1fcfe5de48225e0d5b3"
+      sha256: c6184bf2913dd66be244108c9c27ca04b01caf726321c44b0e7a7a1e32d41044
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.7"
+    version: "7.1.4"
   ndef_record:
     dependency: transitive
     description:
@@ -1757,10 +1750,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
+      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.7"
+    version: "0.7.6"
   time:
     dependency: transitive
     description:

@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Location permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,8 +14,15 @@
         android:name="android.hardware.nfc"
         android:required="false" />
     
-    <!-- SMS permission for SOS alerts -->
-    <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- SOS opens the SMS app pre-filled instead of sending directly.
+         Strip restricted SMS/Call Log permissions if any plugin adds them
+         (Play policy: default SMS/Phone handlers only). -->
+    <uses-permission android:name="android.permission.SEND_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" tools:node="remove" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" tools:node="remove" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" tools:node="remove" />
     
     <!-- Biometric permissions -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
