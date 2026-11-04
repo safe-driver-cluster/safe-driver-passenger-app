@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/release
 config.bat
 node_modules
+
+
+.env
