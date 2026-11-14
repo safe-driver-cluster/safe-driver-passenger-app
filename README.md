@@ -596,7 +596,7 @@ For support and questions:
 ---
 
 <div align="center">
-  <p><strong>Made with ❤️ by CodeCrafters Team</strong></p>
+  <p><strong>Made with ❤️ by CodeCrafters Team 2026.11.14</strong></p>
   <p><em>Revolutionizing Public Transport Safety in Sri Lanka</em></p>
 </div>
 
