@@ -7,7 +7,7 @@
     "deploy": "firebase deploy --only functions",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
-    "start": "node init && npm run shell",
+    "start": "npm run shell",
     "logs": "firebase functions:log",
     "test": "jest"
   },
